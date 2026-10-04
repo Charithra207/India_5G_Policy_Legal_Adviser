@@ -1,0 +1,471 @@
+"""
+Swarm Orchestrator
+==================
+Implements the orchestration logic described in DOCX §3.3 and §3.7.
+
+Responsibilities
+----------------
+1. Receive the current scenario chunk and maintain the running incident state.
+2. Determine which specialist agents are relevant to the current chunk.
+3. Activate ONLY the required agents (no fixed sequence — swarm behaviour).
+4. Pass the current chunk + structured incident state to each active agent.
+5. Collect structured AgentFindings from each active agent.
+6. Preserve evidence and source information.
+7. Forward findings to the Verifier.
+8. Forward verified results to the Coordinator.
+9. Record a full AuditRecord for each chunk.
+
+Agent-selection rules (DOCX Annex-1 A.4, §2.5)
+------------------------------------------------
+Stage detection is based on NEW facts in the current chunk only.
+Accumulated incident context is preserved in _incident_state so that
+later agents can reason about prior events, but accumulated flags do NOT
+automatically pull previously active agents back into the current chunk.
+
+    T0 — performance symptom only:
+        Technical
+
+    T1 — security indicators added:
+        Technical + Cybersecurity + Standards
+
+    T2 — critical service / data risk identified:
+        Critical Infrastructure + Privacy + Policy & Legal
+
+    T3 — reporting/escalation question:
+        Policy & Legal + Cybersecurity + Privacy + Critical Infrastructure
+        + Policy Gap
+
+Policy Gap execution order (FIX 2)
+------------------------------------
+The Policy Gap Agent requires VERIFIED findings as input (DOCX §3.7).
+It therefore runs in a second pass AFTER the other active specialists
+have been verified:
+
+    Pass 1: run all active non-PolicyGap specialists
+         → Verifier checks Pass-1 findings
+         → verified findings added to incident_state
+    Pass 2: run Policy Gap Agent (receives verified Pass-1 findings)
+         → Verifier checks Policy Gap findings
+    Combine all findings → Coordinator
+
+This guarantees the Policy Gap Agent never receives unverified
+current-chunk findings as though they were verified.
+"""
+
+from __future__ import annotations
+
+import logging
+from datetime import datetime, timezone
+from typing import Optional
+
+from src.core.models import (
+    AgentFinding, AgentID, AuditRecord,
+    CoordinatorAssessment, ScenarioChunk, VerifierResult,
+)
+from src.agents import (
+    TechnicalAgent, PolicyLegalAgent, CybersecurityAgent,
+    PrivacyAgent, CriticalInfraAgent, StandardsAgent, PolicyGapAgent,
+)
+from src.knowledge_base.base_kb import KnowledgeBase, StubKnowledgeBase
+
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Stage detection — keyword sets for NEW chunk content only
+# ---------------------------------------------------------------------------
+
+_SECURITY_KEYWORDS = frozenset([
+    "authentication", "signalling", "suspicious", "unusual", "anomal",
+    "unauthori", "attack", "intrusion", "cyber", "security event",
+    "control-plane", "control plane",
+])
+
+_PRIVACY_KEYWORDS = frozenset([
+    "personal data", "patient", "subscriber", "identifiable", "healthcare",
+    "health", "data exposed", "data breach", "user data",
+])
+
+_CII_KEYWORDS = frozenset([
+    "critical service", "healthcare", "health", "hospital", "emergency",
+    "government application", "critical application", "critical infrastructure",
+    "essential service",
+])
+
+_GAP_KEYWORDS = frozenset([
+    "what should be reported", "what should be escalated",
+    "policy gap", "escalation", "reporting", "report",
+    "what remains", "what policy gap",
+])
+
+
+# ---------------------------------------------------------------------------
+# Exact per-stage agent sets (DOCX Annex-1 A.4 / §2.5)
+# ---------------------------------------------------------------------------
+
+_STAGE_AGENTS: dict[int, list[AgentID]] = {
+    0: [                                          # T0 — performance symptom
+        AgentID.TECHNICAL,
+    ],
+    1: [                                          # T1 — security indicators
+        AgentID.TECHNICAL,
+        AgentID.CYBERSECURITY,
+        AgentID.STANDARDS,
+    ],
+    2: [                                          # T2 — critical service / data
+        AgentID.CRITICAL_INFRA,
+        AgentID.PRIVACY,
+        AgentID.POLICY_LEGAL,
+    ],
+    3: [                                          # T3 — reporting / gap question
+        AgentID.POLICY_LEGAL,
+        AgentID.CYBERSECURITY,
+        AgentID.PRIVACY,
+        AgentID.CRITICAL_INFRA,
+        AgentID.POLICY_GAP,
+    ],
+}
+
+
+class SwarmOrchestrator:
+    """
+    The Swarm Orchestrator manages the full per-chunk pipeline.
+
+    Parameters
+    ----------
+    verifier    : Verifier instance (injected)
+    coordinator : Coordinator instance (injected)
+    agent_kbs   : optional dict mapping AgentID → KnowledgeBase; if omitted,
+                  stub KBs are used.  Inject real KBs here for live RAG.
+
+    Usage
+    -----
+        orchestrator = SwarmOrchestrator(verifier, coordinator)
+        audit_record = orchestrator.process_chunk(chunk)
+    """
+
+    def __init__(
+        self,
+        verifier,
+        coordinator,
+        agent_kbs: Optional[dict[AgentID, KnowledgeBase]] = None,
+    ) -> None:
+        self.verifier    = verifier
+        self.coordinator = coordinator
+        self._kbs        = agent_kbs or {}
+
+        # Instantiate all 7 specialist agents
+        self._agents: dict[AgentID, object] = {
+            AgentID.TECHNICAL:      TechnicalAgent(self._kb(AgentID.TECHNICAL)),
+            AgentID.POLICY_LEGAL:   PolicyLegalAgent(self._kb(AgentID.POLICY_LEGAL)),
+            AgentID.CYBERSECURITY:  CybersecurityAgent(self._kb(AgentID.CYBERSECURITY)),
+            AgentID.PRIVACY:        PrivacyAgent(self._kb(AgentID.PRIVACY)),
+            AgentID.CRITICAL_INFRA: CriticalInfraAgent(self._kb(AgentID.CRITICAL_INFRA)),
+            AgentID.STANDARDS:      StandardsAgent(self._kb(AgentID.STANDARDS)),
+            AgentID.POLICY_GAP:     PolicyGapAgent(self._kb(AgentID.POLICY_GAP)),
+        }
+
+        # Accumulated incident context — preserved across chunks for reasoning.
+        # NOTE: these flags inform agent reasoning and coordinator change-tracking
+        # but do NOT drive agent selection.  Agent selection uses _select_agents()
+        # which applies the DOCX stage-specific sets.
+        self._incident_state: dict = {
+            "chunks_processed":        [],
+            "active_agents_history":   {},   # chunk_id → list[AgentID]
+            "cii_flagged":             False,
+            "data_exposure_suspected": False,
+            "cyber_event_suspected":   False,
+            "verified_findings":       [],   # compact summaries from ALL prior chunks
+            "active_agents":           [],   # agent IDs active in CURRENT chunk
+        }
+
+        logger.info("SwarmOrchestrator initialised with %d agents.", len(self._agents))
+
+    # ------------------------------------------------------------------
+    # Public entry point
+    # ------------------------------------------------------------------
+
+    def process_chunk(self, chunk: ScenarioChunk) -> AuditRecord:
+        """
+        Run the full pipeline for one scenario chunk.
+
+        Flow (two-pass for Policy Gap correctness):
+
+        Pass 1:
+            chunk → select specialist agents (excl. Policy Gap)
+                  → run Pass-1 agents
+                  → Verifier (Pass-1 findings)
+                  → verified findings → incident_state
+
+        Pass 2 (only if Policy Gap is in the active set):
+            → run Policy Gap Agent (receives verified Pass-1 findings)
+            → Verifier (Policy Gap findings)
+
+        Combined:
+            All findings + both verifier results → Coordinator → AuditRecord
+        """
+        logger.info("=" * 60)
+        logger.info("Orchestrator: processing chunk %s (index=%d)",
+                    chunk.chunk_id, chunk.chunk_index)
+
+        # 1. Update accumulated incident context flags
+        self._update_incident_flags(chunk)
+
+        # 2. Select agents for this chunk stage (exact DOCX sets)
+        active_agent_ids = self._select_agents(chunk)
+        self._incident_state["active_agents"] = [a.value for a in active_agent_ids]
+        self._incident_state["active_agents_history"][chunk.chunk_id] = active_agent_ids
+
+        logger.info("Active agents for %s: %s",
+                    chunk.chunk_id, [a.value for a in active_agent_ids])
+
+        policy_gap_active = AgentID.POLICY_GAP in active_agent_ids
+        pass1_agent_ids   = [a for a in active_agent_ids if a != AgentID.POLICY_GAP]
+
+        # ----------------------------------------------------------------
+        # Pass 1: run all non-PolicyGap specialists
+        # ----------------------------------------------------------------
+        pass1_findings: list[AgentFinding] = self._run_agents(chunk, pass1_agent_ids)
+
+        pass1_verifier_result: VerifierResult = self.verifier.verify(
+            chunk_id       = chunk.chunk_id,
+            findings       = pass1_findings,
+            incident_state = self._incident_state,
+        )
+
+        # Absorb Pass-1 verified findings into incident_state so Policy Gap
+        # Agent (and future chunks) can reference them
+        self._absorb_verified_findings(pass1_verifier_result)
+
+        # ----------------------------------------------------------------
+        # Pass 2: Policy Gap Agent (only at T3 / when selected)
+        # ----------------------------------------------------------------
+        all_findings:          list[AgentFinding] = list(pass1_findings)
+        combined_verifier_result: VerifierResult  = pass1_verifier_result
+
+        if policy_gap_active:
+            logger.info("Orchestrator: running Policy Gap Agent (Pass 2) for %s",
+                        chunk.chunk_id)
+            gap_findings: list[AgentFinding] = self._run_agents(
+                chunk, [AgentID.POLICY_GAP]
+            )
+            gap_verifier_result: VerifierResult = self.verifier.verify(
+                chunk_id       = chunk.chunk_id,
+                findings       = gap_findings,
+                incident_state = self._incident_state,
+            )
+            self._absorb_verified_findings(gap_verifier_result)
+
+            # Merge Pass-2 results into the combined view
+            all_findings.extend(gap_findings)
+            combined_verifier_result = VerifierResult(
+                chunk_id           = chunk.chunk_id,
+                verified_claims    = (pass1_verifier_result.verified_claims
+                                      + gap_verifier_result.verified_claims),
+                cross_domain_links = (pass1_verifier_result.cross_domain_links
+                                      + gap_verifier_result.cross_domain_links),
+                conflicts          = (pass1_verifier_result.conflicts
+                                      + gap_verifier_result.conflicts),
+                missing_evidence   = (pass1_verifier_result.missing_evidence
+                                      + gap_verifier_result.missing_evidence),
+            )
+
+        # ----------------------------------------------------------------
+        # Coordinate
+        # ----------------------------------------------------------------
+        prior_assessment = self._incident_state.get("last_assessment")
+        assessment: CoordinatorAssessment = self.coordinator.synthesize(
+            chunk            = chunk,
+            findings         = all_findings,
+            verifier_result  = combined_verifier_result,
+            incident_state   = self._incident_state,
+            prior_assessment = prior_assessment,
+        )
+        self._incident_state["last_assessment"] = assessment
+
+        # ----------------------------------------------------------------
+        # Build audit record
+        # ----------------------------------------------------------------
+        record = AuditRecord(
+            chunk_id               = chunk.chunk_id,
+            timestamp              = datetime.now(timezone.utc).isoformat(),
+            active_agents          = active_agent_ids,
+            agent_findings         = all_findings,
+            verifier_result        = combined_verifier_result,
+            coordinator_assessment = assessment,
+            raw_chunk              = chunk,
+        )
+
+        self._incident_state["chunks_processed"].append(chunk.chunk_id)
+        logger.info("Orchestrator: chunk %s complete.", chunk.chunk_id)
+        return record
+
+    # ------------------------------------------------------------------
+    # Agent selection — exact DOCX stage sets
+    # ------------------------------------------------------------------
+
+    def _select_agents(self, chunk: ScenarioChunk) -> list[AgentID]:
+        """
+        Return the exact agent set for this chunk's stage index.
+
+        Primary source: DOCX Annex-1 A.4 table and §2.5.
+
+        For chunks whose index matches 0–3 exactly, the DOCX-specified
+        set is returned without modification.
+
+        For chunks outside that range (e.g. additional scenario steps),
+        the selection falls back to keyword-based heuristics against
+        the current chunk's text ONLY (not accumulated state flags).
+        This keeps the swarm correct for novel scenarios while preserving
+        exact DOCX compliance for the defined four stages.
+
+        IMPORTANT: accumulated incident_state flags (cii_flagged, etc.)
+        are NOT used here.  They belong to agent reasoning context, not
+        to stage-specific agent selection.
+        """
+        idx = chunk.chunk_index
+
+        if idx in _STAGE_AGENTS:
+            selected = list(_STAGE_AGENTS[idx])
+            # Policy Gap requires prior verified findings; guard at T3
+            if AgentID.POLICY_GAP in selected and not self._incident_state["chunks_processed"]:
+                selected = [a for a in selected if a != AgentID.POLICY_GAP]
+                logger.debug("Policy Gap Agent deselected: no prior verified findings.")
+            logger.info("Stage %d: using DOCX-specified agent set: %s",
+                        idx, [a.value for a in selected])
+            return sorted(selected, key=lambda a: a.value)
+
+        # Fallback for chunks beyond the defined four stages
+        logger.warning(
+            "Chunk index %d is outside the defined 0–3 stage range. "
+            "Falling back to keyword-based selection on current chunk text.",
+            idx,
+        )
+        return self._select_agents_by_keywords(chunk)
+
+    def _select_agents_by_keywords(self, chunk: ScenarioChunk) -> list[AgentID]:
+        """
+        Keyword-based fallback selection for chunks outside the defined
+        four stages.  Uses ONLY the current chunk's text — not accumulated
+        incident state flags.
+        """
+        combined = (chunk.description + " " + " ".join(chunk.new_facts)).lower()
+        selected: set[AgentID] = {AgentID.TECHNICAL}
+
+        if any(kw in combined for kw in _SECURITY_KEYWORDS):
+            selected.add(AgentID.CYBERSECURITY)
+            selected.add(AgentID.STANDARDS)
+
+        if any(kw in combined for kw in _CII_KEYWORDS):
+            selected.add(AgentID.CRITICAL_INFRA)
+            selected.add(AgentID.POLICY_LEGAL)
+
+        if any(kw in combined for kw in _PRIVACY_KEYWORDS):
+            selected.add(AgentID.PRIVACY)
+            selected.add(AgentID.POLICY_LEGAL)
+
+        if any(kw in combined for kw in _GAP_KEYWORDS):
+            if self._incident_state["chunks_processed"]:
+                selected.add(AgentID.POLICY_GAP)
+            selected.update([
+                AgentID.POLICY_LEGAL, AgentID.CYBERSECURITY,
+                AgentID.PRIVACY, AgentID.CRITICAL_INFRA,
+            ])
+
+        return sorted(selected, key=lambda a: a.value)
+
+    # ------------------------------------------------------------------
+    # Agent runner
+    # ------------------------------------------------------------------
+
+    def _run_agents(
+        self,
+        chunk: ScenarioChunk,
+        agent_ids: list[AgentID],
+    ) -> list[AgentFinding]:
+        """Run each listed agent sequentially and collect findings."""
+        findings: list[AgentFinding] = []
+        for agent_id in agent_ids:
+            agent = self._agents[agent_id]
+            try:
+                finding = agent.analyze(chunk, self._incident_state)
+                findings.append(finding)
+                logger.debug("Agent %s produced %d claim(s).",
+                             agent_id.value, len(finding.claims))
+            except Exception as exc:  # noqa: BLE001
+                logger.error("Agent %s raised an exception: %s",
+                             agent_id.value, exc, exc_info=True)
+                findings.append(AgentFinding(
+                    agent_id=agent_id,
+                    chunk_id=chunk.chunk_id,
+                    summary=f"[ERROR] Agent failed: {exc}",
+                    uncertainty_notes=[f"Agent execution error: {exc}"],
+                ))
+        return findings
+
+    async def _run_agents_parallel(
+        self,
+        chunk: ScenarioChunk,
+        agent_ids: list[AgentID],
+    ) -> list[AgentFinding]:  # pragma: no cover
+        """
+        Parallel version of _run_agents using asyncio.
+        Implement using asyncio.gather over async agent.analyze calls.
+        """
+        raise NotImplementedError(
+            "Parallel agent execution not yet implemented. "
+            "Use _run_agents for sequential execution."
+        )
+
+    # ------------------------------------------------------------------
+    # Incident context management
+    # ------------------------------------------------------------------
+
+    def _update_incident_flags(self, chunk: ScenarioChunk) -> None:
+        """
+        Update accumulated incident context flags from the current chunk.
+
+        These flags are used by agents for reasoning context and by the
+        Coordinator for change tracking.  They do NOT drive agent selection.
+        """
+        combined = (chunk.description + " " + " ".join(chunk.new_facts)).lower()
+
+        if any(kw in combined for kw in _SECURITY_KEYWORDS):
+            self._incident_state["cyber_event_suspected"] = True
+
+        if any(kw in combined for kw in _CII_KEYWORDS):
+            self._incident_state["cii_flagged"] = True
+
+        if any(kw in combined for kw in _PRIVACY_KEYWORDS):
+            self._incident_state["data_exposure_suspected"] = True
+
+    def _absorb_verified_findings(self, verifier_result: VerifierResult) -> None:
+        """
+        Store compact summaries of verified claims into incident_state.
+        The Policy Gap Agent reads these in its pass-2 run.
+        """
+        for vc in verifier_result.verified_claims:
+            self._incident_state["verified_findings"].append({
+                "agent_id": vc.agent_id.value,
+                "claim":    vc.claim,
+                "outcome":  vc.outcome.value,
+            })
+
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
+    def _kb(self, agent_id: AgentID) -> KnowledgeBase:
+        return self._kbs.get(agent_id, StubKnowledgeBase(
+            kb_name=f"{agent_id.value}_stub",
+            domain=agent_id.value,
+        ))
+
+    @property
+    def incident_state(self) -> dict:
+        """Read-only view of the current accumulated incident context."""
+        return dict(self._incident_state)
+
+    def get_agent(self, agent_id: AgentID):
+        """Return the agent instance (for testing)."""
+        return self._agents[agent_id]
