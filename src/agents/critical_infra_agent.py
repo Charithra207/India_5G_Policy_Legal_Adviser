@@ -50,10 +50,10 @@ class CriticalInfraAgent(BaseAgent):
     ) -> list[str]:
         base = chunk.description
         return [
-            f"critical infrastructure provisions India applicable: {base}",
-            "NCIIPC Rules 2013 critical information infrastructure designation",
-            "Telecommunications Act 2023 critical telecommunication infrastructure",
-            "critical service healthcare government 5G network CII designation",
+            base,
+            "notification of critical telecommunication infrastructure and measures for its protection",
+            "designation and protection of critical information infrastructure",
+            "standards and measures for security of telecommunication networks",
         ]
 
     def _produce_finding(
@@ -65,56 +65,50 @@ class CriticalInfraAgent(BaseAgent):
         description = chunk.description.lower()
         uncertainty_notes = self._uncertainty_note_if_stub(evidence)
         claims: list[str] = []
-        obligations: list[str] = []
         institutions: list[str] = ["NCIIPC", "Department of Telecommunications (DoT)"]
         missing_facts: list[str] = []
 
         # ----------------------------------------------------------------
-        # Determine CII relevance from current chunk
+        # Determine CII relevance from the facts released so far
         # ----------------------------------------------------------------
         cii_keywords = ["healthcare", "health", "critical service", "critical application",
                         "critical infrastructure", "government", "essential service",
                         "emergency", "hospital"]
+        matched = [kw for kw in cii_keywords if kw in description]
+        cii_relevant = bool(matched) or bool(incident_state.get("cii_flagged"))
 
-        cii_relevant = any(kw in description for kw in cii_keywords)
-
+        citations: dict[str, list[EvidenceItem]] = {}
         if cii_relevant:
-            claims.append(
-                "The affected 5G private network slice supports a healthcare "
-                "application. Healthcare and emergency services may qualify as "
-                "Critical Information Infrastructure (CII) under the IT (NCIIPC) "
-                "Rules, 2013, or as critical telecommunication infrastructure under "
-                "the Telecommunications Act, 2023. Formal CII designation status "
-                "must be confirmed."
+            service = (
+                "a healthcare application" if any(k in matched for k in ("healthcare", "health", "hospital"))
+                else "a critical service" if matched
+                else "a service flagged as critical in an earlier chunk"
             )
             claims.append(
-                "If the slice is CII-designated, additional protective obligations, "
-                "incident-reporting requirements, and institutional responsibilities "
-                "under NCIIPC arise."
+                f"The incident facts indicate that the affected 5G slice supports "
+                f"{service}, so critical-infrastructure provisions are relevant to "
+                "examine. Formal CII designation status is not established by the facts."
             )
-            obligations.extend([
-                "Confirm whether the healthcare application or its supporting network "
-                "infrastructure is formally designated as Critical Information "
-                "Infrastructure by NCIIPC.",
-                "If CII-designated: comply with NCIIPC incident-reporting and "
-                "protective-measures requirements.",
-                "Notify NCIIPC and DoT if a CII-designated service is affected "
-                "(exact thresholds require KB retrieval).",
-            ])
             uncertainty_notes.append(
-                "CII designation is UNCONFIRMED at this stage. The healthcare "
-                "application may or may not be formally designated. This "
-                "uncertainty must be carried through the assessment."
+                "CII designation is UNCONFIRMED at this stage. The service may or may "
+                "not be formally designated. This uncertainty must be carried through "
+                "the assessment."
             )
+            # What the CII instruments say — quoted from retrieved passages only
+            source_claims, citations = self._evidence_or_scope_claims(
+                evidence, self.INSTRUMENTS,
+            )
+            claims.extend(source_claims)
         else:
             claims.append(
-                "No explicit critical-infrastructure designation indicators are "
-                "present in the current chunk. CII relevance cannot be confirmed."
+                "No critical-service indicators are present in the facts released so "
+                "far. CII relevance cannot be established."
             )
-            cii_relevant = False
+
+        obligations = self._duty_passages(evidence) if cii_relevant else []
 
         missing_facts.extend([
-            "Formal CII designation status of the healthcare application/network.",
+            "Formal CII designation status of the affected service/network.",
             "Whether NCIIPC has been notified of the incident.",
             "Whether the affected entity is listed under any critical sector designation.",
         ])
@@ -123,13 +117,17 @@ class CriticalInfraAgent(BaseAgent):
             agent_id                 = AgentID.CRITICAL_INFRA,
             chunk_id                 = chunk.chunk_id,
             summary                  = (
-                "Critical infrastructure assessment: healthcare application on "
-                "the affected slice may qualify for CII designation under IT "
-                "(NCIIPC) Rules 2013 or Telecommunications Act 2023 critical "
-                "infrastructure provisions. Formal designation status unconfirmed."
+                "Critical infrastructure assessment: "
+                + ("critical-service relevance indicated by the facts; formal CII "
+                   "designation unconfirmed. " if cii_relevant else
+                   "no critical-service indicators. ")
+                + (f"{len(citations)} provision(s) quoted from the {self.kb.kb_name}."
+                   if citations else
+                   "No CII provisions retrieved; additional obligations are not assessed.")
             ),
             claims                   = claims,
             evidence                 = evidence,
+            claim_citations          = citations,
             obligations              = obligations,
             responsible_institutions = institutions,
             cii_relevant             = cii_relevant,

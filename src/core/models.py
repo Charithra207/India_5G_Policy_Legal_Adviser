@@ -81,12 +81,20 @@ class EvidenceItem:
     document_type   : "Act" | "Rule" | "Direction" | "Standard" | "Policy" | ...
     section         : specific provision or section number cited
     excerpt         : the verbatim or summarised passage retrieved
-    date_issued     : ISO-8601 date string, e.g. "2023-12-26"
-    effective       : whether the provision is currently in force
+    date_issued     : date as stated in the document, e.g. "24th December, 2023"
+    effective       : True = in force, False = not in force, None = in-force
+                      status NOT verified (the honest default for ingested text)
     amendment_note  : any known amendment that changes the passage
+    amendment_checked: True only if someone actually checked for amendments
     url             : canonical URL for the source (empty string if not available)
     chunk_id        : vector-store chunk identifier (set by the RAG/KB layer)
     relevance_score : retrieval similarity score (0.0 – 1.0); 0.0 until RAG is live
+    section_title   : heading text of the section, as printed in the document
+    page            : page(s) of the source file the passage came from
+    related_documents: documents the source itself refers to (e.g. parent Act)
+    institutions    : institutions with roles under the document
+    domains         : subject areas (DOCX §7.2 "Domain")
+    provenance_note : where the copy came from, and any caveat about it
     """
     source_title    : str
     authority       : str
@@ -95,11 +103,18 @@ class EvidenceItem:
     section         : str
     excerpt         : str
     date_issued     : str         = ""
-    effective       : bool        = True
+    effective       : Optional[bool] = True
     amendment_note  : str         = ""
     url             : str         = ""
     chunk_id        : str         = ""
     relevance_score : float       = 0.0
+    amendment_checked : bool      = True
+    section_title   : str         = ""
+    page            : str         = ""
+    related_documents : list[str] = field(default_factory=list)
+    institutions    : list[str]   = field(default_factory=list)
+    domains         : list[str]   = field(default_factory=list)
+    provenance_note : str         = ""
 
 
 # ---------------------------------------------------------------------------
@@ -142,6 +157,11 @@ class AgentFinding:
     summary           : str                      = ""  # ≤ 3 sentences in the agent's mandate
     claims            : list[str]                = field(default_factory=list)  # discrete verifiable statements
     evidence          : list[EvidenceItem]       = field(default_factory=list)  # evidence retrieved from the agent's KB
+    # claim text → the retrieved passages that claim cites.  A claim about
+    # what a source says MUST appear here; the Verifier checks each cited
+    # source/section against the Canonical KB.  Claims absent from this map
+    # are the agent's own reading of the incident facts.
+    claim_citations   : dict[str, list[EvidenceItem]] = field(default_factory=dict)
 
     # Mandate-specific structured fields
     affected_components : list[str]             = field(default_factory=list)  # Technical

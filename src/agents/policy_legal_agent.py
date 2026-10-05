@@ -52,15 +52,14 @@ class PolicyLegalAgent(BaseAgent):
     ) -> list[str]:
         base = chunk.description
         queries = [
-            f"Indian telecom law applicable provisions: {base}",
-            "Telecommunications Act 2023 obligations network security incident",
-            "TRAI Act 1997 regulatory responsibilities telecom incident",
-            "DoT obligations telecommunication entities incident reporting",
+            base,
+            "measures to protect telecommunication networks and services and their security",
+            "authorisation to provide telecommunication services and operate networks",
+            "functions and powers of the Telecom Regulatory Authority of India",
         ]
         if incident_state.get("cii_flagged"):
             queries.append(
-                "Telecommunications Act 2023 critical telecommunication "
-                "infrastructure provisions obligations"
+                "notification of critical telecommunication infrastructure and rules for it"
             )
         return queries
 
@@ -70,78 +69,54 @@ class PolicyLegalAgent(BaseAgent):
         incident_state: dict,
         evidence: list[EvidenceItem],
     ) -> AgentFinding:
-        description = chunk.description.lower()
         uncertainty_notes = self._uncertainty_note_if_stub(evidence)
-        claims: list[str] = []
-        obligations: list[str] = []
-        institutions: list[str] = []
-        provisions: list[str] = []
+        institutions: list[str] = [
+            "Department of Telecommunications (DoT)",
+            "Telecom Regulatory Authority of India (TRAI)",
+        ]
         missing_facts: list[str] = []
 
-        # ----------------------------------------------------------------
-        # Provisions that are plausibly relevant at T0/T1 based on scenario text.
-        # These are framed as "may be relevant" because without real RAG
-        # they cannot be marked VERIFIED.
-        # ----------------------------------------------------------------
-        provisions.append(
-            "Telecommunications Act, 2023 — general authorisation and "
-            "network-security obligations for telecommunication entities "
-            "(exact sections require KB retrieval to confirm)."
-        )
-        claims.append(
-            "The Telecommunications Act, 2023 is the primary Indian statute "
-            "governing licensed telecommunication entities and their obligations "
-            "in an incident of this type."
-        )
-        institutions.append("Department of Telecommunications (DoT)")
-        institutions.append("Telecom Regulatory Authority of India (TRAI)")
+        # What Indian telecom law says — quoted from retrieved passages only
+        claims, citations = self._evidence_or_scope_claims(evidence, self.INSTRUMENTS)
+        provisions  = [f"{e.source_title}, {e.section}"
+                       for items in citations.values() for e in items]
+        obligations = self._duty_passages(evidence)
 
         if incident_state.get("cii_flagged"):
-            provisions.append(
-                "Telecommunications Act, 2023 — critical telecommunication "
-                "infrastructure provisions (Sections to be confirmed by KB retrieval)."
-            )
-            claims.append(
-                "If the affected slice qualifies as critical telecommunication "
-                "infrastructure under the Telecommunications Act, 2023, "
-                "additional obligations and institutional responsibilities arise."
-            )
-            institutions.append("National Critical Information Infrastructure Protection Centre (NCIIPC)")
-
-        if incident_state.get("data_exposure_suspected"):
-            claims.append(
-                "Personal-data-protection obligations (DPDP Act 2023) may overlap "
-                "with telecom authorisation obligations — cross-domain analysis "
-                "with the Privacy Agent is required."
+            institutions.append(
+                "National Critical Information Infrastructure Protection Centre (NCIIPC)"
             )
             uncertainty_notes.append(
-                "Exact interaction between Telecom Act 2023 and DPDP Act 2023 "
-                "obligations in a combined telecom-security/data-exposure scenario "
-                "requires KB verification."
+                "Critical-service relevance has been flagged. Whether the Telecommunications "
+                "Act, 2023 critical telecommunication infrastructure provisions apply "
+                "depends on retrieved provisions and formal designation."
             )
 
-        obligations.extend([
-            "Ensure network security and incident response under applicable "
-            "telecom authorisation conditions (Telecommunications Act, 2023).",
-            "Notify relevant authorities as required by applicable directions "
-            "(exact thresholds require KB retrieval).",
-        ])
+        if incident_state.get("data_exposure_suspected"):
+            uncertainty_notes.append(
+                "Personal data may be involved. Any interaction between telecom "
+                "obligations and data-protection obligations is for the Privacy Agent "
+                "and the Verifier's cross-domain check, not this agent."
+            )
 
-        missing_facts.append(
-            "Exact section numbers, thresholds, and timelines under the "
-            "Telecommunications Act, 2023 require retrieval from the Policy & Legal KB."
-        )
+        if not citations:
+            missing_facts.append(
+                "Applicable sections, thresholds and timelines under the Indian telecom "
+                f"instruments require retrieval from the {self.kb.kb_name}."
+            )
 
         return AgentFinding(
             agent_id                  = AgentID.POLICY_LEGAL,
             chunk_id                  = chunk.chunk_id,
             summary                   = (
-                "The Telecommunications Act, 2023 and TRAI Act, 1997 are the "
-                "primary Indian legal instruments relevant to this incident. "
-                "Exact provisions and obligations require KB retrieval for confirmation."
+                f"Policy & Legal assessment: {len(citations)} provision(s) quoted from "
+                f"the {self.kb.kb_name}"
+                + (f", {len(obligations)} of which impose duties." if citations else
+                   "; applicable provisions and obligations are not assessed.")
             ),
             claims                    = claims,
             evidence                  = evidence,
+            claim_citations           = citations,
             applicable_provisions     = provisions,
             responsible_institutions  = institutions,
             obligations               = obligations,

@@ -1,0 +1,82 @@
+========================================================================
+INDIA 5G POLICY & LEGAL ADVISER — ASSESSMENT REPORT
+========================================================================
+Chunk ID   : scenario2_T0
+Timestamp  : 2026-10-05T15:21:12.289582+00:00
+Active Agents: technical
+
+SCENARIO INFORMATION RELEASED THIS CHUNK
+------------------------------------------------------------------------
+Description: Intermittent latency and session drops in the private 5G slice.
+New facts:
+  • A private 5G network slice is experiencing intermittent latency spikes.
+  • Session drops are occurring on the affected slice.
+  • The degradation is intermittent rather than a complete outage.
+  • No additional context about the cause or the service supported by the slice is available at this stage.
+
+CHANGES FROM PRIOR ASSESSMENT
+------------------------------------------------------------------------
+  ▶ Initial assessment — no prior chunk to compare against.
+
+COORDINATOR ASSESSMENT
+========================================================================
+1. CONFIRMED FACTS
+------------------------------------------------------------------------
+  • [Incident fact — scenario2_T0] Intermittent latency and session drops in the private 5G slice.
+  • [New fact — scenario2_T0] A private 5G network slice is experiencing intermittent latency spikes.
+  • [New fact — scenario2_T0] Session drops are occurring on the affected slice.
+  • [New fact — scenario2_T0] The degradation is intermittent rather than a complete outage.
+  • [New fact — scenario2_T0] No additional context about the cause or the service supported by the slice is available at this stage.
+
+2. EVIDENCE-BACKED CONCLUSIONS
+------------------------------------------------------------------------
+  No evidence-backed conclusions at this stage.
+
+3. UNCERTAIN CONCLUSIONS
+------------------------------------------------------------------------
+  • [TECHNICAL | UNSUPPORTED] The incident involves Network Slice (performance layer), User Plane Function (UPF), Private 5G Network (dedicated slice). (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. St…)
+  • [TECHNICAL | UNSUPPORTED] Incident classification: Network performance degradation / potential service-quality failure. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. St…)
+  • [TECHNICAL | UNSUPPORTED] [REFERENCE ONLY — not Indian law] No passage was retrieved from the Technical KB — 5G architecture & standards. Instruments in this agent's mandate (DOCX §4): 3GPP TS 23.501 (System architecture for the 5G System); 3GPP TS 33.501 (Security architecture and procedures for 5G System). Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. St…)
+
+4. CONFLICTING FINDINGS
+------------------------------------------------------------------------
+  No conflicting findings identified.
+
+5. POTENTIAL POLICY GAPS
+------------------------------------------------------------------------
+  No policy gaps identified at this stage.
+
+VERIFICATION SUMMARY
+------------------------------------------------------------------------
+  Claims checked : 3
+  VERIFIED       : 0
+  INCOMPLETE     : 0
+  UNSUPPORTED    : 3
+  CONFLICT       : 0
+  Missing evidence notes:
+    ⚠ [VERIFIER] Canonical KB not yet populated. All claims are UNSUPPORTED or INCOMPLETE pending KB integration. Populate CanonicalKnowledgeBase to enable real verification.
+    ⚠ [technical] Core network telemetry (AMF/SMF logs) not yet released.
+    ⚠ [technical] Radio access network (RAN) performance counters not yet available.
+    ⚠ [technical] Whether the performance degradation is isolated to one slice or system-wide is unknown.
+
+HUMAN REVIEW NOTICE
+------------------------------------------------------------------------
+Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.
+
+RAW AGENT FINDINGS (for audit)
+------------------------------------------------------------------------
+
+  [TECHNICAL]
+  Summary: Technical assessment: Network performance degradation / potential service-quality failure. Affected components: Network Slice (performance layer), User Plane Function (UPF), Private 5G Network (dedicated slice). Further telemetry required to confirm root cause.
+  Claims:
+    – The incident involves Network Slice (performance layer), User Plane Function (UPF), Private 5G Network (dedicated slice).
+    – Incident classification: Network performance degradation / potential service-quality failure.
+    – [REFERENCE ONLY — not Indian law] No passage was retrieved from the Technical KB — 5G architecture & standards. Instruments in this agent's mandate (DOCX §4): 3GPP TS 23.501 (System architecture for the 5G System); 3GPP TS 33.501 (Security architecture and procedures for 5G System). Their applicability to this incident is not assessed.
+  Uncertainty notes:
+    ⚠ [RAG NOT LIVE] technical agent findings are based on scenario text only; no KB evidence was retrieved. Claims should be treated as preliminary until RAG is integrated.
+  Missing facts:
+    ? Core network telemetry (AMF/SMF logs) not yet released.
+    ? Radio access network (RAN) performance counters not yet available.
+    ? Whether the performance degradation is isolated to one slice or system-wide is unknown.
+
+========================================================================

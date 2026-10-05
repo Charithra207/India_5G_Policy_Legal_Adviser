@@ -131,6 +131,22 @@ class CanonicalKnowledgeBase(KnowledgeBase):
         """Stub: returns empty list until the real Canonical KB is integrated."""
         return []
 
+    def is_available(self) -> bool:
+        """
+        Stub: False until the real Canonical KB is integrated, so the
+        Verifier reports that verification was impossible rather than that
+        a live corpus held no support.  Real subclasses return True.
+        """
+        return False
+
+    def scan(self, filters: Optional[dict] = None) -> Optional[list[EvidenceItem]]:
+        """
+        Every passage matching `filters`, or None if this KB cannot enumerate
+        its passages.  Used for absence checks ("no Indian passage mentions
+        X"), which a top-k search cannot support.
+        """
+        return None
+
     def verify_claim(
         self,
         claim: str,

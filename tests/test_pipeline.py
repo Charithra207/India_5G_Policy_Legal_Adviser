@@ -705,3 +705,129 @@ def test_audit_json_evidence_fields_complete() -> None:
         "evidence_count must be retained alongside the full evidence list"
     )
     assert tech["evidence_count"] == 1
+
+
+# -----------------------------------------------------------------------
+# Regression: agent inferences are not confirmed facts
+# -----------------------------------------------------------------------
+
+def test_t0_inferred_components_not_confirmed_facts() -> None:
+    """
+    The Technical Agent infers components (e.g. UPF) from symptoms.  Those
+    inferences must not appear under confirmed facts — only scenario text may.
+    """
+    pipeline = Pipeline()
+    record   = _run(pipeline, 0)
+    a = record.coordinator_assessment
+    tech = next(f for f in record.agent_findings if f.agent_id == AgentID.TECHNICAL)
+
+    for fact in a.confirmed_facts:
+        assert fact.startswith("[Incident fact") or fact.startswith("[New fact"), (
+            f"Confirmed fact does not come from the scenario chunk: {fact}"
+        )
+        for comp in tech.affected_components:
+            assert comp not in fact, (
+                f"Inferred component {comp!r} presented as a confirmed fact: {fact}"
+            )
+
+
+# -----------------------------------------------------------------------
+# Regression: detected conflicts mark the disputed claims as CONFLICT
+# -----------------------------------------------------------------------
+
+def test_verifier_marks_disputed_claims_conflict() -> None:
+    """
+    When the CII Agent finds CII relevance but Policy & Legal surfaces no
+    obligations, the CII claims become CONFLICT and Policy & Legal claims
+    keep their evidence-based outcome.
+    """
+    from src.core.models import AgentFinding, EvidenceItem
+    from src.core.verifier import Verifier
+
+    cii_claim = "The slice may qualify as Critical Information Infrastructure."
+    pl_claim  = "The Telecommunications Act, 2023 applies to the operator."
+    # Policy & Legal examined a source (so its silence on obligations is a
+    # disagreement, not missing evidence)
+    examined = EvidenceItem(
+        source_title="FIXTURE Telecom Instrument", authority="Test fixture",
+        jurisdiction="India", document_type="Act", section="Section 1",
+        excerpt="General definitions.", chunk_id="fx-1",
+    )
+    findings = [
+        AgentFinding(
+            agent_id     = AgentID.CRITICAL_INFRA,
+            chunk_id     = "conflict-test",
+            claims       = [cii_claim],
+            cii_relevant = True,
+        ),
+        AgentFinding(
+            agent_id    = AgentID.POLICY_LEGAL,
+            chunk_id    = "conflict-test",
+            claims      = [pl_claim],
+            obligations = [],
+            claim_citations = {pl_claim: [examined]},
+        ),
+    ]
+
+    result = Verifier().verify("conflict-test", findings, incident_state={})
+    outcomes = {vc.claim: vc.outcome for vc in result.verified_claims}
+
+    assert result.conflicts, "Conflict rule should have fired"
+    assert outcomes[cii_claim] == VerifierOutcome.CONFLICT, (
+        f"Disputed CII claim should be CONFLICT, got {outcomes[cii_claim]}"
+    )
+    assert outcomes[pl_claim] == VerifierOutcome.UNSUPPORTED, (
+        f"Undisputed claim should keep its outcome, got {outcomes[pl_claim]}"
+    )
+
+
+# -----------------------------------------------------------------------
+# Scenario 1 (DOCX §2.4 / Annex-1 A.4): agent selection follows the
+# information released, not the chunk's position
+# -----------------------------------------------------------------------
+
+def test_scenario1_annex_a4_agent_sets() -> None:
+    from scenarios.scenario1_slicing_incident import get_chunks as s1_chunks
+
+    expected = [
+        {AgentID.TECHNICAL},
+        {AgentID.TECHNICAL, AgentID.CYBERSECURITY, AgentID.STANDARDS},
+        {AgentID.CRITICAL_INFRA, AgentID.POLICY_LEGAL},
+        {AgentID.PRIVACY, AgentID.POLICY_LEGAL, AgentID.CYBERSECURITY},
+    ]
+    pipeline = Pipeline()
+    for chunk, agents in zip(s1_chunks(), expected):
+        _assert_exact_agents(pipeline.run_chunk(chunk), agents)
+
+
+# -----------------------------------------------------------------------
+# Regression: stub Canonical KB must not be reported as live
+# -----------------------------------------------------------------------
+
+def test_stub_canonical_kb_reported_as_not_populated() -> None:
+    pipeline = Pipeline()
+    record   = _run(pipeline, 0)
+    result   = record.verifier_result
+
+    assert any("Canonical KB not yet populated" in m for m in result.missing_evidence), (
+        "Verifier must state that the Canonical KB is not populated"
+    )
+    for vc in result.verified_claims:
+        assert "Canonical KB is available" not in vc.rationale, (
+            f"Rationale claims a live Canonical KB while it is a stub: {vc.rationale}"
+        )
+
+
+# -----------------------------------------------------------------------
+# Regression: suspected exposure from T2 is not forgotten at T3
+# -----------------------------------------------------------------------
+
+def test_t3_privacy_carries_forward_suspected_exposure() -> None:
+    pipeline = Pipeline()
+    for i in range(3):
+        _run(pipeline, i)
+    record = _run(pipeline, 3)
+    pf = next(f for f in record.agent_findings if f.agent_id == AgentID.PRIVACY)
+    assert pf.exposure_status == "suspected", (
+        f"T2 established suspected exposure; T3 reported {pf.exposure_status!r}"
+    )

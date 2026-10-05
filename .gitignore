@@ -66,3 +66,13 @@ tmp/
 # Jupyter
 .ipynb_checkpoints/
 *.ipynb
+
+# Knowledge base: downloaded sources, built vector stores and the embedding
+# model cache are reproducible (python -m src.rag.build) and large.
+# Kept in git: knowledge_base/sources/manifest.json, ingestion_manifest.json,
+# retrieval_tests.md/.json
+knowledge_base/sources/raw/
+knowledge_base/*/chunks.jsonl
+knowledge_base/*/vectors.npy
+knowledge_base/*/index.json
+knowledge_base/.model_cache/

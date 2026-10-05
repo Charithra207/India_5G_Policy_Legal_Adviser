@@ -1,0 +1,8 @@
+# Core pipeline: standard library only.
+# RAG / knowledge-base layer (src/rag):
+pymupdf>=1.24        # PDF text extraction and bookmark outlines
+python-docx>=1.1     # 3GPP specifications (.docx)
+numpy>=1.26          # vector store
+fastembed>=0.4       # BAAI/bge-small-en-v1.5 embeddings (ONNX, CPU)
+# Tests:
+pytest>=8

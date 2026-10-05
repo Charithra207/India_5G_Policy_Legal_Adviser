@@ -276,11 +276,28 @@ def save_audit_json(record: AuditRecord, output_dir: str = "outputs") -> str:
             "conflicts"         : record.verifier_result.conflicts,
             "missing_evidence"  : record.verifier_result.missing_evidence,
         },
+        # Per-claim outcome and the authoritative passages behind it (DOCX §7.6)
+        "verified_claims": [
+            {
+                "agent_id"            : v.agent_id.value,
+                "claim"               : v.claim,
+                "outcome"             : v.outcome.value,
+                "rationale"           : v.rationale,
+                "supporting_evidence" : [_serialise_evidence(e) for e in v.supporting_evidence],
+                "conflicting_evidence": [_serialise_evidence(e) for e in v.conflicting_evidence],
+                "cross_domain_flag"   : v.cross_domain_flag,
+            }
+            for v in record.verifier_result.verified_claims
+        ],
         "agent_findings": [
             {
                 "agent_id"         : f.agent_id.value,
                 "summary"          : f.summary,
                 "claims"           : f.claims,
+                "claim_citations"  : {
+                    claim: [f"{e.source_title}, {e.section}" for e in items]
+                    for claim, items in f.claim_citations.items()
+                },
                 "uncertainty_notes": f.uncertainty_notes,
                 "missing_facts"    : f.missing_facts,
                 "evidence_count"   : len(f.evidence),

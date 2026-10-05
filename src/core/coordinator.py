@@ -91,7 +91,7 @@ class Coordinator:
         # ----------------------------------------------------------------
         # Category 1: Confirmed facts — raw incident facts, not inferences
         # ----------------------------------------------------------------
-        confirmed_facts = self._extract_confirmed_facts(chunk, findings)
+        confirmed_facts = self._extract_confirmed_facts(chunk)
 
         # ----------------------------------------------------------------
         # Category 2 & 3: Evidence-backed vs Uncertain conclusions
@@ -160,30 +160,21 @@ class Coordinator:
     # Category builders
     # ------------------------------------------------------------------
 
-    def _extract_confirmed_facts(
-        self,
-        chunk: ScenarioChunk,
-        findings: list[AgentFinding],
-    ) -> list[str]:
+    def _extract_confirmed_facts(self, chunk: ScenarioChunk) -> list[str]:
         """
         Confirmed facts = the raw incident facts released in this chunk.
         These are what the scenario actually states — not agent inferences.
+
+        Agent inferences (e.g. the Technical Agent's affected components,
+        which are inferred from symptoms rather than observed in telemetry)
+        are NOT confirmed facts.  They reach the assessment only as agent
+        claims, classified by their Verifier outcome.
         """
         facts: list[str] = [
             f"[Incident fact — {chunk.chunk_id}] {chunk.description}"
         ]
         for nf in chunk.new_facts:
             facts.append(f"[New fact — {chunk.chunk_id}] {nf}")
-
-        # Technical affected components are observable facts (not inferences)
-        for finding in findings:
-            if (finding.agent_id == AgentID.TECHNICAL
-                    and finding.affected_components):
-                for comp in finding.affected_components:
-                    if "unknown" not in comp.lower():
-                        facts.append(
-                            f"[Technical observation] Affected component: {comp}"
-                        )
         return facts
 
     def _classify_by_verifier_outcome(
@@ -257,13 +248,13 @@ class Coordinator:
             if finding.agent_id != AgentID.POLICY_GAP:
                 continue
             for claim in finding.claims:
-                # Only include claims that use non-conclusive gap language
-                if any(kw in claim.lower() for kw in
-                       ["potential gap", "regulatory ambiguity", "not explicitly",
-                        "unclear", "overlapping", "missing institutional"]):
-                    gaps.append(
-                        f"[POLICY GAP — for expert review] {claim}"
-                    )
+                # Raised gaps rest on Canonical KB examination; candidate areas
+                # that could not be examined are listed separately so they are
+                # never mistaken for evidence-backed gaps.
+                if claim.startswith("Potential gap"):
+                    gaps.append(f"[POLICY GAP — for expert review] {claim}")
+                elif claim.startswith("Candidate area NOT EXAMINED"):
+                    gaps.append(f"[CANDIDATE GAP AREA — not examined] {claim}")
             if finding.gap_description:
                 gaps.append(
                     f"[GAP SUMMARY — {finding.gap_category.value if finding.gap_category else 'unclassified'}] "

@@ -15,25 +15,40 @@ Responsibilities
 8. Forward verified results to the Coordinator.
 9. Record a full AuditRecord for each chunk.
 
-Agent-selection rules (DOCX Annex-1 A.4, §2.5)
-------------------------------------------------
-Stage detection is based on NEW facts in the current chunk only.
-Accumulated incident context is preserved in _incident_state so that
-later agents can reason about prior events, but accumulated flags do NOT
-automatically pull previously active agents back into the current chunk.
+Agent-selection rules (DOCX §3.2, §3.3, §2.5, Annex-1 A.4)
+-----------------------------------------------------------
+The swarm has no fixed sequence (§3.2): the Orchestrator activates only
+the specialists justified by the information released in the current
+chunk (§2.5), read against the current incident state (§3.3).  Selection
+uses the chunk's released information (`description`) — never its
+position in the scenario.
 
-    T0 — performance symptom only:
-        Technical
+    Information released in this chunk          Agents activated
+    ------------------------------------------  ------------------------------
+    performance symptom / security indicator    Technical
+    security indicator                          + Cybersecurity + Standards
+    critical service                            Critical Infrastructure
+                                                + Policy & Legal
+    personal data involved                      Privacy + Policy & Legal
+    possible data exposure                      + Cybersecurity
+    reporting / escalation question             Policy & Legal, plus each
+                                                domain already flagged in the
+                                                incident state (Cybersecurity,
+                                                Privacy, Critical Infrastructure)
+    policy-gap question                         Policy Gap
 
-    T1 — security indicators added:
-        Technical + Cybersecurity + Standards
+Accumulated incident context is otherwise NOT used for selection: a domain
+flagged in an earlier chunk is re-activated only when the current chunk
+asks a reporting/escalation question that spans the whole incident.
 
-    T2 — critical service / data risk identified:
-        Critical Infrastructure + Privacy + Policy & Legal
+These rules reproduce both DOCX staged scenarios:
 
-    T3 — reporting/escalation question:
-        Policy & Legal + Cybersecurity + Privacy + Critical Infrastructure
-        + Policy Gap
+    Annex-1 A.4 (Scenario 1)                §2.5 (Scenario 2)
+    C1 Technical                            T0 Technical
+    C2 Technical + Cyber + Standards        T1 Technical + Cyber + Standards
+    C3 Critical Infra + Policy & Legal      T2 Critical Infra + Privacy + P&L
+    C4 Privacy + Policy & Legal + Cyber     T3 P&L + Cyber + Privacy
+                                               + Critical Infra + Policy Gap
 
 Policy Gap execution order (FIX 2)
 ------------------------------------
@@ -75,6 +90,11 @@ logger = logging.getLogger(__name__)
 # Stage detection — keyword sets for NEW chunk content only
 # ---------------------------------------------------------------------------
 
+_TECHNICAL_SYMPTOM_KEYWORDS = frozenset([
+    "latency", "packet loss", "session drop", "degradation", "outage",
+    "throughput", "jitter",
+])
+
 _SECURITY_KEYWORDS = frozenset([
     "authentication", "signalling", "suspicious", "unusual", "anomal",
     "unauthori", "attack", "intrusion", "cyber", "security event",
@@ -92,39 +112,19 @@ _CII_KEYWORDS = frozenset([
     "essential service",
 ])
 
-_GAP_KEYWORDS = frozenset([
-    "what should be reported", "what should be escalated",
-    "policy gap", "escalation", "reporting", "report",
-    "what remains", "what policy gap",
+# Data may have left the operator's control — a security question as well
+# as a privacy one (Annex-1 A.4 chunk 4: "reporting/response questions")
+_EXPOSURE_KEYWORDS = frozenset([
+    "exposed", "exposure", "exfiltrat", "leak", "data breach",
 ])
 
+_REPORTING_KEYWORDS = frozenset([
+    "report", "escalat", "notif",
+])
 
-# ---------------------------------------------------------------------------
-# Exact per-stage agent sets (DOCX Annex-1 A.4 / §2.5)
-# ---------------------------------------------------------------------------
-
-_STAGE_AGENTS: dict[int, list[AgentID]] = {
-    0: [                                          # T0 — performance symptom
-        AgentID.TECHNICAL,
-    ],
-    1: [                                          # T1 — security indicators
-        AgentID.TECHNICAL,
-        AgentID.CYBERSECURITY,
-        AgentID.STANDARDS,
-    ],
-    2: [                                          # T2 — critical service / data
-        AgentID.CRITICAL_INFRA,
-        AgentID.PRIVACY,
-        AgentID.POLICY_LEGAL,
-    ],
-    3: [                                          # T3 — reporting / gap question
-        AgentID.POLICY_LEGAL,
-        AgentID.CYBERSECURITY,
-        AgentID.PRIVACY,
-        AgentID.CRITICAL_INFRA,
-        AgentID.POLICY_GAP,
-    ],
-}
+_GAP_KEYWORDS = frozenset([
+    "policy gap", "gap remains", "regulatory gap",
+])
 
 
 class SwarmOrchestrator:
@@ -162,7 +162,12 @@ class SwarmOrchestrator:
             AgentID.PRIVACY:        PrivacyAgent(self._kb(AgentID.PRIVACY)),
             AgentID.CRITICAL_INFRA: CriticalInfraAgent(self._kb(AgentID.CRITICAL_INFRA)),
             AgentID.STANDARDS:      StandardsAgent(self._kb(AgentID.STANDARDS)),
-            AgentID.POLICY_GAP:     PolicyGapAgent(self._kb(AgentID.POLICY_GAP)),
+            # Read-only Canonical + Standards KB access for comparison (DOCX §7.1)
+            AgentID.POLICY_GAP:     PolicyGapAgent(
+                self._kb(AgentID.POLICY_GAP),
+                canonical_kb = getattr(verifier, "canonical_kb", None),
+                standards_kb = self._kb(AgentID.STANDARDS),
+            ),
         }
 
         # Accumulated incident context — preserved across chunks for reasoning.
@@ -301,77 +306,73 @@ class SwarmOrchestrator:
         return record
 
     # ------------------------------------------------------------------
-    # Agent selection — exact DOCX stage sets
+    # Agent selection — information released + incident state
     # ------------------------------------------------------------------
 
     def _select_agents(self, chunk: ScenarioChunk) -> list[AgentID]:
         """
-        Return the exact agent set for this chunk's stage index.
+        Select the specialists justified by the information released in
+        this chunk (DOCX §2.5), read against the incident state (§3.3).
 
-        Primary source: DOCX Annex-1 A.4 table and §2.5.
+        Only `chunk.description` — the DOCX "Information released" text —
+        is read.  The chunk's position in the scenario is never used, so the
+        same rules serve any staged scenario (see module docstring).
 
-        For chunks whose index matches 0–3 exactly, the DOCX-specified
-        set is returned without modification.
-
-        For chunks outside that range (e.g. additional scenario steps),
-        the selection falls back to keyword-based heuristics against
-        the current chunk's text ONLY (not accumulated state flags).
-        This keeps the swarm correct for novel scenarios while preserving
-        exact DOCX compliance for the defined four stages.
-
-        IMPORTANT: accumulated incident_state flags (cii_flagged, etc.)
-        are NOT used here.  They belong to agent reasoning context, not
-        to stage-specific agent selection.
+        Must be called after _update_incident_flags(chunk).
         """
-        idx = chunk.chunk_index
+        released = chunk.description.lower()
+        state    = self._incident_state
+        selected: set[AgentID] = set()
 
-        if idx in _STAGE_AGENTS:
-            selected = list(_STAGE_AGENTS[idx])
-            # Policy Gap requires prior verified findings; guard at T3
-            if AgentID.POLICY_GAP in selected and not self._incident_state["chunks_processed"]:
-                selected = [a for a in selected if a != AgentID.POLICY_GAP]
-                logger.debug("Policy Gap Agent deselected: no prior verified findings.")
-            logger.info("Stage %d: using DOCX-specified agent set: %s",
-                        idx, [a.value for a in selected])
-            return sorted(selected, key=lambda a: a.value)
+        def mentions(keywords: frozenset[str]) -> bool:
+            return any(kw in released for kw in keywords)
 
-        # Fallback for chunks beyond the defined four stages
-        logger.warning(
-            "Chunk index %d is outside the defined 0–3 stage range. "
-            "Falling back to keyword-based selection on current chunk text.",
-            idx,
-        )
-        return self._select_agents_by_keywords(chunk)
+        security = mentions(_SECURITY_KEYWORDS)
 
-    def _select_agents_by_keywords(self, chunk: ScenarioChunk) -> list[AgentID]:
-        """
-        Keyword-based fallback selection for chunks outside the defined
-        four stages.  Uses ONLY the current chunk's text — not accumulated
-        incident state flags.
-        """
-        combined = (chunk.description + " " + " ".join(chunk.new_facts)).lower()
-        selected: set[AgentID] = {AgentID.TECHNICAL}
+        if mentions(_TECHNICAL_SYMPTOM_KEYWORDS) or security:
+            selected.add(AgentID.TECHNICAL)
 
-        if any(kw in combined for kw in _SECURITY_KEYWORDS):
+        if security:
+            selected.update([AgentID.CYBERSECURITY, AgentID.STANDARDS])
+
+        if mentions(_CII_KEYWORDS):
+            selected.update([AgentID.CRITICAL_INFRA, AgentID.POLICY_LEGAL])
+
+        if mentions(_PRIVACY_KEYWORDS):
+            selected.update([AgentID.PRIVACY, AgentID.POLICY_LEGAL])
+
+        if mentions(_EXPOSURE_KEYWORDS):
             selected.add(AgentID.CYBERSECURITY)
-            selected.add(AgentID.STANDARDS)
 
-        if any(kw in combined for kw in _CII_KEYWORDS):
-            selected.add(AgentID.CRITICAL_INFRA)
+        # A reporting/escalation question spans the whole incident: bring in
+        # every domain the incident state has already flagged.
+        if mentions(_REPORTING_KEYWORDS):
             selected.add(AgentID.POLICY_LEGAL)
+            if state["cyber_event_suspected"]:
+                selected.add(AgentID.CYBERSECURITY)
+            if state["data_exposure_suspected"]:
+                selected.add(AgentID.PRIVACY)
+            if state["cii_flagged"]:
+                selected.add(AgentID.CRITICAL_INFRA)
 
-        if any(kw in combined for kw in _PRIVACY_KEYWORDS):
-            selected.add(AgentID.PRIVACY)
-            selected.add(AgentID.POLICY_LEGAL)
-
-        if any(kw in combined for kw in _GAP_KEYWORDS):
-            if self._incident_state["chunks_processed"]:
+        # Policy Gap requires prior verified findings (DOCX §3.7)
+        if mentions(_GAP_KEYWORDS):
+            if state["chunks_processed"]:
                 selected.add(AgentID.POLICY_GAP)
-            selected.update([
-                AgentID.POLICY_LEGAL, AgentID.CYBERSECURITY,
-                AgentID.PRIVACY, AgentID.CRITICAL_INFRA,
-            ])
+            else:
+                logger.debug("Policy Gap Agent deselected: no prior verified findings.")
 
+        if not selected:
+            # Nothing in the released information matches a mandate yet;
+            # technical triage is the only analysis the facts can support.
+            logger.warning(
+                "Chunk %s matched no specialist mandate; activating Technical "
+                "Agent for initial triage.", chunk.chunk_id,
+            )
+            selected.add(AgentID.TECHNICAL)
+
+        logger.info("Chunk %s: selected agents %s",
+                    chunk.chunk_id, sorted(a.value for a in selected))
         return sorted(selected, key=lambda a: a.value)
 
     # ------------------------------------------------------------------

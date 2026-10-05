@@ -73,6 +73,11 @@ class BaseAgent(ABC):
         finding  = self._produce_finding(chunk, incident_state, evidence)
         finding.agent_id = self.agent_id
         finding.chunk_id = chunk.chunk_id
+        # Citations may only point at claims the finding actually makes
+        finding.claim_citations = {
+            c: items for c, items in finding.claim_citations.items()
+            if c in finding.claims
+        }
 
         logger.info(
             "Agent %s -> produced %d claim(s), %d evidence item(s)",
@@ -127,9 +132,15 @@ class BaseAgent(ABC):
         seen_chunks: set[str] = set()
         evidence: list[EvidenceItem] = []
 
-        for query in queries:
-            items = self.kb.retrieve(query, top_k=5)
-            for item in items:
+        # Interleave by rank: every query's best passage comes before any
+        # query's second best, so one strong query cannot crowd out the
+        # agent's other questions.
+        per_query = [self.kb.retrieve(query, top_k=5) for query in queries]
+        for rank in range(max((len(r) for r in per_query), default=0)):
+            for results in per_query:
+                if rank >= len(results):
+                    continue
+                item = results[rank]
                 key = item.chunk_id or f"{item.source_title}::{item.section}"
                 if key not in seen_chunks:
                     seen_chunks.add(key)
@@ -142,9 +153,94 @@ class BaseAgent(ABC):
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _evidence_is_real(evidence: list[EvidenceItem]) -> bool:
+    def _is_real(item: EvidenceItem) -> bool:
+        return item.chunk_id != "stub-000" and item.authority != "STUB"
+
+    @classmethod
+    def _evidence_is_real(cls, evidence: list[EvidenceItem]) -> bool:
         """Return True if at least one non-stub evidence item is present."""
-        return any(e.chunk_id != "stub-000" and e.authority != "STUB" for e in evidence)
+        return any(cls._is_real(e) for e in evidence)
+
+    @classmethod
+    def _real_evidence(cls, evidence: list[EvidenceItem]) -> list[EvidenceItem]:
+        """Non-stub evidence, in retrieval order (each query's best first)."""
+        return [e for e in evidence if cls._is_real(e)]
+
+    # ------------------------------------------------------------------
+    # Evidence-grounded claims
+    # ------------------------------------------------------------------
+    #
+    # Rule: an agent states what a law, rule or standard SAYS only by
+    # quoting a passage retrieved from its own KB, and records that passage
+    # as the claim's citation.  Without retrieved passages the agent names
+    # the instruments in its mandate (DOCX §4.2) and states that nothing was
+    # assessed — it never supplies their content from memory.
+
+    MAX_CITED_PASSAGES = 4
+    EXCERPT_CHARS      = 400
+
+    # Words that mark a passage as imposing a duty (DOCX §3.3: agents
+    # "identify obligations").  Detection only — the passage is quoted, not
+    # interpreted.
+    _DUTY_WORDS = ("shall", "must", "required to", "obliged", "report", "notify")
+
+    @staticmethod
+    def _reference_label(item: EvidenceItem) -> str:
+        """International material is labelled as a reference point (DOCX §4)."""
+        if item.jurisdiction.strip().lower() == "india":
+            return ""
+        return "[REFERENCE ONLY — not Indian law] "
+
+    def _quote_claim(self, item: EvidenceItem) -> str:
+        excerpt = " ".join(item.excerpt.split())
+        if len(excerpt) > self.EXCERPT_CHARS:
+            excerpt = excerpt[: self.EXCERPT_CHARS].rsplit(" ", 1)[0] + " …"
+        return (
+            f'{self._reference_label(item)}{item.source_title}, {item.section} '
+            f'states: "{excerpt}"'
+        )
+
+    def _cited_claims(
+        self, evidence: list[EvidenceItem],
+    ) -> tuple[list[str], dict[str, list[EvidenceItem]]]:
+        """One quoted claim per top retrieved passage, each with its citation."""
+        claims: list[str] = []
+        citations: dict[str, list[EvidenceItem]] = {}
+        for item in self._real_evidence(evidence)[: self.MAX_CITED_PASSAGES]:
+            claim = self._quote_claim(item)
+            if claim not in citations:
+                claims.append(claim)
+                citations[claim] = [item]
+        return claims, citations
+
+    def _duty_passages(self, evidence: list[EvidenceItem]) -> list[str]:
+        """Retrieved passages whose text imposes a duty, quoted with their source."""
+        return [
+            self._quote_claim(e)
+            for e in self._real_evidence(evidence)[: self.MAX_CITED_PASSAGES]
+            if any(w in e.excerpt.lower() for w in self._DUTY_WORDS)
+        ]
+
+    def _not_assessed_claim(self, instruments: list[str], label: str = "") -> str:
+        """Scope statement used when the KB returned no passages."""
+        return (
+            f"{label}No passage was retrieved from the {self.kb.kb_name}. "
+            f"Instruments in this agent's mandate (DOCX §4): "
+            f"{'; '.join(instruments)}. Their applicability to this incident "
+            "is not assessed."
+        )
+
+    def _evidence_or_scope_claims(
+        self,
+        evidence: list[EvidenceItem],
+        instruments: list[str],
+        label: str = "",
+    ) -> tuple[list[str], dict[str, list[EvidenceItem]]]:
+        """Cited claims when passages were retrieved, else the scope statement."""
+        claims, citations = self._cited_claims(evidence)
+        if not claims:
+            claims = [self._not_assessed_claim(instruments, label)]
+        return claims, citations
 
     def _uncertainty_note_if_stub(self, evidence: list[EvidenceItem]) -> list[str]:
         """Return an uncertainty note when only stub evidence is available."""

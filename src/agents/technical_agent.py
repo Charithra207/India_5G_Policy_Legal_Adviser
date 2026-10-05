@@ -41,6 +41,12 @@ class TechnicalAgent(BaseAgent):
         "NFV", "orchestration", "QoS", "throughput", "degradation",
     ]
 
+    # Technical references this agent may quote (DOCX §4.1 rows 2–3)
+    REFERENCES = [
+        "3GPP TS 23.501 (System architecture for the 5G System)",
+        "3GPP TS 33.501 (Security architecture and procedures for 5G System)",
+    ]
+
     def __init__(self, kb: Optional[KnowledgeBase] = None) -> None:
         super().__init__(AgentID.TECHNICAL, kb)
 
@@ -52,16 +58,17 @@ class TechnicalAgent(BaseAgent):
         "What are the affected 5G components and what is the technical
         classification of this incident?"
         """
+        # The KB is already restricted to technical material, so queries
+        # describe the technical question rather than name documents.
         base = chunk.description
         queries = [
-            f"5G network slice performance degradation causes: {base}",
-            "affected 5G components network function failure root cause",
-            "3GPP TS 23.501 network slice architecture service quality",
+            base,
+            "network slice quality of service, latency and packet delay monitoring",
+            "PDU session release and loss of user plane connectivity",
         ]
-        # Add query for control-plane anomalies if signalling is mentioned
         if any(kw in base.lower() for kw in ["authentication", "signalling", "control"]):
             queries.append(
-                "5G control plane abnormal authentication signalling 3GPP TS 33.501"
+                "authentication of the UE and protection of NAS and RRC signalling"
             )
         return queries
 
@@ -118,9 +125,14 @@ class TechnicalAgent(BaseAgent):
         if any(w in description for w in ["authentication", "signalling"]):
             claims.append(
                 "Unusual authentication/signalling behaviour is consistent with "
-                "potential 5G control-plane compromise or misconfiguration "
-                "(reference: 3GPP TS 33.501 security procedures)."
+                "potential 5G control-plane compromise or misconfiguration."
             )
+
+        # What the technical references say — quoted from retrieved passages only
+        source_claims, citations = self._evidence_or_scope_claims(
+            evidence, self.REFERENCES, label="[REFERENCE ONLY — not Indian law] ",
+        )
+        claims.extend(source_claims)
 
         missing_facts.extend([
             "Core network telemetry (AMF/SMF logs) not yet released.",
@@ -138,6 +150,7 @@ class TechnicalAgent(BaseAgent):
             ),
             claims              = claims,
             evidence            = evidence,
+            claim_citations     = citations,
             affected_components = affected,
             incident_class      = incident_class,
             uncertainty_notes   = uncertainty_notes,

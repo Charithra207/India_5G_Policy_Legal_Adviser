@@ -90,20 +90,34 @@ are always labelled as reference points, never as Indian law.
 
 ## Swarm Orchestrator
 
-The Orchestrator selects the exact specialist set for each scenario stage
-(DOCX Annex-1 A.4):
+The swarm has no fixed sequence (DOCX §3.2).  For each chunk the
+Orchestrator activates only the specialists justified by the information
+released in that chunk (§2.5), read against the incident state (§3.3).
+The chunk's position in the scenario is never used.
 
-| Stage | Agents activated |
+| Information released in the chunk | Agents activated |
 |---|---|
-| T0 — performance symptom | Technical |
-| T1 — security indicators | Technical + Cybersecurity + Standards |
-| T2 — critical service / data risk | Critical Infrastructure + Privacy + Policy & Legal |
-| T3 — reporting / gap question | Policy & Legal + Cybersecurity + Privacy + Critical Infrastructure + Policy Gap |
+| Performance symptom or security indicator | Technical |
+| Security indicator | + Cybersecurity + Standards |
+| Critical service | Critical Infrastructure + Policy & Legal |
+| Personal data involved | Privacy + Policy & Legal |
+| Possible data exposure | + Cybersecurity |
+| Reporting / escalation question | Policy & Legal, plus each domain already flagged in the incident state (Cybersecurity, Privacy, Critical Infrastructure) |
+| Policy-gap question | Policy Gap (only after earlier chunks have verified findings) |
+
+These rules reproduce both staged scenarios in the DOCX:
+
+| Chunk | Scenario 1 (§2.4, Annex-1 A.4) | Scenario 2 (§2.5) |
+|---|---|---|
+| 1 / T0 | Technical | Technical |
+| 2 / T1 | Technical + Cybersecurity + Standards | Technical + Cybersecurity + Standards |
+| 3 / T2 | Critical Infrastructure + Policy & Legal | Critical Infrastructure + Privacy + Policy & Legal |
+| 4 / T3 | Privacy + Policy & Legal + Cybersecurity | Policy & Legal + Cybersecurity + Privacy + Critical Infrastructure + Policy Gap |
 
 Accumulated incident context (whether a cybersecurity event has been
 suspected, whether CII is flagged, etc.) is preserved across chunks for
-agent reasoning, but it does **not** automatically activate previously
-active agents.  Stage selection is based solely on the DOCX table above.
+agent reasoning.  It re-activates earlier domains only when the current
+chunk asks a reporting/escalation question that spans the whole incident.
 
 ---
 
@@ -113,34 +127,48 @@ Each specialist agent has its own domain KB and retrieval mechanism.
 A separate Canonical KB is used exclusively by the Verifier for independent
 claim verification (DOCX §7.2).
 
-| KB | Sources |
-|---|---|
-| Technical KB | 3GPP TS 23.501/33.501, ETSI GR NFV-SEC 003, 5G technical material |
-| Policy & Legal KB | Telecom Act 2023, TRAI Act 1997, NDCP-2018, DoT/TRAI directions |
-| Cybersecurity KB | Telecom Cyber Security Rules 2024, CERT-In Directions 2022, NCSP-2013 |
-| Privacy KB | DPDP Act 2023, DPDP Rules 2025 |
-| Critical Infra KB | IT (NCIIPC) Rules 2013, Telecom Act 2023 critical infra provisions |
-| Standards KB | ITU-T Y.3172, 3GPP TS 23.501/33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61 Rev.3 |
-| Policy Gap KB | International policy examples, neighbouring-country comparators |
-| Canonical KB | Authoritative copies of all of the above (separate verification corpus) |
+| KB | Ingested sources | Passages |
+|---|---|---|
+| Technical KB | 3GPP TS 23.501, TS 33.501 | 3,739 |
+| Policy & Legal KB | Telecom Act 2023, TRAI Act 1997, NDCP-2018, NCSP-2013 | 274 |
+| Cybersecurity KB | Telecom Cyber Security Rules 2024, CERT-In Directions 2022, NCSP-2013, NDCP-2018; reference: 3GPP TS 33.501, ETSI NFV-SEC 003, NIST CSF 2.0, SP 800-61r3 | 1,675 |
+| Privacy KB | DPDP Act 2023, DPDP Rules 2025 | 159 |
+| Critical Infra KB | Telecom Act 2023 (**NCIIPC Rules 2013 not ingested** — source unreachable) | 105 |
+| Standards KB | ITU-T Y.3172, 3GPP TS 23.501/33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 4,259 |
+| Policy Gap KB | TRAI AI & Big Data Recommendations 2023, NCSP-2013, NDCP-2018 (**international examples not yet chosen**) | 459 |
+| Canonical KB | All ingested authoritative sources (separate verification corpus) | 4,744 |
 
-**Current state:** all KBs are stubs.  See `INTEGRATION_RAG_KB.md` to
-integrate real vector-store retrieval.
+Sources, provenance and what was not ingested: `knowledge_base/sources/manifest.json`
+(curated) and `knowledge_base/ingestion_manifest.json` (generated). Details:
+`INTEGRATION_RAG_KB.md`.
+
+In-force status and amendment history have not been checked for any source,
+so a claim fully supported by its cited text is **INCOMPLETE, not VERIFIED**.
 
 ---
 
 ## Verification
 
-The Verifier checks every agent claim against the Canonical KB.
-A claim is NEVER marked VERIFIED because an LLM generated it or because
-it carries a disclaimer label.
+Agents state what a law or standard says only by quoting a passage
+retrieved from their own KB, and record it as the claim's citation
+(`AgentFinding.claim_citations`).  With no passages, an agent names the
+instruments in its mandate and states that their applicability is not
+assessed — it never supplies their content from memory.
+
+The Verifier checks every claim against the Canonical KB: does the cited
+source/section exist there, and does the authoritative text support the
+claim?  Support is decided by text, never by retrieval similarity, model
+confidence, or a disclaimer label.
 
 | Outcome | Meaning |
 |---|---|
-| VERIFIED | Canonical KB passage found with relevance > 0.5 and no amendment conflict |
-| INCOMPLETE | Canonical KB supports the claim but an amendment or exception applies |
-| UNSUPPORTED | No supporting canonical passage found (or KB not yet populated) |
-| CONFLICT | Another finding or source contradicts the claim |
+| VERIFIED | The canonical text of the cited section supports the claim; in force; no amendment recorded |
+| INCOMPLETE | Supported, but an amendment applies — or the claim matches its cited passage while the Canonical KB is not yet populated |
+| UNSUPPORTED | Cited section not in the Canonical KB, text does not support the claim, passage not in force, or no evidence |
+| CONFLICT | Another agent's finding contradicts the claim |
+
+The support check is pluggable (`Verifier(..., support_judge=...)`); the
+default `LexicalSupportJudge` is deterministic so runs can be replayed.
 
 Cross-domain verification flags relationships where one domain's finding
 changes the reading of another (e.g. a telecom obligation + a privacy
@@ -198,16 +226,25 @@ Two scenarios are provided:
 ## How to run
 
 ```powershell
-# Run the test suite (33 tests)
-python -m pytest tests/test_pipeline.py -v
+pip install -r requirements.txt
 
-# Run Scenario 2 (T0-T3) and print full assessments
+# Build the knowledge bases from knowledge_base/sources (~6 min on CPU)
+python -m src.rag.build
+
+# One retrieval test per agent -> knowledge_base/retrieval_tests.md
+python -m src.rag.retrieval_demo
+
+# Run the test suite (72 tests)
+python -m pytest tests -v
+
+# Run Scenario 2 (T0-T3) with the live knowledge bases
 python -c "
 import sys; sys.path.insert(0, '.')
 from src.pipeline import Pipeline
+from src.rag.registry import build_registry
 from src.utils.output_formatter import format_audit_record
 from scenarios.scenario2_healthcare_5g import get_chunks
-pipeline = Pipeline()
+pipeline = Pipeline(build_registry())
 for chunk in get_chunks():
     record = pipeline.run_chunk(chunk)
     print(format_audit_record(record))
@@ -244,25 +281,40 @@ India_5G_Policy_Legal_Adviser/
 │   │   └── policy_gap_agent.py
 │   ├── knowledge_base/
 │   │   ├── base_kb.py         # Abstract KB interface
+│   │   ├── in_memory_kb.py    # Dependency-free KB for tests and early integration
+│   │   ├── text_match.py      # Deterministic text helpers (support check)
 │   │   └── kb_registry.py     # Maps AgentID to KB instance
+│   ├── rag/                   # RAG / knowledge-base layer
+│   │   ├── manifest.py        # Source manifest loading; KB names
+│   │   ├── extract.py         # PDF / DOCX extraction with page provenance
+│   │   ├── sections.py        # Cleaning, section detection, chunking
+│   │   ├── embedding.py       # bge-small-en-v1.5 embeddings
+│   │   ├── vector_store.py    # One store per KB
+│   │   ├── vector_kb.py       # Live KnowledgeBase / CanonicalKnowledgeBase
+│   │   ├── build.py           # python -m src.rag.build
+│   │   ├── registry.py        # build_registry() -> live KBRegistry
+│   │   ├── interface.py       # run_agent(agent_id, chunk) -> AgentFinding
+│   │   └── retrieval_demo.py  # python -m src.rag.retrieval_demo
 │   ├── utils/
 │   │   └── output_formatter.py
 │   └── pipeline.py            # Top-level entry point
 ├── scenarios/
 │   ├── scenario1_slicing_incident.py
 │   └── scenario2_healthcare_5g.py
-├── knowledge_base/            # Vector store data (populated via RAG integration)
-│   ├── canonical/
-│   ├── technical/
-│   ├── policy_legal/
-│   ├── cybersecurity/
-│   ├── privacy/
-│   ├── critical_infrastructure/
-│   ├── standards/
-│   └── policy_gap/
+├── knowledge_base/
+│   ├── sources/
+│   │   ├── manifest.json      # Curated source manifest (in git)
+│   │   └── raw/               # Downloaded source files (git-ignored)
+│   ├── ingestion_manifest.json  # What was actually ingested (generated, in git)
+│   ├── retrieval_tests.md     # One retrieval test per agent (generated, in git)
+│   ├── canonical/ technical/ policy_legal/ cybersecurity/ privacy/
+│   │   critical_infrastructure/ standards/ policy_gap/   # vector stores (git-ignored)
 ├── outputs/                   # Assessment text and audit JSON files
 ├── tests/
-│   └── test_pipeline.py
+│   ├── test_pipeline.py
+│   ├── test_verification_evidence.py
+│   └── test_rag.py
+├── requirements.txt
 ├── INTEGRATION_RAG_KB.md
 ├── INTEGRATION_UI.md
 └── README.md
@@ -275,15 +327,16 @@ India_5G_Policy_Legal_Adviser/
 | Component | Status |
 |---|---|
 | Project structure | Complete |
-| 7 specialist agents | Complete (role-bounded, no cross-role bleed) |
-| Swarm Orchestrator | Complete (exact DOCX stage-specific agent sets) |
+| 7 specialist agents | Complete (role-bounded; source content only from cited retrieved passages) |
+| Swarm Orchestrator | Complete (selection from released information; matches both DOCX scenario tables) |
 | Two-pass Policy Gap execution | Complete |
-| Verifier (4 outcomes) | Complete (evidence-based, no LLM confidence shortcuts) |
+| Verifier (4 outcomes) | Complete (citation + canonical-text support check; pluggable judge) |
 | Coordinator (5 categories) | Complete |
-| KB integration interface | Complete (stubs in place, ready for real vector stores) |
 | Scenario chunks T0-T3 | Complete |
-| Pipeline tests (33) | Passing |
-| RAG / vector store | Not yet integrated — see INTEGRATION_RAG_KB.md |
+| RAG / vector store | Complete — 14 of 16 DOCX sources ingested, 8 KBs, one retrieval test per agent passing |
+| Not ingested | IT (NCIIPC) Rules 2013 (source unreachable); international policy examples (not specified in DOCX) |
+| In-force / amendment checks | Not done for any source — quoted claims are INCOMPLETE, not VERIFIED |
+| Tests (72) | Passing — incl. VERIFIED / INCOMPLETE / UNSUPPORTED / CONFLICT paths and live-KB retrieval |
 | UI layer | Not yet integrated — see INTEGRATION_UI.md |
 
 ---

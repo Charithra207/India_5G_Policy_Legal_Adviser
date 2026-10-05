@@ -50,10 +50,10 @@ class PrivacyAgent(BaseAgent):
     ) -> list[str]:
         base = chunk.description
         return [
-            f"personal data exposure data protection obligations: {base}",
-            "Digital Personal Data Protection Act 2023 breach notification requirements",
-            "DPDP Rules 2025 data fiduciary obligations security incident",
-            "personal data involvement telecom 5G network slice breach",
+            base,
+            "intimation of a personal data breach to the Board and to affected Data Principals",
+            "reasonable security safeguards a Data Fiduciary must take to prevent personal data breach",
+            "meaning of personal data and personal data breach",
         ]
 
     def _produce_finding(
@@ -82,21 +82,22 @@ class PrivacyAgent(BaseAgent):
             exposure_status = "confirmed"
         elif any(kw in description for kw in data_keywords_suspected):
             exposure_status = "suspected"
+        elif incident_state.get("data_exposure_suspected"):
+            # Released in an earlier chunk; nothing in this chunk resolves it
+            exposure_status = "suspected"
+            uncertainty_notes.append(
+                "Exposure status carried forward from an earlier chunk; this chunk "
+                "releases no new personal-data facts."
+            )
 
         # ----------------------------------------------------------------
-        # Claims
+        # Claims — exposure status is read from the released facts only
         # ----------------------------------------------------------------
         if exposure_status == "confirmed":
             claims.append(
-                "Personal data exposure is CONFIRMED based on current incident facts. "
-                "The DPDP Act 2023 obligations for data breaches are triggered."
+                "Personal data exposure is CONFIRMED by the incident facts released "
+                "in this chunk."
             )
-            obligations.extend([
-                "Notify the Data Protection Board of India of the personal data breach "
-                "as required under the DPDP Act, 2023 (exact timeline requires KB retrieval).",
-                "Notify affected data principals as required under DPDP Act 2023.",
-                "Take remedial action to contain the breach.",
-            ])
         elif exposure_status == "suspected":
             claims.append(
                 "Personal data exposure is SUSPECTED: the affected slice may carry "
@@ -105,15 +106,9 @@ class PrivacyAgent(BaseAgent):
             )
             uncertainty_notes.append(
                 "Whether patient/subscriber data has actually been accessed or exfiltrated "
-                "is UNKNOWN at this stage. The DPDP Act 2023 obligations are contingent "
-                "on confirmed exposure — they should be prepared but not yet reported "
-                "as triggered."
+                "is UNKNOWN at this stage. Data-protection obligations that depend on "
+                "confirmed exposure must not be reported as triggered."
             )
-            obligations.extend([
-                "Investigate whether identifiable personal data was accessible on the "
-                "affected slice.",
-                "Prepare for DPDP Act 2023 notification obligations pending confirmation.",
-            ])
         else:
             claims.append(
                 "Personal data involvement is UNKNOWN at this stage. "
@@ -124,13 +119,19 @@ class PrivacyAgent(BaseAgent):
                 "Privacy Agent will reassess when further incident facts are released."
             )
 
-        # DPDP Act always in scope once a healthcare/subscriber slice is mentioned
+        # What the DPDP framework says — quoted from retrieved passages only
+        citations: dict[str, list[EvidenceItem]] = {}
         if exposure_status in ("confirmed", "suspected"):
-            claims.append(
-                "The Digital Personal Data Protection Act, 2023 and DPDP Rules, 2025 "
-                "are the primary Indian instruments governing this potential data "
-                "exposure. Exact notification thresholds require KB retrieval."
+            source_claims, citations = self._evidence_or_scope_claims(
+                evidence, self.INSTRUMENTS,
             )
+            claims.extend(source_claims)
+            obligations.extend(self._duty_passages(evidence))
+            if exposure_status == "suspected" and obligations:
+                uncertainty_notes.append(
+                    "Obligation passages are quoted for review; exposure is only "
+                    "suspected, so whether they are triggered is not established."
+                )
 
         missing_facts.extend([
             "Confirmation of whether patient/subscriber data is processed on the affected slice.",
@@ -143,11 +144,14 @@ class PrivacyAgent(BaseAgent):
             chunk_id                 = chunk.chunk_id,
             summary                  = (
                 f"Privacy assessment: personal data exposure status is "
-                f"'{exposure_status}'. DPDP Act 2023 obligations "
-                f"{'are triggered' if exposure_status == 'confirmed' else 'may be triggered pending confirmation'}."
+                f"'{exposure_status}'. "
+                + (f"{len(citations)} DPDP provision(s) quoted from the {self.kb.kb_name}."
+                   if citations else
+                   "No DPDP provisions retrieved; data-protection obligations are not assessed.")
             ),
             claims                   = claims,
             evidence                 = evidence,
+            claim_citations          = citations,
             obligations              = obligations,
             responsible_institutions = institutions,
             exposure_status          = exposure_status,

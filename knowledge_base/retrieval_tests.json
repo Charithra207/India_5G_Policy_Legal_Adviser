@@ -1,0 +1,1040 @@
+{
+  "generated_at": "2026-10-05T16:28:45.320021+00:00",
+  "scenario": "Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs",
+  "agents_with_successful_retrieval": 7,
+  "results": [
+    {
+      "agent": "technical",
+      "activated": true,
+      "chunk_id": "scenario2_T0",
+      "chunk": "Intermittent latency and session drops in the private 5G slice.",
+      "kb": "Technical KB",
+      "kb_documents": [
+        "3gpp_ts_23501",
+        "3gpp_ts_33501"
+      ],
+      "passages_retrieved": 14,
+      "retrievals": [
+        {
+          "query": "Intermittent latency and session drops in the private 5G slice.",
+          "source": "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19",
+          "authority": "3rd Generation Partnership Project (3GPP)",
+          "jurisdiction": "International",
+          "document_type": "Standard",
+          "section": "Clause 5.37.7.1",
+          "section_title": "General",
+          "page": "",
+          "date_issued": "2026-09",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.3gpp.org/ftp/Specs/archive/23_series/23.501/23501-j90.zip",
+          "chunk_id": "3gpp_ts_23501:clause-5-37-7-1:1",
+          "passage": "The 5GS Packet Delay Variation is the variation of packet delay measured between UE and PSA UPF. The AF may send the requirement for Packet Delay Variation monitoring to 5GS together with the requirement for packet delay measurement, as described in clause 6.1.3.26 of TS 23.503 [45]. Upon AF request for Packet Delay Variation monitoring together with packet delay monitoring, the PCF triggers the QoS monitoring procedure and obtains the UL, DL or RT QoS Monitoring result from the SMF. After receiving the QoS Monitoring result, the PCF derives the 5GS Packet Delay Variation based on the QoS Monitoring result and then reports to the AF/NEF both packet delay measurements and Packet Delay Variation. The details of the QoS Monitoring and QoS Monitoring for packet delay are described in clauses 5.45 and 5.33.3. NOTE: The derivation of 5GS Packet Delay Variation by PCF, based on QoS Monitoring, is implementation dependent. The Packet Delay Variation calculation method needs to be the same within the PLMN, based on operator policy. QoS Monitoring is used to obtain measurement of QoS parameters of individual QoS Flows.",
+          "why_relevant": {
+            "returned_by_query": "Intermittent latency and session drops in the private 5G slice.",
+            "cosine_similarity": 0.7032,
+            "query_terms_in_passage": [],
+            "kb": "Technical KB"
+          }
+        },
+        {
+          "query": "PDU session release and loss of user plane connectivity",
+          "source": "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19",
+          "authority": "3rd Generation Partnership Project (3GPP)",
+          "jurisdiction": "International",
+          "document_type": "Standard",
+          "section": "Clause 5.5.2",
+          "section_title": "Connection Management",
+          "page": "",
+          "date_issued": "2026-09",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.3gpp.org/ftp/Specs/archive/23_series/23.501/23501-j90.zip",
+          "chunk_id": "3gpp_ts_23501:clause-5-5-2:6",
+          "passage": "for the non-3GPP access, these PDU Sessions are not released to enable the UE to move the PDU Sessions over the 3GPP access based on UE policies. The core network maintains the PDU Sessions but deactivates the N3 user plane connection for such PDU Sessions.",
+          "why_relevant": {
+            "returned_by_query": "PDU session release and loss of user plane connectivity",
+            "cosine_similarity": 0.7586,
+            "query_terms_in_passage": [
+              "pdu",
+              "plane",
+              "user"
+            ],
+            "kb": "Technical KB"
+          }
+        },
+        {
+          "query": "Intermittent latency and session drops in the private 5G slice.",
+          "source": "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19",
+          "authority": "3rd Generation Partnership Project (3GPP)",
+          "jurisdiction": "International",
+          "document_type": "Standard",
+          "section": "Clause 5.33.1",
+          "section_title": "General",
+          "page": "",
+          "date_issued": "2026-09",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.3gpp.org/ftp/Specs/archive/23_series/23.501/23501-j90.zip",
+          "chunk_id": "3gpp_ts_23501:clause-5-33-1:1",
+          "passage": "The following features described in 5.33 may be used to enhance 5GS to support Ultra Reliable Low Latency Communication (URLLC): - Redundant transmission for high reliability communication. In this Release, URLLC applies to 3GPP access only. When a PDU Session is to serve URLLC QoS Flow, the UE and SMF should establish the PDU Session as always-on PDU Session as described in clause 5.6.13. NOTE 1: How the UE knows whether a PDU Session is to serve a URLLC QoS Flow when triggering PDU Session establishment is up to UE implementation. NOTE 2: No additional functionality is specified for URLLC in order to support Home Routed roaming scenario in this Release.",
+          "why_relevant": {
+            "returned_by_query": "Intermittent latency and session drops in the private 5G slice.",
+            "cosine_similarity": 0.7003,
+            "query_terms_in_passage": [
+              "latency",
+              "session"
+            ],
+            "kb": "Technical KB"
+          }
+        }
+      ],
+      "structured_output": {
+        "summary": "Technical assessment: Network performance degradation / potential service-quality failure. Affected components: Network Slice (performance layer), User Plane Function (UPF), Private 5G Network (dedicated slice). Further telemetry required to confirm root cause.",
+        "claims": [
+          {
+            "claim": "The incident involves Network Slice (performance layer), User Plane Function (UPF), Private 5G Network (dedicated slice).",
+            "cites": [],
+            "verifier_outcome": "UNSUPPORTED",
+            "verifier_rationale": "Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage)."
+          },
+          {
+            "claim": "Incident classification: Network performance degradation / potential service-quality failure.",
+            "cites": [],
+            "verifier_outcome": "UNSUPPORTED",
+            "verifier_rationale": "Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage)."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1 states: \"The 5GS Packet Delay Variation is the variation of packet delay measured between UE and PSA UPF. The AF may send the requirement for Packet Delay Variation monitoring to 5GS together with the requirement for packet delay measurement, as described in clause 6.1.3.26 of TS 23.503 [45]. Upon AF request for Packet Delay Variation monitoring together with packet delay monitoring, the PCF triggers the …\"",
+            "cites": [
+              "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.5.2 states: \"for the non-3GPP access, these PDU Sessions are not released to enable the UE to move the PDU Sessions over the 3GPP access based on UE policies. The core network maintains the PDU Sessions but deactivates the N3 user plane connection for such PDU Sessions.\"",
+            "cites": [
+              "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.5.2"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.5.2; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.5.2), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.33.1 states: \"The following features described in 5.33 may be used to enhance 5GS to support Ultra Reliable Low Latency Communication (URLLC): - Redundant transmission for high reliability communication. In this Release, URLLC applies to 3GPP access only. When a PDU Session is to serve URLLC QoS Flow, the UE and SMF should establish the PDU Session as always-on PDU Session as described in clause 5.6.13. NOTE …\"",
+            "cites": [
+              "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.33.1"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.33.1), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.45.2 states: \"QoS Monitoring for packet delay allows for the measurement of UL packet delay, DL packet delay or round trip packet delay between UE and PSA UPF. The details of the QoS Monitoring for packet delay are described in clause 5.33.3. The PCF may calculate Packet Delay Variation (clause 5.37.7) and the round trip packet delay when UL and DL are on different QoS flows (clause 5.37.4) based on packet …\"",
+            "cites": [
+              "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.45.2"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.45.2), but in-force status not verified and amendments not checked for this source."
+          }
+        ],
+        "obligations": [],
+        "uncertainty_notes": [],
+        "missing_facts": [
+          "Core network telemetry (AMF/SMF logs) not yet released.",
+          "Radio access network (RAN) performance counters not yet available.",
+          "Whether the performance degradation is isolated to one slice or system-wide is unknown."
+        ]
+      },
+      "success": true
+    },
+    {
+      "agent": "policy_legal",
+      "activated": true,
+      "chunk_id": "scenario2_T2",
+      "chunk": "The slice supports a healthcare application and may carry identifiable patient information.",
+      "kb": "Indian Legal/Regulatory KB",
+      "kb_documents": [
+        "ncsp_2013",
+        "ndcp_2018",
+        "telecom_act_2023",
+        "trai_act_1997"
+      ],
+      "passages_retrieved": 21,
+      "retrievals": [
+        {
+          "query": "The slice supports a healthcare application and may carry identifiable patient information.",
+          "source": "National Cyber Security Policy - 2013",
+          "authority": "Government of India (Department of Electronics and Information Technology)",
+          "jurisdiction": "India",
+          "document_type": "Policy",
+          "section": "Part III item 10",
+          "section_title": "",
+          "page": "4",
+          "date_issued": "2013",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.meity.gov.in/static/uploads/2024/02/National_cyber_security_policy-2013_0.pdf",
+          "chunk_id": "ncsp_2013:part-iii-item-10:1",
+          "passage": "10) To enable protection of information while in process, handling, storage & transit so as to safeguard privacy of citizen's data and for reducing economic losses due to cyber crime or data theft.",
+          "why_relevant": {
+            "returned_by_query": "The slice supports a healthcare application and may carry identifiable patient information.",
+            "cosine_similarity": 0.6355,
+            "query_terms_in_passage": [
+              "information"
+            ],
+            "kb": "Indian Legal/Regulatory KB"
+          }
+        },
+        {
+          "query": "measures to protect telecommunication networks and services and their security",
+          "source": "The Telecommunications Act, 2023",
+          "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+          "jurisdiction": "India",
+          "document_type": "Act",
+          "section": "Section 22",
+          "section_title": "",
+          "page": "10-11",
+          "date_issued": "24th December, 2023",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://egazette.gov.in/WriteReadData/2023/250880.pdf",
+          "chunk_id": "telecom_act_2023:section-22:1",
+          "passage": "22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.—For the purposes of this sub-section, the expression \"traffic data\" means any data generated, transmitted, received or stored in telecommunication networks including data relating to the type, routing, duration or time of a telecommunication. (3) The Central Government may, by notification in the Official Gazette, declare any telecommunication network, or part thereof, as Critical Telecommunication Infrastructure, disruption of which shall have debilitating impact on national security, economy, public health or safety. (4) The Central Government may by rules provide for the standards, security practices, upgradation requirements and procedures to be implemented for such Critical Telecommunication Infrastructure. Measures for national security, etc. Protection of telecommunication network and telecommunication services. 11",
+          "why_relevant": {
+            "returned_by_query": "measures to protect telecommunication networks and services and their security",
+            "cosine_similarity": 0.805,
+            "query_terms_in_passage": [
+              "measures",
+              "networks",
+              "protect",
+              "security",
+              "services",
+              "telecommunication"
+            ],
+            "kb": "Indian Legal/Regulatory KB"
+          }
+        },
+        {
+          "query": "authorisation to provide telecommunication services and operate networks",
+          "source": "The Telecommunications Act, 2023",
+          "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+          "jurisdiction": "India",
+          "document_type": "Act",
+          "section": "Section 3",
+          "section_title": "",
+          "page": "3-4",
+          "date_issued": "24th December, 2023",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://egazette.gov.in/WriteReadData/2023/250880.pdf",
+          "chunk_id": "telecom_act_2023:section-3:1",
+          "passage": "3. (1) Any person intending to— (a) provide telecommunication services; (b) establish, operate, maintain or expand telecommunication network; or (c) possess radio equipment, shall obtain an authorisation from the Central Government, subject to such terms and conditions, including fees or charges, as may be prescribed. (2) The Central Government may while making rules under sub-section (1) provide for different terms and conditions of authorisation for different types of telecommunication services, telecommunication network or radio equipment. (3) The Central Government, if it determines that it is necessary in the public interest so to do, may provide exemption from the requirement of authorisation under sub-section (1), in such manner as may be prescribed. (4) Any exemption granted prior to the appointed day under the Indian Telegraph Act, 1885 or the Indian Wireless Telegraphy Act, 1933 shall continue under this Act, unless otherwise notified by the Central Government.",
+          "why_relevant": {
+            "returned_by_query": "authorisation to provide telecommunication services and operate networks",
+            "cosine_similarity": 0.8214,
+            "query_terms_in_passage": [
+              "authorisation",
+              "operate",
+              "provide",
+              "services",
+              "telecommunication"
+            ],
+            "kb": "Indian Legal/Regulatory KB"
+          }
+        }
+      ],
+      "structured_output": {
+        "summary": "Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 3 of which impose duties.",
+        "claims": [
+          {
+            "claim": "National Cyber Security Policy - 2013, Part III item 10 states: \"10) To enable protection of information while in process, handling, storage & transit so as to safeguard privacy of citizen's data and for reducing economic losses due to cyber crime or data theft.\"",
+            "cites": [
+              "National Cyber Security Policy - 2013, Part III item 10"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (National Cyber Security Policy - 2013, Part III item 10), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "The Telecommunications Act, 2023, Section 22 states: \"22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.—For the purposes of this sub-section, the expression …\"",
+            "cites": [
+              "The Telecommunications Act, 2023, Section 22"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Telecommunications Act, 2023, Section 22), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "The Telecommunications Act, 2023, Section 3 states: \"3. (1) Any person intending to— (a) provide telecommunication services; (b) establish, operate, maintain or expand telecommunication network; or (c) possess radio equipment, shall obtain an authorisation from the Central Government, subject to such terms and conditions, including fees or charges, as may be prescribed. (2) The Central Government may while making rules under sub-section (1) provide …\"",
+            "cites": [
+              "The Telecommunications Act, 2023, Section 3"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Telecommunications Act, 2023, Section 3), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 states: \"11. Functions of Authority.— [(1)Notwithstanding anything contained in the Indian Telegraph Act, 1885 (13 of 1885), the functions of the Authority shall be to— (a) make recommendations, either suo motu or on a request from the licensor, on the following matters, namely: (i) need and timing for introduction of new service provider; (ii) terms and conditions of licence to a service provider; (iii) …\"",
+            "cites": [
+              "The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11), but in-force status not verified and amendments not checked for this source."
+          }
+        ],
+        "obligations": [
+          "The Telecommunications Act, 2023, Section 22 states: \"22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.—For the purposes of this sub-section, the expression …\"",
+          "The Telecommunications Act, 2023, Section 3 states: \"3. (1) Any person intending to— (a) provide telecommunication services; (b) establish, operate, maintain or expand telecommunication network; or (c) possess radio equipment, shall obtain an authorisation from the Central Government, subject to such terms and conditions, including fees or charges, as may be prescribed. (2) The Central Government may while making rules under sub-section (1) provide …\"",
+          "The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 states: \"11. Functions of Authority.— [(1)Notwithstanding anything contained in the Indian Telegraph Act, 1885 (13 of 1885), the functions of the Authority shall be to— (a) make recommendations, either suo motu or on a request from the licensor, on the following matters, namely: (i) need and timing for introduction of new service provider; (ii) terms and conditions of licence to a service provider; (iii) …\""
+        ],
+        "uncertainty_notes": [
+          "Critical-service relevance has been flagged. Whether the Telecommunications Act, 2023 critical telecommunication infrastructure provisions apply depends on retrieved provisions and formal designation.",
+          "Personal data may be involved. Any interaction between telecom obligations and data-protection obligations is for the Privacy Agent and the Verifier's cross-domain check, not this agent."
+        ],
+        "missing_facts": []
+      },
+      "success": true
+    },
+    {
+      "agent": "cybersecurity",
+      "activated": true,
+      "chunk_id": "scenario2_T1",
+      "chunk": "Unusual authentication and signalling attempts are observed on the affected private 5G slice.",
+      "kb": "Cybersecurity KB",
+      "kb_documents": [
+        "3gpp_ts_33501",
+        "certin_directions_2022",
+        "etsi_gr_nfv_sec_003",
+        "ncsp_2013",
+        "ndcp_2018",
+        "nist_csf_2_0",
+        "nist_sp_800_61r3",
+        "telecom_cyber_security_rules_2024"
+      ],
+      "passages_retrieved": 22,
+      "retrievals": [
+        {
+          "query": "Unusual authentication and signalling attempts are observed on the affected private 5G slice.",
+          "source": "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19",
+          "authority": "3rd Generation Partnership Project (3GPP)",
+          "jurisdiction": "International",
+          "document_type": "Standard",
+          "section": "Clause B.1",
+          "section_title": "Introduction",
+          "page": "",
+          "date_issued": "2026-06",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.501/33501-j70.zip",
+          "chunk_id": "3gpp_ts_33501:clause-b-1:1",
+          "passage": "The present annex describes an example of the usage of additional EAP methods for primary authentication in private networks using the 5G system as specified in TS 22.261 [7]. It is provided as an example on how the 5G authentication framework for primary authentication can be applied to EAP methods other than EAP-AKA' The additional EAP methods are only intended for private networks or with IoT devices in isolated deployment scenarios, i.e. roaming is not considered, as specified in TS 22.261 [7]. When the 5G system is deployed in private networks, the SUPI and SUCI should be encoded using the NAI format as specified in TS 23.501 [2]. UE always includes the realm part in the NAI for routing to the correct UDM.",
+          "why_relevant": {
+            "returned_by_query": "Unusual authentication and signalling attempts are observed on the affected private 5G slice.",
+            "cosine_similarity": 0.7177,
+            "query_terms_in_passage": [
+              "5g",
+              "authentication",
+              "private"
+            ],
+            "kb": "Cybersecurity KB"
+          }
+        },
+        {
+          "query": "telecommunication entity reporting of a security incident and the time limit",
+          "source": "Telecommunications (Telecom Cyber Security) Rules, 2024",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "jurisdiction": "India",
+          "document_type": "Rules",
+          "section": "Rule 7",
+          "section_title": "Reporting of security incidents",
+          "page": "5-6",
+          "date_issued": "21st November, 2024",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://thc.nic.in/Central%20Governmental%20Rules/Telecommunications%20(Telecom%20Cyber%20Security)%20Rules,%202024.pdf",
+          "chunk_id": "telecom_cyber_security_rules_2024:rule-7:1",
+          "passage": "7. Reporting of security incidents. — (1) The telecommunication entity shall– (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident; and (b) within twenty-four hours of becoming aware of such incident, furnish the following information, as applicable: the number of users affected by the security incident; the duration of the security incident; (iii) the geographical area affected by the security incident; (iv) the extent to which the functioning of the telecommunication network or telecommunication service is affected; the remedial measures taken or proposed to be taken; and (vi) any other information it considers relevant. The Central Government may, where it determines that disclosure of the security incident is in the public interest, inform the public of such security incident, or require the affected telecommunication entity to do so.",
+          "why_relevant": {
+            "returned_by_query": "telecommunication entity reporting of a security incident and the time limit",
+            "cosine_similarity": 0.8478,
+            "query_terms_in_passage": [
+              "entity",
+              "incident",
+              "reporting",
+              "security",
+              "telecommunication"
+            ],
+            "kb": "Cybersecurity KB"
+          }
+        },
+        {
+          "query": "telecommunication entity reporting of a security incident and the time limit",
+          "source": "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022)",
+          "authority": "Indian Computer Emergency Response Team (CERT-In), Ministry of Electronics and Information Technology",
+          "jurisdiction": "India",
+          "document_type": "Direction",
+          "section": "Direction (ii)",
+          "section_title": "Any service provider, intermediary, data centre, body corporate and",
+          "page": "2",
+          "date_issued": "28 April, 2022",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf",
+          "chunk_id": "certin_directions_2022:direction-ii:1",
+          "passage": "(ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details regarding methods and formats of reporting cyber security incidents is also published on the website of CERT-In www.cert-in.org.in and will be updated from time to time.",
+          "why_relevant": {
+            "returned_by_query": "telecommunication entity reporting of a security incident and the time limit",
+            "cosine_similarity": 0.7835,
+            "query_terms_in_passage": [
+              "incident",
+              "reporting",
+              "security",
+              "time"
+            ],
+            "kb": "Cybersecurity KB"
+          }
+        }
+      ],
+      "structured_output": {
+        "summary": "Cybersecurity assessment: possible cybersecurity incident indicated by the released facts. 4 provision(s) quoted from the Cybersecurity KB.",
+        "claims": [
+          {
+            "claim": "The security indicators released in this chunk (\"Unusual authentication and signalling attempts are observed on the affected private 5G slice.\") are consistent with a possible cybersecurity incident affecting the 5G network, such as an unauthorised access attempt, a signalling attack, or an exploited misconfiguration. The cause is not established.",
+            "cites": [],
+            "verifier_outcome": "UNSUPPORTED",
+            "verifier_rationale": "Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage)."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1 states: \"The present annex describes an example of the usage of additional EAP methods for primary authentication in private networks using the 5G system as specified in TS 22.261 [7]. It is provided as an example on how the 5G authentication framework for primary authentication can be applied to EAP methods other than EAP-AKA' The additional EAP methods are only intended for private networks or with IoT …\"",
+            "cites": [
+              "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 states: \"7. Reporting of security incidents. — (1) The telecommunication entity shall– (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident; and (b) within twenty-four hours of becoming aware of such …\"",
+            "cites": [
+              "Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) states: \"(ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The …\"",
+            "cites": [
+              "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii)"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii)), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 states: \"5. Measures to protect and ensure telecom cyber security.— (1) The Central Government may put in place digital and other mechanisms as it may consider necessary to identify, or for enabling any person to identify and report, acts that may endanger telecom cyber security. The Central Government shall, after examination of the information received under sub-rule (1), identify the telecommunication …\"",
+            "cites": [
+              "Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5), but in-force status not verified and amendments not checked for this source."
+          }
+        ],
+        "obligations": [
+          "Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 states: \"7. Reporting of security incidents. — (1) The telecommunication entity shall– (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident; and (b) within twenty-four hours of becoming aware of such …\"",
+          "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) states: \"(ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The …\"",
+          "Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 states: \"5. Measures to protect and ensure telecom cyber security.— (1) The Central Government may put in place digital and other mechanisms as it may consider necessary to identify, or for enabling any person to identify and report, acts that may endanger telecom cyber security. The Central Government shall, after examination of the information received under sub-rule (1), identify the telecommunication …\""
+        ],
+        "uncertainty_notes": [],
+        "missing_facts": [
+          "Whether the telecommunication entity has reported the anomaly to CERT-In or DoT is unknown.",
+          "Exact nature of the security indicators (protocol, volume, source) has not been released."
+        ]
+      },
+      "success": true
+    },
+    {
+      "agent": "privacy",
+      "activated": true,
+      "chunk_id": "scenario2_T2",
+      "chunk": "The slice supports a healthcare application and may carry identifiable patient information.",
+      "kb": "Privacy KB",
+      "kb_documents": [
+        "dpdp_act_2023",
+        "dpdp_rules_2025"
+      ],
+      "passages_retrieved": 14,
+      "retrievals": [
+        {
+          "query": "The slice supports a healthcare application and may carry identifiable patient information.",
+          "source": "The Digital Personal Data Protection Act, 2023",
+          "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+          "jurisdiction": "India",
+          "document_type": "Act",
+          "section": "Section 2",
+          "section_title": "",
+          "page": "2-3",
+          "date_issued": "11th August, 2023",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+          "chunk_id": "dpdp_act_2023:section-2:2",
+          "passage": "facts, concepts, opinions or instructions in a manner suitable for communication, interpretation or processing by human beings or by automated means; (i) “Data Fiduciary” means any person who alone or in conjunction with other persons determines the purpose and means of processing of personal data; (j) “Data Principal” means the individual to whom the personal data relates and where such individual is— (i) a child, includes the parents or lawful guardian of such a child; (ii) a person with disability, includes her lawful guardian, acting on her behalf; (k) “Data Processor” means any person who processes personal data on behalf of a Data Fiduciary; (l) “Data Protection Officer” means an individual appointed by the Significant Data Fiduciary under clause (a) of sub-section (2) of section 10; (m) “digital office” means an office that adopts an online mechanism wherein the proceedings, from receipt of intimation or complaint or reference or directions or appeal, as the case may be, to the disposal thereof, are conducted in online or digital mode; (n) “digital personal data” means personal data in digital form;",
+          "why_relevant": {
+            "returned_by_query": "The slice supports a healthcare application and may carry identifiable patient information.",
+            "cosine_similarity": 0.6801,
+            "query_terms_in_passage": [],
+            "kb": "Privacy KB"
+          }
+        },
+        {
+          "query": "intimation of a personal data breach to the Board and to affected Data Principals",
+          "source": "Digital Personal Data Protection Rules, 2025",
+          "authority": "Government of India (Ministry of Electronics and Information Technology)",
+          "jurisdiction": "India",
+          "document_type": "Rules",
+          "section": "Rule 7",
+          "section_title": "Intimation of personal data breach",
+          "page": "26",
+          "date_issued": "13th November, 2025",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.meity.gov.in/static/uploads/2025/11/53450e6e5dc0bfa85ebd78686cadad39.pdf",
+          "chunk_id": "dpdp_rules_2025:rule-7:1",
+          "passage": "7. Intimation of personal data breach. — (1) On becoming aware of any personal data breach, the Data Fiduciary shall, to the best of its knowledge, intimate to each affected Data Principal, in a concise, clear and plain manner and without delay, through her user account or any mode of communication registered by her with the Data Fiduciary, — (a) a description of the breach, including its nature, extent and the timing of its occurrence; (b) the consequences relevant to her, that are likely to arise from the breach; (c) the measures implemented and being implemented by the Data Fiduciary, if any, to mitigate risk; (d) the safety measures that she may take to protect her interests; and (e) business contact information of a person who is able to respond on behalf of the Data Fiduciary, to queries, if any, of the Data Principal. (2) On becoming aware of any personal data breach, the Data Fiduciary shall intimate to the Board, — (a) without delay, a description of the breach, including its nature, extent, timing and location of occurrence and the likely impact;",
+          "why_relevant": {
+            "returned_by_query": "intimation of a personal data breach to the Board and to affected Data Principals",
+            "cosine_similarity": 0.8265,
+            "query_terms_in_passage": [
+              "affected",
+              "board",
+              "breach",
+              "data",
+              "intimation",
+              "personal"
+            ],
+            "kb": "Privacy KB"
+          }
+        },
+        {
+          "query": "reasonable security safeguards a Data Fiduciary must take to prevent personal data breach",
+          "source": "Digital Personal Data Protection Rules, 2025",
+          "authority": "Government of India (Ministry of Electronics and Information Technology)",
+          "jurisdiction": "India",
+          "document_type": "Rules",
+          "section": "Rule 6",
+          "section_title": "Reasonable security safeguards",
+          "page": "26",
+          "date_issued": "13th November, 2025",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.meity.gov.in/static/uploads/2025/11/53450e6e5dc0bfa85ebd78686cadad39.pdf",
+          "chunk_id": "dpdp_rules_2025:rule-6:1",
+          "passage": "6. Reasonable security safeguards. — (1) A Data Fiduciary shall protect personal data in its possession or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach, which shall include, at the minimum, — (a) appropriate data security measures, such as securing of personal data through encryption, obfuscation, masking or the use of virtual tokens mapped to that personal data; (b) appropriate measures to control access to the computer resources used by such Data Fiduciary or such a Data Processor, wherever applicable; (c) visibility on the accessing of such personal data, through appropriate logs, monitoring and review, for enabling detection of unauthorised access, its investigation and remediation to prevent recurrence; (d) reasonable measures for continued processing in the event of confidentiality, integrity or availability of such personal data being compromised as a result of destruction or loss of access to personal data or otherwise, such as by way of data-backups;",
+          "why_relevant": {
+            "returned_by_query": "reasonable security safeguards a Data Fiduciary must take to prevent personal data breach",
+            "cosine_similarity": 0.9172,
+            "query_terms_in_passage": [
+              "breach",
+              "data",
+              "fiduciary",
+              "personal",
+              "prevent",
+              "reasonable",
+              "safeguards",
+              "security"
+            ],
+            "kb": "Privacy KB"
+          }
+        }
+      ],
+      "structured_output": {
+        "summary": "Privacy assessment: personal data exposure status is 'suspected'. 4 DPDP provision(s) quoted from the Privacy KB.",
+        "claims": [
+          {
+            "claim": "Personal data exposure is SUSPECTED: the affected slice may carry identifiable patient or subscriber information. Confirmed exposure cannot be established from current facts — further investigation required.",
+            "cites": [],
+            "verifier_outcome": "UNSUPPORTED",
+            "verifier_rationale": "Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage)."
+          },
+          {
+            "claim": "The Digital Personal Data Protection Act, 2023, Section 2 states: \"facts, concepts, opinions or instructions in a manner suitable for communication, interpretation or processing by human beings or by automated means; (i) “Data Fiduciary” means any person who alone or in conjunction with other persons determines the purpose and means of processing of personal data; (j) “Data Principal” means the individual to whom the personal data relates and where such …\"",
+            "cites": [
+              "The Digital Personal Data Protection Act, 2023, Section 2"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Digital Personal Data Protection Act, 2023, Section 2; The Digital Personal Data Protection Act, 2023, Section 2), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "Digital Personal Data Protection Rules, 2025, Rule 7 states: \"7. Intimation of personal data breach. — (1) On becoming aware of any personal data breach, the Data Fiduciary shall, to the best of its knowledge, intimate to each affected Data Principal, in a concise, clear and plain manner and without delay, through her user account or any mode of communication registered by her with the Data Fiduciary, — (a) a description of the breach, including its nature, …\"",
+            "cites": [
+              "Digital Personal Data Protection Rules, 2025, Rule 7"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (Digital Personal Data Protection Rules, 2025, Rule 7), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "Digital Personal Data Protection Rules, 2025, Rule 6 states: \"6. Reasonable security safeguards. — (1) A Data Fiduciary shall protect personal data in its possession or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach, which shall include, at the minimum, — (a) appropriate data security measures, such as securing of …\"",
+            "cites": [
+              "Digital Personal Data Protection Rules, 2025, Rule 6"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (Digital Personal Data Protection Rules, 2025, Rule 6; Digital Personal Data Protection Rules, 2025, Rule 6), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "The Digital Personal Data Protection Act, 2023, Section 2 states: \"undivided family; (iii) a company; (iv) a firm; (v) an association of persons or a body of individuals, whether incorporated or not; (vi) the State; and (vii) every artificial juristic person, not falling within any of the preceding sub-clauses; (t) “personal data” means any data about an individual who is identifiable by or in relation to such data; (u) “personal data breach” means any …\"",
+            "cites": [
+              "The Digital Personal Data Protection Act, 2023, Section 2"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Digital Personal Data Protection Act, 2023, Section 2; The Digital Personal Data Protection Act, 2023, Section 2), but in-force status not verified and amendments not checked for this source."
+          }
+        ],
+        "obligations": [
+          "Digital Personal Data Protection Rules, 2025, Rule 7 states: \"7. Intimation of personal data breach. — (1) On becoming aware of any personal data breach, the Data Fiduciary shall, to the best of its knowledge, intimate to each affected Data Principal, in a concise, clear and plain manner and without delay, through her user account or any mode of communication registered by her with the Data Fiduciary, — (a) a description of the breach, including its nature, …\"",
+          "Digital Personal Data Protection Rules, 2025, Rule 6 states: \"6. Reasonable security safeguards. — (1) A Data Fiduciary shall protect personal data in its possession or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach, which shall include, at the minimum, — (a) appropriate data security measures, such as securing of …\""
+        ],
+        "uncertainty_notes": [
+          "Whether patient/subscriber data has actually been accessed or exfiltrated is UNKNOWN at this stage. Data-protection obligations that depend on confirmed exposure must not be reported as triggered.",
+          "Obligation passages are quoted for review; exposure is only suspected, so whether they are triggered is not established."
+        ],
+        "missing_facts": [
+          "Confirmation of whether patient/subscriber data is processed on the affected slice.",
+          "Whether the slice operator is a 'data fiduciary' under DPDP Act 2023.",
+          "Volume and category of personal data potentially exposed."
+        ]
+      },
+      "success": true
+    },
+    {
+      "agent": "critical_infrastructure",
+      "activated": true,
+      "chunk_id": "scenario2_T2",
+      "chunk": "The slice supports a healthcare application and may carry identifiable patient information.",
+      "kb": "Critical Infrastructure KB",
+      "kb_documents": [
+        "telecom_act_2023"
+      ],
+      "passages_retrieved": 9,
+      "retrievals": [
+        {
+          "query": "notification of critical telecommunication infrastructure and measures for its protection",
+          "source": "The Telecommunications Act, 2023",
+          "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+          "jurisdiction": "India",
+          "document_type": "Act",
+          "section": "Section 19",
+          "section_title": "",
+          "page": "9",
+          "date_issued": "24th December, 2023",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://egazette.gov.in/WriteReadData/2023/250880.pdf",
+          "chunk_id": "telecom_act_2023:section-19:1",
+          "passage": "19. The Central Government may notify standards and conformity assessment measures in respect of— (a) telecommunication equipment, telecommunication identifiers and telecommunication network; (b) telecommunication services, in consonance with any regulations notified by the Telecom Regulatory Authority of India from time to time; (c) manufacture, import, distribution and sale of telecommunication equipment; (d) telecommunication security, including identification, analysis and prevention of intrusion in telecommunication services and telecommunication networks; (e) cyber security for telecommunication services and telecommunication networks; and (f) encryption and data processing in telecommunication.",
+          "why_relevant": {
+            "returned_by_query": "notification of critical telecommunication infrastructure and measures for its protection",
+            "cosine_similarity": 0.7979,
+            "query_terms_in_passage": [
+              "measures",
+              "telecommunication"
+            ],
+            "kb": "Critical Infrastructure KB"
+          }
+        },
+        {
+          "query": "notification of critical telecommunication infrastructure and measures for its protection",
+          "source": "The Telecommunications Act, 2023",
+          "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+          "jurisdiction": "India",
+          "document_type": "Act",
+          "section": "Section 22",
+          "section_title": "",
+          "page": "10-11",
+          "date_issued": "24th December, 2023",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://egazette.gov.in/WriteReadData/2023/250880.pdf",
+          "chunk_id": "telecom_act_2023:section-22:1",
+          "passage": "22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.—For the purposes of this sub-section, the expression \"traffic data\" means any data generated, transmitted, received or stored in telecommunication networks including data relating to the type, routing, duration or time of a telecommunication. (3) The Central Government may, by notification in the Official Gazette, declare any telecommunication network, or part thereof, as Critical Telecommunication Infrastructure, disruption of which shall have debilitating impact on national security, economy, public health or safety. (4) The Central Government may by rules provide for the standards, security practices, upgradation requirements and procedures to be implemented for such Critical Telecommunication Infrastructure. Measures for national security, etc. Protection of telecommunication network and telecommunication services. 11",
+          "why_relevant": {
+            "returned_by_query": "notification of critical telecommunication infrastructure and measures for its protection",
+            "cosine_similarity": 0.797,
+            "query_terms_in_passage": [
+              "critical",
+              "infrastructure",
+              "measures",
+              "notification",
+              "protection",
+              "telecommunication"
+            ],
+            "kb": "Critical Infrastructure KB"
+          }
+        },
+        {
+          "query": "notification of critical telecommunication infrastructure and measures for its protection",
+          "source": "The Telecommunications Act, 2023",
+          "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+          "jurisdiction": "India",
+          "document_type": "Act",
+          "section": "Section 21",
+          "section_title": "",
+          "page": "10",
+          "date_issued": "24th December, 2023",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://egazette.gov.in/WriteReadData/2023/250880.pdf",
+          "chunk_id": "telecom_act_2023:section-21:1",
+          "passage": "21. The Central Government may, if satisfied that it is necessary or expedient so to do, in the interest of national security, friendly relations with foreign States, or in the event of war, by notification take such measures as are necessary in the circumstances of the case, including issuing directions in respect of the following, namely:— (a) use of telecommunication equipment, telecommunication services, telecommunication network and telecommunication identifiers; (b) standards applicable to manufacture, import and distribution of telecommunication equipment; (c) standards to be adopted by authorised entities or assignees; (d) procurement of telecommunication equipment and telecommunication services only from trusted sources; (e) suspension, removal or prohibition of the use of specified telecommunication equipment and telecommunication services from countries or person as may be notified; or (f) taking over the control and management of, or suspending the operation of, or entrusting any authority of the Central Government to manage any or all of any telecommunication services, or any telecommunication network or part thereof, connected with such telecommunication services.",
+          "why_relevant": {
+            "returned_by_query": "notification of critical telecommunication infrastructure and measures for its protection",
+            "cosine_similarity": 0.7927,
+            "query_terms_in_passage": [
+              "measures",
+              "notification",
+              "telecommunication"
+            ],
+            "kb": "Critical Infrastructure KB"
+          }
+        }
+      ],
+      "structured_output": {
+        "summary": "Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.",
+        "claims": [
+          {
+            "claim": "The incident facts indicate that the affected 5G slice supports a healthcare application, so critical-infrastructure provisions are relevant to examine. Formal CII designation status is not established by the facts.",
+            "cites": [],
+            "verifier_outcome": "UNSUPPORTED",
+            "verifier_rationale": "Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage)."
+          },
+          {
+            "claim": "The Telecommunications Act, 2023, Section 19 states: \"19. The Central Government may notify standards and conformity assessment measures in respect of— (a) telecommunication equipment, telecommunication identifiers and telecommunication network; (b) telecommunication services, in consonance with any regulations notified by the Telecom Regulatory Authority of India from time to time; (c) manufacture, import, distribution and sale of telecommunication …\"",
+            "cites": [
+              "The Telecommunications Act, 2023, Section 19"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Telecommunications Act, 2023, Section 19), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "The Telecommunications Act, 2023, Section 22 states: \"22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.—For the purposes of this sub-section, the expression …\"",
+            "cites": [
+              "The Telecommunications Act, 2023, Section 22"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Telecommunications Act, 2023, Section 22), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "The Telecommunications Act, 2023, Section 21 states: \"21. The Central Government may, if satisfied that it is necessary or expedient so to do, in the interest of national security, friendly relations with foreign States, or in the event of war, by notification take such measures as are necessary in the circumstances of the case, including issuing directions in respect of the following, namely:— (a) use of telecommunication equipment, …\"",
+            "cites": [
+              "The Telecommunications Act, 2023, Section 21"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Telecommunications Act, 2023, Section 21), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "The Telecommunications Act, 2023, Section 23 states: \"23. If it appears necessary or expedient so to do in the public interest, the Central Government may direct any authorised entity to transmit in its telecommunication services or telecommunication network, specific messages, in such manner as may be specified. CHAPTER V DIGITAL BHARAT NIDHI\"",
+            "cites": [
+              "The Telecommunications Act, 2023, Section 23"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (The Telecommunications Act, 2023, Section 23), but in-force status not verified and amendments not checked for this source."
+          }
+        ],
+        "obligations": [
+          "The Telecommunications Act, 2023, Section 19 states: \"19. The Central Government may notify standards and conformity assessment measures in respect of— (a) telecommunication equipment, telecommunication identifiers and telecommunication network; (b) telecommunication services, in consonance with any regulations notified by the Telecom Regulatory Authority of India from time to time; (c) manufacture, import, distribution and sale of telecommunication …\"",
+          "The Telecommunications Act, 2023, Section 22 states: \"22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.—For the purposes of this sub-section, the expression …\""
+        ],
+        "uncertainty_notes": [
+          "CII designation is UNCONFIRMED at this stage. The service may or may not be formally designated. This uncertainty must be carried through the assessment."
+        ],
+        "missing_facts": [
+          "Formal CII designation status of the affected service/network.",
+          "Whether NCIIPC has been notified of the incident.",
+          "Whether the affected entity is listed under any critical sector designation."
+        ]
+      },
+      "success": true
+    },
+    {
+      "agent": "standards",
+      "activated": true,
+      "chunk_id": "scenario2_T1",
+      "chunk": "Unusual authentication and signalling attempts are observed on the affected private 5G slice.",
+      "kb": "International Standards KB",
+      "kb_documents": [
+        "3gpp_ts_23501",
+        "3gpp_ts_33501",
+        "etsi_gr_nfv_sec_003",
+        "itu_t_y3172",
+        "nist_csf_2_0",
+        "nist_sp_800_61r3"
+      ],
+      "passages_retrieved": 18,
+      "retrievals": [
+        {
+          "query": "Unusual authentication and signalling attempts are observed on the affected private 5G slice.",
+          "source": "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19",
+          "authority": "3rd Generation Partnership Project (3GPP)",
+          "jurisdiction": "International",
+          "document_type": "Standard",
+          "section": "Clause B.1",
+          "section_title": "Introduction",
+          "page": "",
+          "date_issued": "2026-06",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.501/33501-j70.zip",
+          "chunk_id": "3gpp_ts_33501:clause-b-1:1",
+          "passage": "The present annex describes an example of the usage of additional EAP methods for primary authentication in private networks using the 5G system as specified in TS 22.261 [7]. It is provided as an example on how the 5G authentication framework for primary authentication can be applied to EAP methods other than EAP-AKA' The additional EAP methods are only intended for private networks or with IoT devices in isolated deployment scenarios, i.e. roaming is not considered, as specified in TS 22.261 [7]. When the 5G system is deployed in private networks, the SUPI and SUCI should be encoded using the NAI format as specified in TS 23.501 [2]. UE always includes the realm part in the NAI for routing to the correct UDM.",
+          "why_relevant": {
+            "returned_by_query": "Unusual authentication and signalling attempts are observed on the affected private 5G slice.",
+            "cosine_similarity": 0.7177,
+            "query_terms_in_passage": [
+              "5g",
+              "authentication",
+              "private"
+            ],
+            "kb": "International Standards KB"
+          }
+        },
+        {
+          "query": "network slice isolation, quality of service and service level",
+          "source": "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19",
+          "authority": "3rd Generation Partnership Project (3GPP)",
+          "jurisdiction": "International",
+          "document_type": "Standard",
+          "section": "Clause 5.15.1",
+          "section_title": "General",
+          "page": "",
+          "date_issued": "2026-09",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.3gpp.org/ftp/Specs/archive/23_series/23.501/23501-j90.zip",
+          "chunk_id": "3gpp_ts_23501:clause-5-15-1:5",
+          "passage": "as described in clause 5.15.13. The selection of N3IWF/TNGF supporting a set of slice(s) is described in clause 6.3.6 and clause 6.3.12 respectively. The support of Network Slice usage control is described in clause 5.15.15. Support of Optimized handling of temporarily available network slices is described in clause 5.15.16. It also covers aspects related to graceful release of network slices connectivity during slice decommissioning. The Partial Network Slice support in a Registration Area is described in clause 5.15.17. Support for Network Slices with Network Slice Area of Service not matching deployed Tracking Areas is described in clause 5.15.18. Support of Network Slice Replacement is described in clause 5.15.19.",
+          "why_relevant": {
+            "returned_by_query": "network slice isolation, quality of service and service level",
+            "cosine_similarity": 0.7422,
+            "query_terms_in_passage": [
+              "network",
+              "service",
+              "slice"
+            ],
+            "kb": "International Standards KB"
+          }
+        },
+        {
+          "query": "primary authentication procedure and protection against signalling attacks",
+          "source": "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19",
+          "authority": "3rd Generation Partnership Project (3GPP)",
+          "jurisdiction": "International",
+          "document_type": "Standard",
+          "section": "Clause 5.2.2",
+          "section_title": "User data and signalling data confidentiality",
+          "page": "",
+          "date_issued": "2026-06",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.501/33501-j70.zip",
+          "chunk_id": "3gpp_ts_33501:clause-5-2-2:1",
+          "passage": "The UE shall support ciphering of user data between the UE and the gNB. The UE shall activate ciphering of user data based on the indication sent by the gNB. The UE shall support ciphering of RRC and NAS-signalling. The UE shall implement the following ciphering algorithms: NEA0, 128-NEA1, 128-NEA2 as defined in Annex D of the present document. The UE may implement the following ciphering algorithm: 128-NEA3 as defined in Annex D of the present document. The UE shall implement the ciphering algorithms as specified in TS 33.401 [10] if it supports E-UTRA connected to 5GC. Confidentiality protection of the user data between the UE and the gNB is optional to use. Confidentiality protection of the RRC-signalling, and NAS-signalling is optional to use. Confidentiality protection should be used whenever regulations permit.",
+          "why_relevant": {
+            "returned_by_query": "primary authentication procedure and protection against signalling attacks",
+            "cosine_similarity": 0.7555,
+            "query_terms_in_passage": [
+              "protection",
+              "signalling"
+            ],
+            "kb": "International Standards KB"
+          }
+        }
+      ],
+      "structured_output": {
+        "summary": "Standards assessment: in scope for comparison — 3GPP TS 23.501, 3GPP TS 33.501, NIST SP 800-61 Rev. 3. 4 passage(s) quoted. All standards are reference points only, not Indian law.",
+        "claims": [
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1 states: \"The present annex describes an example of the usage of additional EAP methods for primary authentication in private networks using the 5G system as specified in TS 22.261 [7]. It is provided as an example on how the 5G authentication framework for primary authentication can be applied to EAP methods other than EAP-AKA' The additional EAP methods are only intended for private networks or with IoT …\"",
+            "cites": [
+              "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1 states: \"as described in clause 5.15.13. The selection of N3IWF/TNGF supporting a set of slice(s) is described in clause 6.3.6 and clause 6.3.12 respectively. The support of Network Slice usage control is described in clause 5.15.15. Support of Optimized handling of temporarily available network slices is described in clause 5.15.16. It also covers aspects related to graceful release of network slices …\"",
+            "cites": [
+              "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 5.2.2 states: \"The UE shall support ciphering of user data between the UE and the gNB. The UE shall activate ciphering of user data based on the indication sent by the gNB. The UE shall support ciphering of RRC and NAS-signalling. The UE shall implement the following ciphering algorithms: NEA0, 128-NEA1, 128-NEA2 as defined in Annex D of the present document. The UE may implement the following ciphering …\"",
+            "cites": [
+              "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 5.2.2"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 5.2.2), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "[REFERENCE ONLY — not Indian law] NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile), Section 1 states: \"access to network communications • Compromising a vendor’s software, which is subsequently distributed to customers in its compromised state Because of the damage that cybersecurity incidents can inflict on organizations and their customers, business partners, and others, it is vital to respond quickly and effectively when an incident occurs. Effective implementation of incident response …\"",
+            "cites": [
+              "NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile), Section 1"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile), Section 1; NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile), Section 1), but in-force status not verified and amendments not checked for this source."
+          }
+        ],
+        "obligations": [],
+        "uncertainty_notes": [],
+        "missing_facts": [
+          "Exact version of 3GPP specifications implemented by the affected network.",
+          "Whether the private 5G network uses NFV/virtualised infrastructure."
+        ]
+      },
+      "success": true
+    },
+    {
+      "agent": "policy_gap",
+      "activated": true,
+      "chunk_id": "scenario2_T3",
+      "chunk": "The question asks: what should be reported or escalated, and what policy gap remains?",
+      "kb": "International Policy Examples KB",
+      "kb_documents": [
+        "ncsp_2013",
+        "ndcp_2018",
+        "trai_ai_bigdata_recs_2023"
+      ],
+      "passages_retrieved": 22,
+      "retrievals": [
+        {
+          "query": "The question asks: what should be reported or escalated, and what policy gap remains?",
+          "source": "National Digital Communications Policy 2018",
+          "authority": "Government of India (Department of Telecommunications)",
+          "jurisdiction": "India",
+          "document_type": "Policy",
+          "section": "Para 8",
+          "section_title": "",
+          "page": "3",
+          "date_issued": "2018",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://cdnbbsr.s3waas.gov.in/s35352696a9ca3397beb79f116f3a33991/uploads/2022/03/2022031545.pdf",
+          "chunk_id": "ndcp_2018:para-8:1",
+          "passage": "8. Improvement in regulation and ongoing structural reforms are the pillars of a sound policy initiative. Regulatory reform is not a one-off effort, but a dynamic, long-term and multidisciplinary process. The Policy recognises the importance of continued improvement in the regulatory framework for attracting investments and ensuring fair competition, to serve the needs of Indian citizens. Given the sector’s capital-intensive nature, the Policy aims to attract long-term, high quality and sustainable investments. To serve this objective, the Policy further aims to pursue regulatory reforms to ensure that the regulatory structures and processes remain relevant, transparent, accountable and forward-looking. Additionally, the Policy aims to remove regulatory barriers and reduce the regulatory burden that hampers investments, innovation and consumer interest. The Policy also identifies steps to strengthen the sector’s institutional mechanism and legislative framework, to ensure that India’s economy and citizens can derive the full potential of its digital communications sector.",
+          "why_relevant": {
+            "returned_by_query": "The question asks: what should be reported or escalated, and what policy gap remains?",
+            "cosine_similarity": 0.6548,
+            "query_terms_in_passage": [
+              "policy"
+            ],
+            "kb": "International Policy Examples KB"
+          }
+        },
+        {
+          "query": "policy for 5G and next generation network technologies and their security",
+          "source": "National Digital Communications Policy 2018",
+          "authority": "Government of India (Department of Telecommunications)",
+          "jurisdiction": "India",
+          "document_type": "Policy",
+          "section": "Para 11",
+          "section_title": "",
+          "page": "4-22",
+          "date_issued": "2018",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://cdnbbsr.s3waas.gov.in/s35352696a9ca3397beb79f116f3a33991/uploads/2022/03/2022031545.pdf",
+          "chunk_id": "ndcp_2018:para-11:20",
+          "passage": "services and network elements incorporating international best practices Earmarking adequate licensed and unlicensed spectrum for IoT/ M2M services Encourage use of Open APIs for emerging technologies (b) Promoting innovation in the creation of Communication services and network infrastructure by Developing a policy framework for ‘Over The Top’ services (c) Ensuring the Transition to IPv6 for all existing communications systems, equipment, networks and devices (d) Enabling Hi-speed internet, Internet of Things and M2M by rollout of 5G technologies: Implementing an action plan for rollout of 5G applications and services Enhancing the backhaul capacity to support the development of next-generation networks like 5G Ensuring availability of spectrum for 5G in <1 GHz, 1-6 GHz and >6 GHz bands Reviewing industry practices with respect to traffic prioritisation to provide 5Genabled applications and services Developing framework for accelerated deployment of M2M services while safeguarding security and interception for M2M devices Defining policy for EMF radiation for M2M devices, with accompanying institutional framework to coordinate government-funded and India-specific research in this",
+          "why_relevant": {
+            "returned_by_query": "policy for 5G and next generation network technologies and their security",
+            "cosine_similarity": 0.7576,
+            "query_terms_in_passage": [
+              "5g",
+              "generation",
+              "network",
+              "next",
+              "policy",
+              "security",
+              "technologies"
+            ],
+            "kb": "International Policy Examples KB"
+          }
+        },
+        {
+          "query": "coordination between agencies for cyber security incident response",
+          "source": "National Cyber Security Policy - 2013",
+          "authority": "Government of India (Department of Electronics and Information Technology)",
+          "jurisdiction": "India",
+          "document_type": "Policy",
+          "section": "Part IV E",
+          "section_title": "Creating mechanisms for security threat early warning, vulnerability management and",
+          "page": "6",
+          "date_issued": "2013",
+          "effective": "not verified",
+          "amendment_checked": false,
+          "url": "https://www.meity.gov.in/static/uploads/2024/02/National_cyber_security_policy-2013_0.pdf",
+          "chunk_id": "ncsp_2013:part-iv-e:2",
+          "passage": "all coordination and communication actions within the respective sectors for effective incidence response & resolution and cyber crisis management. To implement Cyber Crisis Management Plan for dealing with cyber related incidents impacting critical national processes or endangering public safety and security of the Nation, by way of well coordinated, multi disciplinary approach at the National, Sectoral as well as entity levels. To conduct and facilitate regular cyber security drills & exercises at National, sectoral and entity levels to enable assessment of the security posture and level of emergency preparedness in resisting and dealing with cyber security incidents.",
+          "why_relevant": {
+            "returned_by_query": "coordination between agencies for cyber security incident response",
+            "cosine_similarity": 0.8004,
+            "query_terms_in_passage": [
+              "coordination",
+              "cyber",
+              "response",
+              "security"
+            ],
+            "kb": "International Policy Examples KB"
+          }
+        }
+      ],
+      "structured_output": {
+        "summary": "Policy gap assessment: 3 candidate area(s) from verified findings; 3 potential gap(s) raised after Canonical KB examination. Potential gaps are for expert review, not conclusions of inadequacy.",
+        "claims": [
+          {
+            "claim": "Potential gap — Emerging technology not explicitly addressed: none of the 485 Indian passages in the Canonical KB (every one examined) mentions network slicing (instruments examined: CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022); Digital Personal Data Protection Rules, 2025; National Cyber Security Policy - 2013; National Digital Communications Policy 2018; Telecommunications (Telecom Cyber Security) Rules, 2024; The Digital Personal Data Protection Act, 2023; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation); The Telecommunications Act, 2023). This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+            "cites": [],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Policy-gap examination based on an examination of the Canonical KB with no passage to cite. A potential gap or coverage check is an observation for expert review, not a verified conclusion."
+          },
+          {
+            "claim": "Potential gap — Overlapping requirements: CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) and Digital Personal Data Protection Rules, 2025, Rule 7 both carry reporting duties for the same incident, and neither passage refers to the other, so their relationship is unclear in the text examined. This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+            "cites": [
+              "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii)",
+              "Digital Personal Data Protection Rules, 2025, Rule 7"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Policy-gap examination based on cited passages confirmed in the Canonical KB. A potential gap or coverage check is an observation for expert review, not a verified conclusion."
+          },
+          {
+            "claim": "Potential gap — Missing institutional clarity: National Cyber Security Policy - 2013, Part III item 5 addresses NCIIPC and National Digital Communications Policy 2018, Para 11 addresses CERT-In, but none of the 485 Indian passages in the Canonical KB addresses both, so which institution leads is unclear in the text examined. This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+            "cites": [
+              "National Cyber Security Policy - 2013, Part III item 5",
+              "National Digital Communications Policy 2018, Para 11"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Policy-gap examination based on cited passages confirmed in the Canonical KB. A potential gap or coverage check is an observation for expert review, not a verified conclusion."
+          },
+          {
+            "claim": "Comparator — [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1 states: \"as described in clause 5.15.13. The selection of N3IWF/TNGF supporting a set of slice(s) is described in clause 6.3.6 and clause 6.3.12 respectively. The support of Network Slice usage control is described in clause 5.15.15. Support of Optimized handling of temporarily available network slices is described in clause 5.15.16. It also covers aspects related to graceful release of network slices …\"",
+            "cites": [
+              "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1), but in-force status not verified and amendments not checked for this source."
+          },
+          {
+            "claim": "Comparator — [REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 9.5 states: \"This clause applies to all DIAMETER or GTP-based interfaces between the 5G Core and other network entities that are not part of the 5G System. These includes the Rx interface between the PCF and the IMS System and the N26 interface between the AMF and the MME. The protection of these interfaces shall be supported according to NDS/IP as specified in TS 33.210 [3], unless security is provided by …\"",
+            "cites": [
+              "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 9.5"
+            ],
+            "verifier_outcome": "INCOMPLETE",
+            "verifier_rationale": "Supported by the authoritative text (3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 9.5), but in-force status not verified and amendments not checked for this source."
+          }
+        ],
+        "obligations": [],
+        "uncertainty_notes": [],
+        "missing_facts": [
+          "Final manifest of exact Indian instruments confirmed by KB retrieval.",
+          "Neighbouring-country comparators from the Policy Gap KB (to be added during RAG/KB integration)."
+        ]
+      },
+      "success": true
+    }
+  ]
+}

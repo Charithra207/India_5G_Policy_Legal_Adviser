@@ -56,14 +56,14 @@ class CybersecurityAgent(BaseAgent):
     ) -> list[str]:
         base = chunk.description
         queries = [
-            f"Indian telecom cybersecurity incident classification obligations: {base}",
-            "Telecom Cyber Security Rules 2024 incident reporting requirements",
-            "CERT-In Directions 2022 cyber incident reporting Section 70B IT Act",
+            base,
+            "telecommunication entity reporting of a security incident and the time limit",
+            "types of cyber security incidents that must be reported to CERT-In",
+            "measures a telecommunication entity must take to protect telecom cyber security",
         ]
         if any(w in base.lower() for w in ["authentication", "signalling", "suspicious", "unusual"]):
             queries.append(
-                "5G control plane attack authentication anomaly cybersecurity "
-                "classification CERT-In reporting obligation"
+                "unauthorised access attempts and attacks on network infrastructure"
             )
         return queries
 
@@ -76,83 +76,87 @@ class CybersecurityAgent(BaseAgent):
         description = chunk.description.lower()
         uncertainty_notes = self._uncertainty_note_if_stub(evidence)
         claims: list[str] = []
-        obligations: list[str] = []
         institutions: list[str] = ["CERT-In", "Department of Telecommunications (DoT)"]
         missing_facts: list[str] = []
 
         # ----------------------------------------------------------------
-        # Cybersecurity event classification
+        # Cybersecurity event classification — from the released facts
         # ----------------------------------------------------------------
         is_cyber_event = any(
             w in description
             for w in ["authentication", "signalling", "suspicious", "unusual",
-                      "attack", "intrusion", "anomal", "unauthori"]
+                      "attack", "intrusion", "anomal", "unauthori", "control-plane",
+                      "control plane"]
+        )
+        is_exposure = any(
+            w in description for w in ["exposed", "exposure", "exfiltrat", "leak", "breach"]
         )
 
         if is_cyber_event:
             claims.append(
-                "Unusual authentication/signalling attempts are consistent with "
-                "a possible cybersecurity incident affecting the 5G network "
-                "(e.g. unauthorised access attempt, signalling attack, or "
-                "misconfiguration exploited by a threat actor)."
+                "The security indicators released in this chunk "
+                f"(\"{chunk.description.strip()}\") are consistent with a possible "
+                "cybersecurity incident affecting the 5G network, such as an "
+                "unauthorised access attempt, a signalling attack, or an exploited "
+                "misconfiguration. The cause is not established."
             )
+        if is_exposure:
             claims.append(
-                "The Telecommunications (Telecom Cyber Security) Rules, 2024 "
-                "impose obligations on telecommunication entities in the event "
-                "of a telecom cybersecurity incident. Exact thresholds and "
-                "timelines require KB retrieval to confirm."
+                "The possible data exposure released in this chunk is a potential "
+                "security breach. Whether it resulted from unauthorised access is "
+                "not established."
             )
-            claims.append(
-                "The CERT-In Directions (28 April 2022, under Section 70B "
-                "IT Act 2000) establish reporting requirements for cyber incidents. "
-                "Applicability to this specific telecom event requires KB "
-                "verification of the defined incident categories."
-            )
-            obligations.extend([
-                "Report cyber incident to CERT-In within the prescribed timeline "
-                "(exact timeline requires KB retrieval — CERT-In Directions 2022).",
-                "Comply with Telecom Cyber Security Rules 2024 incident-handling "
-                "obligations applicable to this telecommunication entity.",
-                "Preserve logs and forensic evidence per incident-response requirements.",
-            ])
-            institutions.append("NCIIPC (if critical infrastructure is confirmed)")
-        else:
-            claims.append(
-                "Current chunk does not contain direct indicators of a cybersecurity "
-                "event. Assessment will be updated if security indicators emerge."
-            )
-            uncertainty_notes.append(
-                "Performance degradation alone is not classified as a cybersecurity "
-                "event at this stage. Monitoring for additional indicators."
-            )
+        if not (is_cyber_event or is_exposure):
+            if incident_state.get("cyber_event_suspected"):
+                claims.append(
+                    "A possible cybersecurity incident was identified in an earlier "
+                    "chunk; this chunk releases no new security indicators."
+                )
+            else:
+                claims.append(
+                    "Current chunk does not contain direct indicators of a cybersecurity "
+                    "event. Assessment will be updated if security indicators emerge."
+                )
+                uncertainty_notes.append(
+                    "Performance degradation alone is not classified as a cybersecurity "
+                    "event at this stage. Monitoring for additional indicators."
+                )
 
-        # Reference-only note for international frameworks
-        claims.append(
-            "[REFERENCE ONLY — not Indian law] NIST CSF 2.0 Detect/Respond "
-            "functions and NIST SP 800-61 Rev. 3 incident-response guidance "
-            "provide comparable international reference points for structuring "
-            "the incident response."
+        # What the instruments say — quoted from retrieved passages only.
+        # International frameworks are labelled per passage jurisdiction.
+        source_claims, citations = self._evidence_or_scope_claims(
+            evidence, self.INSTRUMENTS + self.REFERENCE_FRAMEWORKS,
         )
+        claims.extend(source_claims)
+        obligations = self._duty_passages(evidence)
+
+        if incident_state.get("cii_flagged"):
+            institutions.append("NCIIPC (if critical infrastructure is confirmed)")
 
         missing_facts.extend([
             "Whether the telecommunication entity has reported the anomaly to "
             "CERT-In or DoT is unknown.",
-            "Exact nature of the signalling anomaly (protocol, volume, source) "
+            "Exact nature of the security indicators (protocol, volume, source) "
             "has not been released.",
         ])
 
+        n_cited = len(citations)
         return AgentFinding(
             agent_id             = AgentID.CYBERSECURITY,
             chunk_id             = chunk.chunk_id,
             summary              = (
-                "Cybersecurity assessment: unusual authentication/signalling "
-                "activity warrants reclassification from performance event to "
-                "possible cyber incident. Indian reporting obligations under "
-                "Telecom Cyber Security Rules 2024 and CERT-In Directions 2022 "
-                "may be triggered. Exact thresholds require KB confirmation."
+                "Cybersecurity assessment: "
+                + ("possible cybersecurity incident indicated by the released facts. "
+                   if (is_cyber_event or is_exposure) else
+                   "no new security indicators in this chunk. ")
+                + (f"{n_cited} provision(s) quoted from the {self.kb.kb_name}."
+                   if n_cited else
+                   f"No provisions retrieved from the {self.kb.kb_name}; "
+                   "reporting obligations are not assessed.")
             ),
             claims               = claims,
             evidence             = evidence,
+            claim_citations      = citations,
             obligations          = obligations,
             responsible_institutions = institutions,
             uncertainty_notes    = uncertainty_notes,

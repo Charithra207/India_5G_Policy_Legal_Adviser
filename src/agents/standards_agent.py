@@ -54,16 +54,16 @@ class StandardsAgent(BaseAgent):
     ) -> list[str]:
         base = chunk.description
         queries = [
-            f"3GPP TS 23.501 network slice architecture service quality: {base}",
-            "3GPP TS 33.501 5G security authentication signalling procedures",
+            base,
+            "network slice isolation, quality of service and service level",
         ]
-        if any(w in base.lower() for w in ["authentication", "signalling", "suspicious"]):
-            queries.append(
-                "3GPP TS 33.501 security procedures 5G authentication anomaly "
-                "NIST SP 800-61 incident response"
-            )
+        if any(w in base.lower() for w in ["authentication", "signalling", "suspicious", "unusual"]):
+            queries.extend([
+                "primary authentication procedure and protection against signalling attacks",
+                "detecting and analysing a cybersecurity incident and responding to it",
+            ])
         if any(w in base.lower() for w in ["nfv", "virtualised", "orchestration"]):
-            queries.append("ETSI GR NFV-SEC 003 virtualised network function security")
+            queries.append("security and trust of virtualised network functions")
         return queries
 
     def _produce_finding(
@@ -74,59 +74,36 @@ class StandardsAgent(BaseAgent):
     ) -> AgentFinding:
         description = chunk.description.lower()
         uncertainty_notes = self._uncertainty_note_if_stub(evidence)
-        claims: list[str] = []
-        standards_compared: list[str] = []
         missing_facts: list[str] = []
 
         # ----------------------------------------------------------------
-        # 3GPP TS 23.501 — architecture reference
+        # Which reference standards are in scope for the released facts
+        # (DOCX §4.1 "Application in Proposed System" column)
         # ----------------------------------------------------------------
-        standards_compared.append("3GPP TS 23.501")
-        claims.append(
-            f"{_REF_LABEL} 3GPP TS 23.501 defines the 5G System architecture "
-            "including network slicing. Intermittent latency and session drops "
-            "in a private slice are consistent with service-quality degradation "
-            "scenarios addressed in the standard's slice management framework."
-        )
-
-        # ----------------------------------------------------------------
-        # 3GPP TS 33.501 — security reference (T1 onwards)
-        # ----------------------------------------------------------------
-        if any(w in description for w in ["authentication", "signalling", "suspicious", "unusual"]):
-            standards_compared.append("3GPP TS 33.501")
-            claims.append(
-                f"{_REF_LABEL} 3GPP TS 33.501 specifies security architecture "
-                "and procedures for the 5G System, including authentication "
-                "(5G-AKA, EAP-AKA') and protection of control-plane signalling. "
-                "Unusual authentication/signalling attempts are a pattern addressed "
-                "in this standard's threat model."
-            )
-
-        # ----------------------------------------------------------------
-        # NIST SP 800-61 Rev. 3 — incident response reference
-        # ----------------------------------------------------------------
+        in_scope = ["3GPP TS 23.501"]
+        if any(w in description for w in ["authentication", "signalling", "suspicious",
+                                           "unusual", "control-plane", "control plane"]):
+            in_scope.append("3GPP TS 33.501")
         if any(w in description for w in ["authentication", "signalling", "suspicious",
                                            "incident", "attack"]):
-            standards_compared.append("NIST SP 800-61 Rev. 3")
-            claims.append(
-                f"{_REF_LABEL} NIST SP 800-61 Rev. 3 (2025) provides incident-"
-                "response recommendations that are internationally recognised as "
-                "a reference point. The response lifecycle (Detection → Containment → "
-                "Eradication → Recovery → Post-incident) is applicable as a "
-                "comparative framework."
-            )
-
-        # ----------------------------------------------------------------
-        # ETSI GR NFV-SEC 003 — if virtualisation is indicated
-        # ----------------------------------------------------------------
+            in_scope.append("NIST SP 800-61 Rev. 3")
         if any(w in description for w in ["nfv", "virtual", "cloud", "orchestrat"]):
-            standards_compared.append("ETSI GR NFV-SEC 003")
-            claims.append(
-                f"{_REF_LABEL} ETSI GR NFV-SEC 003 V1.3.1 (2024-12) provides "
-                "security and trust guidance for virtualised network functions. "
-                "If the affected slice uses NFV/virtualised infrastructure, "
-                "this standard's threat categories are relevant as a reference."
-            )
+            in_scope.append("ETSI GR NFV-SEC 003")
+
+        # Content of the standards — quoted from retrieved passages only.
+        # Every claim carries the reference-only label (DOCX §4).
+        claims, quoted = self._evidence_or_scope_claims(
+            evidence,
+            [f"{std} ({self.STANDARDS[std]})" for std in in_scope],
+            label=f"{_REF_LABEL} ",
+        )
+        citations: dict[str, list[EvidenceItem]] = {}
+        labelled: list[str] = []
+        for claim in claims:
+            text = claim if claim.startswith("[REFERENCE ONLY") else f"{_REF_LABEL} {claim}"
+            labelled.append(text)
+            if claim in quoted:
+                citations[text] = quoted[claim]
 
         missing_facts.extend([
             "Exact version of 3GPP specifications implemented by the affected network.",
@@ -137,14 +114,15 @@ class StandardsAgent(BaseAgent):
             agent_id           = AgentID.STANDARDS,
             chunk_id           = chunk.chunk_id,
             summary            = (
-                "Standards assessment: 3GPP TS 23.501 and TS 33.501 are the "
-                "primary technical reference standards. NIST SP 800-61 Rev. 3 "
-                "provides incident-response reference guidance. All standards "
-                "are reference points only, not Indian law."
+                f"Standards assessment: in scope for comparison — {', '.join(in_scope)}. "
+                + (f"{len(citations)} passage(s) quoted. " if citations else
+                   "No passages retrieved; no comparison is made. ")
+                + "All standards are reference points only, not Indian law."
             ),
-            claims             = claims,
+            claims             = labelled,
             evidence           = evidence,
-            standards_compared = standards_compared,
+            claim_citations    = citations,
+            standards_compared = in_scope,
             uncertainty_notes  = uncertainty_notes,
             missing_facts      = missing_facts,
         )

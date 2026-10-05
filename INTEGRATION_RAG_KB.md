@@ -1,236 +1,215 @@
-# RAG / Knowledge Base Integration
+# RAG / Knowledge Base Layer
 
-**Project:** India 5G Policy & Legal Adviser  
-**Component:** RAG layer and domain knowledge bases  
-
----
-
-## Overview
-
-The pipeline runs end-to-end with stub knowledge bases.  This document
-describes how to replace the stubs with real vector-store retrieval.
-No pipeline code needs to change — only the KB registry.
+**Project:** India 5G Policy & Legal Adviser
+**Component:** specialist agents' knowledge bases, ingestion and retrieval (`src/rag/`)
+**Status:** implemented. 14 of the 16 sources listed in the DOCX are ingested; 2 are not (see [Not ingested](#not-ingested)).
 
 ---
 
-## The single integration contract
-
-Every agent calls exactly one method on its KB:
-
-```python
-kb.retrieve(query: str, top_k: int = 5, filters: dict | None = None) -> list[EvidenceItem]
-```
-
-The `EvidenceItem` dataclass (defined in `src/core/models.py`) is the
-data contract between the RAG layer and the rest of the pipeline:
-
-```python
-@dataclass
-class EvidenceItem:
-    source_title    : str        # e.g. "Telecommunications Act, 2023"
-    authority       : str        # e.g. "Government of India"
-    jurisdiction    : str        # e.g. "India" or "ITU"
-    document_type   : str        # "Act" | "Rule" | "Direction" | "Standard" | "Policy"
-    section         : str        # e.g. "Section 22" or "TS 33.501 §6.1"
-    excerpt         : str        # the verbatim or summarised passage
-    date_issued     : str        # ISO-8601, e.g. "2023-12-26"
-    effective       : bool       # True if currently in force
-    amendment_note  : str        # any known amendment affecting this passage
-    url             : str        # canonical URL for the source
-    chunk_id        : str        # your vector-store chunk ID
-    relevance_score : float      # 0.0–1.0 similarity score
-```
-
-Fill every field you can.  The Verifier uses:
-- `chunk_id` for deduplication
-- `authority` to detect stub evidence (skips items where `authority == "STUB"`)
-- `relevance_score` to filter weak matches (threshold 0.5 for Canonical KB)
-- `amendment_note` to flag `INCOMPLETE` outcomes
-
----
-
-## Step 1 — Subclass `KnowledgeBase` for each domain
-
-```python
-# src/knowledge_base/real_kbs.py  (create this file)
-
-from src.knowledge_base.base_kb import KnowledgeBase, CanonicalKnowledgeBase
-from src.core.models import EvidenceItem
-
-class TechnicalKB(KnowledgeBase):
-    def __init__(self, chroma_client, collection_name: str):
-        super().__init__(kb_name="Technical KB", domain="technical")
-        self.collection = chroma_client.get_collection(collection_name)
-
-    def retrieve(self, query: str, top_k: int = 5, filters=None) -> list[EvidenceItem]:
-        results = self.collection.query(query_texts=[query], n_results=top_k)
-        items = []
-        for i, doc in enumerate(results["documents"][0]):
-            meta = results["metadatas"][0][i]
-            items.append(EvidenceItem(
-                source_title    = meta.get("source_title", ""),
-                authority       = meta.get("authority", ""),
-                jurisdiction    = meta.get("jurisdiction", "India"),
-                document_type   = meta.get("document_type", ""),
-                section         = meta.get("section", ""),
-                excerpt         = doc,
-                date_issued     = meta.get("date_issued", ""),
-                effective       = meta.get("effective", True),
-                amendment_note  = meta.get("amendment_note", ""),
-                url             = meta.get("url", ""),
-                chunk_id        = results["ids"][0][i],
-                relevance_score = 1 - results["distances"][0][i],
-            ))
-        return items
-
-    def is_available(self) -> bool:
-        return True
-```
-
-Repeat for each of the 7 domain KBs.
-
-For the **Canonical KB**, subclass `CanonicalKnowledgeBase`:
-
-```python
-class RealCanonicalKB(CanonicalKnowledgeBase):
-    def __init__(self, chroma_client, collection_name: str):
-        super().__init__(kb_name="Canonical KB", domain="canonical")
-        self.collection = chroma_client.get_collection(collection_name)
-
-    def retrieve(self, query, top_k=5, filters=None) -> list[EvidenceItem]:
-        # same pattern as above
-        ...
-
-    def is_available(self) -> bool:
-        return True
-```
-
-The Canonical KB is used **exclusively by the Verifier** for independent
-claim verification.  It must be stored in a separate collection from the
-agent KBs (DOCX §7.2).
-
----
-
-## Step 2 — Register real KBs in `KBRegistry`
-
-Open `src/knowledge_base/kb_registry.py`.  Replace each `StubKnowledgeBase`
-with your real implementation.  The `AgentID` keys must not change.
-
-```python
-from src.knowledge_base.real_kbs import (
-    TechnicalKB, PolicyLegalKB, CybersecurityKB,
-    PrivacyKB, CriticalInfraKB, StandardsKB, PolicyGapKB,
-    RealCanonicalKB,
-)
-import chromadb
-
-class KBRegistry:
-    def __init__(self):
-        client = chromadb.HttpClient(host="localhost", port=8000)
-
-        self.canonical_kb = RealCanonicalKB(client, "canonical_kb")
-
-        self.agent_kbs = {
-            AgentID.TECHNICAL:      TechnicalKB(client, "technical_kb"),
-            AgentID.POLICY_LEGAL:   PolicyLegalKB(client, "policy_legal_kb"),
-            AgentID.CYBERSECURITY:  CybersecurityKB(client, "cybersecurity_kb"),
-            AgentID.PRIVACY:        PrivacyKB(client, "privacy_kb"),
-            AgentID.CRITICAL_INFRA: CriticalInfraKB(client, "critical_infra_kb"),
-            AgentID.STANDARDS:      StandardsKB(client, "standards_kb"),
-            AgentID.POLICY_GAP:     PolicyGapKB(client, "policy_gap_kb"),
-        }
-```
-
----
-
-## Step 3 — Document metadata schema
-
-Each chunk stored in the vector store must carry these metadata fields:
-
-| Field | Type | Required | Example |
-|---|---|---|---|
-| `source_title` | str | ✓ | "Telecommunications Act, 2023" |
-| `authority` | str | ✓ | "Government of India" |
-| `jurisdiction` | str | ✓ | "India" |
-| `document_type` | str | ✓ | "Act" |
-| `section` | str | ✓ | "Section 22(1)" |
-| `date_issued` | str | ✓ | "2023-12-26" |
-| `effective` | bool | ✓ | true |
-| `amendment_note` | str | optional | "Amended by Rule 7, 2025" |
-| `url` | str | ✓ | "https://indiacode.nic.in/..." |
-
----
-
-## Required document corpus per KB (DOCX §7.3)
-
-| KB | Documents |
-|---|---|
-| Technical KB | 3GPP TS 23.501, TS 33.501, ETSI GR NFV-SEC 003, 5G technical material |
-| Policy & Legal KB | Telecommunications Act 2023, TRAI Act 1997, NDCP-2018, DoT/TRAI directions |
-| Cybersecurity KB | Telecom Cyber Security Rules 2024, CERT-In Directions 2022, NCSP-2013 |
-| Privacy KB | DPDP Act 2023, DPDP Rules 2025 |
-| Critical Infra KB | IT (NCIIPC) Rules 2013, Telecom Act 2023 critical infra provisions |
-| Standards KB | ITU-T Y.3172, 3GPP TS 23.501/33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61 Rev.3 |
-| Policy Gap KB | Neighbouring-country comparative instruments, international policy examples |
-| Canonical KB | Authoritative copies of ALL of the above (separate collection) |
-
----
-
-## Step 4 — Verify integration
-
-After populating your KBs, run the pipeline tests:
+## Build and run
 
 ```powershell
-python -m pytest tests/test_pipeline.py -v
+pip install -r requirements.txt
+
+python -m src.rag.build            # ingest knowledge_base/sources → 8 vector stores (~6 min on CPU)
+python -m src.rag.retrieval_demo   # one retrieval test per agent → knowledge_base/retrieval_tests.md
+python -m pytest tests -v          # 72 tests; RAG integration tests skip if the stores are not built
 ```
 
-With real KBs active, Indian law claims should move from `UNSUPPORTED`
-to `VERIFIED` or `INCOMPLETE`.  Check KB status at any time:
+The downloaded source files (`knowledge_base/sources/raw/`), the built
+stores and the embedding-model cache are git-ignored. Re-download them from
+the URLs in `knowledge_base/sources/manifest.json`, then run the build.
+
+---
+
+## For Member 1: using the live knowledge bases
+
+The core pipeline does not change. Pass the live registry:
 
 ```python
-from src.knowledge_base.kb_registry import KBRegistry
-registry = KBRegistry()
-print(registry.status_report())
-# {'canonical': True, 'technical': True, 'policy_legal': True, ...}
+from src.pipeline import Pipeline
+from src.rag.registry import build_registry
+
+pipeline = Pipeline(build_registry())   # every agent gets its own KB; the Verifier gets the Canonical KB
+record   = pipeline.run_chunk(chunk)
 ```
 
----
+To run **one agent** on one chunk (scenario chunk + agent identity → finding):
 
-## How the Verifier uses your evidence
+```python
+from src.core.models import AgentID
+from src.rag.interface import run_agent
 
-The Verifier calls `canonical_kb.retrieve(claim, top_k=3)` for each claim:
+finding = run_agent(AgentID.CYBERSECURITY, chunk, incident_state=None)
+finding.claims            # what the agent says
+finding.claim_citations   # claim → the passages it quotes (source, section, page, date, URL)
+finding.evidence          # every passage retrieved, in retrieval order
+finding.uncertainty_notes, finding.missing_facts
+```
 
-1. `relevance_score > 0.5` and no amendment note → **VERIFIED**
-2. `relevance_score > 0.5` and amendment note present → **INCOMPLETE**
-3. No passage with `relevance_score > 0.5` → **UNSUPPORTED**
-
----
-
-## What NOT to change
-
-Do not modify:
-
-- `src/core/models.py` — `EvidenceItem` field names are the data contract
-- `src/core/verifier.py` — verification logic
-- `src/core/orchestrator.py` — agent selection and incident state
-- `src/agents/*.py` — agent mandate logic
-- `src/knowledge_base/base_kb.py` — the abstract interface
-
-Only modify:
-
-- `src/knowledge_base/kb_registry.py` — swap in real KB instances
-- `src/knowledge_base/real_kbs.py` — your new file with real implementations
+`build_registry()` falls back to the core's stub for any KB whose store is
+missing, so the pipeline still runs; it then reports "no passage retrieved"
+rather than pretending.
 
 ---
 
-## Integration checklist
+## Pipeline (DOCX §4.3 / §7.4)
 
-- [ ] All 7 domain KBs populated; `is_available()` returns `True`
-- [ ] Canonical KB populated separately with authoritative copies
-- [ ] `EvidenceItem.chunk_id` set to a real vector-store ID (not `"stub-000"`)
-- [ ] `EvidenceItem.authority` is never `"STUB"`
-- [ ] `EvidenceItem.relevance_score` populated from actual similarity scores
-- [ ] `EvidenceItem.amendment_note` populated where known amendments exist
-- [ ] `python -m pytest tests/test_pipeline.py -v` passes after integration
-- [ ] At least one claim per agent upgrades from `UNSUPPORTED` to `VERIFIED`
-- [ ] KB manifest recorded (title, authority, URL, chunk count, vector index, embedding model)
+| DOCX stage | Implementation | File |
+|---|---|---|
+| Source | Curated source manifest + official files | `knowledge_base/sources/manifest.json` |
+| Collection / extraction | PDF text layer with page numbers (PyMuPDF); 3GPP `.docx` paragraphs and heading styles; English pages only for bilingual Gazette copies | `src/rag/extract.py` |
+| Preprocessing / cleaning | Running headers, footers and page numbers removed; hyphenation re-joined | `src/rag/sections.py` |
+| Chunking | Within one detected section; ≤ 1,200 characters, 150 overlap | `src/rag/sections.py` |
+| Metadata | Every passage carries the full provenance below | `src/rag/build.py` |
+| Embedding | `BAAI/bge-small-en-v1.5` (fastembed, ONNX, CPU, 384-d, L2-normalised) | `src/rag/embedding.py` |
+| Vector store | One directory per KB: `chunks.jsonl` + `vectors.npy` + `index.json` | `src/rag/vector_store.py` |
+| Retrieval | Cosine top-k within the agent's own KB; exact source/section lookups for the Verifier | `src/rag/vector_kb.py` |
+| Policy | Canonical KB, used by the Verifier and (read-only) the Policy Gap Agent | `src/core/verifier.py` |
+| Distribution | Coordinator assessment | `src/core/coordinator.py` |
+| Sandbox | **Not executed.** The ITU AI for Good Sandbox is not available in this environment | — |
+
+No generative model is used. Agents quote the passages they retrieve; they
+do not paraphrase, and they do not answer from model knowledge.
+
+---
+
+## The 8 knowledge bases
+
+Each agent KB is a separate store, so **retrieval is restricted to the
+agent's own corpus by construction** (DOCX §3.4). The assignments follow the
+DOCX; each document's `kb_basis` field in the manifest cites the section.
+
+| KB (directory) | Documents | Passages |
+|---|---|---|
+| Technical (`technical/`) | 3GPP TS 23.501, TS 33.501 | 3,739 |
+| Indian Legal/Regulatory (`policy_legal/`) | Telecommunications Act 2023, TRAI Act 1997, NDCP-2018, NCSP-2013 | 274 |
+| Cybersecurity (`cybersecurity/`) | Telecom Cyber Security Rules 2024, CERT-In Directions 2022, NCSP-2013, NDCP-2018; reference: 3GPP TS 33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 1,675 |
+| Privacy (`privacy/`) | DPDP Act 2023, DPDP Rules 2025 | 159 |
+| Critical Infrastructure (`critical_infrastructure/`) | Telecommunications Act 2023 (**NCIIPC Rules 2013 not ingested**) | 105 |
+| International Standards (`standards/`) | ITU-T Y.3172, 3GPP TS 23.501, TS 33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 4,259 |
+| Policy Gap (`policy_gap/`) | TRAI AI & Big Data Recommendations 2023, NCSP-2013, NDCP-2018 (**no international policy examples yet**) | 459 |
+| Canonical (`canonical/`) | All 14 ingested authoritative sources, except the TRAI recommendations, which are not law | 4,744 |
+
+Open searches skip boilerplate sections (front matter, forewords, reference
+and abbreviation lists). Exact section lookups still find them.
+
+---
+
+## Passage metadata (`EvidenceItem`)
+
+| Field | Meaning | Source of the value |
+|---|---|---|
+| `source_title`, `authority`, `jurisdiction`, `document_type` | What the document is | Manifest |
+| `section`, `section_title` | Citation label and printed heading | Detected from the document's own headings or PDF bookmarks |
+| `page` | Page(s) of the source file | Extraction |
+| `excerpt` | The passage text, verbatim after whitespace clean-up | Extraction |
+| `date_issued` | Date as printed in the document | Manifest, **kept only if found verbatim in the text** |
+| `effective` | `None` = in-force status **not verified** | Not checked for any source |
+| `amendment_checked` / `amendment_note` | `False` / empty: later amendments **not checked** | Not checked for any source |
+| `related_documents`, `institutions`, `domains` | As stated by the document | Manifest |
+| `url`, `provenance_note` | Where the copy came from, with any caveat | Manifest |
+| `chunk_id`, `relevance_score` | Store ID; cosine similarity | Build / retrieval |
+
+**Consequence:** because in-force status and amendments are unchecked, the
+Verifier rates a claim fully supported by its cited text as **INCOMPLETE,
+never VERIFIED**. To allow VERIFIED for a source, someone must check its
+commencement and amendment history. Record that in the manifest, and set
+`effective`/`amendment_checked` in `src/rag/build.py` from it; do not set
+them by default.
+
+### Section labels
+
+Labels come only from headings printed in the document: "Section 22" (Acts),
+"Rule 7" (Rules), "Direction (ii)" / "Annexure I" (CERT-In), "Part IV G"
+(NCSP-2013), "Para 3.12" (TRAI recommendations), "Clause 5.15.1" (3GPP Word
+headings), and PDF bookmarks (ITU, ETSI, NIST). Text before the first heading
+is labelled by page ("p. 2"); no section number is ever inferred.
+`ingestion_manifest.json` records, per document, how many sections are
+page-only and how many PDF bookmarks could not be located. For example, 31
+of ETSI's 189 bookmarks are "x.y.0 General" sub-clauses; their text stays
+under the parent clause.
+
+---
+
+## Source manifest and safeguards
+
+- `knowledge_base/sources/manifest.json`: the curated record of every
+  source, including the 2 that are not ingested and the URLs tried.
+- `knowledge_base/ingestion_manifest.json`: generated by the build. Records
+  what was actually ingested: SHA-256, chunk counts, dates confirmed in the
+  text, embedding model, and passage counts per KB.
+
+The build **refuses** a file whose `title_evidence` is not in its extracted
+text. This rejected a DoT PDF that search results described as the Telecom
+Cyber Security Rules; it was an allocation-of-business document.
+
+Provenance caveats recorded in the manifest:
+
+| Source | Caveat |
+|---|---|
+| TRAI Act 1997 | Taken from TDSAT's "bare acts" compilation, pages 7–52, marked "[AMENDED]"; consolidation date not stated. TRAI's own PDF is a scan with no text; India Code returned HTTP 504 |
+| NDCP-2018 | Copy on the Government S3WaaS platform; the dot.gov.in viewer gave no downloadable file |
+| Telecom Cyber Security Rules 2024 | Gazette G.S.R. 720(E) copy on thc.nic.in; the dot.gov.in link returned 404. Amendments not checked |
+| 3GPP TS 23.501 / 33.501 | Latest Release 19 versions on 2026-10-05 (V19.9.0, V19.7.0); the DOCX fixes no version. Tables and figures not ingested |
+
+### Not ingested
+
+| Source | Why | Effect |
+|---|---|---|
+| IT (NCIIPC) Rules, 2013 | India Code returned HTTP 504 three times; nciipc.gov.in did not respond | The Critical Infrastructure KB holds only the Telecommunications Act, 2023 |
+| International policy examples | The DOCX says the exact instruments "must be added to final manifest" and names none | The Policy Gap Agent has no international comparator from its own KB; it uses the Standards KB |
+
+To add a source: download it to `knowledge_base/sources/raw/`, add a
+manifest entry (with `title_evidence`, `date_evidence`, `kbs`, `kb_basis`,
+`section_style`), and run the build.
+
+---
+
+## How the Verifier uses the evidence
+
+Agents never state what a law or standard says from memory: each such claim
+quotes a passage retrieved from the agent's own KB and records it in
+`AgentFinding.claim_citations`. For each claim the Verifier then:
+
+**Cited claim:** looks up the cited source and section in the Canonical KB
+(`filters={"source_title": ..., "section": ...}`):
+
+| Canonical KB result | Outcome |
+|---|---|
+| Cited source/section not found | UNSUPPORTED |
+| Found, but the text does not support the claim | UNSUPPORTED |
+| Supports, but `effective is False` | UNSUPPORTED |
+| Supports, but in-force status or amendments unchecked | INCOMPLETE |
+| Supports, `amendment_note` present | INCOMPLETE |
+| Supports, in force, amendments checked, none recorded | **VERIFIED** |
+
+**Uncited claim** (an agent's reading of the incident facts): the same
+checks against `canonical_kb.retrieve(claim, top_k=5)`.
+
+**Policy Gap examination** ("Potential gap — …", "Coverage check — …"):
+every passage it relies on must exist in the Canonical KB. Then it is at
+most INCOMPLETE, because a potential gap is for expert review. Absence
+claims ("no Indian passage mentions network slicing") use
+`CanonicalKnowledgeBase.scan()`, which examines every Indian passage rather
+than a top-k sample.
+
+"Supports" is decided by `LexicalSupportJudge` (≥ 60 % of the claim's
+content terms occur in the passage). A stronger judge, e.g. an LLM
+entailment check, can be passed as `Verifier(canonical_kb, support_judge=...)`.
+
+---
+
+## Retrieval tests
+
+`python -m src.rag.retrieval_demo` runs Scenario 2 through the full pipeline
+and writes `knowledge_base/retrieval_tests.md`. For each of the 7 agents it
+shows the query, retrieved passage, source, section, page, why it matched,
+and the agent's structured output with verifier outcomes. "Why it matched" is
+computed: the query that returned the passage, its cosine similarity, and
+the query terms that occur in it. Whether a passage *supports* a claim is
+shown only by the verifier outcome.
+
+Similarity scores from bge-small cluster at 0.67–0.85 for these queries,
+relevant or not. The 0.6 cut-off removes clear noise only; it is not a
+relevance judgement.
