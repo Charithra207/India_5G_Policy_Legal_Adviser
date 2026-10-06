@@ -14,11 +14,9 @@ is immediately visible.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict
-from datetime import datetime, timezone
 
 from src.core.models import (
-    AuditRecord, CoordinatorAssessment, VerifierOutcome, VerifierResult,
+    AuditRecord, VerifierOutcome, VerifierResult,
 )
 
 
@@ -43,7 +41,7 @@ def format_audit_record(record: AuditRecord, include_raw_findings: bool = False)
     lines.append(f"Chunk ID   : {record.chunk_id}")
     lines.append(f"Timestamp  : {record.timestamp}")
     lines.append(
-        f"Active Agents: "
+        "Active Agents: "
         + ", ".join(a.value for a in record.active_agents)
     )
     lines.append("")

@@ -519,9 +519,7 @@ def test_standards_reference_label_does_not_confer_verified() -> None:
 
 if __name__ == "__main__":
     import traceback
-    from src.utils.output_formatter import (
-        format_audit_record, save_assessment_text, save_audit_json,
-    )
+    from src.utils.output_formatter import save_assessment_text, save_audit_json
 
     TESTS = [
         # T0
