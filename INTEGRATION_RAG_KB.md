@@ -11,10 +11,29 @@
 ```powershell
 pip install -r requirements.txt
 
-python -m src.rag.build            # ingest knowledge_base/sources → 8 vector stores (~6 min on CPU)
-python -m src.rag.retrieval_demo   # one retrieval test per agent → knowledge_base/retrieval_tests.md
-python -m pytest tests -v          # 72 tests; RAG integration tests skip if the stores are not built
+python -m src.rag.build              # ingest knowledge_base/sources → 8 vector stores (~6–12 min on CPU)
+python -m src.rag.retrieval_demo     # one retrieval test per agent → knowledge_base/retrieval_tests.md
+python -m src.rag.retrieval_quality  # labelled queries, all 7 agents → knowledge_base/retrieval_quality.md
+python -m src.scenario.run --run-id <id>   # record a full run (used by the foundation artefacts)
+python -m src.rag.foundation --run outputs/audit/<id>.jsonl   # regenerate the artefacts below
+python -m pytest tests -v            # live-KB tests skip if the stores are not built
 ```
+
+### Knowledge-foundation artefacts (generated — do not edit by hand)
+
+`python -m src.rag.foundation` writes these from the manifests, the built
+stores, a recorded run and the DOCX tables. Every quotation is located in a
+stored passage and every cited file must exist, or generation fails; DOCX
+tables are reproduced verbatim; values not obtained are written as such.
+
+| File | DOCX | Contents |
+|---|---|---|
+| `knowledge_base/source_manifest.json` | §7.2 final KB manifest | Per document: title, authority, jurisdiction, type, date, effective status, section information, amendment status, URL, licence statement quoted from the document (or "not stated"), open-access note, SHA-256, chunk count, vector index per KB, embedding and generator model |
+| `knowledge_base/canonical/canonical_metadata.json` | §7.2 | The §7.2 metadata fields per document; whether it is in the Canonical KB |
+| `knowledge_base/host_country_corpus.json` | §7.3 | The ten corpus categories (verbatim), sources obtained, coverage status, institutional-mandate passages |
+| `knowledge_base/policy_gap/policy_gap_categories.json` | §5.1 | Six coverage categories (DOCX meanings verbatim), how the agent examines each, the agent's actual output in the recorded run, gap-vs-"no law" rule |
+| `knowledge_base/y3172_pipeline_traceability.json` | §4.3 | Each Y.3172 stage: its definition quoted from the ingested Recommendation, the components that perform it, and one quoted provision traced through it |
+| `knowledge_base/itu_ai_readiness_mapping.json` | §5.2 | The DOCX's eight readiness perspectives (verbatim) with corpus passages and project artefacts as evidence; no score |
 
 The downloaded source files (`knowledge_base/sources/raw/`), the built
 stores and the embedding-model cache are git-ignored. Re-download them from
@@ -89,7 +108,7 @@ DOCX; each document's `kb_basis` field in the manifest cites the section.
 | Critical Infrastructure (`critical_infrastructure/`) | Telecommunications Act 2023 (**NCIIPC Rules 2013 not ingested**) | 105 |
 | International Standards (`standards/`) | ITU-T Y.3172, 3GPP TS 23.501, TS 33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 4,259 |
 | Policy Gap (`policy_gap/`) | TRAI AI & Big Data Recommendations 2023, NCSP-2013, NDCP-2018 (**no international policy examples yet**) | 459 |
-| Canonical (`canonical/`) | All 14 ingested authoritative sources, except the TRAI recommendations, which are not law | 4,744 |
+| Canonical (`canonical/`) | All 14 ingested sources — the common reference beneath every agent KB (DOCX §7.2) | see `source_manifest.json` |
 
 Open searches skip boilerplate sections (front matter, forewords, reference
 and abbreviation lists). Exact section lookups still find them.

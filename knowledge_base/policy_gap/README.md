@@ -92,5 +92,9 @@ Files: `chunks.jsonl`, `vectors.npy`, `index.json`.
 
 ## Important Limitations
 - International comparators are absent; this is explicitly recorded.
-- TRAI recommendations are not law; the agent labels them accordingly.
+- TRAI recommendations are not law. They are in the Canonical KB (so claims
+  citing them can be checked), but gap examinations scan only the Indian legal
+  and policy instruments; where a technology is named only in the
+  recommendations, the gap says so ("named only in recommendations to
+  Government, which are not law").
 - In-force and amendment status are not verified for any passage.

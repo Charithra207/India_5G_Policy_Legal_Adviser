@@ -52,7 +52,7 @@ every agent KB, so the Verifier can independently confirm any citation.
 agent-specific KBs and is used only by the Verifier and the Policy Gap Agent.
 
 ## Chunk Statistics (from `ingestion_manifest.json`)
-- **Total chunks:** 4,744 (all documents combined)
+- **Total chunks:** 5,112 (all 15 ingested documents, including the TRAI recommendations, which are labelled as recommendations, not law)
 
 ## Embedding Model
 `BAAI/bge-small-en-v1.5` (fastembed, ONNX, CPU, 384 dimensions).

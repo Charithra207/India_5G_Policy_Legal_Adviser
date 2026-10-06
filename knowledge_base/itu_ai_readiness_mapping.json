@@ -1,291 +1,288 @@
 {
   "_about": [
-    "ITU AI Readiness mapping (DOCX Task 7).",
-    "Maps the ITU AI Readiness framework dimensions to actual evidence from",
-    "the project corpus. Evidence is drawn only from ingested sources.",
-    "",
-    "IMPORTANT — NO FABRICATION POLICY:",
-    "  - No quantitative readiness scores are assigned.",
-    "  - No unsupported maturity levels are claimed.",
-    "  - No compliance claims are made that the evidence does not support.",
-    "  - Where evidence is unavailable in the ingested corpus, the dimension",
-    "    is explicitly marked as 'evidence unavailable in corpus'.",
-    "  - All source citations reference actual ingested documents with their",
-    "    document IDs, chunk IDs, and sections as recorded in the KB.",
-    "",
-    "ITU AI Readiness Assessment reference framework dimensions are based on",
-    "publicly available ITU resources. This mapping is for project evidence",
-    "purposes only and does not constitute a formal ITU readiness assessment."
+    "ITU AI Readiness mapping (DOCX §5.2 and §5.1 mapping 13). The eight perspectives,",
+    "project mappings and evidence/status texts are the DOCX table verbatim; evidence",
+    "items are corpus passages located in the stores or project files that exist."
   ],
-  "schema_version": "1.0",
-  "assessment_date": "2026-10-05",
-  "country": "India",
-  "scope": "5G network deployment and AI-enabled telecommunications governance",
-  "methodology_disclaimer": "This is an evidence mapping, not a formal ITU AI Readiness Assessment. No readiness score or maturity level is assigned. Formal assessment requires qualified evaluators and comprehensive data beyond this corpus.",
+  "schema_version": "2.0",
+  "docx_section": "§5.2",
+  "generated_by": "python -m src.rag.foundation",
+  "methodology_disclaimer": "This is an evidence mapping, not a formal ITU AI Readiness assessment and not ITU certification. No score or maturity level is assigned.",
+  "recorded_run": "outputs/audit/day2_scenario2_full_T0_T3.jsonl",
   "dimensions": [
     {
       "dimension_id": "D1",
-      "dimension_name": "Government strategy and vision",
-      "description": "National AI strategy, digital transformation plans, government commitment to AI governance.",
-      "evidence_status": "PARTIAL EVIDENCE AVAILABLE",
+      "dimension_name": "Open data and open-source management",
+      "docx_project_mapping": "Uses published/open Indian legal, regulatory and standards material and is designed for a source-linked open package.",
+      "docx_evidence_status": "Repository/KB URLs were not supplied; insert actual public links before submission.",
       "evidence_items": [
         {
-          "claim": "India has a National Digital Communications Policy (2018) that sets connectivity and digital infrastructure goals including 5G.",
-          "source_id": "ndcp_2018",
-          "source_title": "National Digital Communications Policy 2018",
-          "authority": "Government of India (DoT)",
-          "section": "Para 1 (Vision and Mission)",
-          "evidence_type": "Policy document",
-          "jurisdiction": "India",
-          "caveat": "Policy document, not legally binding legislation. Specific 5G-readiness targets must be verified against current DoT publications."
+          "evidence_type": "project artefact",
+          "claim": "15 source documents were downloaded from public URLs without login; each is recorded with URL, SHA-256 and provenance.",
+          "files": [
+            "knowledge_base/source_manifest.json"
+          ]
         },
         {
-          "claim": "TRAI has issued recommendations on AI and Big Data for the telecommunications sector (July 2023), signalling regulatory attention to AI-enabled 5G.",
-          "source_id": "trai_ai_bigdata_recs_2023",
-          "source_title": "TRAI Recommendations on Leveraging AI and Big Data in Telecommunication Sector",
-          "authority": "TRAI",
-          "section": "Para 1.1 (Introduction)",
-          "evidence_type": "Recommendations",
-          "jurisdiction": "India",
-          "caveat": "Recommendations to Government, not enacted law. The degree of Government uptake is not confirmed in the ingested corpus."
+          "evidence_type": "project artefact",
+          "claim": "5 documents carry a licence/copyright statement in their ingested text, quoted in the manifest; for the others none was found in the ingested text.",
+          "files": [
+            "knowledge_base/source_manifest.json"
+          ]
+        },
+        {
+          "evidence_type": "project artefact",
+          "claim": "The KB build is reproducible from the manifest; downloaded files and stores are not redistributed in the repository.",
+          "files": [
+            "src/rag/build.py",
+            ".gitignore"
+          ]
         }
       ],
       "evidence_unavailable": [
-        "IndiaAI Mission 2024 documentation not ingested",
-        "NITI Aayog National Strategy for AI (2018) not ingested",
-        "Specific AI-readiness targets or KPIs from Government sources not in corpus"
+        "Public repository and KB URLs for the submission (DOCX placeholders) are not recorded in the corpus.",
+        "Licence terms were not determined for documents whose ingested text carries no statement."
       ]
     },
     {
       "dimension_id": "D2",
-      "dimension_name": "ICT infrastructure",
-      "description": "Telecommunications infrastructure quality, 5G deployment status, connectivity.",
-      "evidence_status": "INDIRECT EVIDENCE ONLY",
+      "dimension_name": "Generative AI content ecosystem",
+      "docx_project_mapping": "Generative AI synthesizes verified multi-domain findings while preserving citations and uncertainty.",
+      "docx_evidence_status": "Addressed architecturally; exact generator model name must be added.",
       "evidence_items": [
         {
-          "claim": "India has a national telecommunications regulatory framework under the Telecommunications Act 2023, which provides the legal basis for 5G spectrum assignment and authorisation.",
-          "source_id": "telecom_act_2023",
-          "source_title": "The Telecommunications Act, 2023",
-          "authority": "Government of India",
-          "section": "Section 3 (Authorisation), Section 4 (Spectrum assignment)",
-          "evidence_type": "Act",
-          "jurisdiction": "India",
-          "caveat": "The Act establishes the regulatory framework; it does not contain deployment statistics or infrastructure readiness data."
+          "evidence_type": "project artefact",
+          "claim": "No generative model is used: agents quote retrieved passages and the Coordinator organises verified claims; generator_model is recorded as 'none'.",
+          "files": [
+            "knowledge_base/ingestion_manifest.json",
+            "src/agents/base_agent.py"
+          ]
         }
       ],
       "evidence_unavailable": [
-        "5G deployment coverage or penetration statistics not in corpus",
-        "Spectrum auction outcomes not in corpus",
-        "Infrastructure quality metrics not in corpus"
+        "No generator model name exists to record, because none is used."
       ]
     },
     {
       "dimension_id": "D3",
-      "dimension_name": "Legal and regulatory framework",
-      "description": "Existence and quality of laws governing AI, data protection, cybersecurity, and digital services.",
-      "evidence_status": "STRONG EVIDENCE AVAILABLE",
+      "dimension_name": "Contextualization of AI solutions and regional development",
+      "docx_project_mapping": "India-specific legal, regulatory and institutional context with a regional comparison layer.",
+      "docx_evidence_status": "Addressed in scope; neighbouring-country corpus should be included in the final Policy Gap KB.",
       "evidence_items": [
         {
-          "claim": "India enacted the Digital Personal Data Protection Act 2023 (Act No. 22 of 2023), establishing a personal data protection framework including breach notification obligations.",
-          "source_id": "dpdp_act_2023",
-          "source_title": "The Digital Personal Data Protection Act, 2023",
-          "authority": "Government of India",
-          "section": "Section 8(6) (personal data breach intimation)",
-          "evidence_type": "Act",
-          "jurisdiction": "India",
-          "caveat": "Commencement of individual provisions notified separately and not verified. Effective status: not verified."
-        },
-        {
-          "claim": "India enacted the Digital Personal Data Protection Rules 2025 (G.S.R. 846(E)) implementing the DPDP Act, including breach intimation procedures.",
-          "source_id": "dpdp_rules_2025",
-          "source_title": "Digital Personal Data Protection Rules, 2025",
-          "authority": "Government of India (MeitY)",
-          "section": "Rule 7 (intimation of personal data breach)",
-          "evidence_type": "Rules",
-          "jurisdiction": "India",
-          "caveat": "Phase-wise commencement; phase applicability per rule not checked."
-        },
-        {
-          "claim": "India enacted the Telecommunications (Telecom Cyber Security) Rules 2024 (G.S.R. 720(E)) requiring mandatory security incident reporting within 6 hours.",
-          "source_id": "telecom_cyber_security_rules_2024",
-          "source_title": "Telecommunications (Telecom Cyber Security) Rules, 2024",
-          "authority": "Government of India (DoT)",
-          "section": "Rule 7 (reporting of security incidents)",
-          "evidence_type": "Rules",
-          "jurisdiction": "India",
-          "caveat": "Effective status not verified; amendments not checked."
-        },
-        {
-          "claim": "India established CERT-In with mandatory incident reporting obligations for service providers under IT Act 2000 section 70B (Directions, April 2022).",
-          "source_id": "certin_directions_2022",
-          "source_title": "CERT-In Directions under s.70B of IT Act 2000",
-          "authority": "CERT-In, MeitY",
-          "section": "Direction (ii) (6-hour reporting)",
-          "evidence_type": "Direction",
-          "jurisdiction": "India",
-          "caveat": "A later clarification notice (27 June 2022) exists and was not ingested."
-        },
-        {
-          "claim": "India enacted the Telecommunications Act 2023, replacing the Indian Telegraph Act 1885 and establishing a modern telecommunications legal framework.",
+          "evidence_type": "corpus passage",
+          "claim": "Telecom authorisation by the Central Government.",
           "source_id": "telecom_act_2023",
           "source_title": "The Telecommunications Act, 2023",
-          "authority": "Government of India",
-          "section": "Section 1 (Short title, extent and commencement)",
-          "evidence_type": "Act",
+          "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
           "jurisdiction": "India",
-          "caveat": "Commencement of individual sections notified separately and not verified."
+          "document_type": "Act",
+          "section": "Section 3",
+          "section_title": "",
+          "page": "3-4",
+          "chunk_id": "telecom_act_2023:section-3:1",
+          "knowledge_bases": [
+            "canonical",
+            "critical_infrastructure",
+            "policy_legal"
+          ],
+          "quote": "…son intending to— (a) provide telecommunication services; (b) establish, operate, maintain or expand telecommunication network; or (c) possess radio equipment, shall obtain an authorisation from the Central Government, subject to such terms and conditions, including fees or charges, as may be prescribed. (2) The Central Government may while making rules under sub-section (1)…"
+        },
+        {
+          "evidence_type": "corpus passage",
+          "claim": "Six-hour security-incident reporting by telecommunication entities.",
+          "source_id": "telecom_cyber_security_rules_2024",
+          "source_title": "Telecommunications (Telecom Cyber Security) Rules, 2024",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "jurisdiction": "India",
+          "document_type": "Rules",
+          "section": "Rule 7",
+          "section_title": "Reporting of security incidents",
+          "page": "5-6",
+          "chunk_id": "telecom_cyber_security_rules_2024:rule-7:1",
+          "knowledge_bases": [
+            "canonical",
+            "cybersecurity"
+          ],
+          "quote": "7. Reporting of security incidents. — (1) The telecommunication entity shall– (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with r…"
+        },
+        {
+          "evidence_type": "corpus passage",
+          "claim": "Cyber-incident reporting to CERT-In.",
+          "source_id": "certin_directions_2022",
+          "source_title": "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022)",
+          "authority": "Indian Computer Emergency Response Team (CERT-In), Ministry of Electronics and Information Technology",
+          "jurisdiction": "India",
+          "document_type": "Direction",
+          "section": "Direction (ii)",
+          "section_title": "Any service provider, intermediary, data centre, body corporate and",
+          "page": "2",
+          "chunk_id": "certin_directions_2022:direction-ii:1",
+          "knowledge_bases": [
+            "canonical",
+            "cybersecurity"
+          ],
+          "quote": "(ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported …"
+        },
+        {
+          "evidence_type": "corpus passage",
+          "claim": "Personal-data breach intimation by a Data Fiduciary.",
+          "source_id": "dpdp_rules_2025",
+          "source_title": "Digital Personal Data Protection Rules, 2025",
+          "authority": "Government of India (Ministry of Electronics and Information Technology)",
+          "jurisdiction": "India",
+          "document_type": "Rules",
+          "section": "Rule 7",
+          "section_title": "Intimation of personal data breach",
+          "page": "26",
+          "chunk_id": "dpdp_rules_2025:rule-7:1",
+          "knowledge_bases": [
+            "canonical",
+            "privacy"
+          ],
+          "quote": "7. Intimation of personal data breach. — (1) On becoming aware of any personal data breach, the Data Fiduciary shall, to the best of its knowledge, intimate to each affected Data Principal, in a co…"
         }
       ],
       "evidence_unavailable": [
-        "IT Act 2000 not separately ingested (parent of CERT-In Directions)",
-        "NCIIPC Rules 2013 NOT INGESTED (CII designation criteria unavailable)",
-        "AI-specific regulatory framework: no dedicated AI liability or AI governance Act in corpus"
+        "No neighbouring-country or regional comparator instrument was obtained."
       ]
     },
     {
       "dimension_id": "D4",
-      "dimension_name": "Ethical and trustworthy AI",
-      "description": "Policies, guidelines, and frameworks ensuring ethical, fair, and trustworthy deployment of AI systems.",
-      "evidence_status": "PARTIAL EVIDENCE AVAILABLE",
+      "dimension_name": "AI integration in domains and cross-domain analysis",
+      "docx_project_mapping": "Seven specialist agents cover technical, legal/policy, cyber, privacy, critical infrastructure, standards and policy gaps; Verifier checks cross-domain effects.",
+      "docx_evidence_status": "Addressed at workflow level.",
       "evidence_items": [
         {
-          "claim": "TRAI (2023) recommended algorithmic accountability and transparency frameworks for AI use in telecommunications, indicating regulatory attention to AI ethics in telecom.",
-          "source_id": "trai_ai_bigdata_recs_2023",
-          "source_title": "TRAI Recommendations on Leveraging AI and Big Data in Telecommunication Sector",
-          "authority": "TRAI",
-          "section": "Para (Recommendations on AI governance)",
-          "evidence_type": "Recommendations",
-          "jurisdiction": "India",
-          "caveat": "Recommendations only, not enacted. Specific algorithmic accountability obligations do not yet have statutory force based on the ingested corpus."
+          "evidence_type": "project artefact",
+          "claim": "Seven agent KBs plus the Canonical KB: technical 3739, policy_legal 274, cybersecurity 1675, privacy 159, critical_infrastructure 105, standards 4259, policy_gap 459, canonical 5112 passages.",
+          "files": [
+            "knowledge_base/source_manifest.json"
+          ]
+        },
+        {
+          "evidence_type": "project artefact",
+          "claim": "Cross-domain links established from evidence in the recorded run: instrument basis 10, parallel reporting 4, shared provision 8.",
+          "files": [
+            "outputs/audit/day2_scenario2_full_T0_T3.jsonl",
+            "src/core/cross_domain.py"
+          ]
         }
       ],
       "evidence_unavailable": [
-        "No dedicated AI ethics policy or AI governance Act in ingested corpus",
-        "IndiaAI Mission ethical AI framework not ingested",
-        "MeitY AI governance papers not ingested"
+        "No empirical evaluation of cross-domain accuracy by domain experts."
       ]
     },
     {
       "dimension_id": "D5",
-      "dimension_name": "Cybersecurity capabilities",
-      "description": "National cybersecurity posture, incident response capabilities, and security standards compliance.",
-      "evidence_status": "EVIDENCE AVAILABLE",
+      "dimension_name": "Human interaction and supervision",
+      "docx_project_mapping": "Decision support only; legal interpretation and final institutional decisions remain with qualified humans.",
+      "docx_evidence_status": "Addressed by design; formal human-evaluation scores are not claimed.",
       "evidence_items": [
         {
-          "claim": "India established NCIIPC as the national body for critical information infrastructure protection and CERT-In for cyber incident response, as evidenced in the National Cyber Security Policy 2013.",
-          "source_id": "ncsp_2013",
-          "source_title": "National Cyber Security Policy - 2013",
-          "authority": "Government of India (DEITY)",
-          "section": "Part IV (Institutional Mechanisms)",
-          "evidence_type": "Policy",
-          "jurisdiction": "India",
-          "caveat": "2013 policy document; institutional developments since 2013 are not reflected in this source alone."
+          "evidence_type": "project artefact",
+          "claim": "Every assessment carries the human-review notice: \"Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.\"",
+          "files": [
+            "outputs/audit/day2_scenario2_full_T0_T3.jsonl",
+            "src/core/models.py"
+          ]
         },
         {
-          "claim": "India's Telecom Cyber Security Rules 2024 mandate security measures, audits, and incident reporting for telecom entities, aligned with international practice.",
-          "source_id": "telecom_cyber_security_rules_2024",
-          "source_title": "Telecommunications (Telecom Cyber Security) Rules, 2024",
-          "authority": "Government of India (DoT)",
-          "section": "Rule 4 (security measures), Rule 7 (incident reporting), Rule 8 (security audit)",
-          "evidence_type": "Rules",
-          "jurisdiction": "India",
-          "caveat": "Effective status not verified."
+          "evidence_type": "project artefact",
+          "claim": "The UI shows the notice permanently and keeps conflicts unresolved for human review.",
+          "files": [
+            "src/ui/app.py"
+          ]
         }
       ],
       "evidence_unavailable": [
-        "NCIIPC Rules 2013 NOT INGESTED — CII protection capabilities not confirmable from corpus",
-        "Actual CERT-In capacity or incident statistics not in corpus",
-        "Penetration testing or red-team capabilities not addressed in corpus"
+        "No human-evaluation study or score."
       ]
     },
     {
       "dimension_id": "D6",
-      "dimension_name": "Data availability and governance",
-      "description": "Data governance frameworks, open data policies, and data-sharing mechanisms.",
-      "evidence_status": "PARTIAL EVIDENCE AVAILABLE",
+      "dimension_name": "AI policy and implementation opportunity identification",
+      "docx_project_mapping": "Policy Gap Agent classifies explicit, partial, unclear, overlapping, institutional-clarity and emerging-technology coverage.",
+      "docx_evidence_status": "Addressed with evidence-linked potential gaps.",
       "evidence_items": [
         {
-          "claim": "The DPDP Act 2023 establishes data-fiduciary obligations for personal data processing in India, including a breach notification framework.",
-          "source_id": "dpdp_act_2023",
-          "source_title": "The Digital Personal Data Protection Act, 2023",
-          "authority": "Government of India",
-          "section": "Section 8 (obligations of data fiduciary)",
-          "evidence_type": "Act",
-          "jurisdiction": "India",
-          "caveat": "Commencement not verified; does not address open data or non-personal data governance."
+          "evidence_type": "project artefact",
+          "claim": "4 potential-gap entries in the final stage of the recorded run, each naming the instruments examined.",
+          "files": [
+            "outputs/audit/day2_scenario2_full_T0_T3.jsonl",
+            "src/agents/policy_gap_agent.py"
+          ]
         },
         {
-          "claim": "TRAI (2023) recommended data-sharing frameworks and open data policies for AI in telecom, indicating regulatory direction on data governance.",
+          "evidence_type": "corpus passage",
+          "claim": "TRAI recommendations on AI and Big Data in telecom, used as policy reference.",
           "source_id": "trai_ai_bigdata_recs_2023",
-          "source_title": "TRAI Recommendations on Leveraging AI and Big Data in Telecommunication Sector",
-          "authority": "TRAI",
-          "section": "Para (Data sharing and access)",
-          "evidence_type": "Recommendations",
+          "source_title": "TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector",
+          "authority": "Telecom Regulatory Authority of India (TRAI)",
           "jurisdiction": "India",
-          "caveat": "Recommendations only, not enacted."
+          "document_type": "Recommendations",
+          "section": "p. 1",
+          "section_title": "",
+          "page": "1",
+          "chunk_id": "trai_ai_bigdata_recs_2023:p-1:1",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap"
+          ],
+          "quote": "Telecom Regulatory Authority of India Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector 20th July 2023 Mahanagar Doorsanchar Bhawan Jawahar Lal Nehru Marg New Delhi – 110002"
         }
       ],
       "evidence_unavailable": [
-        "Non-Personal Data Governance Framework not ingested",
-        "Open government data policy not in corpus",
-        "Data localisation obligations: DPDP Rules 2025 contain localisation provisions but their commencement is not verified"
+        "Unclear coverage is not produced by the current agent; explicit/partial coverage is left to expert review.",
+        "International policy examples are not ingested."
       ]
     },
     {
       "dimension_id": "D7",
-      "dimension_name": "Research and innovation ecosystem",
-      "description": "R&D investment, academic capacity, and innovation support for AI and 5G.",
-      "evidence_status": "EVIDENCE UNAVAILABLE IN CORPUS",
-      "evidence_items": [],
+      "dimension_name": "AI for social inclusion",
+      "docx_project_mapping": "Makes complex policy evidence available through a structured decision-support interface for multiple stakeholder groups.",
+      "docx_evidence_status": "Potential contribution; no quantitative inclusion study is claimed.",
+      "evidence_items": [
+        {
+          "evidence_type": "project artefact",
+          "claim": "Structured interface showing each finding with its source, section and passage.",
+          "files": [
+            "src/ui/app.py"
+          ]
+        }
+      ],
       "evidence_unavailable": [
-        "R&D investment data not in corpus",
-        "Academic capacity indicators not in corpus",
-        "Innovation policy instruments not ingested"
+        "No inclusion study or user data."
       ]
     },
     {
       "dimension_id": "D8",
-      "dimension_name": "Skills and human capacity",
-      "description": "Workforce readiness, training programmes, and human capital for AI and 5G.",
-      "evidence_status": "EVIDENCE UNAVAILABLE IN CORPUS",
-      "evidence_items": [],
-      "evidence_unavailable": [
-        "Skills-gap assessment data not in corpus",
-        "Training programme details not in corpus",
-        "Labour-market data not ingested"
-      ]
-    },
-    {
-      "dimension_id": "D9",
-      "dimension_name": "International cooperation",
-      "description": "Participation in international standards bodies, bilateral/multilateral AI and telecom agreements.",
-      "evidence_status": "INDIRECT EVIDENCE ONLY",
+      "dimension_name": "Digital infrastructure and energy",
+      "docx_project_mapping": "Software decision-support layer tested in an isolated Windows environment; deployment footprint can be measured separately.",
+      "docx_evidence_status": "Operational energy measurements are not reported.",
       "evidence_items": [
         {
-          "claim": "India participates in ITU standardisation through ITU membership; the ingested ITU-T Y.3172 standard (2019) provides the architectural framework that this project maps to.",
-          "source_id": "itu_t_y3172",
-          "source_title": "ITU-T Recommendation Y.3172",
-          "authority": "ITU-T",
-          "section": "Clause 1 (Scope)",
-          "evidence_type": "Standard (international reference)",
-          "jurisdiction": "International",
-          "caveat": "[REFERENCE ONLY — not Indian law]. Confirms ITU-T framework exists; does not confirm India's specific participation or commitment."
+          "evidence_type": "project artefact",
+          "claim": "CPU-only embedding model (BAAI/bge-small-en-v1.5); the full KB build took 686.9 s of wall-clock time on this machine.",
+          "files": [
+            "knowledge_base/ingestion_manifest.json"
+          ]
         }
       ],
       "evidence_unavailable": [
-        "Bilateral AI or telecom agreements not in corpus",
-        "India's formal ITU positions or contributions not in corpus",
-        "3GPP membership contribution details not in corpus"
+        "No energy measurement."
       ]
     }
   ],
   "overall_evidence_summary": {
-    "dimensions_with_strong_evidence": ["D3 — Legal and regulatory framework"],
-    "dimensions_with_partial_evidence": ["D1 — Government strategy", "D2 — ICT infrastructure (indirect)", "D4 — Ethical AI (partial)", "D5 — Cybersecurity", "D6 — Data governance"],
-    "dimensions_with_no_evidence": ["D7 — Research and innovation", "D8 — Skills and human capacity"],
-    "dimensions_with_indirect_evidence_only": ["D2 — ICT infrastructure", "D9 — International cooperation"],
-    "key_gap_in_evidence": "NCIIPC Rules 2013 not ingested — this is the single most significant gap for CII protection and cybersecurity readiness evidence.",
-    "no_readiness_score_assigned": "true — quantitative scores require comprehensive assessment beyond the scope of this corpus mapping.",
-    "no_maturity_level_claimed": "true — maturity levels are not assigned without formal assessment methodology and complete evidence."
+    "no_readiness_score_assigned": "true — the DOCX claims none and none is computed",
+    "no_maturity_level_claimed": "true",
+    "perspectives": 8,
+    "stages_in_recorded_run": [
+      "T0",
+      "T1",
+      "T2",
+      "T3"
+    ]
   }
 }

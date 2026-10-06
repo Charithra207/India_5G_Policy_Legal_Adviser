@@ -388,19 +388,20 @@ def test_policy_gap_categories_each_has_enum_value_and_name() -> None:
 
 
 def test_policy_gap_categories_overlap_example_uses_correct_sources() -> None:
-    """The overlapping-requirements category must reference the correct instruments."""
+    """
+    The overlapping-requirements example must be the agent's actual output in
+    the recorded run: the two instruments it names are the ones the gap claim cites.
+    """
     data = _load_json(POLICY_GAP_CATS)
     overlap = next(
         c for c in data["categories"]
         if c["enum_value"] == "overlapping_requirements"
     )
     example = overlap.get("concrete_scenario_2_example", {})
-    assert "Rule 7" in example.get("instrument_a", ""), (
-        "Overlapping requirements example must reference Telecom Cyber Security Rules Rule 7"
-    )
-    assert "Section 8" in example.get("instrument_b", ""), (
-        "Overlapping requirements example must reference DPDP Act Section 8"
-    )
+    [observed] = overlap["observed_in_recorded_run"]
+    assert example["instrument_a"] and example["instrument_b"]
+    assert example["instrument_a"] in observed["claim"]
+    assert example["instrument_b"] in observed["claim"]
 
 
 def test_policy_gap_categories_emerging_tech_uses_exhaustive_scan() -> None:
@@ -438,11 +439,12 @@ def test_host_corpus_has_all_ten_docx_categories() -> None:
 
 def test_host_corpus_category_names_include_docx_headings() -> None:
     data = _load_json(HOST_CORPUS)
+    # DOCX §7.3 "Corpus category" column, verbatim
     expected_headings = {
         "Laws and regulations",
-        "Digital / cybersecurity strategies",
+        "Digital and cybersecurity strategies",
         "Institutional mandates",
-        "National AI strategy / IndiaAI",
+        "National AI strategy and AI mission",
     }
     names = {c["docx_heading"] for c in data["categories"]}
     for heading in expected_headings:
@@ -453,12 +455,12 @@ def test_host_corpus_uncovered_categories_are_explicitly_marked() -> None:
     """Categories without ingested sources must be marked NOT COVERED."""
     data = _load_json(HOST_CORPUS)
     uncovered_expected = {
-        "Economic / industrial characteristics",
+        "Economic and industrial characteristics",
         "Labour-market conditions",
         "Intellectual property",
-        "Multilateral / treaty obligations",
-        "Energy / infrastructure constraints",
-        "Regional / global comparators",
+        "Multilateral and treaty obligations",
+        "Energy and infrastructure constraints",
+        "Regional and global comparators",
     }
     for cat in data["categories"]:
         if cat["docx_heading"] in uncovered_expected:

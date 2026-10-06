@@ -1,0 +1,975 @@
+{
+  "_about": [
+    "Final KB manifest (DOCX §7.2: title, authority, jurisdiction, document type,",
+    "date/effective status, section, amendment status, URL, licence/open-access",
+    "status, chunk count, vector index and model names). Generated from",
+    "knowledge_base/sources/manifest.json, ingestion_manifest.json and the stores."
+  ],
+  "schema_version": "2.0",
+  "docx_section": "§7.2",
+  "generated_by": "python -m src.rag.foundation",
+  "retrieved_on": "2026-10-05",
+  "built_at": "2026-10-06T15:32:31.822232+00:00",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "embedding_dimension": 384,
+  "generator_model": "none — agents quote retrieved passages; no generative model is used",
+  "vector_store": "local numpy store, one directory per KB (knowledge_base/<kb>/)",
+  "chunking": {
+    "max_chars": 1200,
+    "overlap_chars": 150,
+    "unit": "within one detected section"
+  },
+  "sandbox": "not executed — the ITU AI for Good Sandbox is not available in this environment",
+  "knowledge_bases": {
+    "technical": {
+      "passages": 3739,
+      "documents": [
+        "3gpp_ts_23501",
+        "3gpp_ts_33501"
+      ]
+    },
+    "policy_legal": {
+      "passages": 274,
+      "documents": [
+        "ncsp_2013",
+        "ndcp_2018",
+        "telecom_act_2023",
+        "trai_act_1997"
+      ]
+    },
+    "cybersecurity": {
+      "passages": 1675,
+      "documents": [
+        "3gpp_ts_33501",
+        "certin_directions_2022",
+        "etsi_gr_nfv_sec_003",
+        "ncsp_2013",
+        "ndcp_2018",
+        "nist_csf_2_0",
+        "nist_sp_800_61r3",
+        "telecom_cyber_security_rules_2024"
+      ]
+    },
+    "privacy": {
+      "passages": 159,
+      "documents": [
+        "dpdp_act_2023",
+        "dpdp_rules_2025"
+      ]
+    },
+    "critical_infrastructure": {
+      "passages": 105,
+      "documents": [
+        "telecom_act_2023"
+      ]
+    },
+    "standards": {
+      "passages": 4259,
+      "documents": [
+        "3gpp_ts_23501",
+        "3gpp_ts_33501",
+        "etsi_gr_nfv_sec_003",
+        "itu_t_y3172",
+        "nist_csf_2_0",
+        "nist_sp_800_61r3"
+      ]
+    },
+    "policy_gap": {
+      "passages": 459,
+      "documents": [
+        "ncsp_2013",
+        "ndcp_2018",
+        "trai_ai_bigdata_recs_2023"
+      ]
+    },
+    "canonical": {
+      "passages": 5112,
+      "documents": [
+        "3gpp_ts_23501",
+        "3gpp_ts_33501",
+        "certin_directions_2022",
+        "dpdp_act_2023",
+        "dpdp_rules_2025",
+        "etsi_gr_nfv_sec_003",
+        "itu_t_y3172",
+        "ncsp_2013",
+        "ndcp_2018",
+        "nist_csf_2_0",
+        "nist_sp_800_61r3",
+        "telecom_act_2023",
+        "telecom_cyber_security_rules_2024",
+        "trai_act_1997",
+        "trai_ai_bigdata_recs_2023"
+      ]
+    }
+  },
+  "documents": [
+    {
+      "id": "telecom_act_2023",
+      "title": "The Telecommunications Act, 2023",
+      "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+      "jurisdiction": "India",
+      "document_type": "Act",
+      "date_issued": "24th December, 2023",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Section",
+        "sections_ingested": 66,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://egazette.gov.in/WriteReadData/2023/250880.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official Gazette copy (Act No. 44 of 2023) from egazette.gov.in. Commencement of individual sections is notified separately and was not checked.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "302df7ba4ed69e9054202d55248f604d32d8568a22a2e5489ac3041478635577",
+      "chunk_count": 105,
+      "chunk_id_prefix": "telecom_act_2023:",
+      "vector_index": {
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 105
+        },
+        "critical_infrastructure": {
+          "store": "knowledge_base/critical_infrastructure/",
+          "vectors": "knowledge_base/critical_infrastructure/vectors.npy",
+          "passages": 105
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 105
+        }
+      },
+      "knowledge_bases": [
+        "policy_legal",
+        "critical_infrastructure",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 rows 1 and 4; 7.3 Laws and regulations",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "trai_act_1997",
+      "title": "The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation)",
+      "authority": "Government of India",
+      "jurisdiction": "India",
+      "document_type": "Act",
+      "date_issued": "1997",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Section",
+        "sections_ingested": 55,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://tdsat.gov.in/admin/introduction/uploads/bare%20acts.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Text taken from pages 7-52 of the TDSAT 'bare acts' compilation (tdsat.gov.in), headed '[AMENDED]'. The compilation does not state the date up to which it is consolidated. The TRAI-hosted PDF (trai.gov.in/sites/default/files/2024-10/The_TRAI_Act_1997.pdf) is a scan with no text layer, and India Code returned HTTP 504.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "dd6c098b3d91bbfbf90bd95ff21c28c18d0751f0b4be3c30dcdf316c29362739",
+      "chunk_count": 78,
+      "chunk_id_prefix": "trai_act_1997:",
+      "vector_index": {
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 78
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 78
+        }
+      },
+      "knowledge_bases": [
+        "policy_legal",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 1; 5.1 mapping 2",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "ndcp_2018",
+      "title": "National Digital Communications Policy 2018",
+      "authority": "Government of India (Department of Telecommunications)",
+      "jurisdiction": "India",
+      "document_type": "Policy",
+      "date_issued": "2018",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Para",
+        "sections_ingested": 12,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://cdnbbsr.s3waas.gov.in/s35352696a9ca3397beb79f116f3a33991/uploads/2022/03/2022031545.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Copy hosted on the Government of India S3WaaS platform (cdnbbsr.s3waas.gov.in), not on dot.gov.in: the dot.gov.in policy page serves the PDF through a viewer that returned no downloadable file. The copy does not state its notification date.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "6d1be37237e1bbdc9b52390ef1dac7b52decfe9ca930408138b2268b184a7700",
+      "chunk_count": 46,
+      "chunk_id_prefix": "ndcp_2018:",
+      "vector_index": {
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 46
+        },
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 46
+        },
+        "policy_gap": {
+          "store": "knowledge_base/policy_gap/",
+          "vectors": "knowledge_base/policy_gap/vectors.npy",
+          "passages": 46
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 46
+        }
+      },
+      "knowledge_bases": [
+        "policy_legal",
+        "cybersecurity",
+        "policy_gap",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 1; 5.1 mapping 8; 7.3 Digital and cybersecurity strategies",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "telecom_cyber_security_rules_2024",
+      "title": "Telecommunications (Telecom Cyber Security) Rules, 2024",
+      "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+      "jurisdiction": "India",
+      "document_type": "Rules",
+      "date_issued": "21st November, 2024",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Rule",
+        "sections_ingested": 11,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://thc.nic.in/Central%20Governmental%20Rules/Telecommunications%20(Telecom%20Cyber%20Security)%20Rules,%202024.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Gazette notification G.S.R. 720(E), bilingual; English pages only. Copy hosted on thc.nic.in (a Government NIC domain): the dot.gov.in gazette link returned HTTP 404. The DOCX cites the Rules 'as amended'; amendments were not checked.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "16f93fbc5e1bbdbdee56b3b98a020e0d49e32f98b524ed8942ac8d6f7dc81494",
+      "chunk_count": 34,
+      "chunk_id_prefix": "telecom_cyber_security_rules_2024:",
+      "vector_index": {
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 34
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 34
+        }
+      },
+      "knowledge_bases": [
+        "cybersecurity",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 2; 5.1 mapping 3",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "certin_directions_2022",
+      "title": "CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022)",
+      "authority": "Indian Computer Emergency Response Team (CERT-In), Ministry of Electronics and Information Technology",
+      "jurisdiction": "India",
+      "document_type": "Direction",
+      "date_issued": "28 April, 2022",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "roman_items",
+        "section_label": "Direction",
+        "sections_ingested": 11,
+        "sections_labelled_by_page_only": 2,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from cert-in.org.in. A later CERT-In notice (27.06.2022) on extension and validation exists and was not ingested.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f",
+      "chunk_count": 18,
+      "chunk_id_prefix": "certin_directions_2022:",
+      "vector_index": {
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 18
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 18
+        }
+      },
+      "knowledge_bases": [
+        "cybersecurity",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 2; 5.1 mapping 4",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "ncsp_2013",
+      "title": "National Cyber Security Policy - 2013",
+      "authority": "Government of India (Department of Electronics and Information Technology)",
+      "jurisdiction": "India",
+      "document_type": "Policy",
+      "date_issued": "2013",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "outline",
+        "section_label": "Part",
+        "sections_ingested": 39,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.meity.gov.in/static/uploads/2024/02/National_cyber_security_policy-2013_0.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from meity.gov.in. The copy does not state an exact issue date.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "eaf3dbcde254bad4739d687680cab2fcb741c417ca7c166f9991bc54a8276b5b",
+      "chunk_count": 45,
+      "chunk_id_prefix": "ncsp_2013:",
+      "vector_index": {
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 45
+        },
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 45
+        },
+        "policy_gap": {
+          "store": "knowledge_base/policy_gap/",
+          "vectors": "knowledge_base/policy_gap/vectors.npy",
+          "passages": 45
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 45
+        }
+      },
+      "knowledge_bases": [
+        "cybersecurity",
+        "policy_legal",
+        "policy_gap",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 2; 5.1 mapping 9; 7.3 Digital and cybersecurity strategies",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "dpdp_act_2023",
+      "title": "The Digital Personal Data Protection Act, 2023",
+      "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
+      "jurisdiction": "India",
+      "document_type": "Act",
+      "date_issued": "11th August, 2023",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Section",
+        "sections_ingested": 46,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from meity.gov.in (Act No. 22 of 2023). Commencement of provisions is notified separately and was not checked.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15",
+      "chunk_count": 83,
+      "chunk_id_prefix": "dpdp_act_2023:",
+      "vector_index": {
+        "privacy": {
+          "store": "knowledge_base/privacy/",
+          "vectors": "knowledge_base/privacy/vectors.npy",
+          "passages": 83
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 83
+        }
+      },
+      "knowledge_bases": [
+        "privacy",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 3; 5.1 mapping 5",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "dpdp_rules_2025",
+      "title": "Digital Personal Data Protection Rules, 2025",
+      "authority": "Government of India (Ministry of Electronics and Information Technology)",
+      "jurisdiction": "India",
+      "document_type": "Rules",
+      "date_issued": "13th November, 2025",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Rule",
+        "sections_ingested": 30,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.meity.gov.in/static/uploads/2025/11/53450e6e5dc0bfa85ebd78686cadad39.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Gazette notification G.S.R. 846(E) from meity.gov.in, bilingual; English pages only. The Rules commence in phases (stated in the notification); phase applicability was not checked per rule.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "eabc7d05e013144615d78ddc0e8b9c9aac1920e814f4fad38ce6560951f5aa08",
+      "chunk_count": 76,
+      "chunk_id_prefix": "dpdp_rules_2025:",
+      "vector_index": {
+        "privacy": {
+          "store": "knowledge_base/privacy/",
+          "vectors": "knowledge_base/privacy/vectors.npy",
+          "passages": 76
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 76
+        }
+      },
+      "knowledge_bases": [
+        "privacy",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 3; 5.1 mapping 6",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "nciipc_rules_2013",
+      "title": "Information Technology (National Critical Information Infrastructure Protection Centre and Manner of Performing Functions and Duties) Rules, 2013",
+      "authority": "Government of India",
+      "jurisdiction": "India",
+      "document_type": "Rules",
+      "date_issued": null,
+      "date_verified_in_text": false,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": null,
+      "url": null,
+      "attempted_urls": [
+        "https://www.indiacode.nic.in/ViewFileUploaded?path=AC_CEN_45_76_00001_200021_1517807324077%2Frulesindividualfile%2F&file=nciipc_function_and_duties_rule_2013.pdf (HTTP 504, three attempts on 2026-10-05)",
+        "https://nciipc.gov.in/ (no response within 90 s)"
+      ],
+      "provenance_note": "NOT INGESTED. The Critical Infrastructure KB currently holds only the Telecommunications Act, 2023.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": null
+      },
+      "status": "not ingested: not_available",
+      "sha256": null,
+      "chunk_count": 0,
+      "chunk_id_prefix": null,
+      "vector_index": {},
+      "knowledge_bases": [
+        "critical_infrastructure",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 4; 5.1 mapping 7",
+      "embedding_model": null,
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "trai_ai_bigdata_recs_2023",
+      "title": "TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector",
+      "authority": "Telecom Regulatory Authority of India (TRAI)",
+      "jurisdiction": "India",
+      "document_type": "Recommendations",
+      "date_issued": "20th July 2023",
+      "date_verified_in_text": true,
+      "effective_status": "not applicable (recommendations, not an Act)",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered_paras",
+        "section_label": "Para",
+        "sections_ingested": 285,
+        "sections_labelled_by_page_only": 4,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.trai.gov.in/sites/default/files/2024-09/Recommendation_20072023.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from trai.gov.in. Recommendations to Government, not law (DOCX 5.1 mapping 11).",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "e320879b4f7a304e3cd780ae084b8816f9e494ea074005ffc852759dd1a1ad36",
+      "chunk_count": 368,
+      "chunk_id_prefix": "trai_ai_bigdata_recs_2023:",
+      "vector_index": {
+        "policy_gap": {
+          "store": "knowledge_base/policy_gap/",
+          "vectors": "knowledge_base/policy_gap/vectors.npy",
+          "passages": 368
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 368
+        }
+      },
+      "knowledge_bases": [
+        "policy_gap",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 5.1 mapping 11; 7.3 National AI strategy; 7.2 Canonical KB is the one common reference beneath every agent KB (document types include policy)",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "itu_t_y3172",
+      "title": "ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020",
+      "authority": "International Telecommunication Union (ITU-T)",
+      "jurisdiction": "International",
+      "document_type": "Standard",
+      "date_issued": "06/2019",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "pdf_outline",
+        "section_label": "Clause",
+        "sections_ingested": 26,
+        "sections_labelled_by_page_only": 3,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-Y.3172-201906-I!!PDF-E&type=items",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from itu.int. Reference point only, not Indian law (DOCX 4).",
+      "licence": {
+        "statement_in_document": "ITU 2019 All rights reserved. No part of this publication may be reproduced, by any means whatsoever, without the prior written permission of ITU.",
+        "note": "Quoted from the document text.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b",
+      "chunk_count": 79,
+      "chunk_id_prefix": "itu_t_y3172:",
+      "vector_index": {
+        "standards": {
+          "store": "knowledge_base/standards/",
+          "vectors": "knowledge_base/standards/vectors.npy",
+          "passages": 79
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 79
+        }
+      },
+      "knowledge_bases": [
+        "standards",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.1 row 1; 7.3 Standards KB",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "3gpp_ts_23501",
+      "title": "3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19",
+      "authority": "3rd Generation Partnership Project (3GPP)",
+      "jurisdiction": "International",
+      "document_type": "Standard",
+      "date_issued": "2026-09",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "docx_headings",
+        "section_label": "Clause",
+        "sections_ingested": 885,
+        "sections_labelled_by_page_only": 0,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.3gpp.org/ftp/Specs/archive/23_series/23.501/23501-j90.zip",
+      "attempted_urls": [],
+      "provenance_note": "Official archive 23501-j90.zip from 3gpp.org (latest Release 19 version on 2026-10-05; the DOCX does not fix a version). Body paragraphs only; tables and figures not ingested. Reference point only, not Indian law.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "3fbdc4f6ee6f475a10517400d04e6376f94142da171fa67c143def61d5bb82e0",
+      "chunk_count": 2648,
+      "chunk_id_prefix": "3gpp_ts_23501:",
+      "vector_index": {
+        "technical": {
+          "store": "knowledge_base/technical/",
+          "vectors": "knowledge_base/technical/vectors.npy",
+          "passages": 2648
+        },
+        "standards": {
+          "store": "knowledge_base/standards/",
+          "vectors": "knowledge_base/standards/vectors.npy",
+          "passages": 2648
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 2648
+        }
+      },
+      "knowledge_bases": [
+        "technical",
+        "standards",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.1 row 2; 7.3 Technical KB and Standards KB",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "3gpp_ts_33501",
+      "title": "3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19",
+      "authority": "3rd Generation Partnership Project (3GPP)",
+      "jurisdiction": "International",
+      "document_type": "Standard",
+      "date_issued": "2026-06",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "docx_headings",
+        "section_label": "Clause",
+        "sections_ingested": 550,
+        "sections_labelled_by_page_only": 0,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.501/33501-j70.zip",
+      "attempted_urls": [],
+      "provenance_note": "Official archive 33501-j70.zip from 3gpp.org (latest Release 19 version on 2026-10-05; the DOCX does not fix a version). Body paragraphs only; tables and figures not ingested. Reference point only, not Indian law.",
+      "licence": {
+        "statement_in_document": "Copyright Notification No part may be reproduced except as authorized by written permission.",
+        "note": "Quoted from the document text.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "aef7d9b919bdbf44d15ad8f6f25af7a7ee8ab964c23b5eb4698955af63433aff",
+      "chunk_count": 1091,
+      "chunk_id_prefix": "3gpp_ts_33501:",
+      "vector_index": {
+        "technical": {
+          "store": "knowledge_base/technical/",
+          "vectors": "knowledge_base/technical/vectors.npy",
+          "passages": 1091
+        },
+        "standards": {
+          "store": "knowledge_base/standards/",
+          "vectors": "knowledge_base/standards/vectors.npy",
+          "passages": 1091
+        },
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 1091
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 1091
+        }
+      },
+      "knowledge_bases": [
+        "technical",
+        "standards",
+        "cybersecurity",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.1 row 3 (Cybersecurity/Technical Agents); 7.3 Technical KB and Standards KB",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "etsi_gr_nfv_sec_003",
+      "title": "ETSI GR NFV-SEC 003 V1.3.1 (2024-12) Network Functions Virtualisation (NFV); NFV Security; Security and Trust Guidance",
+      "authority": "European Telecommunications Standards Institute (ETSI)",
+      "jurisdiction": "International",
+      "document_type": "Standard",
+      "date_issued": "2024-12",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "pdf_outline",
+        "section_label": "Clause",
+        "sections_ingested": 153,
+        "sections_labelled_by_page_only": 6,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.etsi.org/deliver/etsi_gr/NFV-SEC/001_099/003/01.03.01_60/gr_NFV-SEC003v010301p.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from etsi.org. Reference point only, not Indian law.",
+      "licence": {
+        "statement_in_document": "Copyright Notification No part may be reproduced or utilized in any form or by any means, electronic or mechanical, including photocopying and microfilm except as authorized by written permission of ETSI.",
+        "note": "Quoted from the document text.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "64be3a98312dc477e19a5f91f4d310ebf81de88bd504befeac03d13633bad246",
+      "chunk_count": 258,
+      "chunk_id_prefix": "etsi_gr_nfv_sec_003:",
+      "vector_index": {
+        "standards": {
+          "store": "knowledge_base/standards/",
+          "vectors": "knowledge_base/standards/vectors.npy",
+          "passages": 258
+        },
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 258
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 258
+        }
+      },
+      "knowledge_bases": [
+        "standards",
+        "cybersecurity",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.1 row 4 (Standards/Cybersecurity Agents)",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "nist_csf_2_0",
+      "title": "NIST CSWP 29: The NIST Cybersecurity Framework (CSF) 2.0",
+      "authority": "National Institute of Standards and Technology (NIST)",
+      "jurisdiction": "International",
+      "document_type": "Framework",
+      "date_issued": "February 26, 2024",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "pdf_outline",
+        "section_label": "Section",
+        "sections_ingested": 17,
+        "sections_labelled_by_page_only": 5,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from nvlpubs.nist.gov. Guidance/reference, not Indian law (DOCX 4.1 row 5).",
+      "licence": {
+        "statement_in_document": "This publication is available free of charge from: https://doi.org/10.6028/NIST.CSWP.29",
+        "note": "Quoted from the document text.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "3c31f46fee98cac0c4323453e5109291a213b4de7fef8c058af9bf67f717433c",
+      "chunk_count": 74,
+      "chunk_id_prefix": "nist_csf_2_0:",
+      "vector_index": {
+        "standards": {
+          "store": "knowledge_base/standards/",
+          "vectors": "knowledge_base/standards/vectors.npy",
+          "passages": 74
+        },
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 74
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 74
+        }
+      },
+      "knowledge_bases": [
+        "standards",
+        "cybersecurity",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.1 row 5 (Cybersecurity Agent)",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "nist_sp_800_61r3",
+      "title": "NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile)",
+      "authority": "National Institute of Standards and Technology (NIST)",
+      "jurisdiction": "International",
+      "document_type": "Guidance",
+      "date_issued": "April 2025",
+      "date_verified_in_text": true,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "pdf_outline",
+        "section_label": "Section",
+        "sections_ingested": 23,
+        "sections_labelled_by_page_only": 8,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r3.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official PDF from nvlpubs.nist.gov. Guidance/reference, not Indian law; does not replace CERT-In or operator procedures (DOCX 4.1 row 6).",
+      "licence": {
+        "statement_in_document": "This publication is available free of charge from: https://doi.org/10.6028/NIST.SP.800-61r3",
+        "note": "Quoted from the document text.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "e5593d6bb85daecec7e8d9549400c7b3473bcc3f06e469c82218073afa7fba2d",
+      "chunk_count": 109,
+      "chunk_id_prefix": "nist_sp_800_61r3:",
+      "vector_index": {
+        "standards": {
+          "store": "knowledge_base/standards/",
+          "vectors": "knowledge_base/standards/vectors.npy",
+          "passages": 109
+        },
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 109
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 109
+        }
+      },
+      "knowledge_bases": [
+        "standards",
+        "cybersecurity",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.1 row 6 (Cybersecurity Agent)",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "international_policy_examples",
+      "title": "International policy examples and neighbouring-country comparative instruments",
+      "authority": "not stated in the document",
+      "jurisdiction": "International",
+      "document_type": "Policy",
+      "date_issued": null,
+      "date_verified_in_text": false,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": null,
+      "url": null,
+      "attempted_urls": [],
+      "provenance_note": "NOT INGESTED. The DOCX states the exact foreign instruments 'must be added to final manifest' and names none; choosing them is a team decision. The Policy Gap KB currently holds Indian policy documents only.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": null
+      },
+      "status": "not ingested: not_specified",
+      "sha256": null,
+      "chunk_count": 0,
+      "chunk_id_prefix": null,
+      "vector_index": {},
+      "knowledge_bases": [
+        "policy_gap"
+      ],
+      "kb_basis": "DOCX 4.3.1, 5.1 mapping 10, 7.3 Regional and global comparators",
+      "embedding_model": null,
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    }
+  ]
+}

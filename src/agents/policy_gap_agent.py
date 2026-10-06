@@ -50,6 +50,15 @@ _CATEGORY_LABEL = {
 _REPORTING_WORDS = ("report", "notif", "inform")
 
 
+def _in_framework(item: EvidenceItem) -> bool:
+    """
+    Whether a passage belongs to the Indian legal and regulatory framework
+    the gap analysis examines (DOCX §5.1).  Recommendations to Government
+    (e.g. TRAI recommendations) are policy context, not part of it.
+    """
+    return not item.document_type.strip().lower().startswith("recommendation")
+
+
 @dataclass
 class _GapResult:
     """Outcome of examining one candidate area against the Canonical KB."""
@@ -133,7 +142,18 @@ class PolicyGapAgent(BaseAgent):
     def _indian_passages(self, query: str, top_k: int = 10) -> list[EvidenceItem]:
         hits = self.canonical_kb.retrieve(query, top_k=top_k, filters={"jurisdiction": "India"})
         return [e for e in self._real_evidence(hits)
-                if e.jurisdiction.strip().lower() == "india"]
+                if e.jurisdiction.strip().lower() == "india" and _in_framework(e)]
+
+    def _indian_corpus(self) -> tuple[Optional[list[EvidenceItem]], list[EvidenceItem]]:
+        """
+        Every Indian Canonical KB passage, split into the framework and
+        non-binding recommendations; (None, []) if the KB cannot be scanned.
+        """
+        corpus = self.canonical_kb.scan(filters={"jurisdiction": "India"})
+        if corpus is None:
+            return None, []
+        return ([e for e in corpus if _in_framework(e)],
+                [e for e in corpus if not _in_framework(e)])
 
     @staticmethod
     def _ref(item: EvidenceItem) -> str:
@@ -157,7 +177,7 @@ class PolicyGapAgent(BaseAgent):
         label = _CATEGORY_LABEL[area]
         if area == CoverageCategory.EMERGING_TECHNOLOGY:
             # An absence claim needs every Indian passage, not a top-k sample
-            corpus = self.canonical_kb.scan(filters={"jurisdiction": "India"})
+            corpus, recommendations = self._indian_corpus()
             exhaustive = corpus is not None
             if not exhaustive:
                 corpus = self._indian_passages("network slicing 5G slice")
@@ -174,15 +194,21 @@ class PolicyGapAgent(BaseAgent):
                     citations=naming[:5],
                 )
             sources = "; ".join(sorted({e.source_title for e in corpus}))
-            scope = (f"the {len(corpus)} Indian passages in the Canonical KB (every one examined)"
+            scope = (f"the {len(corpus)} passages of Indian legal and policy instruments in "
+                     "the Canonical KB (every one examined)"
                      if exhaustive else
                      f"the {len(corpus)} Indian passages most relevant to network slicing")
+            # Named in non-binding recommendations only: context, not coverage
+            named_in_recs = self._distinct_sections(
+                [e for e in recommendations if mentions(e.excerpt, "slic")])
+            context = (f" It is named only in recommendations to Government, which are not "
+                       f"law ({self._refs(named_in_recs[:3])})." if named_in_recs else "")
             return _GapResult(
                 claim=(
                     f"Potential gap — {label}: none of {scope} mentions network slicing "
-                    f"(instruments examined: {sources}). {self.GAP_DISCLAIMER}"
+                    f"(instruments examined: {sources}).{context} {self.GAP_DISCLAIMER}"
                 ),
-                citations=[], raised=area,
+                citations=named_in_recs[:3], raised=area,
             )
 
         if area == CoverageCategory.OVERLAPPING_REQUIREMENTS:
@@ -219,7 +245,7 @@ class PolicyGapAgent(BaseAgent):
 
         # MISSING_INSTITUTIONAL_CLARITY — also an absence claim ("no passage
         # addresses both"), so scan every Indian passage when the KB allows it
-        corpus = self.canonical_kb.scan(filters={"jurisdiction": "India"})
+        corpus, _ = self._indian_corpus()
         exhaustive = corpus is not None
         if not exhaustive:
             corpus = self._indian_passages("NCIIPC CERT-In incident response coordination")
@@ -238,8 +264,8 @@ class PolicyGapAgent(BaseAgent):
             )
         if not (nciipc and certin):
             return self._not_examined(area, "passages naming both NCIIPC and CERT-In roles were not available")
-        scope = (f"the {len(corpus)} Indian passages in the Canonical KB" if exhaustive
-                 else f"the {len(corpus)} passages examined")
+        scope = (f"the {len(corpus)} passages of Indian legal and policy instruments in the "
+                 "Canonical KB" if exhaustive else f"the {len(corpus)} passages examined")
         return _GapResult(
             claim=(
                 f"Potential gap — {label}: {self._ref(nciipc[0])} addresses NCIIPC and "
