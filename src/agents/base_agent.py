@@ -69,6 +69,7 @@ class BaseAgent(ABC):
         logger.info("Agent %s -> analyzing chunk %s", self.agent_id.value, chunk.chunk_id)
 
         queries  = self._build_queries(chunk, incident_state)
+        self.last_queries = list(queries)      # recorded in the audit trail (DOCX §7.6)
         evidence = self._retrieve_evidence(queries)
         finding  = self._produce_finding(chunk, incident_state, evidence)
         finding.agent_id = self.agent_id

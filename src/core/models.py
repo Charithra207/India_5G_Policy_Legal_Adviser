@@ -273,3 +273,7 @@ class AuditRecord:
     verifier_result     : VerifierResult
     coordinator_assessment : CoordinatorAssessment
     raw_chunk           : ScenarioChunk
+    # agent_id value → what that agent was given: the incident state it
+    # could read (flags, prior verified findings) and the retrieval queries
+    # it issued.  The chunk itself is raw_chunk.
+    agent_inputs        : dict[str, dict] = field(default_factory=dict)

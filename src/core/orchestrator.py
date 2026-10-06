@@ -153,6 +153,7 @@ class SwarmOrchestrator:
         self.verifier    = verifier
         self.coordinator = coordinator
         self._kbs        = agent_kbs or {}
+        self._agent_inputs: dict[str, dict] = {}
 
         # Instantiate all 7 specialist agents
         self._agents: dict[AgentID, object] = {
@@ -215,6 +216,7 @@ class SwarmOrchestrator:
 
         # 1. Update accumulated incident context flags
         self._update_incident_flags(chunk)
+        self._agent_inputs = {}
 
         # 2. Select agents for this chunk stage (exact DOCX sets)
         active_agent_ids = self._select_agents(chunk)
@@ -299,6 +301,7 @@ class SwarmOrchestrator:
             verifier_result        = combined_verifier_result,
             coordinator_assessment = assessment,
             raw_chunk              = chunk,
+            agent_inputs           = self._agent_inputs,
         )
 
         self._incident_state["chunks_processed"].append(chunk.chunk_id)
@@ -388,8 +391,13 @@ class SwarmOrchestrator:
         findings: list[AgentFinding] = []
         for agent_id in agent_ids:
             agent = self._agents[agent_id]
+            visible_state = self._visible_state()
             try:
                 finding = agent.analyze(chunk, self._incident_state)
+                self._agent_inputs[agent_id.value] = {
+                    "incident_state": visible_state,
+                    "queries": list(getattr(agent, "last_queries", [])),
+                }
                 findings.append(finding)
                 logger.debug("Agent %s produced %d claim(s).",
                              agent_id.value, len(finding.claims))
@@ -439,6 +447,17 @@ class SwarmOrchestrator:
 
         if any(kw in combined for kw in _PRIVACY_KEYWORDS):
             self._incident_state["data_exposure_suspected"] = True
+
+    def _visible_state(self) -> dict:
+        """Copy of the incident state an agent can read (for the audit trail)."""
+        state = self._incident_state
+        return {
+            "chunks_processed":        list(state["chunks_processed"]),
+            "cyber_event_suspected":   state["cyber_event_suspected"],
+            "cii_flagged":             state["cii_flagged"],
+            "data_exposure_suspected": state["data_exposure_suspected"],
+            "verified_findings":       [dict(v) for v in state["verified_findings"]],
+        }
 
     def _absorb_verified_findings(self, verifier_result: VerifierResult) -> None:
         """

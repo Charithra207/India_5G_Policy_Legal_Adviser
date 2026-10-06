@@ -197,6 +197,65 @@ shows a rendered example for every agent.
 
 ---
 
+## Scenario engine, demonstration UI, audit trail and replay (Member 3)
+
+Status: Day 1 delivered. All of it calls `Pipeline.run_chunk`; nothing here
+selects agents, retrieves, verifies or assesses.
+
+```powershell
+streamlit run src/ui/app.py                     # Live run + Replay
+python -m src.scenario.run --stages 2           # Day-1 test: T0 then T1
+python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --reexecute
+```
+
+| Piece | File | What it does |
+|---|---|---|
+| Scenario catalogue | `src/scenario/catalog.py` | DOCX §2.5 and Annex-1 A.4 stage tables, copied verbatim. Used only to **check and display** the Orchestrator's selection, never to drive it |
+| Scenario engine | `src/scenario/engine.py` | `ScenarioEngine(scenario_id, registry)`: `next_stage()` releases one chunk to the pipeline and records it; `state()` gives scenario, stage, activated agents, previous and current findings, evidence, verification, cross-domain links, policy gaps |
+| Audit trail | `src/audit/trail.py` | `outputs/audit/<run_id>.jsonl`: `run_started` header (scenario, KB status, KB build hash, git commit), one `stage` entry per chunk, `run_completed`. Append-only; each entry carries `prev_hash`/`hash` so edits, removals and reordering are detected |
+| Replay | `src/audit/replay.py` | `load_run` (checks the hash chain), step through stages, `reexecute` (re-runs the chunk sequence **from the record** and compares agents, passages, claims, outcomes, Coordinator categories) |
+| UI | `src/ui/app.py` | Streamlit. Shows each stage in the order Scenario → Current chunk → Active agents → Agent findings → Evidence/sources → Verifier → Coordinator → Policy gap/cross-domain → Previous findings → Audit entry |
+
+**Stage entry (DOCX §7.6).** Per agent: `agent_id`, `visible_input`
+(released text, new facts, earlier chunk IDs, and the incident state the
+agent could read, including prior verified findings), `queries`,
+`retrieved_passages` (source, section, heading, page, verbatim excerpt,
+URL, provenance, `effective`, `amendment_checked`), `decision_summary`,
+`mandate_output`, `claims` (each with citations, verifier outcome and
+rationale, cross-domain flag/note), uncertainty and missing facts. Per stage:
+timestamps, chunk, Orchestrator selection vs the DOCX table, verifier counts,
+conflicts, missing evidence, and the full Coordinator assessment.
+
+To capture what each agent saw, the core now records it (additive only):
+`BaseAgent.analyze` keeps `last_queries`, and `AuditRecord.agent_inputs`
+holds each agent's visible incident state and queries.
+
+The live UI and replay render the same stage entries, so what is shown live
+is exactly what is recorded.
+
+**Day-1 test (recorded):** `outputs/audit/day1_scenario2_T0_T1.jsonl`.
+T0 → Technical; T1 → Technical + Cybersecurity + Standards, both matching the
+DOCX table. The Coordinator reports the reclassification, and re-execution
+reproduces both stages.
+
+### Remaining Day-2 work
+
+- Run and record all four stages (T2, T3) on live KBs, and walk through the
+  T3 policy-gap output in the UI.
+- Visual polish: cross-domain links drawn between agent panels; a
+  side-by-side stage diff (claims added/removed/re-rated between stages).
+- Collapse repetitive evidence: the same passage retrieved by several agents
+  is currently shown once per agent.
+- Export a replay as a single HTML/PDF evidence report for judges.
+- Y.3172 pipeline trace view (source → collection → preprocessing → model →
+  policy → distribution; Sandbox marked "not executed").
+- Store audit runs with the ITU AI for Good Sandbox artefacts (§7.6), once
+  the Sandbox is available.
+- Show the DOCX wording beside the scenario file's wording where they differ
+  (T1 adds "on the affected private 5G slice").
+
+---
+
 ## Verifier outcome display
 
 | Outcome | Suggested treatment |
@@ -331,4 +390,6 @@ for chunk in get_chunks():
 - [ ] `relevance_score` not presented as confidence
 - [ ] Standards claims show `[REFERENCE ONLY — not Indian law]` label
 - [ ] Policy gap statements use non-conclusive language
+- [x] Scenario engine releases the DOCX stages one chunk at a time
+- [x] Audit trail with DOCX §7.6 fields; replay with integrity check
 - [ ] `python -m pytest tests -v` passes after changes

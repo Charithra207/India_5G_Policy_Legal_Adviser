@@ -205,9 +205,14 @@ Every pipeline run produces an `AuditRecord` containing:
 - Cross-domain links and conflicts
 - Coordinator assessment (all five categories)
 
-Records are saved as `.txt` (human-readable) and `.json` (machine-readable)
-under `outputs/`.  A reviewer can reconstruct the decision path from scenario
-chunk through retrieved evidence to final assessment.
+The scenario engine (`src/scenario/`) writes each run to an append-only,
+hash-chained audit trail, `outputs/audit/<run_id>.jsonl` (`src/audit/`), with
+the DOCX §7.6 fields per agent: visible input, retrieval queries, retrieved
+passages with source/section/page, decision summary, citations, verifier
+outcome, cross-domain flags and the Coordinator decision.  A run can be
+replayed stage by stage (UI Replay mode, or `--replay`), its hash chain
+checked, and its recorded chunk sequence re-executed and compared with the
+record.
 
 ---
 
@@ -234,8 +239,15 @@ python -m src.rag.build
 # One retrieval test per agent -> knowledge_base/retrieval_tests.md
 python -m src.rag.retrieval_demo
 
-# Run the test suite (72 tests)
+# Run the test suite (87 tests)
 python -m pytest tests -v
+
+# Demonstration UI: live run (chunk by chunk) and replay
+streamlit run src/ui/app.py
+
+# Command line: release T0 and T1, record the audit trail; then replay it
+python -m src.scenario.run --stages 2
+python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --reexecute
 
 # Run Scenario 2 (T0-T3) with the live knowledge bases
 python -c "
@@ -295,6 +307,15 @@ India_5G_Policy_Legal_Adviser/
 │   │   ├── registry.py        # build_registry() -> live KBRegistry
 │   │   ├── interface.py       # run_agent(agent_id, chunk) -> AgentFinding
 │   │   └── retrieval_demo.py  # python -m src.rag.retrieval_demo
+│   ├── scenario/
+│   │   ├── catalog.py         # DOCX stage tables (display/check only)
+│   │   ├── engine.py          # ScenarioEngine: chunk-by-chunk release + state
+│   │   └── run.py             # python -m src.scenario.run
+│   ├── audit/
+│   │   ├── trail.py           # Append-only, hash-chained JSONL audit trail
+│   │   └── replay.py          # Load, verify, step through, re-execute
+│   ├── ui/
+│   │   └── app.py             # streamlit run src/ui/app.py
 │   ├── utils/
 │   │   └── output_formatter.py
 │   └── pipeline.py            # Top-level entry point
@@ -309,11 +330,12 @@ India_5G_Policy_Legal_Adviser/
 │   ├── retrieval_tests.md     # One retrieval test per agent (generated, in git)
 │   ├── canonical/ technical/ policy_legal/ cybersecurity/ privacy/
 │   │   critical_infrastructure/ standards/ policy_gap/   # vector stores (git-ignored)
-├── outputs/                   # Assessment text and audit JSON files
+├── outputs/                   # Assessment text/JSON; audit/ holds recorded runs
 ├── tests/
 │   ├── test_pipeline.py
 │   ├── test_verification_evidence.py
-│   └── test_rag.py
+│   ├── test_rag.py
+│   └── test_scenario_audit.py
 ├── requirements.txt
 ├── INTEGRATION_RAG_KB.md
 ├── INTEGRATION_UI.md
@@ -336,8 +358,9 @@ India_5G_Policy_Legal_Adviser/
 | RAG / vector store | Complete — 14 of 16 DOCX sources ingested, 8 KBs, one retrieval test per agent passing |
 | Not ingested | IT (NCIIPC) Rules 2013 (source unreachable); international policy examples (not specified in DOCX) |
 | In-force / amendment checks | Not done for any source — quoted claims are INCOMPLETE, not VERIFIED |
-| Tests (72) | Passing — incl. VERIFIED / INCOMPLETE / UNSUPPORTED / CONFLICT paths and live-KB retrieval |
-| UI layer | Not yet integrated — see INTEGRATION_UI.md |
+| Scenario engine, audit trail, replay | Complete — stage tables checked against the DOCX; hash-chained JSONL; re-execution compare |
+| Demonstration UI | Day-1 functional UI (Streamlit): live run and replay |
+| Tests (87) | Passing — incl. VERIFIED / INCOMPLETE / UNSUPPORTED / CONFLICT paths, live-KB retrieval, audit tamper detection, UI chunk 1 → 2 |
 
 ---
 
