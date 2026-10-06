@@ -1,6 +1,6 @@
 # Evidence audit
 
-Run audited: `outputs/audit/day2_scenario2_full_T0_T3.jsonl`. Generated 2026-10-06T16:01:40 UTC by `python -m src.rag.evidence_audit`.
+Run audited: `outputs/audit/day2_scenario2_full_T0_T3.jsonl`. Generated 2026-10-06T16:13:48 UTC by `python -m src.rag.evidence_audit`.
 
 **Checked:** 60 claims, 53 cited passages, 3 potential gaps, every Coordinator line, and 17 manifest sources.
 

@@ -25,7 +25,7 @@ Recorded reference runs in the repository:
 
 - `outputs/audit/day2_scenario2_full_T0_T3.jsonl` — live KBs, all four stages
 - `outputs/audit/day2_conflict_demo_FIXTURE.jsonl` — labelled synthetic passages, conflict demonstration
-- `outputs/audit/day1_scenario2_T0_T1.jsonl` — Day-1 run; recorded before the Day-2 core changes, so re-execution now differs (expected; its hash chain is intact)
+- `outputs/audit/archive/day1_scenario2_T0_T1.jsonl` — Day-1 run, archived (recorded before the Day-2 core changes, so re-execution differs; its hash chain is intact). Archived runs are not listed in the UI.
 
 Known limits (see `knowledge_base/evaluation_report.md`): nothing can be
 VERIFIED until in-force and amendment status are checked; NCIIPC Rules and

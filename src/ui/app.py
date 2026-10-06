@@ -251,11 +251,6 @@ def render_verifier(entry: dict) -> None:
                     st.markdown(f"**{agent_name(agent_id)}:** {c['claim']}")
                     st.caption(c["verifier_rationale"])
     render_conflicts(entry)
-    missing = entry["verifier"]["missing_evidence"]
-    if missing:
-        with st.expander(f"Missing evidence ({len(missing)})"):
-            for item in missing:
-                st.markdown(f"- {item}")
 
 
 def render_conflict_side(col, label: str, side: dict) -> None:
@@ -309,11 +304,6 @@ def render_coordinator(entry: dict) -> None:
                 st.caption("None at this stage.")
     if coord["relevant_institutions"]:
         st.markdown("**Relevant institutions:** " + "; ".join(coord["relevant_institutions"]))
-    rest = [q for q in questions if not q.startswith("No conclusion is evidence-backed")]
-    if rest:
-        with st.expander(f"Open questions — evidence still missing ({len(rest)})"):
-            for q in rest:
-                st.markdown(f"- {q}")
 
 
 def render_gaps_and_links(entry: dict) -> None:
@@ -424,7 +414,8 @@ def render_stage(spec, stages: list[dict], index: int, header: dict | None, path
 def render_kb_status(kb_status: dict[str, bool], header: dict | None = None) -> None:
     st.sidebar.subheader("Knowledge bases")
     for kb, live in kb_status.items():
-        st.sidebar.markdown(f"{'🟢' if live else '🔴'} {kb} — {'live' if live else 'stub'}")
+        name = "Canonical (verification)" if kb == "canonical" else agent_name(kb)
+        st.sidebar.markdown(f"{'🟢' if live else '🔴'} {name} — {'live' if live else 'stub'}")
     if not all(kb_status.values()):
         st.sidebar.warning("Stub KBs retrieve nothing; every claim from them is UNSUPPORTED. "
                            "Build with `python -m src.rag.build`.")
@@ -496,11 +487,22 @@ def live_mode() -> None:
                  shown_path(engine.audit_path))
 
 
+def _replay_order(path: Path) -> tuple:
+    """Complete runs on live KBs first, then fixture runs, then incomplete ones."""
+    try:
+        run = load_run(path)
+    except Exception:  # noqa: BLE001 — an unreadable file goes last
+        return (3, path.name)
+    live = all(run.header["knowledge_bases_live"].values()) and not run.header.get("knowledge_base_note")
+    return (0 if run.completed and live else 1 if run.completed else 2, path.name)
+
+
 def replay_mode() -> None:
     runs = list_runs()
     if not runs:
         st.info(f"No recorded runs in `{audit_dir()}`. Do a live run first.")
         return
+    runs = sorted(runs, key=_replay_order)
     path = st.sidebar.selectbox("Recorded run", runs, format_func=lambda p: p.name)
     run = load_run(path)
     spec = get_scenario(run.header["scenario_id"])

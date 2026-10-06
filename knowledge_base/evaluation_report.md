@@ -1,6 +1,6 @@
 # Evaluation summary (internal)
 
-Generated 2026-10-06T16:03:04 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
+Generated 2026-10-06T16:13:48 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
 
 **Test suite:** 386 passed, 0 failed, 0 skipped.
 

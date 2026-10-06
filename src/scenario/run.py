@@ -108,6 +108,8 @@ def main(argv: list[str] | None = None) -> int:
         run = load_run(args.replay)
         registry = registry_for(run.header, args.stub)
         print(f"Run {run.header['run_id']} — {run.header['scenario_title']}")
+        if run.header.get("knowledge_base_note"):
+            print(f"NOTE: {run.header['knowledge_base_note']}")
         print("Hash chain:", "intact" if run.intact else "BROKEN")
         for problem in run.integrity_problems:
             print("  !", problem)

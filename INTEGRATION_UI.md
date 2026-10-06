@@ -233,7 +233,7 @@ holds each agent's visible incident state and queries.
 The live UI and replay render the same stage entries, so what is shown live
 is exactly what is recorded.
 
-**Day-1 test (recorded):** `outputs/audit/day1_scenario2_T0_T1.jsonl`.
+**Day-1 test (recorded):** `outputs/audit/archive/day1_scenario2_T0_T1.jsonl` (archived).
 T0 → Technical; T1 → Technical + Cybersecurity + Standards, both matching the
 DOCX table. The Coordinator reports the reclassification, and re-execution
 reproduces both stages.

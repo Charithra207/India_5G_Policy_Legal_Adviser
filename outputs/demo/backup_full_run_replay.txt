@@ -1,0 +1,420 @@
+Run day2_scenario2_full_T0_T3 — Second staged 5G incident — healthcare private 5G slice
+Hash chain: intact
+==============================================================================
+T0  [scenario2_T0]  Intermittent latency and session drops in the private 5G slice.
+------------------------------------------------------------------------------
+Active agents   : technical
+Newly activated : technical
+DOCX table      : technical → match
+
+  [technical] Technical assessment: Network performance degradation / potential service-quality failure. Affected components: Network Slice (performance layer), User Plane Function (UPF), Private 5G Network (dedicated slice). Further telemetry required to confirm root cause.
+    passages retrieved: 14
+      - 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1
+      - 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.5.2
+      - 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.33.1
+    UNSUPPORTED The incident involves Network Slice (performance layer), User Plane Function (UPF), Private 5G Net
+    UNSUPPORTED Incident classification: Network performance degradation / potential service-quality failure.
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+
+Verifier        : INCOMPLETE 4, UNSUPPORTED 2
+Coordinator     : confirmed facts 5; evidence backed conclusions 0; uncertain conclusions 6; conflicting findings 0; potential policy gaps 0
+Changed         : Initial assessment — no prior chunk to compare against.
+Uncertainty     : No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked
+
+  What happened?
+    T0 (scenario2_T0): "Intermittent latency and session drops in the private 5G slice."
+    New fact: A private 5G network slice is experiencing intermittent latency spikes.
+    New fact: Session drops are occurring on the affected slice.
+    New fact: The degradation is intermittent rather than a complete outage.
+    New fact: No additional context about the cause or the service supported by the slice is available at this stage.
+    DOCX expected change: Classify radio/core/slicing/service-quality symptoms; identify missing telemetry.
+
+  Which agent acted?
+    Active: technical
+    Newly activated: technical
+    Selection matches the DOCX stage table (technical).
+
+  What evidence was retrieved?
+    technical: 14 passage(s) from its own KB — 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19 ×13; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×1
+
+  What was concluded?
+    technical: Technical assessment: Network performance degradation / potential service-quality failure. Affected components: Network Slice (performance layer), User Plane Function (UPF), Private 5G Network (dedicated slice). Further telemetry required to confirm root cause.
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1 → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.5.2 → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.33.1 → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.45.2 → INCOMPLETE
+
+  How was it verified?
+    Outcomes: VERIFIED 0, INCOMPLETE 4, UNSUPPORTED 2, CONFLICT 0
+    UNSUPPORTED — e.g. [technical] Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage).
+    INCOMPLETE — e.g. [technical] Supported by the authoritative text (3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1), but in-force status not verified and amendments not checked for this source.
+
+  How did the Coordinator reach the assessment?
+    Five categories (DOCX Table A1): confirmed facts 5; evidence-backed conclusions 0; uncertain conclusions 6; conflicting findings 0; potential policy gaps 0
+    Changed: Initial assessment — no prior chunk to compare against.
+    Open questions: 4 (first: No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.)
+    Human review: Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.
+==============================================================================
+T1  [scenario2_T1]  Unusual authentication and signalling attempts are observed on the affected private 5G slice.
+------------------------------------------------------------------------------
+Active agents   : cybersecurity, standards, technical
+Newly activated : cybersecurity, standards
+DOCX table      : technical, cybersecurity, standards → match
+
+  [cybersecurity] Cybersecurity assessment: possible cybersecurity incident indicated by the released facts. 4 provision(s) quoted from the Cybersecurity KB.
+    passages retrieved: 22
+      - 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1
+      - Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6)
+      - CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2)
+    UNSUPPORTED The security indicators released in this chunk ("Unusual authentication and signalling attempts ar
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and proce
+    INCOMPLETE  Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 states: "7. Reporting of security 
+    INCOMPLETE  CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (2
+    INCOMPLETE  Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 states: "5. Measures to protect an
+
+  [standards] Standards assessment: in scope for comparison — 3GPP TS 23.501, 3GPP TS 33.501, NIST SP 800-61 Rev. 3. 4 passage(s) quoted. All standards are reference points only, not Indian law.
+    passages retrieved: 18
+      - 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1
+      - 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1
+      - 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 5.2.2
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and proce
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and proce
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] NIST SP 800-61r3: Incident Response Recommendations and Consider
+
+  [technical] Technical assessment: Possible security/cyber event affecting 5G control plane. Affected components: Control Plane, Access and Mobility Management Function (AMF), Session Management Function (SMF), Private 5G Network (dedicated slice). Further telemetry required to confirm root cause.
+    passages retrieved: 15
+      - 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1
+      - 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1
+      - 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.3.3.1
+    INCOMPLETE  The incident involves Control Plane, Access and Mobility Management Function (AMF), Session Manage
+    UNSUPPORTED Incident classification: Possible security/cyber event affecting 5G control plane.
+    UNSUPPORTED Unusual authentication/signalling behaviour is consistent with potential 5G control-plane compromi
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and proce
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+    INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G 
+
+Verifier        : INCOMPLETE 13, UNSUPPORTED 3
+Coordinator     : confirmed facts 9; evidence backed conclusions 0; uncertain conclusions 16; conflicting findings 0; potential policy gaps 0
+Changed         : Newly activated agents: cybersecurity, standards (selected from the information released in this chunk).
+Changed         : Incident reassessed as a possible security event: security indicators appear in the information released in this chunk.
+Changed         : New evidence considered (10 provision(s)): 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 4.2.2; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.10.1; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.3.3.1; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 5.2.2; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1; CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii); NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile), Section 1 …
+Changed         : Superseded on reassessment (no longer asserted): technical 5 claim(s)
+Changed         : New cross-domain relationships (3): cybersecurity ↔ standards (shared provision); cybersecurity ↔ technical (shared provision); standards ↔ technical (shared provision)
+Cross-domain    : shared provision 3
+  - CROSS-DOMAIN [cybersecurity ↔ standards] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and p
+  - CROSS-DOMAIN [cybersecurity ↔ technical] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and p
+  - CROSS-DOMAIN [standards ↔ technical] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and proce
+Uncertainty     : No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked
+
+  What happened?
+    T1 (scenario2_T1): "Unusual authentication and signalling attempts are observed on the affected private 5G slice."
+    New fact: Unusual authentication attempts have been detected on the 5G network slice control plane.
+    New fact: Abnormal signalling patterns are being observed alongside the performance degradation.
+    New fact: The combination of performance issues and security indicators suggests the incident may have a cybersecurity dimension.
+    DOCX expected change: Reassess as a possible security event and retrieve relevant 5GS/NFV security references.
+
+  Which agent acted?
+    Active: cybersecurity, standards, technical
+    Newly activated: cybersecurity, standards
+    Selection matches the DOCX stage table (technical, cybersecurity, standards).
+
+  What evidence was retrieved?
+    cybersecurity: 22 passage(s) from its own KB — Telecommunications (Telecom Cyber Security) Rules, 2024 ×7; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×6; CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022) ×5
+    standards: 18 passage(s) from its own KB — 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×7; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19 ×6; NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile) ×5
+    technical: 15 passage(s) from its own KB — 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19 ×8; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×7
+
+  What was concluded?
+    cybersecurity: Cybersecurity assessment: possible cybersecurity incident indicated by the released facts. 4 provision(s) quoted from the Cybersecurity KB.
+      quotes 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1 → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6) → INCOMPLETE
+      quotes CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2) → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 (p. 4-5) → INCOMPLETE
+    standards: Standards assessment: in scope for comparison — 3GPP TS 23.501, 3GPP TS 33.501, NIST SP 800-61 Rev. 3. 4 passage(s) quoted. All standards are reference points only, not Indian law.
+      quotes 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1 → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1 → INCOMPLETE
+      quotes 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 5.2.2 → INCOMPLETE
+      quotes NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile), Section 1 (p. 10-11) → INCOMPLETE
+    technical: Technical assessment: Possible security/cyber event affecting 5G control plane. Affected components: Control Plane, Access and Mobility Management Function (AMF), Session Management Function (SMF), Private 5G Network (dedicated slice). Further telemetry required to confirm root cause.
+      quotes 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1 → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.37.7.1 → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.3.3.1 → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.10.1 → INCOMPLETE
+
+  How was it verified?
+    Outcomes: VERIFIED 0, INCOMPLETE 13, UNSUPPORTED 3, CONFLICT 0
+    UNSUPPORTED — e.g. [cybersecurity] Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage).
+    INCOMPLETE — e.g. [cybersecurity] Supported by the authoritative text (3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1), but in-force status not verified and amendments not checked for this source.
+
+  How did the Coordinator reach the assessment?
+    Five categories (DOCX Table A1): confirmed facts 9; evidence-backed conclusions 0; uncertain conclusions 16; conflicting findings 0; potential policy gaps 0
+    Changed: Newly activated agents: cybersecurity, standards (selected from the information released in this chunk).
+    Changed: Incident reassessed as a possible security event: security indicators appear in the information released in this chunk.
+    Changed: New evidence considered (10 provision(s)): 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 4.2.2; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.10.1; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.3.3.1; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause 5.2.2; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1; CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii); NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile), Section 1 …
+    Changed: Superseded on reassessment (no longer asserted): technical 5 claim(s)
+    Changed: New cross-domain relationships (3): cybersecurity ↔ standards (shared provision); cybersecurity ↔ technical (shared provision); standards ↔ technical (shared provision)
+    Cross-domain links established from evidence: 3 — cybersecurity ↔ standards (shared provision); cybersecurity ↔ technical (shared provision); standards ↔ technical (shared provision)
+    Open questions: 8 (first: No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.)
+    Human review: Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.
+==============================================================================
+T2  [scenario2_T2]  The slice supports a healthcare application and may carry identifiable patient information.
+------------------------------------------------------------------------------
+Active agents   : critical_infrastructure, policy_legal, privacy
+Newly activated : critical_infrastructure, policy_legal, privacy
+DOCX table      : critical_infrastructure, privacy, policy_legal → match
+
+  [critical_infrastructure] Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
+    passages retrieved: 9
+      - The Telecommunications Act, 2023, Section 19 (p. 9)
+      - The Telecommunications Act, 2023, Section 22 (p. 10-11)
+      - The Telecommunications Act, 2023, Section 21 (p. 10)
+    UNSUPPORTED The incident facts indicate that the affected 5G slice supports a healthcare application, so criti
+    INCOMPLETE  The Telecommunications Act, 2023, Section 19 states: "19. The Central Government may notify standa
+    INCOMPLETE  The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules 
+    INCOMPLETE  The Telecommunications Act, 2023, Section 21 states: "21. The Central Government may, if satisfied
+    INCOMPLETE  The Telecommunications Act, 2023, Section 23 states: "23. If it appears necessary or expedient so 
+
+  [policy_legal] Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 3 of which impose duties.
+    passages retrieved: 21
+      - National Cyber Security Policy - 2013, Part III item 10 (p. 4)
+      - The Telecommunications Act, 2023, Section 22 (p. 10-11)
+      - The Telecommunications Act, 2023, Section 3 (p. 3-4)
+    INCOMPLETE  National Cyber Security Policy - 2013, Part III item 10 states: "10) To enable protection of infor
+    INCOMPLETE  The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules 
+    INCOMPLETE  The Telecommunications Act, 2023, Section 3 states: "3. (1) Any person intending to— (a) provide t
+    INCOMPLETE  The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 st
+
+  [privacy] Privacy assessment: personal data exposure status is 'suspected'. 4 DPDP provision(s) quoted from the Privacy KB.
+    passages retrieved: 14
+      - The Digital Personal Data Protection Act, 2023, Section 2 (p. 2-3)
+      - Digital Personal Data Protection Rules, 2025, Rule 7 (p. 26)
+      - Digital Personal Data Protection Rules, 2025, Rule 6 (p. 26)
+    UNSUPPORTED Personal data exposure is SUSPECTED: the affected slice may carry identifiable patient or subscrib
+    INCOMPLETE  The Digital Personal Data Protection Act, 2023, Section 2 states: "facts, concepts, opinions or in
+    INCOMPLETE  Digital Personal Data Protection Rules, 2025, Rule 7 states: "7. Intimation of personal data breac
+    INCOMPLETE  Digital Personal Data Protection Rules, 2025, Rule 6 states: "6. Reasonable security safeguards. —
+    INCOMPLETE  The Digital Personal Data Protection Act, 2023, Section 2 states: "undivided family; (iii) a compa
+
+Verifier        : INCOMPLETE 12, UNSUPPORTED 2
+Coordinator     : confirmed facts 14; evidence backed conclusions 0; uncertain conclusions 30; conflicting findings 0; potential policy gaps 0
+Changed         : Newly activated agents: critical_infrastructure, policy_legal, privacy (selected from the information released in this chunk).
+Changed         : Not active in this chunk: cybersecurity, standards, technical; their latest conclusions are carried forward, not re-examined.
+Changed         : Critical-service relevance appears for the first time in this chunk.
+Changed         : Possible personal-data involvement appears for the first time in this chunk.
+Changed         : New evidence considered (10 provision(s)): Digital Personal Data Protection Rules, 2025, Rule 6; Digital Personal Data Protection Rules, 2025, Rule 7; National Cyber Security Policy - 2013, Part III item 10; The Digital Personal Data Protection Act, 2023, Section 2; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11; The Telecommunications Act, 2023, Section 19; The Telecommunications Act, 2023, Section 21; The Telecommunications Act, 2023, Section 22 …
+Changed         : New cross-domain relationships (8): critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting); privacy ↔ policy_legal (instrument basis)
+Cross-domain    : instrument basis 5, parallel reporting 2, shared provision 1
+  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] instrument basis: The Telecommunications Act, 2023 (cited by critical_infrastructure
+  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] shared provision: both findings cite The Telecommunications Act, 2023, Section 22; t
+  - CROSS-DOMAIN [privacy ↔ policy_legal] instrument basis: The Digital Personal Data Protection Act, 2023 (cited by privacy) names the Teleco
+  - CROSS-DOMAIN [privacy ↔ policy_legal] instrument basis: Digital Personal Data Protection Rules, 2025 (cited by privacy) names the Telecom 
+  - CROSS-DOMAIN [cybersecurity, from scenario2_T1 ↔ critical_infrastructure] instrument basis: Telecommunications (Telecom Cyber Security) Ru
+  - CROSS-DOMAIN [cybersecurity, from scenario2_T1 ↔ policy_legal] instrument basis: Telecommunications (Telecom Cyber Security) Rules, 2024 (
+  - CROSS-DOMAIN [privacy ↔ cybersecurity, from scenario2_T1] parallel reporting: the same incident may trigger reporting under Digital Person
+  - CROSS-DOMAIN [privacy ↔ cybersecurity, from scenario2_T1] parallel reporting: the same incident may trigger reporting under Digital Person
+  - [carried forward from scenario2_T1] CROSS-DOMAIN [cybersecurity ↔ standards] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (
+  - [carried forward from scenario2_T1] CROSS-DOMAIN [cybersecurity ↔ technical] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (
+  - [carried forward from scenario2_T1] CROSS-DOMAIN [standards ↔ technical] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (2026
+Uncertainty     : No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked
+
+  What happened?
+    T2 (scenario2_T2): "The slice supports a healthcare application and may carry identifiable patient information."
+    New fact: The private 5G network slice has been confirmed to support a healthcare application.
+    New fact: The healthcare application may carry identifiable patient information.
+    New fact: This introduces critical-infrastructure relevance and potential personal-data protection implications.
+    New fact: Prior performance and security observations from T0 and T1 remain unresolved.
+    DOCX expected change: Assess critical-service relevance, personal-data implications and institutional responsibilities.
+
+  Which agent acted?
+    Active: critical_infrastructure, policy_legal, privacy
+    Newly activated: critical_infrastructure, policy_legal, privacy
+    Not active at this stage: cybersecurity, standards, technical
+    Selection matches the DOCX stage table (critical_infrastructure, privacy, policy_legal).
+
+  What evidence was retrieved?
+    critical_infrastructure: 9 passage(s) from its own KB — The Telecommunications Act, 2023 ×9
+    policy_legal: 21 passage(s) from its own KB — The Telecommunications Act, 2023 ×9; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation) ×7; National Digital Communications Policy 2018 ×3
+    privacy: 14 passage(s) from its own KB — The Digital Personal Data Protection Act, 2023 ×9; Digital Personal Data Protection Rules, 2025 ×5
+
+  What was concluded?
+    critical_infrastructure: Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
+      quotes The Telecommunications Act, 2023, Section 19 (p. 9) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 21 (p. 10) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 23 (p. 11) → INCOMPLETE
+    policy_legal: Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 3 of which impose duties.
+      quotes National Cyber Security Policy - 2013, Part III item 10 (p. 4) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 3 (p. 3-4) → INCOMPLETE
+      quotes The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 (p. 17-22) → INCOMPLETE
+    privacy: Privacy assessment: personal data exposure status is 'suspected'. 4 DPDP provision(s) quoted from the Privacy KB.
+      quotes The Digital Personal Data Protection Act, 2023, Section 2 (p. 2-3) → INCOMPLETE
+      quotes Digital Personal Data Protection Rules, 2025, Rule 7 (p. 26) → INCOMPLETE
+      quotes Digital Personal Data Protection Rules, 2025, Rule 6 (p. 26) → INCOMPLETE
+      quotes The Digital Personal Data Protection Act, 2023, Section 2 (p. 2-3) → INCOMPLETE
+
+  How was it verified?
+    Outcomes: VERIFIED 0, INCOMPLETE 12, UNSUPPORTED 2, CONFLICT 0
+    UNSUPPORTED — e.g. [critical_infrastructure] Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage).
+    INCOMPLETE — e.g. [critical_infrastructure] Supported by the authoritative text (The Telecommunications Act, 2023, Section 19), but in-force status not verified and amendments not checked for this source.
+
+  How did the Coordinator reach the assessment?
+    Five categories (DOCX Table A1): confirmed facts 14; evidence-backed conclusions 0; uncertain conclusions 30; conflicting findings 0; potential policy gaps 0
+    Changed: Newly activated agents: critical_infrastructure, policy_legal, privacy (selected from the information released in this chunk).
+    Changed: Not active in this chunk: cybersecurity, standards, technical; their latest conclusions are carried forward, not re-examined.
+    Changed: Critical-service relevance appears for the first time in this chunk.
+    Changed: Possible personal-data involvement appears for the first time in this chunk.
+    Changed: New evidence considered (10 provision(s)): Digital Personal Data Protection Rules, 2025, Rule 6; Digital Personal Data Protection Rules, 2025, Rule 7; National Cyber Security Policy - 2013, Part III item 10; The Digital Personal Data Protection Act, 2023, Section 2; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11; The Telecommunications Act, 2023, Section 19; The Telecommunications Act, 2023, Section 21; The Telecommunications Act, 2023, Section 22 …
+    Changed: New cross-domain relationships (8): critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting); privacy ↔ policy_legal (instrument basis)
+    Cross-domain links established from evidence: 8 — critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); privacy ↔ policy_legal (instrument basis); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting)
+    Open questions: 7 (first: No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.)
+    Human review: Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.
+==============================================================================
+T3  [scenario2_T3]  The question asks: what should be reported or escalated, and what policy gap remains?
+------------------------------------------------------------------------------
+Active agents   : critical_infrastructure, cybersecurity, policy_gap, policy_legal, privacy
+Newly activated : cybersecurity, policy_gap
+DOCX table      : policy_legal, cybersecurity, privacy, critical_infrastructure, policy_gap → match
+
+  [critical_infrastructure] Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
+    passages retrieved: 12
+      - The Telecommunications Act, 2023, Section 33 (p. 13)
+      - The Telecommunications Act, 2023, Section 19 (p. 9)
+      - The Telecommunications Act, 2023, Section 22 (p. 10-11)
+    UNSUPPORTED The incident facts indicate that the affected 5G slice supports a service flagged as critical in a
+    INCOMPLETE  The Telecommunications Act, 2023, Section 33 states: "33. (1) The Adjudicating Officer shall, upon
+    INCOMPLETE  The Telecommunications Act, 2023, Section 19 states: "19. The Central Government may notify standa
+    INCOMPLETE  The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules 
+    INCOMPLETE  The Telecommunications Act, 2023, Section 35 states: "35. (1) For the purposes of this Chapter, th
+
+  [cybersecurity] Cybersecurity assessment: no new security indicators in this chunk. 4 provision(s) quoted from the Cybersecurity KB.
+    passages retrieved: 17
+      - National Digital Communications Policy 2018, Para 8 (p. 3)
+      - Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6)
+      - CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2)
+    UNSUPPORTED A possible cybersecurity incident was identified in an earlier chunk; this chunk releases no new s
+    INCOMPLETE  National Digital Communications Policy 2018, Para 8 states: "8. Improvement in regulation and ongo
+    INCOMPLETE  Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 states: "7. Reporting of security 
+    INCOMPLETE  CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (2
+    INCOMPLETE  Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 states: "5. Measures to protect an
+
+  [policy_legal] Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 4 of which impose duties.
+    passages retrieved: 21
+      - The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 25 (p. 41-42)
+      - The Telecommunications Act, 2023, Section 22 (p. 10-11)
+      - The Telecommunications Act, 2023, Section 3 (p. 3-4)
+    INCOMPLETE  The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 25 st
+    INCOMPLETE  The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules 
+    INCOMPLETE  The Telecommunications Act, 2023, Section 3 states: "3. (1) Any person intending to— (a) provide t
+    INCOMPLETE  The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 st
+
+  [privacy] Privacy assessment: personal data exposure status is 'suspected'. 4 DPDP provision(s) quoted from the Privacy KB.
+    passages retrieved: 16
+      - The Digital Personal Data Protection Act, 2023, Section 27 (p. 14)
+      - Digital Personal Data Protection Rules, 2025, Rule 7 (p. 26)
+      - Digital Personal Data Protection Rules, 2025, Rule 6 (p. 26)
+    UNSUPPORTED Personal data exposure is SUSPECTED: the affected slice may carry identifiable patient or subscrib
+    INCOMPLETE  The Digital Personal Data Protection Act, 2023, Section 27 states: "after recording reasons in wri
+    INCOMPLETE  Digital Personal Data Protection Rules, 2025, Rule 7 states: "7. Intimation of personal data breac
+    INCOMPLETE  Digital Personal Data Protection Rules, 2025, Rule 6 states: "6. Reasonable security safeguards. —
+    INCOMPLETE  The Digital Personal Data Protection Act, 2023, Section 2 states: "undivided family; (iii) a compa
+
+  [policy_gap] Policy gap assessment: 3 candidate area(s) from verified findings; 3 potential gap(s) raised after Canonical KB examination. Potential gaps are for expert review, not conclusions of inadequacy.
+    passages retrieved: 22
+      - National Digital Communications Policy 2018, Para 8 (p. 3)
+      - National Digital Communications Policy 2018, Para 11 (p. 4-22)
+      - National Cyber Security Policy - 2013, Part IV E (p. 6)
+    INCOMPLETE  Potential gap — Emerging technology not explicitly addressed: none of the 485 passages of Indian l
+    INCOMPLETE  Potential gap — Overlapping requirements: CERT-In Directions under sub-section (6) of section 70B 
+    INCOMPLETE  Potential gap — Missing institutional clarity: National Cyber Security Policy - 2013, Part III ite
+    INCOMPLETE  Comparator — [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architectur
+    INCOMPLETE  Comparator — [REFERENCE ONLY — not Indian law] ITU-T Recommendation Y.3172 (06/2019) Architectural
+
+Verifier        : INCOMPLETE 21, UNSUPPORTED 3
+Coordinator     : confirmed facts 18; evidence backed conclusions 0; uncertain conclusions 35; conflicting findings 0; potential policy gaps 4
+Changed         : Newly activated agents: cybersecurity, policy_gap (selected from the information released in this chunk).
+Changed         : New evidence considered (11 provision(s)): ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1; National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11; National Digital Communications Policy 2018, Para 8; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40; The Digital Personal Data Protection Act, 2023, Section 27 …
+Changed         : Superseded on reassessment (no longer asserted): critical_infrastructure 3 claim(s), cybersecurity 2 claim(s), policy_legal 1 claim(s), privacy 1 claim(s)
+Changed         : New cross-domain relationships (7): cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision); policy_gap ↔ standards (shared provision)
+Changed         : Potential policy gaps raised for expert review: 4.
+Cross-domain    : instrument basis 5, parallel reporting 2, shared provision 4
+  - CROSS-DOMAIN [cybersecurity ↔ critical_infrastructure] instrument basis: Telecommunications (Telecom Cyber Security) Rules, 2024 (cited by
+  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] instrument basis: The Telecommunications Act, 2023 (cited by critical_infrastructure
+  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] shared provision: both findings cite The Telecommunications Act, 2023, Section 22; t
+  - CROSS-DOMAIN [cybersecurity ↔ policy_legal] instrument basis: Telecommunications (Telecom Cyber Security) Rules, 2024 (cited by cybersecur
+  - CROSS-DOMAIN [cybersecurity ↔ privacy] parallel reporting: the same incident may trigger reporting under Telecommunications (Telecom Cyber
+  - CROSS-DOMAIN [cybersecurity ↔ privacy] parallel reporting: the same incident may trigger reporting under CERT-In Directions under sub-sect
+  - CROSS-DOMAIN [privacy ↔ policy_legal] instrument basis: The Digital Personal Data Protection Act, 2023 (cited by privacy) names the Teleco
+  - CROSS-DOMAIN [privacy ↔ policy_legal] instrument basis: Digital Personal Data Protection Rules, 2025 (cited by privacy) names the Telecom 
+  - CROSS-DOMAIN [policy_gap ↔ cybersecurity] shared provision: both findings cite CERT-In Directions under sub-section (6) of section 70B of 
+  - CROSS-DOMAIN [policy_gap ↔ privacy] shared provision: both findings cite Digital Personal Data Protection Rules, 2025, Rule 7; the two dom
+  - CROSS-DOMAIN [policy_gap ↔ standards, from scenario2_T1] shared provision: both findings cite 3GPP TS 23.501 V19.9.0 (2026-09) System arch
+  - [carried forward from scenario2_T1] CROSS-DOMAIN [standards ↔ technical] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (2026
+Uncertainty     : No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked
+
+  What happened?
+    T3 (scenario2_T3): "The question asks: what should be reported or escalated, and what policy gap remains?"
+    New fact: No new technical facts; the question is now about reporting, escalation, and policy gaps.
+    New fact: All prior observations (performance, security indicators, healthcare/CII relevance, possible personal-data exposure) are in scope for this assessment.
+    New fact: The assessment must identify what should be reported to which institution, under which Indian instrument, and flag any remaining policy gaps or ambiguities.
+    DOCX expected change: Produce a verified, source-linked assessment, identify uncertainty and classify any potential gap without treating international standards as Indian law.
+
+  Which agent acted?
+    Active: critical_infrastructure, cybersecurity, policy_gap, policy_legal, privacy
+    Newly activated: cybersecurity, policy_gap
+    Selection matches the DOCX stage table (policy_legal, cybersecurity, privacy, critical_infrastructure, policy_gap).
+
+  What evidence was retrieved?
+    critical_infrastructure: 12 passage(s) from its own KB — The Telecommunications Act, 2023 ×12
+    cybersecurity: 17 passage(s) from its own KB — Telecommunications (Telecom Cyber Security) Rules, 2024 ×8; CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022) ×5; NIST CSWP 29: The NIST Cybersecurity Framework (CSF) 2.0 ×2
+    policy_legal: 21 passage(s) from its own KB — The Telecommunications Act, 2023 ×11; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation) ×6; National Digital Communications Policy 2018 ×3
+    privacy: 16 passage(s) from its own KB — The Digital Personal Data Protection Act, 2023 ×9; Digital Personal Data Protection Rules, 2025 ×7
+    policy_gap: 22 passage(s) from its own KB — TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector ×10; National Cyber Security Policy - 2013 ×7; National Digital Communications Policy 2018 ×5
+
+  What was concluded?
+    critical_infrastructure: Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
+      quotes The Telecommunications Act, 2023, Section 33 (p. 13) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 19 (p. 9) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 35 (p. 14) → INCOMPLETE
+    cybersecurity: Cybersecurity assessment: no new security indicators in this chunk. 4 provision(s) quoted from the Cybersecurity KB.
+      quotes National Digital Communications Policy 2018, Para 8 (p. 3) → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6) → INCOMPLETE
+      quotes CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2) → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 (p. 4-5) → INCOMPLETE
+    policy_legal: Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 4 of which impose duties.
+      quotes The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 25 (p. 41-42) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
+      quotes The Telecommunications Act, 2023, Section 3 (p. 3-4) → INCOMPLETE
+      quotes The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 (p. 17-22) → INCOMPLETE
+    privacy: Privacy assessment: personal data exposure status is 'suspected'. 4 DPDP provision(s) quoted from the Privacy KB.
+      quotes The Digital Personal Data Protection Act, 2023, Section 27 (p. 14) → INCOMPLETE
+      quotes Digital Personal Data Protection Rules, 2025, Rule 7 (p. 26) → INCOMPLETE
+      quotes Digital Personal Data Protection Rules, 2025, Rule 6 (p. 26) → INCOMPLETE
+      quotes The Digital Personal Data Protection Act, 2023, Section 2 (p. 2-3) → INCOMPLETE
+    policy_gap: Policy gap assessment: 3 candidate area(s) from verified findings; 3 potential gap(s) raised after Canonical KB examination. Potential gaps are for expert review, not conclusions of inadequacy.
+      quotes TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30 (p. 77) → INCOMPLETE
+      quotes CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2) → INCOMPLETE
+      quotes National Cyber Security Policy - 2013, Part III item 5 (p. 3) → INCOMPLETE
+      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1 → INCOMPLETE
+      quotes ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1 (p. 1) → INCOMPLETE
+
+  How was it verified?
+    Outcomes: VERIFIED 0, INCOMPLETE 21, UNSUPPORTED 3, CONFLICT 0
+    UNSUPPORTED — e.g. [critical_infrastructure] Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage).
+    INCOMPLETE — e.g. [critical_infrastructure] Supported by the authoritative text (The Telecommunications Act, 2023, Section 33), but in-force status not verified and amendments not checked for this source.
+
+  How did the Coordinator reach the assessment?
+    Five categories (DOCX Table A1): confirmed facts 18; evidence-backed conclusions 0; uncertain conclusions 35; conflicting findings 0; potential policy gaps 4
+    Changed: Newly activated agents: cybersecurity, policy_gap (selected from the information released in this chunk).
+    Changed: New evidence considered (11 provision(s)): ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1; National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11; National Digital Communications Policy 2018, Para 8; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40; The Digital Personal Data Protection Act, 2023, Section 27 …
+    Changed: Superseded on reassessment (no longer asserted): critical_infrastructure 3 claim(s), cybersecurity 2 claim(s), policy_legal 1 claim(s), privacy 1 claim(s)
+    Changed: New cross-domain relationships (7): cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision); policy_gap ↔ standards (shared provision)
+    Changed: Potential policy gaps raised for expert review: 4.
+    Cross-domain links established from evidence: 11 — cybersecurity ↔ critical_infrastructure (instrument basis); critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); privacy ↔ policy_legal (instrument basis); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision); policy_gap ↔ standards (shared provision)
+    Open questions: 11 (first: No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.)
+    Human review: Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.
