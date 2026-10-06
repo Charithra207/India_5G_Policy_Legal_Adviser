@@ -38,11 +38,12 @@ class ScenarioEngine:
                   outputs/audit/, or $ADVISER_AUDIT_DIR)
     record      : False keeps the stage entries in memory only
     run_id      : optional fixed run ID (default: scenario + UTC time)
+    registry_note : recorded in the run header, e.g. that the KBs are fixtures
     """
 
     def __init__(self, scenario_id: str = DEFAULT_SCENARIO, registry=None,
                  audit_dir: Optional[Path] = None, run_id: Optional[str] = None,
-                 record: bool = True) -> None:
+                 record: bool = True, registry_note: Optional[str] = None) -> None:
         self.spec: ScenarioSpec = get_scenario(scenario_id)
         self.chunks: list[ScenarioChunk] = self.spec.load_chunks()
         if len(self.chunks) != len(self.spec.stages):
@@ -51,7 +52,7 @@ class ScenarioEngine:
         self.pipeline = Pipeline(registry)
         self.kb_status = self.pipeline.registry.status_report()
         self.trail: Optional[AuditTrail] = (
-            AuditTrail.start(self.spec, self.kb_status, audit_dir, run_id)
+            AuditTrail.start(self.spec, self.kb_status, audit_dir, run_id, registry_note)
             if record else None
         )
         self.records = []           # pipeline AuditRecords, in stage order

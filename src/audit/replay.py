@@ -90,6 +90,7 @@ def _fingerprint(stage: dict) -> dict:
         "claims": {a["agent_id"]: [(c["claim"], c["verifier_outcome"]) for c in a["claims"]]
                    for a in stage["agents"]},
         **{cat: stage["coordinator"][cat] for cat in COORDINATOR_CATEGORIES},
+        "cross_domain_relationships": stage["coordinator"]["cross_domain_relationships"],
     }
 
 

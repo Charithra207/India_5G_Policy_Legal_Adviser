@@ -165,14 +165,41 @@ confidence, or a disclaimer label.
 | VERIFIED | The canonical text of the cited section supports the claim; in force; no amendment recorded |
 | INCOMPLETE | Supported, but an amendment applies — or the claim matches its cited passage while the Canonical KB is not yet populated |
 | UNSUPPORTED | Cited section not in the Canonical KB, text does not support the claim, passage not in force, or no evidence |
-| CONFLICT | Another agent's finding contradicts the claim |
+| INCOMPLETE (live corpus) | Supported by the cited text, but in-force status / amendments not checked — currently every quoted provision |
+| CONFLICT | Another finding or source contradicts the claim; both sides kept with their evidence |
 
 The support check is pluggable (`Verifier(..., support_judge=...)`); the
 default `LexicalSupportJudge` is deterministic so runs can be replayed.
 
-Cross-domain verification flags relationships where one domain's finding
-changes the reading of another (e.g. a telecom obligation + a privacy
-obligation triggered by the same incident).
+**Cross-domain verification** (`src/core/cross_domain.py`) links findings of
+different domains only where the evidence establishes it — never because
+two agents are active:
+
+| Relationship | Established when | Live example (Scenario 2) |
+|---|---|---|
+| shared provision | both domains cite the same source and section | Critical Infrastructure and Policy & Legal both cite Telecommunications Act, 2023, Section 22 |
+| instrument basis | an instrument cited in one domain names, in its own Canonical KB text, an Act cited in the other | Telecom Cyber Security Rules (Cybersecurity) are made "in exercise of the powers conferred by … section 22 … of the Telecommunications Act, 2023" (Critical Infrastructure / Policy & Legal) |
+| parallel reporting | both domains cite Indian legal duties to report the same incident, to different recipients | TCS Rules Rule 7 (Central Government, six hours) and CERT-In Direction (ii) (CERT-In, 6 hours) vs DPDP Rules Rule 7 (Data Principal and Board, without delay) |
+
+Findings of agents that ran in an earlier chunk take part (a T2 privacy
+finding links to a T1 cybersecurity finding).
+
+**Conflicts** are recorded as `ConflictRecord`s: Finding A and Finding B,
+each with its evidence, the basis, the status ("unresolved; requires
+qualified human review") and the Coordinator's treatment.  Rules:
+
+- *reporting deadline* — two cited duties to report the same incident to
+  the same recipient within different time limits;
+- *CII obligations* — CII relevance found, but Policy & Legal examined its
+  sources and found no corresponding obligation;
+- *exposure classification* — exposure confirmed by Privacy, but
+  Cybersecurity does not treat the incident as a security event.
+
+The ingested corpus contains no disagreeing provisions, so the live run has
+no conflict — correctly.  The conflict path is demonstrated with labelled
+synthetic passages (`src/scenario/conflict_fixture.py`,
+`python -m src.scenario.run --conflict-demo`, recorded in
+`outputs/audit/day2_conflict_demo_FIXTURE.jsonl`).
 
 ---
 
@@ -187,8 +214,24 @@ assessment with five strictly separated categories (DOCX Annex-1 Table A1):
 4. **Conflicting findings** — contradictions between agents or sources
 5. **Potential policy gaps** — areas of unclear or absent coverage, for expert review
 
-When incident facts change between chunks, the assessment is re-issued and
-earlier conclusions are updated visibly.
+**Progressive reassessment.** Each chunk's assessment covers the whole
+incident so far:
+
+- confirmed facts accumulate across chunks;
+- conclusions of agents not active in this chunk are carried forward under
+  their last outcome, tagged `[carried forward from <chunk> — not re-examined]`;
+- `changes_from_prior` is computed by comparison: newly active / inactive
+  agents, incident flags that became true in this chunk, newly cited
+  provisions, re-rated claims, superseded claims, new cross-domain links,
+  conflicts and policy gaps.
+
+**Conflicts** are shown with both findings and their evidence; neither is
+adopted, and both are withheld from the other categories.
+
+**Uncertainty.** UNSUPPORTED claims are labelled "insufficient evidence;
+preliminary only"; `open_questions` lists the evidence the agents and the
+Verifier found missing, and states explicitly when no conclusion is
+evidence-backed.
 
 Policy gaps use non-conclusive language ("potential gap", "regulatory
 ambiguity").  No conclusion of policy failure is drawn.
@@ -239,7 +282,7 @@ python -m src.rag.build
 # One retrieval test per agent -> knowledge_base/retrieval_tests.md
 python -m src.rag.retrieval_demo
 
-# Run the test suite (87 tests)
+# Run the test suite (103 tests)
 python -m pytest tests -v
 
 # Demonstration UI: live run (chunk by chunk) and replay
@@ -248,6 +291,7 @@ streamlit run src/ui/app.py
 # Command line: release T0 and T1, record the audit trail; then replay it
 python -m src.scenario.run --stages 2
 python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --reexecute
+python -m src.scenario.run --conflict-demo       # conflict handling (labelled fixtures)
 
 # Run Scenario 2 (T0-T3) with the live knowledge bases
 python -c "
@@ -281,6 +325,7 @@ India_5G_Policy_Legal_Adviser/
 │   │   ├── models.py          # Data contracts (EvidenceItem, AgentFinding, ...)
 │   │   ├── orchestrator.py    # Swarm Orchestrator
 │   │   ├── verifier.py        # Verifier (4 outcomes)
+│   │   ├── cross_domain.py    # Evidence-based cross-domain links and conflicts
 │   │   └── coordinator.py     # Coordinator (5-category synthesis)
 │   ├── agents/
 │   │   ├── base_agent.py      # Abstract base — RAG integration point
@@ -310,6 +355,7 @@ India_5G_Policy_Legal_Adviser/
 │   ├── scenario/
 │   │   ├── catalog.py         # DOCX stage tables (display/check only)
 │   │   ├── engine.py          # ScenarioEngine: chunk-by-chunk release + state
+│   │   ├── conflict_fixture.py # Labelled synthetic KBs for the conflict demonstration
 │   │   └── run.py             # python -m src.scenario.run
 │   ├── audit/
 │   │   ├── trail.py           # Append-only, hash-chained JSONL audit trail
@@ -335,7 +381,8 @@ India_5G_Policy_Legal_Adviser/
 │   ├── test_pipeline.py
 │   ├── test_verification_evidence.py
 │   ├── test_rag.py
-│   └── test_scenario_audit.py
+│   ├── test_scenario_audit.py
+│   └── test_cross_domain.py
 ├── requirements.txt
 ├── INTEGRATION_RAG_KB.md
 ├── INTEGRATION_UI.md
@@ -360,7 +407,11 @@ India_5G_Policy_Legal_Adviser/
 | In-force / amendment checks | Not done for any source — quoted claims are INCOMPLETE, not VERIFIED |
 | Scenario engine, audit trail, replay | Complete — stage tables checked against the DOCX; hash-chained JSONL; re-execution compare |
 | Demonstration UI | Day-1 functional UI (Streamlit): live run and replay |
-| Tests (87) | Passing — incl. VERIFIED / INCOMPLETE / UNSUPPORTED / CONFLICT paths, live-KB retrieval, audit tamper detection, UI chunk 1 → 2 |
+| Cross-domain verification | Complete — evidence-based (shared provision, instrument basis, parallel reporting), across chunks |
+| Conflict handling | Complete — structured Finding A / Finding B with evidence; demonstrated with labelled fixtures (the live corpus has no conflicting provisions) |
+| Progressive reassessment | Complete — cumulative facts, carried-forward conclusions, computed changes |
+| Full 4-stage run | Recorded: `outputs/audit/day2_scenario2_full_T0_T3.jsonl` (replays and re-executes exactly) |
+| Tests (103) | Passing — incl. all verifier outcomes, cross-domain links, conflict test, reassessment, live 4-stage chain, audit tamper detection, UI chunk 1 → 2 |
 
 ---
 

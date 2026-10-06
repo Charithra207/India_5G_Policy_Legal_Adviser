@@ -438,16 +438,17 @@ def test_t3_coordinator_has_policy_gaps() -> None:
     )
 
 
-def test_t3_cross_domain_links_flagged() -> None:
-    """T3 has multiple overlapping domains â€” cross-domain links must be flagged."""
+def test_t3_no_cross_domain_links_without_evidence() -> None:
+    """
+    Cross-domain links are established from cited evidence, never from two
+    agents merely being active: on stub KBs nothing is cited, so no link
+    may be claimed.  (Evidence-based links: tests/test_cross_domain.py.)
+    """
     pipeline = Pipeline()
-    _run(pipeline, 0)
-    _run(pipeline, 1)
-    _run(pipeline, 2)
-    record = _run(pipeline, 3)
-    assert record.verifier_result.cross_domain_links, (
-        "Verifier must flag cross-domain relationships at T3"
-    )
+    for i in range(4):
+        record = _run(pipeline, i)
+    assert not record.verifier_result.cross_domain_links
+    assert not any(vc.cross_domain_flag for vc in record.verifier_result.verified_claims)
 
 
 def test_t3_human_review_present() -> None:
@@ -556,7 +557,7 @@ if __name__ == "__main__":
         test_t3_policy_gap_uses_non_conclusive_language,
         test_t3_policy_gap_receives_prior_verified_findings,
         test_t3_coordinator_has_policy_gaps,
-        test_t3_cross_domain_links_flagged,
+        test_t3_no_cross_domain_links_without_evidence,
         test_t3_human_review_present,
         test_t3_no_fake_citations,
         # Regression

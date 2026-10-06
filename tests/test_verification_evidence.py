@@ -213,7 +213,14 @@ def test_conflict_when_policy_legal_examined_sources_but_found_no_obligation() -
 
     cii = [vc for vc in record.verifier_result.verified_claims
            if vc.agent_id == AgentID.CRITICAL_INFRA]
-    assert cii and all(vc.outcome == VerifierOutcome.CONFLICT for vc in cii)
+    # Only the disputed claim — CII relevance — becomes CONFLICT
+    relevance = next(vc for vc in cii if "critical-infrastructure provisions" in vc.claim)
+    assert relevance.outcome == VerifierOutcome.CONFLICT
+    assert all(vc.outcome != VerifierOutcome.CONFLICT for vc in cii if vc is not relevance)
+    [conflict] = record.verifier_result.conflict_details
+    assert conflict.finding_a.claim == relevance.claim
+    assert conflict.finding_b.agent_id == AgentID.POLICY_LEGAL
+    assert conflict.finding_b.evidence, "Finding B shows the passages Policy & Legal examined"
     assert record.coordinator_assessment.conflicting_findings
 
 

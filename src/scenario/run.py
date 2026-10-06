@@ -4,6 +4,8 @@ Command-line scenario runner and replay
     python -m src.scenario.run --stages 2            # Day-1 test: T0 then T1
     python -m src.scenario.run                       # all four stages
     python -m src.scenario.run --replay outputs/audit/<run>.jsonl [--reexecute]
+    python -m src.scenario.run --conflict-demo       # labelled fixture KBs (see
+                                                     # src/scenario/conflict_fixture.py)
 
 Live knowledge bases are used when built (python -m src.rag.build);
 `--stub` forces the core's stub KBs.
@@ -50,8 +52,38 @@ def print_stage(entry: dict) -> None:
             "conflicting_findings", "potential_policy_gaps")))
     for change in coord["changes_from_prior"]:
         print("Changed         :", change)
+    kinds: dict[str, int] = {}
+    for link in entry["verifier"].get("cross_domain_details", []):
+        kinds[link["kind"]] = kinds.get(link["kind"], 0) + 1
+    if kinds:
+        print("Cross-domain    :", ", ".join(f"{k.replace('_', ' ')} {n}"
+                                               for k, n in sorted(kinds.items())))
     for rel in coord["cross_domain_relationships"]:
-        print("Cross-domain    :", rel[:WIDTH + 40])
+        print("  -", rel[:WIDTH + 60])
+    for c in entry["verifier"].get("conflict_details", []):
+        print("CONFLICT        :", c["basis"])
+        for label in ("finding_a", "finding_b"):
+            side = c[label]
+            print(f"  {label[-1].upper()}: [{side['agent_id']}, {side['chunk_id']}] {side['claim'][:WIDTH + 40]}")
+        print("  Status        :", c["status"])
+        print("  Treatment     :", c["coordinator_treatment"])
+    if coord.get("open_questions"):
+        print("Uncertainty     :", coord["open_questions"][0][:WIDTH + 80])
+
+
+def live_registry():
+    from src.rag.registry import build_registry
+    return build_registry()
+
+
+def registry_for(header: dict, stub: bool = False):
+    """The knowledge bases a recorded run used: fixture, stub or live."""
+    from src.scenario.conflict_fixture import FIXTURE_LABEL, conflict_registry
+    if header.get("knowledge_base_note") == FIXTURE_LABEL:
+        return conflict_registry()
+    if stub or not all(header["knowledge_bases_live"].values()):
+        return None
+    return live_registry()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -60,6 +92,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--scenario", default=DEFAULT_SCENARIO, choices=sorted(SCENARIOS))
     ap.add_argument("--stages", type=int, default=4, help="number of chunks to release")
     ap.add_argument("--stub", action="store_true", help="use stub knowledge bases")
+    ap.add_argument("--conflict-demo", action="store_true",
+                    help="run on the labelled FIXTURE KBs in which two agents disagree")
     ap.add_argument("--run-id", help="fixed run ID for the audit file name")
     ap.add_argument("--replay", type=Path, help="replay a recorded audit trail")
     ap.add_argument("--reexecute", action="store_true",
@@ -67,13 +101,9 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.ERROR)
 
-    registry = None
-    if not args.stub:
-        from src.rag.registry import build_registry
-        registry = build_registry()
-
     if args.replay:
         run = load_run(args.replay)
+        registry = registry_for(run.header, args.stub)
         print(f"Run {run.header['run_id']} — {run.header['scenario_title']}")
         print("Hash chain:", "intact" if run.intact else "BROKEN")
         for problem in run.integrity_problems:
@@ -89,7 +119,14 @@ def main(argv: list[str] | None = None) -> int:
             return 1 if diffs or not run.intact else 0
         return 0 if run.intact else 1
 
-    engine = ScenarioEngine(args.scenario, registry=registry, run_id=args.run_id)
+    if args.conflict_demo:
+        from src.scenario.conflict_fixture import FIXTURE_LABEL, conflict_registry
+        registry, note = conflict_registry(), FIXTURE_LABEL
+        print("NOTE:", FIXTURE_LABEL)
+    else:
+        registry, note = (None if args.stub else live_registry()), None
+    engine = ScenarioEngine(args.scenario, registry=registry, run_id=args.run_id,
+                            registry_note=note)
     live = [k for k, v in engine.kb_status.items() if v]
     print(f"{engine.spec.title} (DOCX {engine.spec.docx_section})")
     print(f"Live KBs: {', '.join(live) or 'none — stub run'}")

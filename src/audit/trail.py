@@ -109,6 +109,10 @@ def passage(e: EvidenceItem) -> dict:
     }
 
 
+def _member(ref) -> dict:
+    return {"agent_id": ref.agent_id.value, "chunk_id": ref.chunk_id, "claim": ref.claim}
+
+
 def _citation(e: EvidenceItem) -> dict:
     return {"source_title": e.source_title, "section": e.section,
             "page": e.page, "chunk_id": e.chunk_id}
@@ -195,6 +199,21 @@ def stage_entry(record: AuditRecord, scenario_id: str, stage_spec,
             "cross_domain_links": list(record.verifier_result.cross_domain_links),
             "conflicts": list(record.verifier_result.conflicts),
             "missing_evidence": list(record.verifier_result.missing_evidence),
+            "cross_domain_details": [{
+                "agents": [a.value for a in link.agents],
+                "kind": link.kind,
+                "note": link.note,
+                "members": [_member(m) for m in link.members],
+                "evidence": [passage(e) for e in link.evidence],
+            } for link in record.verifier_result.cross_domain_details],
+            "conflict_details": [{
+                "rule": c.rule, "basis": c.basis, "status": c.status,
+                "coordinator_treatment": c.coordinator_treatment,
+                "finding_a": {**_member(c.finding_a),
+                              "evidence": [passage(e) for e in c.finding_a.evidence]},
+                "finding_b": {**_member(c.finding_b),
+                              "evidence": [passage(e) for e in c.finding_b.evidence]},
+            } for c in record.verifier_result.conflict_details],
         },
         "coordinator": _plain(asdict(record.coordinator_assessment)),
     }
@@ -245,7 +264,8 @@ class AuditTrail:
     @classmethod
     def start(cls, scenario, kb_status: dict[str, bool],
               directory: Optional[Path] = None,
-              run_id: Optional[str] = None) -> "AuditTrail":
+              run_id: Optional[str] = None,
+              knowledge_base_note: Optional[str] = None) -> "AuditTrail":
         now = datetime.now(timezone.utc)
         run_id = run_id or f"{scenario.scenario_id}_{now.strftime('%Y%m%dT%H%M%SZ')}"
         directory = Path(directory) if directory is not None else audit_dir()
@@ -264,6 +284,7 @@ class AuditTrail:
             "stage_count": len(scenario.stages),
             "knowledge_bases_live": kb_status,
             "knowledge_base_build": _kb_build(),
+            "knowledge_base_note": knowledge_base_note,
             "code": _git_commit(),
         })
         return trail

@@ -42,9 +42,13 @@ Outcomes (Annex-1 A.1)
 
 Cross-domain verification
 -------------------------
-The Verifier has access to the full set of agent findings and flags
-relationships where one domain's conclusion changes the reading of another
-(DOCX §3.5).
+The Verifier sees every finding of the chunk, plus the latest findings of
+agents that ran in earlier chunks, and links findings of different domains
+only where the evidence establishes a relationship — a shared provision, an
+instrument whose text names an Act cited in another domain, or parallel
+reporting duties for the same incident (src/core/cross_domain.py).  Two
+cited duties to report to the same recipient within different time limits
+are a CONFLICT; both sides are recorded with their evidence (DOCX §3.5).
 """
 
 from __future__ import annotations
@@ -52,8 +56,9 @@ from __future__ import annotations
 import logging
 from typing import Callable, Optional
 
+from src.core.cross_domain import find_relationships
 from src.core.models import (
-    AgentFinding, AgentID, EvidenceItem,
+    AgentFinding, AgentID, ClaimRef, ConflictRecord, EvidenceItem,
     VerifiedClaim, VerifierOutcome, VerifierResult,
 )
 from src.knowledge_base.base_kb import CanonicalKnowledgeBase
@@ -78,43 +83,6 @@ class LexicalSupportJudge:
         return term_coverage(claim, text) >= self.threshold
 
 logger = logging.getLogger(__name__)
-
-
-# ---------------------------------------------------------------------------
-# Cross-domain relationship rules (DOCX §3.5)
-# ---------------------------------------------------------------------------
-
-_CROSS_DOMAIN_PAIRS: list[tuple[AgentID, AgentID, str]] = [
-    (
-        AgentID.POLICY_LEGAL,
-        AgentID.CYBERSECURITY,
-        "Telecom authorisation obligations (Policy & Legal) and cyber-incident "
-        "reporting obligations (Cybersecurity) may both be triggered by the "
-        "same incident — ensure reporting requirements are consistent.",
-    ),
-    (
-        AgentID.CYBERSECURITY,
-        AgentID.PRIVACY,
-        "A cybersecurity event that involves personal data triggers both "
-        "CERT-In / Telecom Cyber Security Rules reporting (Cybersecurity) "
-        "and DPDP Act 2023 notification obligations (Privacy). "
-        "These obligations overlap and must be coordinated.",
-    ),
-    (
-        AgentID.CRITICAL_INFRA,
-        AgentID.POLICY_LEGAL,
-        "CII designation (Critical Infra) activates additional obligations "
-        "under the Telecommunications Act 2023 that complement the "
-        "general regulatory framework (Policy & Legal).",
-    ),
-    (
-        AgentID.PRIVACY,
-        AgentID.POLICY_LEGAL,
-        "DPDP Act 2023 obligations (Privacy) interact with Telecommunications "
-        "Act 2023 obligations (Policy & Legal) for telecom entities that are "
-        "also data fiduciaries.",
-    ),
-]
 
 
 class Verifier:
@@ -156,9 +124,14 @@ class Verifier:
         chunk_id: str,
         findings: list[AgentFinding],
         incident_state: dict,
+        prior_findings: Optional[list[AgentFinding]] = None,
     ) -> VerifierResult:
         """
         Verify all claims from all active agents for this chunk.
+
+        prior_findings : latest findings of agents that ran in earlier
+                         chunks but not in this one (cross-domain context;
+                         their claims are not re-verified here)
 
         Returns VerifierResult with per-claim outcomes, cross-domain links,
         conflicts, and missing-evidence notes.
@@ -181,29 +154,39 @@ class Verifier:
                 )
                 verified_claims.append(vc)
 
-        # Step 2: Cross-domain relationship detection
-        active_agent_ids = {f.agent_id for f in findings}
-        cross_domain_notes = self._check_cross_domain(active_agent_ids)
-        all_cross_domain_links.extend(cross_domain_notes)
+        # Step 2: Cross-domain relationships and evidence conflicts,
+        # established from the cited passages and the Canonical KB
+        links, evidence_conflicts = find_relationships(
+            findings, prior_findings or [],
+            self.canonical_kb if canonical_live else None,
+        )
+        all_cross_domain_links.extend(link.note for link in links)
 
-        for vc in verified_claims:
-            for note in cross_domain_notes:
-                if vc.agent_id.value in note:
+        by_claim = {(vc.agent_id, vc.claim): vc for vc in verified_claims}
+        for link in links:
+            for member in link.members:
+                vc = by_claim.get((member.agent_id, member.claim))
+                if vc is not None and member.chunk_id == chunk_id:
                     vc.cross_domain_flag = True
                     if not vc.cross_domain_note:
-                        vc.cross_domain_note = note
+                        vc.cross_domain_note = link.note
 
-        # Step 3: Conflict detection between agents.  Each rule names the
-        # exact (agent, claim) pairs it disputes; only those are marked.
-        conflicts = self._detect_conflicts(findings)
-        all_conflicts.extend(note for note, _ in conflicts)
+        # Step 3: Conflicts — between cited evidence, and between agents'
+        # structured findings.  Only the claims on either side are marked.
+        conflicts = evidence_conflicts + self._detect_conflicts(findings)
+        all_conflicts.extend(render_conflict(c) for c in conflicts)
 
-        for vc in verified_claims:
-            for note, disputed in conflicts:
-                if (vc.agent_id, vc.claim) in disputed:
-                    if vc.outcome != VerifierOutcome.CONFLICT:
-                        vc.outcome   = VerifierOutcome.CONFLICT
-                        vc.rationale += f" | CONFLICT detected: {note}"
+        for record in conflicts:
+            for side, other in ((record.finding_a, record.finding_b),
+                                (record.finding_b, record.finding_a)):
+                vc = by_claim.get((side.agent_id, side.claim))
+                if vc is None or side.chunk_id != chunk_id:
+                    continue
+                if vc.outcome != VerifierOutcome.CONFLICT:
+                    vc.outcome = VerifierOutcome.CONFLICT
+                    vc.rationale += f" | CONFLICT: {record.basis}"
+                vc.conflicting_evidence.extend(
+                    e for e in other.evidence if e not in vc.conflicting_evidence)
 
         # Step 4: Missing evidence notes
         for finding in findings:
@@ -224,6 +207,8 @@ class Verifier:
             cross_domain_links = all_cross_domain_links,
             conflicts          = all_conflicts,
             missing_evidence   = all_missing_evidence,
+            cross_domain_details = links,
+            conflict_details     = conflicts,
         )
 
         logger.info(
@@ -425,77 +410,68 @@ class Verifier:
         )
 
     # ------------------------------------------------------------------
-    # Cross-domain checks
+    # Conflicts between agents' structured findings
     # ------------------------------------------------------------------
 
-    def _check_cross_domain(
-        self,
-        active_agent_ids: set[AgentID],
-    ) -> list[str]:
-        """Flag cross-domain pairs where both agents are active (DOCX §3.5)."""
-        notes: list[str] = []
-        for agent_a, agent_b, note in _CROSS_DOMAIN_PAIRS:
-            if agent_a in active_agent_ids and agent_b in active_agent_ids:
-                notes.append(
-                    f"CROSS-DOMAIN [{agent_a.value} ↔ {agent_b.value}]: {note}"
-                )
-                logger.debug("Cross-domain flag: %s ↔ %s", agent_a.value, agent_b.value)
-        return notes
-
-    # ------------------------------------------------------------------
-    # Conflict detection
-    # ------------------------------------------------------------------
-
-    def _detect_conflicts(
-        self,
-        findings: list[AgentFinding],
-    ) -> list[tuple[str, set[tuple[AgentID, str]]]]:
+    def _detect_conflicts(self, findings: list[AgentFinding]) -> list[ConflictRecord]:
         """
-        Detect contradictions between agent findings (DOCX §3.5 check 7).
-
-        Returns (note, disputed) pairs, where `disputed` is the set of
-        (agent_id, claim) pairs whose outcome becomes CONFLICT.
-
-        Extend these rules once real KB evidence enables semantic comparison.
+        Disagreements between agents' structured findings (DOCX §3.5 check 7).
+        Side A is the claim that becomes CONFLICT; side B states the other
+        agent's position (its summary, with the passages it examined).
         """
-        conflicts: list[tuple[str, set[tuple[AgentID, str]]]] = []
-        findings_by_agent: dict[AgentID, AgentFinding] = {
-            f.agent_id: f for f in findings
-        }
+        conflicts: list[ConflictRecord] = []
+        by_agent: dict[AgentID, AgentFinding] = {f.agent_id: f for f in findings}
 
-        # Rule 1: CII relevance vs Policy & Legal obligations
-        cii_f = findings_by_agent.get(AgentID.CRITICAL_INFRA)
-        pl_f  = findings_by_agent.get(AgentID.POLICY_LEGAL)
+        def cited(f: AgentFinding) -> list[EvidenceItem]:
+            return [e for items in f.claim_citations.values() for e in items]
+
+        def position(f: AgentFinding) -> ClaimRef:
+            return ClaimRef(f.agent_id, f.chunk_id, f.summary, cited(f))
+
+        # CII relevance vs Policy & Legal finding no corresponding obligation.
         # Policy & Legal can only disagree if it examined sources: with no
         # retrieved passages its silence is missing evidence, not a conflict.
-        if (cii_f and pl_f
-                and cii_f.cii_relevant is True
-                and pl_f.claim_citations
-                and not pl_f.obligations):
-            # The CII Agent's claims all rest on the disputed CII relevance
-            conflicts.append((
-                "CONFLICT: Critical Infrastructure Agent identified CII relevance "
-                "but Policy & Legal Agent did not surface corresponding additional "
-                "obligations. Requires manual review.",
-                {(cii_f.agent_id, c) for c in cii_f.claims},
+        cii_f = by_agent.get(AgentID.CRITICAL_INFRA)
+        pl_f = by_agent.get(AgentID.POLICY_LEGAL)
+        if (cii_f and pl_f and cii_f.cii_relevant is True and cii_f.claims
+                and pl_f.claim_citations and not pl_f.obligations):
+            conflicts.append(ConflictRecord(
+                rule  = "cii_obligations",
+                basis = ("The Critical Infrastructure Agent finds critical-infrastructure "
+                         "relevance, but the Policy & Legal Agent examined its sources and "
+                         "identified no corresponding obligation."),
+                finding_a = ClaimRef(cii_f.agent_id, cii_f.chunk_id, cii_f.claims[0], cited(cii_f)),
+                finding_b = position(pl_f),
             ))
 
-        # Rule 2: Privacy confirmed exposure vs Cybersecurity classification
-        priv_f  = findings_by_agent.get(AgentID.PRIVACY)
-        cyber_f = findings_by_agent.get(AgentID.CYBERSECURITY)
-        if (priv_f and cyber_f
-                and priv_f.exposure_status == "confirmed"
-                and not any(
-                    "cyber" in c.lower() or "security" in c.lower()
-                    for c in cyber_f.claims
-                )):
-            # Disputed: the Privacy claims asserting exposure.  The Cybersecurity
-            # side is an omission, not a claim, so none of its claims are marked.
-            conflicts.append((
-                "CONFLICT: Privacy Agent confirmed personal data exposure but "
-                "Cybersecurity Agent does not classify this as a security event. "
-                "Requires reconciliation.",
-                {(priv_f.agent_id, c) for c in priv_f.claims if "exposure" in c.lower()},
-            ))
-
+        # Privacy confirms exposure vs Cybersecurity not treating it as a security event
+        priv_f = by_agent.get(AgentID.PRIVACY)
+        cyber_f = by_agent.get(AgentID.CYBERSECURITY)
+        if (priv_f and cyber_f and priv_f.exposure_status == "confirmed"
+                and not any("cyber" in c.lower() or "security" in c.lower()
+                            for c in cyber_f.claims)):
+            exposure = next((c for c in priv_f.claims if "exposure" in c.lower()), None)
+            if exposure:
+                conflicts.append(ConflictRecord(
+                    rule  = "exposure_classification",
+                    basis = ("The Privacy Agent finds personal-data exposure confirmed, but "
+                             "the Cybersecurity Agent does not classify the incident as a "
+                             "security event."),
+                    finding_a = ClaimRef(priv_f.agent_id, priv_f.chunk_id, exposure, []),
+                    finding_b = position(cyber_f),
+                ))
         return conflicts
+
+
+def _side(ref: ClaimRef) -> str:
+    sources = "; ".join(f"{e.source_title}, {e.section}" for e in ref.evidence[:3])
+    return (f"[{ref.agent_id.value}, {ref.chunk_id}] {ref.claim}"
+            + (f" (evidence: {sources})" if sources else " (no passage cited)"))
+
+
+def render_conflict(record: ConflictRecord) -> str:
+    """One-line form of a ConflictRecord for text output."""
+    return (f"CONFLICT ({record.rule}): {record.basis} "
+            f"Finding A: {_side(record.finding_a)} "
+            f"Finding B: {_side(record.finding_b)} "
+            f"Status: {record.status}.")

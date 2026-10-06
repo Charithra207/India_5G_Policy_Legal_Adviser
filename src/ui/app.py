@@ -249,38 +249,93 @@ def render_verifier(entry: dict) -> None:
                 for agent_id, c in claims:
                     st.markdown(f"**{agent_name(agent_id)}:** {c['claim']}")
                     st.caption(c["verifier_rationale"])
-    for key, title in (("conflicts", "Conflicts"), ("missing_evidence", "Missing evidence")):
-        if entry["verifier"][key]:
-            with st.expander(f"{title} ({len(entry['verifier'][key])})"):
-                for item in entry["verifier"][key]:
-                    st.markdown(f"- {item}")
+    render_conflicts(entry)
+    missing = entry["verifier"]["missing_evidence"]
+    if missing:
+        with st.expander(f"Missing evidence ({len(missing)})"):
+            for item in missing:
+                st.markdown(f"- {item}")
+
+
+def render_conflict_side(col, label: str, side: dict) -> None:
+    col.markdown(f"**{label} — {agent_name(side['agent_id'])}** ({side['chunk_id']})")
+    col.markdown(side["claim"])
+    if not side["evidence"]:
+        col.caption("No passage cited.")
+    for p in side["evidence"]:
+        col.markdown(f"*Evidence:* **{p['source_title']}**, {p['section']}")
+        col.markdown("> " + " ".join(p["excerpt"].split()))
+
+
+def render_conflicts(entry: dict) -> None:
+    conflicts = entry["verifier"].get("conflict_details")
+    if conflicts is None:                        # recorded before structured conflicts
+        for item in entry["verifier"]["conflicts"]:
+            st.error(item)
+        return
+    for c in conflicts:
+        st.subheader(f"Conflict — {c['rule'].replace('_', ' ')}")
+        st.error(c["basis"])
+        left, right = st.columns(2)
+        render_conflict_side(left, "Finding A", c["finding_a"])
+        render_conflict_side(right, "Finding B", c["finding_b"])
+        st.markdown(f"**Status:** :violet[{c['status']}]")
+        st.markdown(f"**Coordinator treatment:** {c['coordinator_treatment']}")
 
 
 def render_coordinator(entry: dict) -> None:
     coord = entry["coordinator"]
     st.header("Coordinator assessment")
-    st.caption("Categories kept separate, in DOCX Annex-1 Table A1 order.")
+    st.caption("Categories kept separate, in DOCX Annex-1 Table A1 order. The assessment "
+               "covers the whole incident so far: conclusions of agents not active in this "
+               "chunk are carried forward and tagged, not dropped.")
+    questions = coord.get("open_questions", [])
+    if questions and questions[0].startswith("No conclusion is evidence-backed"):
+        st.warning(questions[0])
     for key, title, meaning in TABLE_A1:
         items = coord[key]
         with st.expander(f"{title} ({len(items)})", expanded=key in ("confirmed_facts",
                                                                      "conflicting_findings")):
             st.caption(meaning)
             for item in items:
-                st.markdown(f"- {item}")
+                if key == "conflicting_findings":
+                    st.text(item)
+                elif item.startswith("[carried forward"):
+                    st.markdown(f"- :gray[{item}]")
+                else:
+                    st.markdown(f"- {item}")
             if not items:
                 st.caption("None at this stage.")
     if coord["relevant_institutions"]:
         st.markdown("**Relevant institutions:** " + "; ".join(coord["relevant_institutions"]))
+    rest = [q for q in questions if not q.startswith("No conclusion is evidence-backed")]
+    if rest:
+        with st.expander(f"Open questions — evidence still missing ({len(rest)})"):
+            for q in rest:
+                st.markdown(f"- {q}")
 
 
 def render_gaps_and_links(entry: dict) -> None:
     coord = entry["coordinator"]
     st.header("Policy gap / cross-domain findings")
     st.subheader("Cross-domain relationships")
+    st.caption("Each relationship is established from cited evidence: a shared provision, "
+               "an instrument whose text names an Act cited in another domain, or parallel "
+               "reporting duties for the same incident.")
+    details = {d["note"]: d for d in entry["verifier"].get("cross_domain_details", [])}
     for rel in coord["cross_domain_relationships"]:
+        if rel.startswith("[carried forward"):
+            st.markdown(f"- :gray[{rel}]")
+            continue
         st.markdown(f"- {rel}")
+        link = details.get(rel)
+        if link and link["members"]:
+            with st.expander("Findings linked", expanded=False):
+                for m in link["members"]:
+                    st.markdown(f"- **{agent_name(m['agent_id'])}** ({m['chunk_id']}): "
+                                f"{m['claim'][:300]}")
     if not coord["cross_domain_relationships"]:
-        st.caption("None flagged at this stage.")
+        st.caption("None established from the evidence at this stage.")
     st.subheader("Potential policy gaps")
     gaps = coord["potential_policy_gaps"]
     if "policy_gap" not in entry["orchestrator"]["active_agents"]:
@@ -418,6 +473,8 @@ def replay_mode() -> None:
     run = load_run(path)
     spec = get_scenario(run.header["scenario_id"])
     render_kb_status(run.header["knowledge_bases_live"], run.header)
+    if run.header.get("knowledge_base_note"):
+        st.warning(f"**{run.header['knowledge_base_note']}.**")
 
     if run.intact:
         st.sidebar.success(f"Hash chain intact ({len(run.stages)} stage entries).")
@@ -444,9 +501,15 @@ def replay_mode() -> None:
                 f"({'complete run' if run.completed else 'incomplete run'})")
 
     if st.sidebar.button("Re-execute and compare"):
-        live = all(run.header["knowledge_bases_live"].values())
+        from src.scenario.conflict_fixture import FIXTURE_LABEL, conflict_registry
+        if run.header.get("knowledge_base_note") == FIXTURE_LABEL:
+            registry = conflict_registry()
+        elif all(run.header["knowledge_bases_live"].values()):
+            registry = live_registry()
+        else:
+            registry = None
         with st.spinner("Re-running the recorded chunk sequence through the pipeline …"):
-            diffs = reexecute(run, live_registry() if live else None)
+            diffs = reexecute(run, registry)
         st.session_state[f"diffs-{path.name}"] = diffs
     diffs = st.session_state.get(f"diffs-{path.name}")
     if diffs is not None:

@@ -238,10 +238,20 @@ T0 → Technical; T1 → Technical + Cybersecurity + Standards, both matching th
 DOCX table. The Coordinator reports the reclassification, and re-execution
 reproduces both stages.
 
-### Remaining Day-2 work
+**Day-2 additions (core).** Stage entries now also carry
+`verifier.cross_domain_details` (kind, agents, linked findings, establishing
+passages) and `verifier.conflict_details` (Finding A / Finding B with
+evidence, basis, status, Coordinator treatment); the Coordinator assessment
+adds `open_questions`, `claim_register` and `link_register`. The UI shows
+conflicts side by side, carried-forward conclusions greyed and tagged, and
+the "no conclusion is evidence-backed" notice. A run on fixture KBs records
+`knowledge_base_note` in its header and the UI shows it as a warning.
 
-- Run and record all four stages (T2, T3) on live KBs, and walk through the
-  T3 policy-gap output in the UI.
+Recorded runs: `day2_scenario2_full_T0_T3.jsonl` (live KBs, all four
+stages) and `day2_conflict_demo_FIXTURE.jsonl` (labelled synthetic passages).
+
+### Remaining Member 3 work
+
 - Visual polish: cross-domain links drawn between agent panels; a
   side-by-side stage diff (claims added/removed/re-rated between stages).
 - Collapse repetitive evidence: the same passage retrieved by several agents

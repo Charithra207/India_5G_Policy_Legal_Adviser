@@ -201,6 +201,53 @@ class VerifiedClaim:
 
 
 @dataclass
+class ClaimRef:
+    """One agent's finding as one side of a relationship or conflict."""
+    agent_id  : AgentID
+    chunk_id  : str                               # the chunk in which the agent made it
+    claim     : str
+    evidence  : list[EvidenceItem] = field(default_factory=list)
+
+
+@dataclass
+class CrossDomainLink:
+    """
+    A relationship between findings of two domains (DOCX §3.5), established
+    from evidence — never from the mere fact that both agents are active.
+
+    kind:
+      shared_provision    – both findings cite the same source and section
+      instrument_basis    – an instrument cited in one domain names, in its
+                            own text, an Act cited in the other
+      parallel_reporting  – both findings cite reporting duties triggered by
+                            the same incident (different recipients/limits)
+    """
+    agents    : tuple[AgentID, AgentID]
+    kind      : str
+    note      : str
+    members   : list[ClaimRef]      = field(default_factory=list)
+    evidence  : list[EvidenceItem]  = field(default_factory=list)  # the passage(s) establishing the link
+
+
+@dataclass
+class ConflictRecord:
+    """
+    Two findings that disagree (DOCX §3.5 check 7).  Both sides are kept with
+    their evidence; the Coordinator never picks one.
+    """
+    rule                  : str
+    basis                 : str
+    finding_a             : ClaimRef
+    finding_b             : ClaimRef
+    status                : str = "CONFLICT — unresolved; requires qualified human review"
+    coordinator_treatment : str = (
+        "Neither finding is adopted. Both are withheld from evidence-backed "
+        "conclusions and shown side by side with their evidence; which one "
+        "governs (e.g. a later or more specific instrument) is for human review."
+    )
+
+
+@dataclass
 class VerifierResult:
     """
     The complete output of the Verifier for one orchestration round.
@@ -210,6 +257,9 @@ class VerifierResult:
     cross_domain_links  : list[str]                = field(default_factory=list)
     conflicts           : list[str]                = field(default_factory=list)
     missing_evidence    : list[str]                = field(default_factory=list)
+    # Structured forms of cross_domain_links / conflicts (same content)
+    cross_domain_details: list[CrossDomainLink]    = field(default_factory=list)
+    conflict_details    : list[ConflictRecord]     = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -242,6 +292,24 @@ class CoordinatorAssessment:
 
     # What changed relative to the previous chunk
     changes_from_prior      : list[str]            = field(default_factory=list)
+
+    # Evidence the agents or the Verifier found missing; kept visible so an
+    # uncertain conclusion is never presented as settled (DOCX A.2)
+    open_questions          : list[str]            = field(default_factory=list)
+
+    # Every claim in the assessment with its current outcome and the chunk
+    # it was last assessed in — the basis for carrying earlier conclusions
+    # forward visibly and for reporting re-rated claims.
+    # Each: {"agent_id", "claim", "outcome", "chunk_id", "carried_forward"}
+    claim_register          : list[dict]           = field(default_factory=list)
+
+    # Incident flags as of this chunk, so the next chunk can report what
+    # became true in it
+    incident_flags          : dict                 = field(default_factory=dict)
+
+    # Cross-domain links behind cross_domain_relationships:
+    # each {"note", "agents": [a, b], "chunk_id"}
+    link_register           : list[dict]           = field(default_factory=list)
 
     # Human-review note (always present per DOCX A.2)
     human_review_required   : str = (

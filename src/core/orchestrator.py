@@ -154,6 +154,9 @@ class SwarmOrchestrator:
         self.coordinator = coordinator
         self._kbs        = agent_kbs or {}
         self._agent_inputs: dict[str, dict] = {}
+        # Latest finding of each agent, for cross-domain verification of
+        # later chunks.  Kept out of incident_state: agents never see it.
+        self._latest_findings: dict[AgentID, AgentFinding] = {}
 
         # Instantiate all 7 specialist agents
         self._agents: dict[AgentID, object] = {
@@ -234,10 +237,16 @@ class SwarmOrchestrator:
         # ----------------------------------------------------------------
         pass1_findings: list[AgentFinding] = self._run_agents(chunk, pass1_agent_ids)
 
+        # Latest findings of agents that ran earlier but not now: the
+        # Verifier links current findings to them across domains (§3.5)
+        earlier = [f for agent_id, f in self._latest_findings.items()
+                   if agent_id not in active_agent_ids]
+
         pass1_verifier_result: VerifierResult = self.verifier.verify(
             chunk_id       = chunk.chunk_id,
             findings       = pass1_findings,
             incident_state = self._incident_state,
+            prior_findings = earlier,
         )
 
         # Absorb Pass-1 verified findings into incident_state so Policy Gap
@@ -260,6 +269,7 @@ class SwarmOrchestrator:
                 chunk_id       = chunk.chunk_id,
                 findings       = gap_findings,
                 incident_state = self._incident_state,
+                prior_findings = pass1_findings + earlier,
             )
             self._absorb_verified_findings(gap_verifier_result)
 
@@ -274,7 +284,12 @@ class SwarmOrchestrator:
                 conflicts          = (pass1_verifier_result.conflicts
                                       + gap_verifier_result.conflicts),
                 missing_evidence   = (pass1_verifier_result.missing_evidence
-                                      + gap_verifier_result.missing_evidence),
+                                      + [m for m in gap_verifier_result.missing_evidence
+                                         if m not in pass1_verifier_result.missing_evidence]),
+                cross_domain_details = (pass1_verifier_result.cross_domain_details
+                                        + gap_verifier_result.cross_domain_details),
+                conflict_details     = (pass1_verifier_result.conflict_details
+                                        + gap_verifier_result.conflict_details),
             )
 
         # ----------------------------------------------------------------
@@ -305,6 +320,8 @@ class SwarmOrchestrator:
         )
 
         self._incident_state["chunks_processed"].append(chunk.chunk_id)
+        for finding in all_findings:
+            self._latest_findings[finding.agent_id] = finding
         logger.info("Orchestrator: chunk %s complete.", chunk.chunk_id)
         return record
 
