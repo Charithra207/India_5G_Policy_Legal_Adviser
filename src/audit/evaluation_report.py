@@ -57,8 +57,9 @@ AREAS = [
      "Suspected (not confirmed) exposure kept distinct; DPDP Act and DPDP Rules Rules 6–7 quoted.",
      ["test_evaluation::TestPrivacyAnalysis"]),
     ("Critical infrastructure analysis", P,
-     "Critical-service relevance assessed from the Telecommunications Act only: the IT (NCIIPC) "
-     "Rules, 2013 could not be obtained, so NCIIPC provisions cannot be quoted or verified.",
+     "Critical-service relevance assessed from the Telecommunications Act and the Critical "
+     "Telecommunication Infrastructure Rules, 2024; the IT (NCIIPC) Rules, 2013 could not be "
+     "obtained, so NCIIPC provisions cannot be quoted or verified.",
      ["test_evaluation::TestCriticalInfrastructureAnalysis"]),
     ("International standards (reference only)", W,
      "3GPP, ETSI, NIST and ITU passages quoted with the reference-only label; never treated as Indian law.",
@@ -66,12 +67,15 @@ AREAS = [
     ("Policy-gap identification", P,
      "Three of the six DOCX categories are examined (overlapping requirements, institutional "
      "clarity, emerging technology); explicit/partial coverage are left to expert review, "
-     "unclear coverage is not produced, and no international policy examples were ingested.",
+     "unclear coverage is not produced; international comparators are two EU (ENISA) documents, "
+     "with no neighbouring-country instrument.",
      ["test_evaluation::TestPolicyGapIdentification"]),
     ("Verification", P,
-     "All four outcomes are produced by the real Verifier, but on the live corpus nothing can be "
-     "VERIFIED (in-force status and amendments were not checked for any source) and no real "
-     "provisions conflict; VERIFIED and CONFLICT are shown with labelled fixtures.",
+     "All four outcomes are produced by the real Verifier. In-force status is now established for "
+     "the Telecommunications Act sections named in two commencement notifications and for four "
+     "Rules, but no source's amendment history is shown to be complete, so nothing on the live "
+     "corpus is VERIFIED; no real provisions conflict. VERIFIED and CONFLICT are shown with "
+     "labelled fixtures.",
      ["test_evaluation::TestVerification", "test_verification_evidence"]),
     ("Cross-domain reasoning", W,
      "Links established from evidence on the live run (shared provision, instrument basis, "
@@ -102,8 +106,9 @@ OTHER = [
       "test_scenario_audit::test_ui_full_demo_shows_every_required_element",
       "test_scenario_audit::test_ui_replay_shows_conflict_side_by_side"]),
     ("Knowledge foundation / RAG", P,
-     "15 sources ingested and every artefact checked against the stores; NCIIPC Rules, IndiaAI/"
-     "national AI strategy, international examples and six host-country categories not obtained.",
+     "23 sources ingested, each with an official URL whose file hash matches; every artefact "
+     "checked against the stores. Not obtained: NCIIPC Rules, IndiaAI Mission documents, "
+     "neighbouring-country instruments, and sources for the economic and multilateral categories.",
      ["test_rag", "test_kb_foundation", "test_foundation"]),
     ("Failure handling", W,
      "No evidence, wrong citation, missing section, conflict, incomplete information, unexpected "
@@ -115,8 +120,13 @@ OTHER = [
      ["test_core_freeze"]),
     ("Team integration (Members 1–3)", W, "One pipeline from scenario to audit; checklist tests pass.",
      ["test_demo_integration::TestIntegrationChecklist", "test_pipeline"]),
-    ("In-force / amendment checking", N,
-     "Not done for any source; this is what blocks VERIFIED on the real corpus.", []),
+    ("In-force / amendment checking", P,
+     "In-force status established from obtained documents (S.O. 2408(E) and S.O. 2623(E) for the "
+     "Telecommunications Act; the commencement clauses of the TCS, CTI, TCS Amendment and Right of "
+     "Way Rules) and amendment notes from the TCS Amendment Rules 2025, each traced by the evidence "
+     "audit. Amendment histories are not shown to be complete, so nothing real is VERIFIED.",
+     ["test_evidence_audit::test_in_force_status_*", "test_evidence_audit::test_amendment_notes_*",
+      "test_evidence_audit::test_verifier_reports_*", "test_evidence_audit::test_catches_unbacked_*"]),
     ("Generative synthesis (DOCX §5.2 generative-AI perspective)", N,
      "No generative model is used: agents quote passages and the Coordinator organises verified claims.", []),
     ("Parallel agent execution", N,

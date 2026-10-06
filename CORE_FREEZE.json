@@ -49,6 +49,14 @@
       "files": [
         "src/agents/technical_agent.py"
       ]
+    },
+    {
+      "at": "2026-10-06T16:35:13.323621+00:00",
+      "reason": "fix: in-force status and amendments established by obtained documents (commencement notifications, amendment rules) were not carried to evidence or named by the Verifier; EvidenceItem gains effective_status (additive) and the INCOMPLETE rationale now names the recorded status and amendment. Outcomes unchanged: amendment_checked stays false, so nothing on real sources is VERIFIED.",
+      "files": [
+        "src/core/verifier.py",
+        "src/core/models.py"
+      ]
     }
   ],
   "files": {
@@ -62,10 +70,10 @@
     "src/agents/critical_infra_agent.py": "789bfca226a00f2b2173c4645b06dd8f9a54488828cdfa68340a1508fe3df4a6",
     "src/agents/standards_agent.py": "1f79c93d0ed8c358f4e83d35db0e60db85bed11a0e969c4bae584f988adadac0",
     "src/agents/policy_gap_agent.py": "50ee11e698410aab417912692c135af55409ce10c0319df20bdbe797ec60f086",
-    "src/core/verifier.py": "1492de2193c4c4e70e8a5577197663e62689fbbe86daabb276bd18fd88365ddb",
+    "src/core/verifier.py": "14e076fe48b98156cb7606037cf3d8011d15c96941af6950c17d6af70f3e2a15",
     "src/core/cross_domain.py": "0a9dda4e1bc7ed3fd44d8c2fe059cc83f776acfc273c46d9c613691edaa8747b",
     "src/core/coordinator.py": "3648dadc29f353da796b3ac8dfcf4928f6783e90d1756f22966ab5794fd11b74",
-    "src/core/models.py": "e4b4fcb1253abac9b3e7860fd00918811e4d5d86a85177008e382f2649a6f97a",
+    "src/core/models.py": "a97bf923957fabc441f7983c08130f243f46e63590a78233a8f230184edf3e99",
     "scenarios/scenario1_slicing_incident.py": "5479972b3e49bdc1fba9de3e9a8f72e7b1a69200c083aeb6c79fe64480de3ac0",
     "scenarios/scenario2_healthcare_5g.py": "bad50f18619e20e4313e682f90ea825e5e7722bf38e2f44d8885d167272dd3b2",
     "src/scenario/catalog.py": "dbcc40ee6992707cb6b340de98c03d1e53cb4f9cace8cf70a2cf82a59b98f510",

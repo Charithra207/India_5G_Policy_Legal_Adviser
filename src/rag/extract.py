@@ -32,7 +32,9 @@ def _ascii_ratio(text: str) -> float:
     return sum(c.isascii() for c in letters) / len(letters) if letters else 1.0
 
 
-def extract_pdf(path: Path, page_range=None, english_only=False) -> list[Block]:
+def extract_pdf(path: Path, page_range=None, english_only=False, english_lines=False) -> list[Block]:
+    """english_only drops mostly-Hindi pages, then Hindi lines; english_lines keeps every
+    page and drops Hindi lines only (one-page bilingual notifications, mixed pages)."""
     import pymupdf
 
     blocks: list[Block] = []
@@ -40,13 +42,15 @@ def extract_pdf(path: Path, page_range=None, english_only=False) -> list[Block]:
         first, last = (page_range or [1, len(doc)])
         for page_no in range(first, last + 1):
             text = doc[page_no - 1].get_text()
-            if english_only and _ascii_ratio(text) < 0.85:
+            if english_only and not english_lines and _ascii_ratio(text) < 0.85:
                 continue      # Hindi half of a bilingual Gazette notification
             for line in text.splitlines():
                 line = line.strip()
                 if not line:
                     continue
-                if english_only and _ascii_ratio(line) < 0.6:
+                if english_lines and any("ऀ" <= ch <= "ॿ" for ch in line):
+                    continue      # any Devanagari: the Hindi text of a bilingual page
+                if (english_only or english_lines) and _ascii_ratio(line) < 0.6:
                     continue
                 blocks.append(Block(line, page_no))
     return blocks
@@ -92,7 +96,7 @@ def raw_docx_text(path: Path) -> str:
 
 def extract(doc: SourceDocument) -> list[Block]:
     if doc.file_format == "pdf":
-        return extract_pdf(doc.path, doc.page_range, doc.english_only)
+        return extract_pdf(doc.path, doc.page_range, doc.english_only, doc.english_lines)
     if doc.file_format == "docx":
         return extract_docx(doc.path)
     raise ValueError(f"{doc.id}: unsupported file format {doc.file_format!r}")

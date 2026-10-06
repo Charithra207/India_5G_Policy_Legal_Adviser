@@ -203,9 +203,11 @@ def render_passage(p: dict) -> None:
     st.markdown("> " + " ".join(p["excerpt"].split()))
     notes = [
         "in-force status not verified" if p["effective"] is None
-        else ("in force" if p["effective"] else "NOT in force"),
+        else (p.get("effective_status") or "in force") if p["effective"] else "NOT in force",
         "amendments checked" if p["amendment_checked"] else "amendments not checked",
     ]
+    if p.get("amendment_note"):
+        notes.append(f"recorded amendment: {p['amendment_note']}")
     if p["date_issued"]:
         notes.append(f"dated {p['date_issued']}")
     if p["url"]:

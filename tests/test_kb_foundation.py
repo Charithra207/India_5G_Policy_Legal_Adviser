@@ -123,31 +123,37 @@ def test_sources_manifest_unavailable_are_nciipc_and_comparators() -> None:
 
 
 def test_sources_manifest_no_fabricated_effective_status() -> None:
-    """No source may claim to be in force — effective_status must be 'not verified',
-    'not applicable', or absent for unavailable sources."""
+    """
+    A source may state that it is (partly) in force only when an `in_force`
+    entry names the obtained document that establishes it; otherwise its
+    effective_status must be 'not verified' or 'not applicable'.
+    """
     docs = _manifest_docs()
-    allowed = {
-        "not verified",
-        "not applicable (recommendations, not an Act)",
-        "not applicable",
-        "",         # acceptable for unavailable sources that have no status
-    }
+    ids = {d["id"] for d in docs if d.get("status") == "downloaded"}
     for d in docs:
         status = d.get("effective_status", "")
-        assert status in allowed, (
-            f"{d['id']}: unexpected effective_status {status!r}. "
-            f"Must be one of {sorted(allowed - {''})!r} (or absent/empty for unavailable sources)."
-        )
+        if "in force" in status:
+            assert d.get("in_force"), f"{d['id']}: claims in force without an in_force entry"
+            for entry in d["in_force"]:
+                assert entry["by"] in ids and entry["evidence"] and entry["units"], d["id"]
+        else:
+            assert status == "" or status.startswith(("not verified", "not applicable")), (
+                f"{d['id']}: unexpected effective_status {status!r}")
 
 
 def test_sources_manifest_no_fabricated_amendment_status() -> None:
-    """No source may claim amendments were checked."""
+    """
+    No source may claim its amendments were fully checked.  A recorded
+    amendment must name an obtained amending document (`amended_by`) and must
+    say that further amendments were not checked.
+    """
     docs = _manifest_docs()
     for d in docs:
         status = d.get("amendment_status", "not checked")
-        assert status == "not checked", (
-            f"{d['id']}: amendment_status should be 'not checked', got {status!r}"
-        )
+        if status in ("not checked", "not applicable"):
+            continue
+        assert d.get("amended_by"), f"{d['id']}: amendment recorded without an amended_by entry"
+        assert "not checked" in status, f"{d['id']}: must say further amendments were not checked"
 
 
 def test_sources_manifest_downloaded_have_sha256_and_url() -> None:
@@ -286,13 +292,16 @@ def test_canonical_metadata_ingested_have_sha256() -> None:
 
 
 def test_canonical_metadata_effective_status_never_confirmed() -> None:
-    """No canonical metadata entry may claim a provision is in force."""
+    """In-force claims in the canonical metadata match the manifest's established status."""
     data = _load_json(CANONICAL_META)
+    manifest = {d["id"]: d for d in _manifest_docs()}
     for d in data["documents"]:
         status = d.get("effective_status", "")
-        assert "not verified" in status or "not applicable" in status or status == "", (
-            f"{d['id']}: effective_status must not claim the provision is in force; got {status!r}"
-        )
+        if "in force" in status:
+            assert manifest[d["id"]].get("in_force"), f"{d['id']}: in-force claim without an in_force entry"
+        else:
+            assert "not verified" in status or "not applicable" in status or status == "", (
+                f"{d['id']}: unexpected effective_status {status!r}")
 
 
 def test_canonical_metadata_unavailable_have_null_sha256() -> None:
@@ -454,13 +463,11 @@ def test_host_corpus_category_names_include_docx_headings() -> None:
 def test_host_corpus_uncovered_categories_are_explicitly_marked() -> None:
     """Categories without ingested sources must be marked NOT COVERED."""
     data = _load_json(HOST_CORPUS)
+    # Categories with no obtained source (labour, IP, infrastructure and comparators
+    # are PARTIAL since the NITI Aayog strategy, Right of Way Rules and ENISA documents)
     uncovered_expected = {
         "Economic and industrial characteristics",
-        "Labour-market conditions",
-        "Intellectual property",
         "Multilateral and treaty obligations",
-        "Energy and infrastructure constraints",
-        "Regional and global comparators",
     }
     for cat in data["categories"]:
         if cat["docx_heading"] in uncovered_expected:
@@ -1197,16 +1204,25 @@ def test_built_vector_store_metadata_preserved() -> None:
 
 @built
 def test_built_no_fabricated_effective_status_in_chunks() -> None:
-    """No chunk may claim its provision is verified in force."""
+    """
+    A chunk is marked in force only for a provision named by an in_force entry
+    of its document; nothing else is. No chunk claims a complete amendment check.
+    """
+    import re
     from src.rag.registry import build_registry
 
+    manifest = {d["id"]: d for d in _manifest_docs()}
     registry = build_registry()
     for agent_id, kb in registry.agent_kbs.items():
         for chunk in kb.store.chunks:
-            assert chunk.get("effective") is None, (
-                f"{agent_id.value}: chunk {chunk.get('chunk_id')} "
-                f"has effective={chunk.get('effective')!r} — should be null"
-            )
+            if chunk.get("effective") is not None:
+                m = re.match(r"^(?:Section|Rule)\s+(\d+[A-Z]?)\b", chunk["section"])
+                unit = m.group(1) if m else None
+                entries = manifest[chunk["doc_id"]].get("in_force", [])
+                whole = not chunk["section"].startswith("p. ")     # "*": every provision, incl. Schedules
+                assert chunk["effective"] is True and any(
+                    unit in e["units"] or ("*" in e["units"] and whole) for e in entries), (
+                    f"{agent_id.value}: chunk {chunk['chunk_id']} marked in force without backing")
             assert chunk.get("amendment_checked") is False, (
                 f"{agent_id.value}: chunk {chunk.get('chunk_id')} "
                 f"has amendment_checked={chunk.get('amendment_checked')!r} — should be False"

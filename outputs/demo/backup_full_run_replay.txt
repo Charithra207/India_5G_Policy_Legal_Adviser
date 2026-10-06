@@ -67,7 +67,7 @@ DOCX table      : technical, cybersecurity, standards → match
   [cybersecurity] Cybersecurity assessment: possible cybersecurity incident indicated by the released facts. 4 provision(s) quoted from the Cybersecurity KB.
     passages retrieved: 22
       - 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1
-      - Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6)
+      - Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 12-13)
       - CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2)
     UNSUPPORTED The security indicators released in this chunk ("Unusual authentication and signalling attempts ar
     INCOMPLETE  [REFERENCE ONLY — not Indian law] 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and proce
@@ -124,16 +124,16 @@ Uncertainty     : No conclusion is evidence-backed at this stage: no claim was f
     Selection matches the DOCX stage table (technical, cybersecurity, standards).
 
   What evidence was retrieved?
-    cybersecurity: 22 passage(s) from its own KB — Telecommunications (Telecom Cyber Security) Rules, 2024 ×7; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×6; CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022) ×5
+    cybersecurity: 22 passage(s) from its own KB — 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×7; Telecommunications (Telecom Cyber Security) Rules, 2024 ×7; CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022) ×5
     standards: 18 passage(s) from its own KB — 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×7; 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19 ×6; NIST SP 800-61r3: Incident Response Recommendations and Considerations for Cybersecurity Risk Management (A CSF 2.0 Community Profile) ×5
     technical: 15 passage(s) from its own KB — 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19 ×8; 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19 ×7
 
   What was concluded?
     cybersecurity: Cybersecurity assessment: possible cybersecurity incident indicated by the released facts. 4 provision(s) quoted from the Cybersecurity KB.
       quotes 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1 → INCOMPLETE
-      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6) → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 12-13) → INCOMPLETE
       quotes CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2) → INCOMPLETE
-      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 (p. 4-5) → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 (p. 11-12) → INCOMPLETE
     standards: Standards assessment: in scope for comparison — 3GPP TS 23.501, 3GPP TS 33.501, NIST SP 800-61 Rev. 3. 4 passage(s) quoted. All standards are reference points only, not Indian law.
       quotes 3GPP TS 33.501 V19.7.0 (2026-06) Security architecture and procedures for 5G system, Release 19, Clause B.1 → INCOMPLETE
       quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1 → INCOMPLETE
@@ -169,21 +169,21 @@ DOCX table      : critical_infrastructure, privacy, policy_legal → match
 
   [critical_infrastructure] Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
     passages retrieved: 9
-      - The Telecommunications Act, 2023, Section 19 (p. 9)
-      - The Telecommunications Act, 2023, Section 22 (p. 10-11)
-      - The Telecommunications Act, 2023, Section 21 (p. 10)
+      - Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8 (p. 9)
+      - Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 (p. 7)
+      - Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5 (p. 7)
     UNSUPPORTED The incident facts indicate that the affected 5G slice supports a healthcare application, so criti
-    INCOMPLETE  The Telecommunications Act, 2023, Section 19 states: "19. The Central Government may notify standa
+    INCOMPLETE  Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8 states: "of the
+    INCOMPLETE  Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 states: "3. App
+    INCOMPLETE  Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5 states: "5. Ins
     INCOMPLETE  The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules 
-    INCOMPLETE  The Telecommunications Act, 2023, Section 21 states: "21. The Central Government may, if satisfied
-    INCOMPLETE  The Telecommunications Act, 2023, Section 23 states: "23. If it appears necessary or expedient so 
 
   [policy_legal] Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 3 of which impose duties.
-    passages retrieved: 21
-      - National Cyber Security Policy - 2013, Part III item 10 (p. 4)
+    passages retrieved: 23
+      - National Strategy for Artificial Intelligence #AIforAll (NITI Aayog), Approaches to evaluating focus sector areas (p. 113-114)
       - The Telecommunications Act, 2023, Section 22 (p. 10-11)
       - The Telecommunications Act, 2023, Section 3 (p. 3-4)
-    INCOMPLETE  National Cyber Security Policy - 2013, Part III item 10 states: "10) To enable protection of infor
+    INCOMPLETE  National Strategy for Artificial Intelligence #AIforAll (NITI Aayog), Approaches to evaluating foc
     INCOMPLETE  The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules 
     INCOMPLETE  The Telecommunications Act, 2023, Section 3 states: "3. (1) Any person intending to— (a) provide t
     INCOMPLETE  The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 st
@@ -205,11 +205,12 @@ Changed         : Newly activated agents: critical_infrastructure, policy_legal,
 Changed         : Not active in this chunk: cybersecurity, standards, technical; their latest conclusions are carried forward, not re-examined.
 Changed         : Critical-service relevance appears for the first time in this chunk.
 Changed         : Possible personal-data involvement appears for the first time in this chunk.
-Changed         : New evidence considered (10 provision(s)): Digital Personal Data Protection Rules, 2025, Rule 6; Digital Personal Data Protection Rules, 2025, Rule 7; National Cyber Security Policy - 2013, Part III item 10; The Digital Personal Data Protection Act, 2023, Section 2; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11; The Telecommunications Act, 2023, Section 19; The Telecommunications Act, 2023, Section 21; The Telecommunications Act, 2023, Section 22 …
-Changed         : New cross-domain relationships (8): critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting); privacy ↔ policy_legal (instrument basis)
-Cross-domain    : instrument basis 5, parallel reporting 2, shared provision 1
-  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] instrument basis: The Telecommunications Act, 2023 (cited by critical_infrastructure
+Changed         : New evidence considered (10 provision(s)): Digital Personal Data Protection Rules, 2025, Rule 6; Digital Personal Data Protection Rules, 2025, Rule 7; National Strategy for Artificial Intelligence #AIforAll (NITI Aayog), Approaches to evaluating focus sector areas; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8; The Digital Personal Data Protection Act, 2023, Section 2; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 …
+Changed         : New cross-domain relationships (9): critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting); privacy ↔ policy_legal (instrument basis)
+Cross-domain    : instrument basis 6, parallel reporting 2, shared provision 1
+  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] instrument basis: Telecommunications (Critical Telecommunication Infrastructure) Rul
   - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] shared provision: both findings cite The Telecommunications Act, 2023, Section 22; t
+  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] instrument basis: The Telecommunications Act, 2023 (cited by critical_infrastructure
   - CROSS-DOMAIN [privacy ↔ policy_legal] instrument basis: The Digital Personal Data Protection Act, 2023 (cited by privacy) names the Teleco
   - CROSS-DOMAIN [privacy ↔ policy_legal] instrument basis: Digital Personal Data Protection Rules, 2025 (cited by privacy) names the Telecom 
   - CROSS-DOMAIN [cybersecurity, from scenario2_T1 ↔ critical_infrastructure] instrument basis: Telecommunications (Telecom Cyber Security) Ru
@@ -236,18 +237,18 @@ Uncertainty     : No conclusion is evidence-backed at this stage: no claim was f
     Selection matches the DOCX stage table (critical_infrastructure, privacy, policy_legal).
 
   What evidence was retrieved?
-    critical_infrastructure: 9 passage(s) from its own KB — The Telecommunications Act, 2023 ×9
-    policy_legal: 21 passage(s) from its own KB — The Telecommunications Act, 2023 ×9; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation) ×7; National Digital Communications Policy 2018 ×3
+    critical_infrastructure: 9 passage(s) from its own KB — Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024 ×6; The Telecommunications Act, 2023 ×3
+    policy_legal: 23 passage(s) from its own KB — The Telecommunications Act, 2023 ×8; National Strategy for Artificial Intelligence #AIforAll (NITI Aayog) ×4; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation) ×4
     privacy: 14 passage(s) from its own KB — The Digital Personal Data Protection Act, 2023 ×9; Digital Personal Data Protection Rules, 2025 ×5
 
   What was concluded?
     critical_infrastructure: Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
-      quotes The Telecommunications Act, 2023, Section 19 (p. 9) → INCOMPLETE
+      quotes Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8 (p. 9) → INCOMPLETE
+      quotes Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 (p. 7) → INCOMPLETE
+      quotes Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5 (p. 7) → INCOMPLETE
       quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
-      quotes The Telecommunications Act, 2023, Section 21 (p. 10) → INCOMPLETE
-      quotes The Telecommunications Act, 2023, Section 23 (p. 11) → INCOMPLETE
     policy_legal: Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 3 of which impose duties.
-      quotes National Cyber Security Policy - 2013, Part III item 10 (p. 4) → INCOMPLETE
+      quotes National Strategy for Artificial Intelligence #AIforAll (NITI Aayog), Approaches to evaluating focus sector areas (p. 113-114) → INCOMPLETE
       quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
       quotes The Telecommunications Act, 2023, Section 3 (p. 3-4) → INCOMPLETE
       quotes The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 (p. 17-22) → INCOMPLETE
@@ -260,7 +261,7 @@ Uncertainty     : No conclusion is evidence-backed at this stage: no claim was f
   How was it verified?
     Outcomes: VERIFIED 0, INCOMPLETE 12, UNSUPPORTED 2, CONFLICT 0
     UNSUPPORTED — e.g. [critical_infrastructure] Checked against any retrieved Canonical KB passage: the authoritative text does not support the claim (the claim's content is not found in the passage).
-    INCOMPLETE — e.g. [critical_infrastructure] Supported by the authoritative text (The Telecommunications Act, 2023, Section 19), but in-force status not verified and amendments not checked for this source.
+    INCOMPLETE — e.g. [critical_infrastructure] Supported by the authoritative text (Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8), but amendments not checked for this source. Recorded status: in force from 22 November 2024 (rule 1(2): on publication in the Official Gazette).
 
   How did the Coordinator reach the assessment?
     Five categories (DOCX Table A1): confirmed facts 14; evidence-backed conclusions 0; uncertain conclusions 30; conflicting findings 0; potential policy gaps 0
@@ -268,9 +269,9 @@ Uncertainty     : No conclusion is evidence-backed at this stage: no claim was f
     Changed: Not active in this chunk: cybersecurity, standards, technical; their latest conclusions are carried forward, not re-examined.
     Changed: Critical-service relevance appears for the first time in this chunk.
     Changed: Possible personal-data involvement appears for the first time in this chunk.
-    Changed: New evidence considered (10 provision(s)): Digital Personal Data Protection Rules, 2025, Rule 6; Digital Personal Data Protection Rules, 2025, Rule 7; National Cyber Security Policy - 2013, Part III item 10; The Digital Personal Data Protection Act, 2023, Section 2; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11; The Telecommunications Act, 2023, Section 19; The Telecommunications Act, 2023, Section 21; The Telecommunications Act, 2023, Section 22 …
-    Changed: New cross-domain relationships (8): critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting); privacy ↔ policy_legal (instrument basis)
-    Cross-domain links established from evidence: 8 — critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); privacy ↔ policy_legal (instrument basis); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting)
+    Changed: New evidence considered (10 provision(s)): Digital Personal Data Protection Rules, 2025, Rule 6; Digital Personal Data Protection Rules, 2025, Rule 7; National Strategy for Artificial Intelligence #AIforAll (NITI Aayog), Approaches to evaluating focus sector areas; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8; The Digital Personal Data Protection Act, 2023, Section 2; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 …
+    Changed: New cross-domain relationships (9): critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting); privacy ↔ policy_legal (instrument basis)
+    Cross-domain links established from evidence: 9 — critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); privacy ↔ policy_legal (instrument basis); cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); privacy ↔ cybersecurity (parallel reporting)
     Open questions: 7 (first: No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.)
     Human review: Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.
 ==============================================================================
@@ -281,20 +282,20 @@ Newly activated : cybersecurity, policy_gap
 DOCX table      : policy_legal, cybersecurity, privacy, critical_infrastructure, policy_gap → match
 
   [critical_infrastructure] Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
-    passages retrieved: 12
+    passages retrieved: 13
       - The Telecommunications Act, 2023, Section 33 (p. 13)
-      - The Telecommunications Act, 2023, Section 19 (p. 9)
-      - The Telecommunications Act, 2023, Section 22 (p. 10-11)
+      - Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 (p. 7)
+      - Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5 (p. 7)
     UNSUPPORTED The incident facts indicate that the affected 5G slice supports a service flagged as critical in a
     INCOMPLETE  The Telecommunications Act, 2023, Section 33 states: "33. (1) The Adjudicating Officer shall, upon
-    INCOMPLETE  The Telecommunications Act, 2023, Section 19 states: "19. The Central Government may notify standa
+    INCOMPLETE  Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 states: "3. App
+    INCOMPLETE  Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5 states: "5. Ins
     INCOMPLETE  The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules 
-    INCOMPLETE  The Telecommunications Act, 2023, Section 35 states: "35. (1) For the purposes of this Chapter, th
 
   [cybersecurity] Cybersecurity assessment: no new security indicators in this chunk. 4 provision(s) quoted from the Cybersecurity KB.
     passages retrieved: 17
       - National Digital Communications Policy 2018, Para 8 (p. 3)
-      - Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6)
+      - Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 12-13)
       - CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2)
     UNSUPPORTED A possible cybersecurity incident was identified in an earlier chunk; this chunk releases no new s
     INCOMPLETE  National Digital Communications Policy 2018, Para 8 states: "8. Improvement in regulation and ongo
@@ -303,7 +304,7 @@ DOCX table      : policy_legal, cybersecurity, privacy, critical_infrastructure,
     INCOMPLETE  Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 states: "5. Measures to protect an
 
   [policy_legal] Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 4 of which impose duties.
-    passages retrieved: 21
+    passages retrieved: 23
       - The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 25 (p. 41-42)
       - The Telecommunications Act, 2023, Section 22 (p. 10-11)
       - The Telecommunications Act, 2023, Section 3 (p. 3-4)
@@ -324,26 +325,27 @@ DOCX table      : policy_legal, cybersecurity, privacy, critical_infrastructure,
     INCOMPLETE  The Digital Personal Data Protection Act, 2023, Section 2 states: "undivided family; (iii) a compa
 
   [policy_gap] Policy gap assessment: 3 candidate area(s) from verified findings; 3 potential gap(s) raised after Canonical KB examination. Potential gaps are for expert review, not conclusions of inadequacy.
-    passages retrieved: 22
+    passages retrieved: 24
       - National Digital Communications Policy 2018, Para 8 (p. 3)
-      - National Digital Communications Policy 2018, Para 11 (p. 4-22)
+      - ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1 (p. 1)
       - National Cyber Security Policy - 2013, Part IV E (p. 6)
-    INCOMPLETE  Potential gap — Emerging technology not explicitly addressed: none of the 485 passages of Indian l
+    INCOMPLETE  Potential gap — Emerging technology not explicitly addressed: none of the 886 passages of Indian l
     INCOMPLETE  Potential gap — Overlapping requirements: CERT-In Directions under sub-section (6) of section 70B 
     INCOMPLETE  Potential gap — Missing institutional clarity: National Cyber Security Policy - 2013, Part III ite
-    INCOMPLETE  Comparator — [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architectur
-    INCOMPLETE  Comparator — [REFERENCE ONLY — not Indian law] ITU-T Recommendation Y.3172 (06/2019) Architectural
+    INCOMPLETE  Comparator — [REFERENCE ONLY — not Indian law] ENISA 5G Cybersecurity Standards — Analysis of stan
+    INCOMPLETE  Comparator — [REFERENCE ONLY — not Indian law] ENISA 5G Cybersecurity Standards — Analysis of stan
 
 Verifier        : INCOMPLETE 21, UNSUPPORTED 3
 Coordinator     : confirmed facts 18; evidence backed conclusions 0; uncertain conclusions 35; conflicting findings 0; potential policy gaps 4
 Changed         : Newly activated agents: cybersecurity, policy_gap (selected from the information released in this chunk).
-Changed         : New evidence considered (11 provision(s)): ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1; National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11; National Digital Communications Policy 2018, Para 8; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40; The Digital Personal Data Protection Act, 2023, Section 27 …
-Changed         : Superseded on reassessment (no longer asserted): critical_infrastructure 3 claim(s), cybersecurity 2 claim(s), policy_legal 1 claim(s), privacy 1 claim(s)
-Changed         : New cross-domain relationships (7): cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision); policy_gap ↔ standards (shared provision)
+Changed         : New evidence considered (11 provision(s)): ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2; ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1; National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11; National Digital Communications Policy 2018, Para 8; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40 …
+Changed         : Superseded on reassessment (no longer asserted): critical_infrastructure 2 claim(s), cybersecurity 2 claim(s), policy_legal 1 claim(s), privacy 1 claim(s)
+Changed         : New cross-domain relationships (6): cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision)
 Changed         : Potential policy gaps raised for expert review: 4.
-Cross-domain    : instrument basis 5, parallel reporting 2, shared provision 4
+Cross-domain    : instrument basis 6, parallel reporting 2, shared provision 3
   - CROSS-DOMAIN [cybersecurity ↔ critical_infrastructure] instrument basis: Telecommunications (Telecom Cyber Security) Rules, 2024 (cited by
   - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] instrument basis: The Telecommunications Act, 2023 (cited by critical_infrastructure
+  - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] instrument basis: Telecommunications (Critical Telecommunication Infrastructure) Rul
   - CROSS-DOMAIN [critical_infrastructure ↔ policy_legal] shared provision: both findings cite The Telecommunications Act, 2023, Section 22; t
   - CROSS-DOMAIN [cybersecurity ↔ policy_legal] instrument basis: Telecommunications (Telecom Cyber Security) Rules, 2024 (cited by cybersecur
   - CROSS-DOMAIN [cybersecurity ↔ privacy] parallel reporting: the same incident may trigger reporting under Telecommunications (Telecom Cyber
@@ -352,7 +354,6 @@ Cross-domain    : instrument basis 5, parallel reporting 2, shared provision 4
   - CROSS-DOMAIN [privacy ↔ policy_legal] instrument basis: Digital Personal Data Protection Rules, 2025 (cited by privacy) names the Telecom 
   - CROSS-DOMAIN [policy_gap ↔ cybersecurity] shared provision: both findings cite CERT-In Directions under sub-section (6) of section 70B of 
   - CROSS-DOMAIN [policy_gap ↔ privacy] shared provision: both findings cite Digital Personal Data Protection Rules, 2025, Rule 7; the two dom
-  - CROSS-DOMAIN [policy_gap ↔ standards, from scenario2_T1] shared provision: both findings cite 3GPP TS 23.501 V19.9.0 (2026-09) System arch
   - [carried forward from scenario2_T1] CROSS-DOMAIN [standards ↔ technical] shared provision: both findings cite 3GPP TS 33.501 V19.7.0 (2026
 Uncertainty     : No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked
 
@@ -369,23 +370,23 @@ Uncertainty     : No conclusion is evidence-backed at this stage: no claim was f
     Selection matches the DOCX stage table (policy_legal, cybersecurity, privacy, critical_infrastructure, policy_gap).
 
   What evidence was retrieved?
-    critical_infrastructure: 12 passage(s) from its own KB — The Telecommunications Act, 2023 ×12
+    critical_infrastructure: 13 passage(s) from its own KB — Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024 ×7; The Telecommunications Act, 2023 ×6
     cybersecurity: 17 passage(s) from its own KB — Telecommunications (Telecom Cyber Security) Rules, 2024 ×8; CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022) ×5; NIST CSWP 29: The NIST Cybersecurity Framework (CSF) 2.0 ×2
-    policy_legal: 21 passage(s) from its own KB — The Telecommunications Act, 2023 ×11; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation) ×6; National Digital Communications Policy 2018 ×3
+    policy_legal: 23 passage(s) from its own KB — The Telecommunications Act, 2023 ×9; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation) ×6; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024 ×4
     privacy: 16 passage(s) from its own KB — The Digital Personal Data Protection Act, 2023 ×9; Digital Personal Data Protection Rules, 2025 ×7
-    policy_gap: 22 passage(s) from its own KB — TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector ×10; National Cyber Security Policy - 2013 ×7; National Digital Communications Policy 2018 ×5
+    policy_gap: 24 passage(s) from its own KB — ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy ×9; National Cyber Security Policy - 2013 ×6; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector ×6
 
   What was concluded?
     critical_infrastructure: Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
       quotes The Telecommunications Act, 2023, Section 33 (p. 13) → INCOMPLETE
-      quotes The Telecommunications Act, 2023, Section 19 (p. 9) → INCOMPLETE
+      quotes Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 (p. 7) → INCOMPLETE
+      quotes Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5 (p. 7) → INCOMPLETE
       quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
-      quotes The Telecommunications Act, 2023, Section 35 (p. 14) → INCOMPLETE
     cybersecurity: Cybersecurity assessment: no new security indicators in this chunk. 4 provision(s) quoted from the Cybersecurity KB.
       quotes National Digital Communications Policy 2018, Para 8 (p. 3) → INCOMPLETE
-      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 5-6) → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7 (p. 12-13) → INCOMPLETE
       quotes CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2) → INCOMPLETE
-      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 (p. 4-5) → INCOMPLETE
+      quotes Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 5 (p. 11-12) → INCOMPLETE
     policy_legal: Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 4 of which impose duties.
       quotes The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 25 (p. 41-42) → INCOMPLETE
       quotes The Telecommunications Act, 2023, Section 22 (p. 10-11) → INCOMPLETE
@@ -400,8 +401,8 @@ Uncertainty     : No conclusion is evidence-backed at this stage: no claim was f
       quotes TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30 (p. 77) → INCOMPLETE
       quotes CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) (p. 2) → INCOMPLETE
       quotes National Cyber Security Policy - 2013, Part III item 5 (p. 3) → INCOMPLETE
-      quotes 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1 → INCOMPLETE
-      quotes ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1 (p. 1) → INCOMPLETE
+      quotes ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1 (p. 1) → INCOMPLETE
+      quotes ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2 (p. 22-28) → INCOMPLETE
 
   How was it verified?
     Outcomes: VERIFIED 0, INCOMPLETE 21, UNSUPPORTED 3, CONFLICT 0
@@ -411,10 +412,10 @@ Uncertainty     : No conclusion is evidence-backed at this stage: no claim was f
   How did the Coordinator reach the assessment?
     Five categories (DOCX Table A1): confirmed facts 18; evidence-backed conclusions 0; uncertain conclusions 35; conflicting findings 0; potential policy gaps 4
     Changed: Newly activated agents: cybersecurity, policy_gap (selected from the information released in this chunk).
-    Changed: New evidence considered (11 provision(s)): ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1; National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11; National Digital Communications Policy 2018, Para 8; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40; The Digital Personal Data Protection Act, 2023, Section 27 …
-    Changed: Superseded on reassessment (no longer asserted): critical_infrastructure 3 claim(s), cybersecurity 2 claim(s), policy_legal 1 claim(s), privacy 1 claim(s)
-    Changed: New cross-domain relationships (7): cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision); policy_gap ↔ standards (shared provision)
+    Changed: New evidence considered (11 provision(s)): ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2; ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1; National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11; National Digital Communications Policy 2018, Para 8; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40 …
+    Changed: Superseded on reassessment (no longer asserted): critical_infrastructure 2 claim(s), cybersecurity 2 claim(s), policy_legal 1 claim(s), privacy 1 claim(s)
+    Changed: New cross-domain relationships (6): cybersecurity ↔ critical_infrastructure (instrument basis); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision)
     Changed: Potential policy gaps raised for expert review: 4.
-    Cross-domain links established from evidence: 11 — cybersecurity ↔ critical_infrastructure (instrument basis); critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); privacy ↔ policy_legal (instrument basis); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision); policy_gap ↔ standards (shared provision)
+    Cross-domain links established from evidence: 11 — cybersecurity ↔ critical_infrastructure (instrument basis); critical_infrastructure ↔ policy_legal (instrument basis); critical_infrastructure ↔ policy_legal (shared provision); cybersecurity ↔ policy_legal (instrument basis); cybersecurity ↔ privacy (parallel reporting); privacy ↔ policy_legal (instrument basis); policy_gap ↔ cybersecurity (shared provision); policy_gap ↔ privacy (shared provision)
     Open questions: 11 (first: No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.)
     Human review: Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers.

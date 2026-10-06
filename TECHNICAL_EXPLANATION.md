@@ -35,12 +35,12 @@ assessment → append-only audit trail → replay.
 | Agent | Knowledge base (passages) | What it produces |
 |---|---|---|
 | Technical | 3GPP TS 23.501 and 33.501 (3,739) | Incident class, affected components, technical references |
-| Policy & Legal | Telecommunications Act, TRAI Act, NDCP-2018, NCSP-2013 (274) | Applicable provisions, obligations, institutions |
-| Cybersecurity | Telecom Cyber Security Rules, CERT-In Directions, plus security references (1,675) | Security classification, reporting duties |
+| Policy & Legal | Telecommunications Act + commencement notifications, TRAI Act, NDCP-2018, NCSP-2013, CTI Rules, NITI Aayog AI strategy (603) | Applicable provisions, obligations, institutions |
+| Cybersecurity | Telecom Cyber Security Rules + 2025 Amendment Rules, CERT-In Directions, plus security references (1,680) | Security classification, reporting duties |
 | Privacy | DPDP Act 2023, DPDP Rules 2025 (159) | Exposure status (suspected and confirmed kept apart), data-protection duties |
-| Critical Infrastructure | Telecommunications Act (105); **IT (NCIIPC) Rules 2013 could not be obtained** | Critical-service relevance; designation stated as unconfirmed |
+| Critical Infrastructure | Telecommunications Act, Critical Telecommunication Infrastructure Rules 2024 (126); **IT (NCIIPC) Rules 2013 could not be obtained** | Critical-service relevance; designation stated as unconfirmed |
 | Standards | ITU-T Y.3172, 3GPP, ETSI NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 (4,259) | Reference points, always labelled "not Indian law" |
-| Policy Gap | TRAI AI & Big Data Recommendations, NCSP, NDCP (459); **no international policy examples ingested** | Potential gaps for expert review |
+| Policy Gap | TRAI AI & Big Data Recommendations, NCSP, NDCP, NITI Aayog AI strategy, Right of Way Rules; EU examples: two ENISA documents (1,029) | Potential gaps for expert review, with EU comparators |
 
 An agent states what a law or standard says only by quoting a retrieved
 passage, with source, section and page. If no passage is found, it says the
@@ -56,8 +56,13 @@ matter is not assessed.
 3. Section detection from the printed headings or PDF bookmarks.
 4. Chunking within one section.
 5. Embedding.
-6. One vector store per agent, plus the separate Canonical KB (5,112
-   passages, 15 documents).
+6. One vector store per agent, plus the separate Canonical KB (5,710
+   passages, 23 documents; each source's official URL serves a file
+   byte-identical to the one ingested).
+
+Passages under 80 characters (heading fragments, cross-reference pointers)
+are excluded from open searches: their embeddings scored above the cut-off
+for unrelated queries. They remain available for exact section lookups.
 
 **Retrieval quality** on 12 labelled queries covering all 7 agents:
 
@@ -97,8 +102,17 @@ For each claim, the Verifier checks three things against the Canonical KB:
 | UNSUPPORTED | Section not found, text does not support the claim, or no evidence |
 | CONFLICT | Another finding or source contradicts the claim |
 
-**On the live corpus nothing is VERIFIED.** Nobody has checked the in-force
-status or amendment history of any source, and that is reported, not hidden.
+**On the live corpus nothing is VERIFIED.** In-force status is established
+from obtained documents only:
+
+- Telecommunications Act sections named in S.O. 2408(E) and S.O. 2623(E);
+- the TCS, CTI, TCS Amendment and Right of Way Rules, under their
+  commencement clauses.
+
+The Verifier names that status, e.g. "in force from 26 June 2024
+(S.O. 2408(E))". The TCS Rules carry amendment notes from G.S.R. 771(E).
+No source's amendment history is shown to be complete, so claims stay
+INCOMPLETE.
 The live run gives 50 INCOMPLETE and 10 UNSUPPORTED. VERIFIED and CONFLICT
 are shown with clearly labelled synthetic fixture passages through the same
 Verifier.
@@ -106,11 +120,11 @@ Verifier.
 ## Cross-domain verification
 
 Links between domains are established from evidence, never from two agents
-simply being active. The live run produced 22 links:
+simply being active. The live run produced 23 links:
 
-- **Shared provision (8):** for example, Critical Infrastructure and
+- **Shared provision (7):** for example, Critical Infrastructure and
   Policy & Legal both cite Telecommunications Act s.22.
-- **Instrument basis (10):** the Telecom Cyber Security Rules say they are
+- **Instrument basis (12):** the Telecom Cyber Security Rules say they are
   made "in exercise of the powers conferred by … section 22 … of the
   Telecommunications Act, 2023".
 - **Parallel reporting (4):**
@@ -168,7 +182,7 @@ The other three are handled as follows:
   the distinction to experts.
 - **Unclear coverage:** not produced.
 
-At T3 it raises three potential gaps. For example, none of the 485 passages
+At T3 it raises three potential gaps. For example, none of the 886 passages
 of Indian legal and policy instruments mentions network slicing; it is named
 only in TRAI recommendations, which are not law. Gaps are phrased as
 potential and for expert review, never as "the law does not exist" or
@@ -197,11 +211,14 @@ Replay, in the UI or on the command line, does four things:
 
 ## Not implemented / limits
 
-- No in-force or amendment checking, so nothing is VERIFIED on real sources.
+- In-force status only where an obtained notification establishes it;
+  amendment histories are not shown to be complete, so nothing is VERIFIED
+  on real sources.
 - IT (NCIIPC) Rules 2013 not ingested, because the official sites were
   unreachable.
-- No IndiaAI or national AI strategy documents, international policy
-  examples, or sources for six host-country categories.
+- No IndiaAI Mission documents or neighbouring-country instruments. The
+  economic and multilateral categories have no source; labour, IP,
+  infrastructure and comparators are partial.
 - No generative synthesis.
 - Agents run sequentially, not in parallel.
 - The ITU AI for Good Sandbox stage was not executed.
@@ -210,7 +227,7 @@ Replay, in the UI or on the command line, does four things:
 ## Core status
 
 **Tests:**
-- 373 pass.
+- 392 pass.
 - All 13 items in the final core checklist are ticked by passing tests.
 - The 8 failure modes (no evidence through empty retrieval, including agent
   failure) fail safely and are stated in the output.

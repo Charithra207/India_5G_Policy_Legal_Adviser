@@ -384,10 +384,16 @@ class Verifier:
             if any(not e.amendment_checked for e in unchecked):
                 gaps.append("amendments not checked")
             sources = "; ".join(f"{e.source_title}, {e.section}" for e in unchecked[:2])
+            status = "; ".join(dict.fromkeys(
+                e.effective_status for e in unchecked
+                if e.effective and e.effective_status))
+            amendments = "; ".join(dict.fromkeys(e.amendment_note for e in unchecked if e.amendment_note))
             return result(
                 VerifierOutcome.INCOMPLETE,
                 f"Supported by the authoritative text ({sources}), but "
-                f"{' and '.join(gaps)} for this source.",
+                f"{' and '.join(gaps)} for this source."
+                + (f" Recorded status: {status}." if status else "")
+                + (f" Recorded amendment: {amendments}." if amendments else ""),
                 support=in_force,
             )
         in_force = [e for e in in_force if e not in unchecked]

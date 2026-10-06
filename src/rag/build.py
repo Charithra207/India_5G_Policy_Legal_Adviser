@@ -19,8 +19,15 @@ Safeguards against fabricated metadata
 * A document is ingested only if its `title_evidence` string is found in the
   extracted text — this catches a wrong file saved under the right name.
 * `date_issued` is kept only if `date_evidence` is found verbatim.
-* Every passage carries effective=None and amendment_checked=False: in-force
-  status and later amendments were not verified, so nothing claims they were.
+* Every passage carries effective=None and amendment_checked=False unless an
+  obtained document establishes otherwise:
+    - `in_force` sets effective=True only for the sections/rules a commencement
+      notification (or the instrument's own commencement clause) names, and
+      only if the quoted `evidence` is found verbatim in that document;
+    - `amended_by` records an amendment note on the amended sections/rules,
+      on the same condition.
+  amendment_checked stays False everywhere: having one amendment does not
+  show there is no other, so no passage claims a complete amendment check.
 """
 
 from __future__ import annotations
@@ -71,6 +78,7 @@ def process_document(doc: SourceDocument) -> tuple[list[dict], dict]:
     if doc.file_format == "docx":
         full_text += " " + raw_docx_text(doc.path)       # cover page text boxes
     report["extracted_chars"] = len(full_text)
+    report["_text"] = full_text                       # for status evidence; not written
 
     if not blocks:
         report["status"] = "not ingested: no extractable text (OCR not attempted)"
@@ -113,7 +121,7 @@ def process_document(doc: SourceDocument) -> tuple[list[dict], dict]:
             "excerpt":           chunk.text,
             "date_issued":       date,
             "effective":         None,
-            "effective_status":  doc.effective_status,
+            "effective_status":  "",                 # set only where an obtained document establishes it
             "amendment_note":    "",
             "amendment_checked": False,
             "amendment_status":  doc.amendment_status,
@@ -126,6 +134,48 @@ def process_document(doc: SourceDocument) -> tuple[list[dict], dict]:
     report["chunks"] = len(records)
     report["status"] = "ingested" if records else "not ingested: no chunks produced"
     return records, report
+
+
+_UNIT = re.compile(r"^(?:Section|Rule|Regulation)\s+(\d+[A-Z]?)\b")
+
+
+def apply_status(docs: list[SourceDocument], chunks: list[dict], reports: list[dict]) -> None:
+    """
+    Apply in-force status and amendment notes that obtained documents
+    establish.  Refuses (raises) if the quoted evidence is not in the
+    authorising document's extracted text, or that document was not ingested.
+    """
+    texts = {r["id"]: r.get("_text", "") for r in reports if r.get("status") == "ingested"}
+    by_id = {r["id"]: r for r in reports}
+    for doc in docs:
+        if not (doc.in_force or doc.amended_by) or doc.id not in texts:
+            continue
+        own = [c for c in chunks if c["doc_id"] == doc.id]
+        for kind, entries in (("in_force", doc.in_force), ("amended_by", doc.amended_by)):
+            for entry in entries:
+                source_text = texts.get(entry["by"])
+                if source_text is None:
+                    raise ValueError(f"{doc.id}.{kind}: {entry['by']} was not ingested")
+                if _squash(entry["evidence"]) not in source_text:
+                    raise ValueError(f"{doc.id}.{kind}: evidence not found in {entry['by']}: "
+                                     f"{entry['evidence'][:80]!r}")
+                units = set(entry["units"])
+                applied = 0
+                for c in own:
+                    m = _UNIT.match(c["section"])
+                    if "*" not in units and not (m and m.group(1) in units):
+                        continue
+                    if "*" in units and c["section"].startswith("p. "):
+                        continue                      # front matter: not a provision
+                    if kind == "in_force":
+                        c["effective"] = True
+                        c["effective_status"] = entry["status"]
+                    else:
+                        c["amendment_note"] = (c["amendment_note"] + "; " if c["amendment_note"] else "") + entry["note"]
+                    applied += 1
+                by_id[doc.id].setdefault(f"{kind}_applied", []).append(
+                    {"by": entry["by"], "units": sorted(units), "passages": applied})
+                print(f"     {doc.id}: {kind} from {entry['by']} applied to {applied} passages")
 
 
 def build(model_id: str = DEFAULT_MODEL) -> dict:
@@ -149,6 +199,8 @@ def build(model_id: str = DEFAULT_MODEL) -> dict:
         all_chunks.extend(records)
         print(f"  {'OK' if records else '!!'} {doc.id}: {report['status']}, "
               f"{report.get('chunks', 0)} chunks")
+
+    apply_status(docs, all_chunks, doc_reports)
 
     print(f"Embedding {len(all_chunks)} passages with {model_id} ...")
     embedder = get_embedder(model_id)
@@ -183,7 +235,7 @@ def build(model_id: str = DEFAULT_MODEL) -> dict:
         "chunking": {"max_chars": 1200, "overlap_chars": 150, "unit": "within one detected section"},
         "sandbox": "not executed — the ITU AI for Good Sandbox is not available in this environment",
         "knowledge_bases": kb_reports,
-        "documents": doc_reports,
+        "documents": [{k: v for k, v in r.items() if k != "_text"} for r in doc_reports],
     }
     INGESTION_MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"Wrote {INGESTION_MANIFEST.relative_to(KB_ROOT.parent)} in {manifest['build_seconds']} s")

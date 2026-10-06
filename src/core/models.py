@@ -95,6 +95,7 @@ class EvidenceItem:
     institutions    : institutions with roles under the document
     domains         : subject areas (DOCX §7.2 "Domain")
     provenance_note : where the copy came from, and any caveat about it
+    effective_status: the in-force status text and the document establishing it
     """
     source_title    : str
     authority       : str
@@ -115,6 +116,9 @@ class EvidenceItem:
     institutions    : list[str]   = field(default_factory=list)
     domains         : list[str]   = field(default_factory=list)
     provenance_note : str         = ""
+    # In-force status as established by an obtained document (e.g. "in force
+    # from 26 June 2024 (S.O. 2408(E))"); empty when not verified
+    effective_status : str        = ""
 
 
 # ---------------------------------------------------------------------------

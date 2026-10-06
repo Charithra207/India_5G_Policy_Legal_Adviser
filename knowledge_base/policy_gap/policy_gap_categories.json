@@ -13,6 +13,16 @@
   "knowledge_base": {
     "documents": [
       {
+        "id": "enisa_5g_cybersecurity_standards_2022",
+        "title": "ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy",
+        "document_type": "Policy analysis (EU)"
+      },
+      {
+        "id": "enisa_5g_security_controls_matrix",
+        "title": "ENISA 5G Security Controls Matrix (booklet)",
+        "document_type": "Policy guidance (EU)"
+      },
+      {
         "id": "ncsp_2013",
         "title": "National Cyber Security Policy - 2013",
         "document_type": "Policy"
@@ -23,18 +33,28 @@
         "document_type": "Policy"
       },
       {
+        "id": "niti_nsai_2018",
+        "title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+        "document_type": "Strategy"
+      },
+      {
+        "id": "telecom_row_rules_2024",
+        "title": "Telecommunications (Right of Way) Rules, 2024",
+        "document_type": "Rules"
+      },
+      {
         "id": "trai_ai_bigdata_recs_2023",
         "title": "TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector",
         "document_type": "Recommendations"
       }
     ],
-    "passages": 459,
+    "passages": 1029,
     "read_only_inputs": [
       "verified findings of the other agents",
       "International Standards KB",
       "Canonical KB"
     ],
-    "international_policy_examples": "NOT INGESTED — the DOCX says the exact foreign instruments 'must be added to final manifest' and names none."
+    "international_policy_examples": "PARTIAL — two EU (ENISA) policy documents are ingested and used as comparators (labelled 'not Indian law'); the DOCX names no specific foreign instrument and no neighbouring-country instrument was obtained."
   },
   "non_conclusive_language_rule": {
     "required_disclaimer": "This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
@@ -48,7 +68,7 @@
   },
   "distinction_potential_gap_vs_law_does_not_exist": {
     "rule": "A potential gap states what the examined corpus does or does not say, and names the instruments examined. It is never stated as 'the law does not exist': the corpus is finite (the NCIIPC Rules and international examples are not ingested), so absence from the corpus is not absence from Indian law.",
-    "example_correct": "Potential gap — Emerging technology not explicitly addressed: none of the 485 passages of Indian legal and policy instruments in the Canonical KB (every one examined) mentions network slicing (instruments examined: CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022); Digital Personal Data Protection Rules, 2025; National Cyber Security Policy - 2013; National Digital Communications Policy 2018; Telecommunications (Telecom Cyber Security) Rules, 2024; The Digital Personal Data Protection Act, 2023; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation); The Telecommunications Act, 2023). It is named only in recommendations to Government, which are not law (TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40). This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+    "example_correct": "Potential gap — Emerging technology not explicitly addressed: none of the 886 passages of Indian legal and policy instruments in the Canonical KB (every one examined) mentions network slicing (instruments examined: CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022); Digital Personal Data Protection Rules, 2025; National Cyber Security Policy - 2013; National Digital Communications Policy 2018; National Strategy for Artificial Intelligence #AIforAll (NITI Aayog); Notification S.O. 2408(E) appointing 26 June 2024 for sections of the Telecommunications Act, 2023; Notification S.O. 2623(E) appointing 5 July 2024 for sections of the Telecommunications Act, 2023; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024; Telecommunications (Right of Way) Rules, 2024; Telecommunications (Telecom Cyber Security) Amendment Rules, 2025; Telecommunications (Telecom Cyber Security) Rules, 2024; The Digital Personal Data Protection Act, 2023; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation); The Telecommunications Act, 2023). It is named only in recommendations to Government, which are not law (TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40). This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
     "example_incorrect": "There is no Indian law on network slicing."
   },
   "categories": [
@@ -148,7 +168,7 @@
       "verifier_outcome": "At most INCOMPLETE — a potential gap is for expert review, never a verified conclusion",
       "observed_in_recorded_run": [
         {
-          "claim": "Potential gap — Missing institutional clarity: National Cyber Security Policy - 2013, Part III item 5 addresses NCIIPC and National Digital Communications Policy 2018, Para 11 addresses CERT-In, but none of the 485 passages of Indian legal and policy instruments in the Canonical KB addresses both, so which institution leads is unclear in the text examined. This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+          "claim": "Potential gap — Missing institutional clarity: National Cyber Security Policy - 2013, Part III item 5 addresses NCIIPC and National Digital Communications Policy 2018, Para 11 addresses CERT-In, but none of the 886 passages of Indian legal and policy instruments in the Canonical KB addresses both, so which institution leads is unclear in the text examined. This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
           "verifier_outcome": "INCOMPLETE",
           "citations": [
             {
@@ -182,7 +202,7 @@
       "verifier_outcome": "At most INCOMPLETE — a potential gap is for expert review, never a verified conclusion",
       "observed_in_recorded_run": [
         {
-          "claim": "Potential gap — Emerging technology not explicitly addressed: none of the 485 passages of Indian legal and policy instruments in the Canonical KB (every one examined) mentions network slicing (instruments examined: CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022); Digital Personal Data Protection Rules, 2025; National Cyber Security Policy - 2013; National Digital Communications Policy 2018; Telecommunications (Telecom Cyber Security) Rules, 2024; The Digital Personal Data Protection Act, 2023; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation); The Telecommunications Act, 2023). It is named only in recommendations to Government, which are not law (TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40). This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+          "claim": "Potential gap — Emerging technology not explicitly addressed: none of the 886 passages of Indian legal and policy instruments in the Canonical KB (every one examined) mentions network slicing (instruments examined: CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022); Digital Personal Data Protection Rules, 2025; National Cyber Security Policy - 2013; National Digital Communications Policy 2018; National Strategy for Artificial Intelligence #AIforAll (NITI Aayog); Notification S.O. 2408(E) appointing 26 June 2024 for sections of the Telecommunications Act, 2023; Notification S.O. 2623(E) appointing 5 July 2024 for sections of the Telecommunications Act, 2023; Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024; Telecommunications (Right of Way) Rules, 2024; Telecommunications (Telecom Cyber Security) Amendment Rules, 2025; Telecommunications (Telecom Cyber Security) Rules, 2024; The Digital Personal Data Protection Act, 2023; The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation); The Telecommunications Act, 2023). It is named only in recommendations to Government, which are not law (TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40). This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
           "verifier_outcome": "INCOMPLETE",
           "citations": [
             {

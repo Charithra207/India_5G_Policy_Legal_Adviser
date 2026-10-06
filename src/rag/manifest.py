@@ -51,9 +51,17 @@ class SourceDocument:
     file_format: str = ""
     page_range: Optional[list[int]] = None
     english_only: bool = False
+    english_lines: bool = False      # keep every page, drop Hindi lines only
     section_style: str = "page"
     section_label: str = "Section"
     attempted_urls: list[str] = field(default_factory=list)
+    # In-force status established by an obtained document, e.g. a commencement
+    # notification: [{"by": doc_id, "evidence": verbatim text, "units": ["22", ...]
+    # or ["*"], "status": "in force from …"}]
+    in_force: list[dict] = field(default_factory=list)
+    # Amendments made by an obtained document:
+    # [{"by": doc_id, "evidence": verbatim text, "units": ["2", "3", ...], "note": "…"}]
+    amended_by: list[dict] = field(default_factory=list)
 
     @property
     def path(self) -> Path:

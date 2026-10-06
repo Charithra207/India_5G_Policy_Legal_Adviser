@@ -1,10 +1,10 @@
 # Evaluation summary (internal)
 
-Generated 2026-10-06T16:13:48 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
+Generated 2026-10-06T16:45:15 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
 
-**Test suite:** 386 passed, 0 failed, 0 skipped.
+**Test suite:** 392 passed, 0 failed, 0 skipped.
 
-**Live 4-stage run** (`outputs/audit/day2_scenario2_full_T0_T3.jsonl`): T0: technical; T1: cybersecurity, standards, technical; T2: critical_infrastructure, policy_legal, privacy; T3: critical_infrastructure, cybersecurity, policy_gap, policy_legal, privacy. Agent sets match the DOCX table: yes. Verifier outcomes: INCOMPLETE 50, UNSUPPORTED 10. Cross-domain links: instrument basis 10, parallel reporting 4, shared provision 8. Conflicts: 0 (none expected — no real provisions disagree). Potential policy gaps at T3: 4. Conflict demonstration on labelled fixtures (`outputs/audit/day2_conflict_demo_FIXTURE.jsonl`): 2 conflict records.
+**Live 4-stage run** (`outputs/audit/day2_scenario2_full_T0_T3.jsonl`): T0: technical; T1: cybersecurity, standards, technical; T2: critical_infrastructure, policy_legal, privacy; T3: critical_infrastructure, cybersecurity, policy_gap, policy_legal, privacy. Agent sets match the DOCX table: yes. Verifier outcomes: INCOMPLETE 50, UNSUPPORTED 10. Cross-domain links: instrument basis 12, parallel reporting 4, shared provision 7. Conflicts: 0 (none expected — no real provisions disagree). Potential policy gaps at T3: 4. Conflict demonstration on labelled fixtures (`outputs/audit/day2_conflict_demo_FIXTURE.jsonl`): 2 conflict records.
 
 ## DOCX evaluation areas
 
@@ -14,10 +14,10 @@ Generated 2026-10-06T16:13:48 UTC by `python -m src.audit.evaluation_report` —
 | Legal / regulatory analysis | Working | 5/0 | Telecommunications Act, TRAI Act and NDCP-2018 provisions retrieved and quoted; duty passages recorded as obligations. |
 | Cybersecurity analysis | Working | 5/0 | T1 reclassifies as a possible security event; TCS Rules Rule 7 and CERT-In Direction (ii) quoted. |
 | Privacy / data protection analysis | Working | 5/0 | Suspected (not confirmed) exposure kept distinct; DPDP Act and DPDP Rules Rules 6–7 quoted. |
-| Critical infrastructure analysis | Partially working | 5/0 | Critical-service relevance assessed from the Telecommunications Act only: the IT (NCIIPC) Rules, 2013 could not be obtained, so NCIIPC provisions cannot be quoted or verified. |
+| Critical infrastructure analysis | Partially working | 5/0 | Critical-service relevance assessed from the Telecommunications Act and the Critical Telecommunication Infrastructure Rules, 2024; the IT (NCIIPC) Rules, 2013 could not be obtained, so NCIIPC provisions cannot be quoted or verified. |
 | International standards (reference only) | Working | 5/0 | 3GPP, ETSI, NIST and ITU passages quoted with the reference-only label; never treated as Indian law. |
-| Policy-gap identification | Partially working | 7/0 | Three of the six DOCX categories are examined (overlapping requirements, institutional clarity, emerging technology); explicit/partial coverage are left to expert review, unclear coverage is not produced, and no international policy examples were ingested. |
-| Verification | Partially working | 24/0 | All four outcomes are produced by the real Verifier, but on the live corpus nothing can be VERIFIED (in-force status and amendments were not checked for any source) and no real provisions conflict; VERIFIED and CONFLICT are shown with labelled fixtures. |
+| Policy-gap identification | Partially working | 7/0 | Three of the six DOCX categories are examined (overlapping requirements, institutional clarity, emerging technology); explicit/partial coverage are left to expert review, unclear coverage is not produced; international comparators are two EU (ENISA) documents, with no neighbouring-country instrument. |
+| Verification | Partially working | 24/0 | All four outcomes are produced by the real Verifier. In-force status is now established for the Telecommunications Act sections named in two commencement notifications and for four Rules, but no source's amendment history is shown to be complete, so nothing on the live corpus is VERIFIED; no real provisions conflict. VERIFIED and CONFLICT are shown with labelled fixtures. |
 | Cross-domain reasoning | Working | 20/0 | Links established from evidence on the live run (shared provision, instrument basis, parallel reporting), including across chunks. |
 | Uncertainty handling | Working | 5/0 | Insufficient evidence stated explicitly; open questions and missing facts listed; human-review notice always present. |
 | Progressive reassessment | Working | 6/0 | Each chunk re-issues the whole assessment: facts accumulate, earlier conclusions carried forward and tagged, changes computed by comparison. |
@@ -30,11 +30,11 @@ Generated 2026-10-06T16:13:48 UTC by `python -m src.audit.evaluation_report` —
 |---|---|---|---|
 | Full 4-stage demo (live KBs) | Working | 11/0 | All four stages run end to end; agent sets match the DOCX table. |
 | Demonstration UI | Working | 3/0 | Live 4-stage run, replay and conflict display driven by tests through Streamlit's AppTest; every required section checked. |
-| Knowledge foundation / RAG | Partially working | 122/0 | 15 sources ingested and every artefact checked against the stores; NCIIPC Rules, IndiaAI/national AI strategy, international examples and six host-country categories not obtained. |
+| Knowledge foundation / RAG | Partially working | 122/0 | 23 sources ingested, each with an official URL whose file hash matches; every artefact checked against the stores. Not obtained: NCIIPC Rules, IndiaAI Mission documents, neighbouring-country instruments, and sources for the economic and multilateral categories. |
 | Failure handling | Working | 9/0 | No evidence, wrong citation, missing section, conflict, incomplete information, unexpected chunk, agent failure and empty retrieval all run safely and are stated in the output. |
 | Core freeze | Working | 1/0 | Frozen core files fingerprinted in CORE_FREEZE.json; any change fails the test. |
 | Team integration (Members 1–3) | Working | 51/0 | One pipeline from scenario to audit; checklist tests pass. |
-| In-force / amendment checking | Not yet implemented | — | Not done for any source; this is what blocks VERIFIED on the real corpus. |
+| In-force / amendment checking | Partially working | 4/0 | In-force status established from obtained documents (S.O. 2408(E) and S.O. 2623(E) for the Telecommunications Act; the commencement clauses of the TCS, CTI, TCS Amendment and Right of Way Rules) and amendment notes from the TCS Amendment Rules 2025, each traced by the evidence audit. Amendment histories are not shown to be complete, so nothing real is VERIFIED. |
 | Generative synthesis (DOCX §5.2 generative-AI perspective) | Not yet implemented | — | No generative model is used: agents quote passages and the Coordinator organises verified claims. |
 | Parallel agent execution | Not yet implemented | — | Agents run sequentially; the asynchronous runner in the Orchestrator is a stub. |
 | ITU AI for Good Sandbox stage | Not yet implemented | — | Sandbox not available in this environment. |

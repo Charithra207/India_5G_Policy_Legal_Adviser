@@ -130,13 +130,13 @@ claim verification (DOCX §7.2).
 | KB | Ingested sources | Passages |
 |---|---|---|
 | Technical KB | 3GPP TS 23.501, TS 33.501 | 3,739 |
-| Policy & Legal KB | Telecom Act 2023, TRAI Act 1997, NDCP-2018, NCSP-2013 | 274 |
-| Cybersecurity KB | Telecom Cyber Security Rules 2024, CERT-In Directions 2022, NCSP-2013, NDCP-2018; reference: 3GPP TS 33.501, ETSI NFV-SEC 003, NIST CSF 2.0, SP 800-61r3 | 1,675 |
+| Policy & Legal KB | Telecommunications Act 2023 + commencement notifications S.O. 2408(E), S.O. 2623(E); TRAI Act 1997; NDCP-2018; NCSP-2013; CTI Rules 2024; NITI Aayog National Strategy for AI | 603 |
+| Cybersecurity KB | Telecom Cyber Security Rules 2024 (official DoT copy) + Amendment Rules 2025, CERT-In Directions 2022, NCSP-2013, NDCP-2018; reference: 3GPP TS 33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 1,680 |
 | Privacy KB | DPDP Act 2023, DPDP Rules 2025 | 159 |
-| Critical Infra KB | Telecom Act 2023 (**NCIIPC Rules 2013 not ingested** — source unreachable) | 105 |
+| Critical Infra KB | Telecommunications Act 2023, Critical Telecommunication Infrastructure Rules 2024 (**NCIIPC Rules 2013 not ingested**) | 126 |
 | Standards KB | ITU-T Y.3172, 3GPP TS 23.501/33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 4,259 |
-| Policy Gap KB | TRAI AI & Big Data Recommendations 2023, NCSP-2013, NDCP-2018 (**international examples not yet chosen**) | 459 |
-| Canonical KB | All ingested authoritative sources (separate verification corpus) | 4,744 |
+| Policy Gap KB | TRAI AI & Big Data Recommendations 2023, NCSP-2013, NDCP-2018, NITI Aayog National Strategy for AI, Right of Way Rules 2024; EU policy examples: ENISA 5G Security Controls Matrix, ENISA 5G Cybersecurity Standards | 1,029 |
+| Canonical KB | All 23 ingested sources (separate verification corpus) | 5,710 |
 
 Sources, provenance and what was not ingested: `knowledge_base/sources/manifest.json`
 (curated) and `knowledge_base/ingestion_manifest.json` (generated). Details:

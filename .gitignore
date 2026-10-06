@@ -76,3 +76,8 @@ knowledge_base/*/chunks.jsonl
 knowledge_base/*/vectors.npy
 knowledge_base/*/index.json
 knowledge_base/.model_cache/
+
+# Team-supplied source folder (285 PDFs, ~450 MB). The documents the project
+# uses are copied into knowledge_base/sources/raw/ and recorded in
+# knowledge_base/sources/manifest.json with their official URLs.
+knowledge base/

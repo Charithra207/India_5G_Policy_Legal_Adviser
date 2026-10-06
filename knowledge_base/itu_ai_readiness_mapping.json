@@ -18,14 +18,14 @@
       "evidence_items": [
         {
           "evidence_type": "project artefact",
-          "claim": "15 source documents were downloaded from public URLs without login; each is recorded with URL, SHA-256 and provenance.",
+          "claim": "23 source documents were downloaded from public URLs without login; each is recorded with URL, SHA-256 and provenance.",
           "files": [
             "knowledge_base/source_manifest.json"
           ]
         },
         {
           "evidence_type": "project artefact",
-          "claim": "5 documents carry a licence/copyright statement in their ingested text, quoted in the manifest; for the others none was found in the ingested text.",
+          "claim": "6 documents carry a licence/copyright statement in their ingested text, quoted in the manifest; for the others none was found in the ingested text.",
           "files": [
             "knowledge_base/source_manifest.json"
           ]
@@ -98,7 +98,7 @@
           "document_type": "Rules",
           "section": "Rule 7",
           "section_title": "Reporting of security incidents",
-          "page": "5-6",
+          "page": "12-13",
           "chunk_id": "telecom_cyber_security_rules_2024:rule-7:1",
           "knowledge_bases": [
             "canonical",
@@ -141,10 +141,28 @@
             "privacy"
           ],
           "quote": "7. Intimation of personal data breach. — (1) On becoming aware of any personal data breach, the Data Fiduciary shall, to the best of its knowledge, intimate to each affected Data Principal, in a co…"
+        },
+        {
+          "evidence_type": "corpus passage",
+          "claim": "An EU policy example used for comparison (not Indian law).",
+          "source_id": "enisa_5g_security_controls_matrix",
+          "source_title": "ENISA 5G Security Controls Matrix (booklet)",
+          "authority": "European Union Agency for Cybersecurity (ENISA)",
+          "jurisdiction": "International",
+          "document_type": "Policy guidance (EU)",
+          "section": "p. 1",
+          "section_title": "",
+          "page": "1",
+          "chunk_id": "enisa_5g_security_controls_matrix:p-1:1",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap"
+          ],
+          "quote": "…al of the ENISA 5G security controls matrix is to support the national authorities in the EU Member States with implementing the technical measures of the EU’s 5G Cybersecurity toolbox. The ENISA 5G security controls matrix follows the overall structure of the ENISA Guideline for Security measures under the EECC, the European Electronic Commu…"
         }
       ],
       "evidence_unavailable": [
-        "No neighbouring-country or regional comparator instrument was obtained."
+        "No neighbouring-country instrument was obtained; the regional comparison layer has EU examples only."
       ]
     },
     {
@@ -155,14 +173,14 @@
       "evidence_items": [
         {
           "evidence_type": "project artefact",
-          "claim": "Seven agent KBs plus the Canonical KB: technical 3739, policy_legal 274, cybersecurity 1675, privacy 159, critical_infrastructure 105, standards 4259, policy_gap 459, canonical 5112 passages.",
+          "claim": "Seven agent KBs plus the Canonical KB: technical 3739, policy_legal 603, cybersecurity 1680, privacy 159, critical_infrastructure 126, standards 4259, policy_gap 1029, canonical 5710 passages.",
           "files": [
             "knowledge_base/source_manifest.json"
           ]
         },
         {
           "evidence_type": "project artefact",
-          "claim": "Cross-domain links established from evidence in the recorded run: instrument basis 10, parallel reporting 4, shared provision 8.",
+          "claim": "Cross-domain links established from evidence in the recorded run: instrument basis 12, parallel reporting 4, shared provision 7.",
           "files": [
             "outputs/audit/day2_scenario2_full_T0_T3.jsonl",
             "src/core/cross_domain.py"
@@ -234,7 +252,7 @@
       ],
       "evidence_unavailable": [
         "Unclear coverage is not produced by the current agent; explicit/partial coverage is left to expert review.",
-        "International policy examples are not ingested."
+        "No neighbouring-country policy examples are ingested."
       ]
     },
     {
@@ -263,7 +281,7 @@
       "evidence_items": [
         {
           "evidence_type": "project artefact",
-          "claim": "CPU-only embedding model (BAAI/bge-small-en-v1.5); the full KB build took 686.9 s of wall-clock time on this machine.",
+          "claim": "CPU-only embedding model (BAAI/bge-small-en-v1.5); the full KB build took 626.4 s of wall-clock time on this machine.",
           "files": [
             "knowledge_base/ingestion_manifest.json"
           ]

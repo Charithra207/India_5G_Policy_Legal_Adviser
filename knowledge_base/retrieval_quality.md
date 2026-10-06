@@ -1,6 +1,6 @@
 # Retrieval quality
 
-Generated 2026-10-06T16:01:39.764389+00:00 by `python -m src.rag.retrieval_quality`.
+Generated 2026-10-06T16:38:02.157531+00:00 by `python -m src.rag.retrieval_quality`.
 
 Each query is labelled with the provision whose own heading or text addresses the topic; the label is checked to exist in the corpus. Results describe this corpus and embedding model only.
 
@@ -10,7 +10,7 @@ Each query is labelled with the provision whose own heading or text addresses th
 | Expected section in top 5 (hit@5) | 12 / 12 |
 | Relevant passage retrieved | 12 / 12 |
 | Expected source among results | 12 / 12 |
-| Mean source precision@5 | 0.83 |
+| Mean source precision@5 | 0.78 |
 | Metadata complete on every result | 12 / 12 |
 | Results only from the agent's own KB | 12 / 12 |
 

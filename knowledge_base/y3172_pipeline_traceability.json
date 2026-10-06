@@ -30,8 +30,8 @@
       "worked_trace": {
         "document": "telecom_cyber_security_rules_2024",
         "title": "Telecommunications (Telecom Cyber Security) Rules, 2024",
-        "url": "https://thc.nic.in/Central%20Governmental%20Rules/Telecommunications%20(Telecom%20Cyber%20Security)%20Rules,%202024.pdf",
-        "sha256": "16f93fbc5e1bbdbdee56b3b98a020e0d49e32f98b524ed8942ac8d6f7dc81494"
+        "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/cybersecurity-rules-2024.pdf",
+        "sha256": "1a0876d2e1fb309679e06afaccc230ae88ea145c8b27f683a3a42126dc047bf6"
       },
       "status": "IMPLEMENTED"
     },
@@ -51,8 +51,8 @@
         "evidence_preserved": "extracted character count, page numbers, refusal on wrong file"
       },
       "worked_trace": {
-        "extracted_chars": 29294,
-        "file": "raw/telecom_cyber_security_rules_2024_thc.pdf"
+        "extracted_chars": 21311,
+        "file": "raw/telecom_cyber_security_rules_2024_dot.pdf"
       },
       "status": "IMPLEMENTED"
     },
@@ -78,7 +78,7 @@
       "worked_trace": {
         "section": "Rule 7",
         "section_title": "Reporting of security incidents",
-        "page": "5-6",
+        "page": "12-13",
         "chunk_id": "telecom_cyber_security_rules_2024:rule-7:1"
       },
       "status": "IMPLEMENTED"
@@ -130,7 +130,7 @@
       },
       "worked_trace": {
         "verifier_outcome": "INCOMPLETE",
-        "verifier_rationale": "Supported by the authoritative text (Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7), but in-force status not verified and amendments not checked for this source."
+        "verifier_rationale": "Supported by the authoritative text (Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7), but amendments not checked for this source. Recorded status: in force from 21 November 2024 (rule 1(2): on publication in the Official Gazette)."
       },
       "status": "IMPLEMENTED"
     },
@@ -154,7 +154,7 @@
         "coordinator_category": "uncertain_conclusions",
         "audit_file": "outputs/audit/day2_scenario2_full_T0_T3.jsonl",
         "audit_entry_seq": 3,
-        "audit_entry_hash": "c34fbfc6fb1ea08ea07b25b42c700171f7bc33cbb518663cb546747d7877f0ea"
+        "audit_entry_hash": "e2f6e29937e0b808a9d86c14cc2780aadd776db85496fcc356f865d42a5675b5"
       },
       "status": "IMPLEMENTED"
     },

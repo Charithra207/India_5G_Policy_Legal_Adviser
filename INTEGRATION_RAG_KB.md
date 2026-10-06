@@ -2,7 +2,7 @@
 
 **Project:** India 5G Policy & Legal Adviser
 **Component:** specialist agents' knowledge bases, ingestion and retrieval (`src/rag/`)
-**Status:** implemented. 14 of the 16 sources listed in the DOCX are ingested; 2 are not (see [Not ingested](#not-ingested)).
+**Status:** implemented. 23 sources ingested — 15 from the DOCX inventory plus 8 added from the team's source folder (each with an official URL serving a byte-identical file); the NCIIPC Rules and neighbouring-country instruments are not (see [Not ingested](#not-ingested)).
 
 ---
 
@@ -102,13 +102,13 @@ DOCX; each document's `kb_basis` field in the manifest cites the section.
 | KB (directory) | Documents | Passages |
 |---|---|---|
 | Technical (`technical/`) | 3GPP TS 23.501, TS 33.501 | 3,739 |
-| Indian Legal/Regulatory (`policy_legal/`) | Telecommunications Act 2023, TRAI Act 1997, NDCP-2018, NCSP-2013 | 274 |
-| Cybersecurity (`cybersecurity/`) | Telecom Cyber Security Rules 2024, CERT-In Directions 2022, NCSP-2013, NDCP-2018; reference: 3GPP TS 33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 1,675 |
+| Indian Legal/Regulatory (`policy_legal/`) | Telecommunications Act 2023 + commencement notifications S.O. 2408(E), S.O. 2623(E); TRAI Act 1997; NDCP-2018; NCSP-2013; CTI Rules 2024; NITI Aayog National Strategy for AI | 603 |
+| Cybersecurity (`cybersecurity/`) | Telecom Cyber Security Rules 2024 (official DoT copy) + Amendment Rules 2025, CERT-In Directions 2022, NCSP-2013, NDCP-2018; reference: 3GPP TS 33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 1,680 |
 | Privacy (`privacy/`) | DPDP Act 2023, DPDP Rules 2025 | 159 |
-| Critical Infrastructure (`critical_infrastructure/`) | Telecommunications Act 2023 (**NCIIPC Rules 2013 not ingested**) | 105 |
+| Critical Infrastructure (`critical_infrastructure/`) | Telecommunications Act 2023, Critical Telecommunication Infrastructure Rules 2024 (**NCIIPC Rules 2013 not ingested**) | 126 |
 | International Standards (`standards/`) | ITU-T Y.3172, 3GPP TS 23.501, TS 33.501, ETSI GR NFV-SEC 003, NIST CSF 2.0, NIST SP 800-61r3 | 4,259 |
-| Policy Gap (`policy_gap/`) | TRAI AI & Big Data Recommendations 2023, NCSP-2013, NDCP-2018 (**no international policy examples yet**) | 459 |
-| Canonical (`canonical/`) | All 14 ingested sources — the common reference beneath every agent KB (DOCX §7.2) | see `source_manifest.json` |
+| Policy Gap (`policy_gap/`) | TRAI AI & Big Data Recommendations 2023, NCSP-2013, NDCP-2018, NITI Aayog National Strategy for AI, Right of Way Rules 2024; EU policy examples: ENISA 5G Security Controls Matrix, ENISA 5G Cybersecurity Standards | 1,029 |
+| Canonical (`canonical/`) | All 23 ingested sources — the common reference beneath every agent KB (DOCX §7.2) | 5,710 |
 
 Open searches skip boilerplate sections (front matter, forewords, reference
 and abbreviation lists). Exact section lookups still find them.
@@ -169,15 +169,25 @@ Provenance caveats recorded in the manifest:
 |---|---|
 | TRAI Act 1997 | Taken from TDSAT's "bare acts" compilation, pages 7–52, marked "[AMENDED]"; consolidation date not stated. TRAI's own PDF is a scan with no text; India Code returned HTTP 504 |
 | NDCP-2018 | Copy on the Government S3WaaS platform; the dot.gov.in viewer gave no downloadable file |
-| Telecom Cyber Security Rules 2024 | Gazette G.S.R. 720(E) copy on thc.nic.in; the dot.gov.in link returned 404. Amendments not checked |
+| Telecom Cyber Security Rules 2024 | Now the official DoT copy (eservices.dot.gov.in); amended by G.S.R. 771(E) — rules 2, 3, 4, 5, 8, 10 carry amendment notes |
 | 3GPP TS 23.501 / 33.501 | Latest Release 19 versions on 2026-10-05 (V19.9.0, V19.7.0); the DOCX fixes no version. Tables and figures not ingested |
 
 ### Not ingested
 
 | Source | Why | Effect |
 |---|---|---|
-| IT (NCIIPC) Rules, 2013 | India Code returned HTTP 504 three times; nciipc.gov.in did not respond | The Critical Infrastructure KB holds only the Telecommunications Act, 2023 |
-| International policy examples | The DOCX says the exact instruments "must be added to final manifest" and names none | The Policy Gap Agent has no international comparator from its own KB; it uses the Standards KB |
+| IT (NCIIPC) Rules, 2013 | India Code returned HTTP 504 three times; nciipc.gov.in did not respond; not in the team folder | NCIIPC's role cannot be quoted; the Critical Infrastructure KB has the Telecommunications Act and the CTI Rules |
+| Neighbouring-country instruments | None obtained; the DOCX names no specific foreign instrument | Policy Gap comparators are EU (ENISA) examples only |
+
+### In-force status and amendments
+
+The manifest's `in_force` and `amended_by` entries quote the authorising
+text. The build checks that wording in the obtained document before
+applying it, and refuses otherwise. It then sets `effective = true` and an
+`effective_status` such as "in force from 26 June 2024 (S.O. 2408(E))",
+or an `amendment_note`, on the named sections or rules only.
+`amendment_checked` stays false everywhere, so nothing real is VERIFIED.
+The evidence audit traces every such status back to its entry.
 
 To add a source: download it to `knowledge_base/sources/raw/`, add a
 manifest entry (with `title_evidence`, `date_evidence`, `kbs`, `kb_basis`,

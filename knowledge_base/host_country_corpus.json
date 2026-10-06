@@ -22,7 +22,7 @@
           "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
           "document_type": "Act",
           "date_issued": "24th December, 2023",
-          "effective_status": "not verified",
+          "effective_status": "partly in force: sections 1, 2, 10–30, 42–44, 46, 47, 50–58, 61, 62 from 26 June 2024 (S.O. 2408(E)); sections 6–8, 48 and 59(b) from 5 July 2024 (S.O. 2623(E)); other sections: commencement not verified",
           "chunks": 105,
           "kbs": [
             "policy_legal",
@@ -30,6 +30,34 @@
             "canonical"
           ],
           "url": "https://egazette.gov.in/WriteReadData/2023/250880.pdf"
+        },
+        {
+          "id": "telecom_act_commencement_so2408e_2024",
+          "title": "Notification S.O. 2408(E) appointing 26 June 2024 for sections of the Telecommunications Act, 2023",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "document_type": "Notification",
+          "date_issued": "21th June, 2024",
+          "effective_status": "not applicable (commencement notification)",
+          "chunks": 1,
+          "kbs": [
+            "policy_legal",
+            "canonical"
+          ],
+          "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/Notification for enforcement of sections of the Telecommunications Act 2023.pdf"
+        },
+        {
+          "id": "telecom_act_commencement_so2623e_2024",
+          "title": "Notification S.O. 2623(E) appointing 5 July 2024 for sections of the Telecommunications Act, 2023",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "document_type": "Notification",
+          "date_issued": "4th July, 2024",
+          "effective_status": "not applicable (commencement notification)",
+          "chunks": 1,
+          "kbs": [
+            "policy_legal",
+            "canonical"
+          ],
+          "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/Notification for enforcement of sections of the Telecommunications Act, 2023.pdf"
         },
         {
           "id": "trai_act_1997",
@@ -51,13 +79,42 @@
           "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
           "document_type": "Rules",
           "date_issued": "21st November, 2024",
-          "effective_status": "not verified",
-          "chunks": 34,
+          "effective_status": "in force from 21 November 2024 (rule 1(2): on publication in the Official Gazette); amended by G.S.R. 771(E)",
+          "chunks": 26,
           "kbs": [
             "cybersecurity",
             "canonical"
           ],
-          "url": "https://thc.nic.in/Central%20Governmental%20Rules/Telecommunications%20(Telecom%20Cyber%20Security)%20Rules,%202024.pdf"
+          "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/cybersecurity-rules-2024.pdf"
+        },
+        {
+          "id": "tcs_amendment_rules_2025",
+          "title": "Telecommunications (Telecom Cyber Security) Amendment Rules, 2025",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "document_type": "Rules (amendment)",
+          "date_issued": "22nd October, 2025",
+          "effective_status": "in force from 22 October 2025 (rule 1(2): on publication in the Official Gazette)",
+          "chunks": 13,
+          "kbs": [
+            "cybersecurity",
+            "canonical"
+          ],
+          "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/telecom-cyber-security-amendment-rules-2025.pdf"
+        },
+        {
+          "id": "cti_rules_2024",
+          "title": "Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "document_type": "Rules",
+          "date_issued": "22nd November, 2024",
+          "effective_status": "in force from 22 November 2024 (rule 1(2): on publication in the Official Gazette)",
+          "chunks": 21,
+          "kbs": [
+            "critical_infrastructure",
+            "policy_legal",
+            "canonical"
+          ],
+          "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/Critical Telecommunication Infrastructure Rules, 2024_0.pdf"
         },
         {
           "id": "certin_directions_2022",
@@ -115,8 +172,23 @@
       "docx_heading": "National AI strategy and AI mission",
       "docx_material_covered": "National AI strategy/IndiaAI mission and responsible-AI policy context",
       "docx_kb_assignment": "Policy Gap; Policy & Legal; Canonical",
-      "coverage_status": "PARTIAL — only the TRAI Recommendations on AI and Big Data (recommendations, not law) were obtained; no IndiaAI mission or national AI strategy document was obtained",
+      "coverage_status": "PARTIAL — NITI Aayog's National Strategy for AI and the TRAI Recommendations on AI and Big Data were obtained (neither is law); no IndiaAI Mission document was obtained",
       "sources_ingested": [
+        {
+          "id": "niti_nsai_2018",
+          "title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+          "authority": "NITI Aayog, Government of India",
+          "document_type": "Strategy",
+          "date_issued": null,
+          "effective_status": "not applicable (national strategy, not law)",
+          "chunks": 306,
+          "kbs": [
+            "policy_gap",
+            "policy_legal",
+            "canonical"
+          ],
+          "url": "https://www.niti.gov.in/sites/default/files/2023-03/National-Strategy-for-Artificial-Intelligence.pdf"
+        },
         {
           "id": "trai_ai_bigdata_recs_2023",
           "title": "TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector",
@@ -132,7 +204,26 @@
           "url": "https://www.trai.gov.in/sites/default/files/2024-09/Recommendation_20072023.pdf"
         }
       ],
-      "sources_unavailable": []
+      "sources_unavailable": [],
+      "category_evidence": [
+        {
+          "source_id": "niti_nsai_2018",
+          "source_title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+          "authority": "NITI Aayog, Government of India",
+          "jurisdiction": "India",
+          "document_type": "Strategy",
+          "section": "#AIforAll: Technology Leadership for Inclusive Growth",
+          "section_title": "#AIforAll: Technology Leadership for Inclusive Growth",
+          "page": "5-6",
+          "chunk_id": "niti_nsai_2018:aiforall-technology-leadership-for-inclu:1",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap",
+            "policy_legal"
+          ],
+          "quote": "#AIforAll: Technology Leadership for Inclusive Growth Artificial Intelligence (AI) is poised to disrupt our world. With intelligent machines enabling high-level cognitiv…"
+        }
+      ]
     },
     {
       "category_id": 3,
@@ -189,7 +280,7 @@
           "authority": "Government of India (Ministry of Law and Justice, Legislative Department)",
           "document_type": "Act",
           "date_issued": "24th December, 2023",
-          "effective_status": "not verified",
+          "effective_status": "partly in force: sections 1, 2, 10–30, 42–44, 46, 47, 50–58, 61, 62 from 26 June 2024 (S.O. 2408(E)); sections 6–8, 48 and 59(b) from 5 July 2024 (S.O. 2623(E)); other sections: commencement not verified",
           "chunks": 105,
           "kbs": [
             "policy_legal",
@@ -241,6 +332,21 @@
             "canonical"
           ],
           "url": "https://www.meity.gov.in/static/uploads/2024/02/National_cyber_security_policy-2013_0.pdf"
+        },
+        {
+          "id": "cti_rules_2024",
+          "title": "Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "document_type": "Rules",
+          "date_issued": "22nd November, 2024",
+          "effective_status": "in force from 22 November 2024 (rule 1(2): on publication in the Official Gazette)",
+          "chunks": 21,
+          "kbs": [
+            "critical_infrastructure",
+            "policy_legal",
+            "canonical"
+          ],
+          "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/Critical Telecommunication Infrastructure Rules, 2024_0.pdf"
         }
       ],
       "sources_unavailable": [
@@ -338,18 +444,88 @@
       "docx_heading": "Labour-market conditions",
       "docx_material_covered": "Workforce and skills context relevant to AI/telecom deployment and supervision",
       "docx_kb_assignment": "Policy Gap",
-      "coverage_status": "NOT COVERED — no source for this category was obtained or ingested",
-      "sources_ingested": [],
-      "sources_unavailable": []
+      "coverage_status": "PARTIAL — strategy-level discussion of AI skilling in NITI Aayog's National Strategy for AI; no labour-market data source was obtained",
+      "sources_ingested": [
+        {
+          "id": "niti_nsai_2018",
+          "title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+          "authority": "NITI Aayog, Government of India",
+          "document_type": "Strategy",
+          "date_issued": null,
+          "effective_status": "not applicable (national strategy, not law)",
+          "chunks": 306,
+          "kbs": [
+            "policy_gap",
+            "policy_legal",
+            "canonical"
+          ],
+          "url": "https://www.niti.gov.in/sites/default/files/2023-03/National-Strategy-for-Artificial-Intelligence.pdf"
+        }
+      ],
+      "sources_unavailable": [],
+      "category_evidence": [
+        {
+          "source_id": "niti_nsai_2018",
+          "source_title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+          "authority": "NITI Aayog, Government of India",
+          "jurisdiction": "India",
+          "document_type": "Strategy",
+          "section": "India’s Approach to Leadership in AI",
+          "section_title": "India’s Approach to Leadership in AI",
+          "page": "7-10",
+          "chunk_id": "niti_nsai_2018:india-s-approach-to-leadership-in-ai:5",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap",
+            "policy_legal"
+          ],
+          "quote": "…for AI are other key components research suggested. As technology increasingly disrupts the nature of jobs and shifts the benchmarks of technological aptitude, skilling and reskilling of workforce forms an integral part of our approach to adopting AI. There is an emergent need for reskilling the existing workforce and developing future talent in accordan…"
+        }
+      ]
     },
     {
       "category_id": 7,
       "docx_heading": "Intellectual property",
       "docx_material_covered": "IP rules relevant to software, models, datasets and technology deployment",
       "docx_kb_assignment": "Policy Gap; Policy & Legal",
-      "coverage_status": "NOT COVERED — no source for this category was obtained or ingested",
-      "sources_ingested": [],
-      "sources_unavailable": []
+      "coverage_status": "PARTIAL — NITI Aayog's National Strategy for AI discusses an IP framework for AI; no IP legislation was obtained",
+      "sources_ingested": [
+        {
+          "id": "niti_nsai_2018",
+          "title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+          "authority": "NITI Aayog, Government of India",
+          "document_type": "Strategy",
+          "date_issued": null,
+          "effective_status": "not applicable (national strategy, not law)",
+          "chunks": 306,
+          "kbs": [
+            "policy_gap",
+            "policy_legal",
+            "canonical"
+          ],
+          "url": "https://www.niti.gov.in/sites/default/files/2023-03/National-Strategy-for-Artificial-Intelligence.pdf"
+        }
+      ],
+      "sources_unavailable": [],
+      "category_evidence": [
+        {
+          "source_id": "niti_nsai_2018",
+          "source_title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+          "authority": "NITI Aayog, Government of India",
+          "jurisdiction": "India",
+          "document_type": "Strategy",
+          "section": "India’s Approach to Leadership in AI",
+          "section_title": "India’s Approach to Leadership in AI",
+          "page": "7-10",
+          "chunk_id": "niti_nsai_2018:india-s-approach-to-leadership-in-ai:7",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap",
+            "policy_legal"
+          ],
+          "quote": "…ameworks and sectorial regulatory frameworks, and promotion of adoption of international standards. In order for India to ride the AI innovation wave, a robust intellectual property framework is required."
+        }
+      ]
     },
     {
       "category_id": 8,
@@ -365,22 +541,118 @@
       "docx_heading": "Energy and infrastructure constraints",
       "docx_material_covered": "Digital infrastructure, energy and deployment constraints relevant to 5G/AI systems",
       "docx_kb_assignment": "Technical; Policy Gap",
-      "coverage_status": "NOT COVERED — no source for this category was obtained or ingested",
-      "sources_ingested": [],
-      "sources_unavailable": []
+      "coverage_status": "PARTIAL — the Telecommunications (Right of Way) Rules, 2024 cover infrastructure deployment; no energy source was obtained",
+      "sources_ingested": [
+        {
+          "id": "telecom_row_rules_2024",
+          "title": "Telecommunications (Right of Way) Rules, 2024",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "document_type": "Rules",
+          "date_issued": "17th September, 2024",
+          "effective_status": "in force from 1 January 2025 (rule 1(2))",
+          "chunks": 67,
+          "kbs": [
+            "policy_gap",
+            "canonical"
+          ],
+          "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/telecommunications-right-of-way-rules-2024.pdf"
+        }
+      ],
+      "sources_unavailable": [],
+      "category_evidence": [
+        {
+          "source_id": "telecom_row_rules_2024",
+          "source_title": "Telecommunications (Right of Way) Rules, 2024",
+          "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+          "jurisdiction": "India",
+          "document_type": "Rules",
+          "section": "p. 19",
+          "section_title": "",
+          "page": "19",
+          "chunk_id": "telecom_row_rules_2024:p-19:1",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap"
+          ],
+          "quote": "…F COMMUNICATIONS (Department of Telecommunications) NOTIFICATION New Delhi, the 17th September, 2024 G.S.R. 576(E).— Whereas a draft of the Telecommunications (Right of Way) Rules, 2024, which the Central Government proposes to make in exercise of the powers conferred by sub-section (3) of section 11, read with sub-sections (5) an…"
+        }
+      ]
     },
     {
       "category_id": 10,
       "docx_heading": "Regional and global comparators",
       "docx_material_covered": "Neighbouring-country and selected global policy instruments used for domain comparison",
       "docx_kb_assignment": "Policy Gap",
-      "coverage_status": "NOT COVERED — no source for this category was obtained or ingested",
-      "sources_ingested": [],
+      "coverage_status": "PARTIAL — two EU (ENISA) policy documents were obtained as international examples; no neighbouring-country instrument was obtained",
+      "sources_ingested": [
+        {
+          "id": "enisa_5g_security_controls_matrix",
+          "title": "ENISA 5G Security Controls Matrix (booklet)",
+          "authority": "European Union Agency for Cybersecurity (ENISA)",
+          "document_type": "Policy guidance (EU)",
+          "date_issued": null,
+          "effective_status": "not applicable (EU guidance; not Indian law)",
+          "chunks": 14,
+          "kbs": [
+            "policy_gap",
+            "canonical"
+          ],
+          "url": "https://enisa.europa.eu/sites/default/files/all_files/5G Security Controls Matrix booklet.pdf"
+        },
+        {
+          "id": "enisa_5g_cybersecurity_standards_2022",
+          "title": "ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy",
+          "authority": "European Union Agency for Cybersecurity (ENISA)",
+          "document_type": "Policy analysis (EU)",
+          "date_issued": "March 2022",
+          "effective_status": "not applicable (EU analysis; not Indian law)",
+          "chunks": 183,
+          "kbs": [
+            "policy_gap",
+            "canonical"
+          ],
+          "url": "https://www.enisa.europa.eu/sites/default/files/publications/ENISA%20-%205G%20Standards.pdf"
+        }
+      ],
       "sources_unavailable": [
         {
           "id": "international_policy_examples",
           "title": "International policy examples and neighbouring-country comparative instruments",
-          "reason": "NOT INGESTED. The DOCX states the exact foreign instruments 'must be added to final manifest' and names none; choosing them is a team decision. The Policy Gap KB currently holds Indian policy documents only."
+          "reason": "NOT INGESTED as a named set: the DOCX says the exact foreign instruments 'must be added to final manifest' and names none. Two EU (ENISA) policy documents are now ingested as international policy examples; no neighbouring-country instrument has been obtained."
+        }
+      ],
+      "category_evidence": [
+        {
+          "source_id": "enisa_5g_security_controls_matrix",
+          "source_title": "ENISA 5G Security Controls Matrix (booklet)",
+          "authority": "European Union Agency for Cybersecurity (ENISA)",
+          "jurisdiction": "International",
+          "document_type": "Policy guidance (EU)",
+          "section": "p. 1",
+          "section_title": "",
+          "page": "1",
+          "chunk_id": "enisa_5g_security_controls_matrix:p-1:1",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap"
+          ],
+          "quote": "…al of the ENISA 5G security controls matrix is to support the national authorities in the EU Member States with implementing the technical measures of the EU’s 5G Cybersecurity toolbox. The ENISA 5G security controls matrix follows the overall structure of the ENISA Guideline for Security measures under the EECC, the European Electronic Commu…"
+        },
+        {
+          "source_id": "enisa_5g_cybersecurity_standards_2022",
+          "source_title": "ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy",
+          "authority": "European Union Agency for Cybersecurity (ENISA)",
+          "jurisdiction": "International",
+          "document_type": "Policy analysis (EU)",
+          "section": "p. 1",
+          "section_title": "",
+          "page": "1",
+          "chunk_id": "enisa_5g_cybersecurity_standards_2022:p-1:1",
+          "knowledge_bases": [
+            "canonical",
+            "policy_gap"
+          ],
+          "quote": "5G CYBERSECURITY STANDARDS Analysis of standardisation requirements in support of cybersecurity policy"
         }
       ]
     }
@@ -393,17 +665,17 @@
     "categories_partial": [
       "Laws and regulations",
       "National AI strategy and AI mission",
-      "Institutional mandates"
-    ],
-    "categories_not_covered": [
-      "Economic and industrial characteristics",
+      "Institutional mandates",
       "Labour-market conditions",
       "Intellectual property",
-      "Multilateral and treaty obligations",
       "Energy and infrastructure constraints",
       "Regional and global comparators"
     ],
-    "documents_ingested": 15,
+    "categories_not_covered": [
+      "Economic and industrial characteristics",
+      "Multilateral and treaty obligations"
+    ],
+    "documents_ingested": 23,
     "documents_not_ingested": [
       "nciipc_rules_2013",
       "international_policy_examples"

@@ -130,7 +130,8 @@ def test_manifest_assignments_are_valid_and_unavailable_sources_are_explicit() -
         assert set(d.kbs) <= set(ALL_KBS) and d.kb_basis, d.id
         if d.status == "downloaded":
             assert d.source_url and d.file and d.title_evidence, d.id
-            assert d.effective_status.startswith("not"), f"{d.id}: in-force status claimed"
+            assert d.effective_status.startswith("not") or d.in_force, (
+                f"{d.id}: in-force status claimed without an establishing document")
         else:
             assert "NOT INGESTED" in d.provenance_note, d.id
     assert {d.id for d in docs if d.status != "downloaded"} == {

@@ -1,6 +1,6 @@
 # Retrieval tests — one per specialist agent
 
-Generated 2026-10-06T16:01:38.605014+00:00 by `python -m src.rag.retrieval_demo`.
+Generated 2026-10-06T16:38:00.654446+00:00 by `python -m src.rag.retrieval_demo`.
 Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents with a successful retrieval: **7 / 7**.
 
 *Why relevant* is computed (query, cosine similarity, shared terms); whether a passage supports a claim is decided only by the Verifier outcome.
@@ -52,24 +52,24 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 
 ## policy_legal
 - **Chunk:** scenario2_T2 — The slice supports a healthcare application and may carry identifiable patient information.
-- **KB:** Indian Legal/Regulatory KB (ncsp_2013, ndcp_2018, telecom_act_2023, trai_act_1997)
-- **Passages retrieved:** 21
+- **KB:** Indian Legal/Regulatory KB (cti_rules_2024, ncsp_2013, ndcp_2018, niti_nsai_2018, telecom_act_2023, telecom_act_commencement_so2408e_2024, telecom_act_commencement_so2623e_2024, trai_act_1997)
+- **Passages retrieved:** 23
 
 ### Retrieval 1
 - **Query:** The slice supports a healthcare application and may carry identifiable patient information.
-- **Source:** National Cyber Security Policy - 2013 (Government of India (Department of Electronics and Information Technology); India; Policy)
-- **Section:** Part III item 10 (p. 4)
-- **Date issued:** 2013 · **In force:** not verified · **Amendments checked:** False
-- **Why relevant:** returned by the query above with cosine similarity 0.635; query terms in passage: information
-- **Chunk ID:** `ncsp_2013:part-iii-item-10:1`
+- **Source:** National Strategy for Artificial Intelligence #AIforAll (NITI Aayog) (NITI Aayog, Government of India; India; Strategy)
+- **Section:** Approaches to evaluating focus sector areas — Approaches to evaluating focus sector areas (p. 113-114)
+- **Date issued:** not stated in source · **In force:** not verified · **Amendments checked:** False
+- **Why relevant:** returned by the query above with cosine similarity 0.657; query terms in passage: healthcare
+- **Chunk ID:** `niti_nsai_2018:approaches-to-evaluating-focus-sector-ar:4`
 
-> 10) To enable protection of information while in process, handling, storage & transit so as to safeguard privacy of citizen's data and for reducing economic losses due to cyber crime or data theft.
+> Other areas that Google may be exploring include Chronic Lower Respiratory Disease, several types of cancer, mental and behavioral health and aging. Google is also invested in powering the healthcare data infrastructure, as evident in its USD625 million acquisition of Apigee, which is building healthcare APIs catering to the latest health records interoperability protocols. Similarly, Deep Mind is building a data infrastructure to enabling building of apps that can analyse different data elements. Furthermore, Google is also building health data streams that third parties could integrate in …
 
 ### Retrieval 2
 - **Query:** measures to protect telecommunication networks and services and their security
 - **Source:** The Telecommunications Act, 2023 (Government of India (Ministry of Law and Justice, Legislative Department); India; Act)
 - **Section:** Section 22 (p. 10-11)
-- **Date issued:** 24th December, 2023 · **In force:** not verified · **Amendments checked:** False
+- **Date issued:** 24th December, 2023 · **In force:** True · **Amendments checked:** False
 - **Why relevant:** returned by the query above with cosine similarity 0.805; query terms in passage: measures, networks, protect, security, services, telecommunication
 - **Chunk ID:** `telecom_act_2023:section-22:1`
 
@@ -88,7 +88,7 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 ### Structured agent output
 - **Summary:** Policy & Legal assessment: 4 provision(s) quoted from the Indian Legal/Regulatory KB, 3 of which impose duties.
 - **Claims:**
-  - [INCOMPLETE] National Cyber Security Policy - 2013, Part III item 10 states: "10) To enable protection of information while in process, handling, storage & transit so as to safeguard privacy of citizen's data and for reducing economic losses due to cyber crime or data theft." — cites National Cyber Security Policy - 2013, Part III item 10
+  - [INCOMPLETE] National Strategy for Artificial Intelligence #AIforAll (NITI Aayog), Approaches to evaluating focus sector areas states: "Other areas that Google may be exploring include Chronic Lower Respiratory Disease, several types of cancer, mental and behavioral health and aging. Google is also invested in … — cites National Strategy for Artificial Intelligence #AIforAll (NITI Aayog), Approaches to evaluating focus sector areas
   - [INCOMPLETE] The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of … — cites The Telecommunications Act, 2023, Section 22
   - [INCOMPLETE] The Telecommunications Act, 2023, Section 3 states: "3. (1) Any person intending to— (a) provide telecommunication services; (b) establish, operate, maintain or expand telecommunication network; or (c) possess radio equipment, shall obtain an authorisation from the Central Government, subject to … — cites The Telecommunications Act, 2023, Section 3
   - [INCOMPLETE] The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11 states: "11. Functions of Authority.— [(1)Notwithstanding anything contained in the Indian Telegraph Act, 1885 (13 of 1885), the functions of the Authority shall be to— (a) make recommendations, either … — cites The Telecom Regulatory Authority of India Act, 1997 (as amended, TDSAT compilation), Section 11
@@ -96,7 +96,7 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 
 ## cybersecurity
 - **Chunk:** scenario2_T1 — Unusual authentication and signalling attempts are observed on the affected private 5G slice.
-- **KB:** Cybersecurity KB (3gpp_ts_33501, certin_directions_2022, etsi_gr_nfv_sec_003, ncsp_2013, ndcp_2018, nist_csf_2_0, nist_sp_800_61r3, telecom_cyber_security_rules_2024)
+- **KB:** Cybersecurity KB (3gpp_ts_33501, certin_directions_2022, etsi_gr_nfv_sec_003, ncsp_2013, ndcp_2018, nist_csf_2_0, nist_sp_800_61r3, tcs_amendment_rules_2025, telecom_cyber_security_rules_2024)
 - **Passages retrieved:** 22
 
 ### Retrieval 1
@@ -112,8 +112,8 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 ### Retrieval 2
 - **Query:** telecommunication entity reporting of a security incident and the time limit
 - **Source:** Telecommunications (Telecom Cyber Security) Rules, 2024 (Government of India (Ministry of Communications, Department of Telecommunications); India; Rules)
-- **Section:** Rule 7 — Reporting of security incidents (p. 5-6)
-- **Date issued:** 21st November, 2024 · **In force:** not verified · **Amendments checked:** False
+- **Section:** Rule 7 — Reporting of security incidents (p. 12-13)
+- **Date issued:** 21st November, 2024 · **In force:** True · **Amendments checked:** False
 - **Why relevant:** returned by the query above with cosine similarity 0.848; query terms in passage: entity, incident, reporting, security, telecommunication
 - **Chunk ID:** `telecom_cyber_security_rules_2024:rule-7:1`
 
@@ -185,47 +185,47 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 
 ## critical_infrastructure
 - **Chunk:** scenario2_T2 — The slice supports a healthcare application and may carry identifiable patient information.
-- **KB:** Critical Infrastructure KB (telecom_act_2023)
+- **KB:** Critical Infrastructure KB (cti_rules_2024, telecom_act_2023)
 - **Passages retrieved:** 9
 
 ### Retrieval 1
-- **Query:** notification of critical telecommunication infrastructure and measures for its protection
-- **Source:** The Telecommunications Act, 2023 (Government of India (Ministry of Law and Justice, Legislative Department); India; Act)
-- **Section:** Section 19 (p. 9)
-- **Date issued:** 24th December, 2023 · **In force:** not verified · **Amendments checked:** False
-- **Why relevant:** returned by the query above with cosine similarity 0.798; query terms in passage: measures, telecommunication
-- **Chunk ID:** `telecom_act_2023:section-19:1`
+- **Query:** The slice supports a healthcare application and may carry identifiable patient information.
+- **Source:** Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024 (Government of India (Ministry of Communications, Department of Telecommunications); India; Rules)
+- **Section:** Rule 8 — Requirements for upgradation of Critical Telecommunication Infrastructure (p. 9)
+- **Date issued:** 22nd November, 2024 · **In force:** True · **Amendments checked:** False
+- **Why relevant:** returned by the query above with cosine similarity 0.612; query terms in passage: application, information
+- **Chunk ID:** `cti_rules_2024:rule-8:3`
 
-> 19. The Central Government may notify standards and conformity assessment measures in respect of— (a) telecommunication equipment, telecommunication identifiers and telecommunication network; (b) telecommunication services, in consonance with any regulations notified by the Telecom Regulatory Authority of India from time to time; (c) manufacture, import, distribution and sale of telecommunication equipment; (d) telecommunication security, including identification, analysis and prevention of intrusion in telecommunication services and telecommunication networks; (e) cyber security for …
+> of the results of such tests in the form and manner as may be specified by the Central Government on case to case basis through secure mode. Where upgradation is necessary for addressing or mitigating the adverse effects of a security incident, a telecommunication entity may undertake immediate upgradation in the software or hardware of any equipment that forms part of Critical Telecommunication Infrastructure without making an application under sub rule (1) and within twenty-four hours of such upgradation, report to the Central Government in the form and manner as may be determined by the …
 
 ### Retrieval 2
 - **Query:** notification of critical telecommunication infrastructure and measures for its protection
-- **Source:** The Telecommunications Act, 2023 (Government of India (Ministry of Law and Justice, Legislative Department); India; Act)
-- **Section:** Section 22 (p. 10-11)
-- **Date issued:** 24th December, 2023 · **In force:** not verified · **Amendments checked:** False
-- **Why relevant:** returned by the query above with cosine similarity 0.797; query terms in passage: critical, infrastructure, measures, notification, protection, telecommunication
-- **Chunk ID:** `telecom_act_2023:section-22:1`
+- **Source:** Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024 (Government of India (Ministry of Communications, Department of Telecommunications); India; Rules)
+- **Section:** Rule 3 — Application (p. 7)
+- **Date issued:** 22nd November, 2024 · **In force:** True · **Amendments checked:** False
+- **Why relevant:** returned by the query above with cosine similarity 0.831; query terms in passage: critical, infrastructure, telecommunication
+- **Chunk ID:** `cti_rules_2024:rule-3:1`
 
-> 22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.—For the purposes of this sub-section, the expression "traffic data" means any data generated, transmitted, received or stored in telecommunication networks including data relating to the type, routing, duration or time of a telecommunication. (3) The …
+> 3. Application. – (1) These rules shall apply to telecommunication network, or any part thereof, which has been notified by the Central Government as Critical Telecommunication Infrastructure under sub-section (3) of section 22 of the Act, based on an assessment that disruption of such infrastructure shall have a debilitating impact on national security, economy, public health or safety of the nation. The Central Government shall specify on the portal the form and manner in which every telecommunication entity shall provide the details of its telecommunication network, telecommunication …
 
 ### Retrieval 3
 - **Query:** notification of critical telecommunication infrastructure and measures for its protection
-- **Source:** The Telecommunications Act, 2023 (Government of India (Ministry of Law and Justice, Legislative Department); India; Act)
-- **Section:** Section 21 (p. 10)
-- **Date issued:** 24th December, 2023 · **In force:** not verified · **Amendments checked:** False
-- **Why relevant:** returned by the query above with cosine similarity 0.793; query terms in passage: measures, notification, telecommunication
-- **Chunk ID:** `telecom_act_2023:section-21:1`
+- **Source:** Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024 (Government of India (Ministry of Communications, Department of Telecommunications); India; Rules)
+- **Section:** Rule 5 — Inspection of Critical Telecommunication Infrastructure (p. 7)
+- **Date issued:** 22nd November, 2024 · **In force:** True · **Amendments checked:** False
+- **Why relevant:** returned by the query above with cosine similarity 0.806; query terms in passage: critical, infrastructure, telecommunication
+- **Chunk ID:** `cti_rules_2024:rule-5:1`
 
-> 21. The Central Government may, if satisfied that it is necessary or expedient so to do, in the interest of national security, friendly relations with foreign States, or in the event of war, by notification take such measures as are necessary in the circumstances of the case, including issuing directions in respect of the following, namely:— (a) use of telecommunication equipment, telecommunication services, telecommunication network and telecommunication identifiers; (b) standards applicable to manufacture, import and distribution of telecommunication equipment; (c) standards to be adopted …
+> 5. Inspection of Critical Telecommunication Infrastructure. – (1) The Central Government, may, by an order, authorise its personnel to access and inspect hardware, software and data pertaining to Critical Telecommunication Infrastructure of telecommunication entities. Every telecommunication entity shall ensure access to any personnel authorised by the Central Government under sub-rule (1) for inspection of Critical Telecommunication Infrastructure.
 
 ### Structured agent output
 - **Summary:** Critical infrastructure assessment: critical-service relevance indicated by the facts; formal CII designation unconfirmed. 4 provision(s) quoted from the Critical Infrastructure KB.
 - **Claims:**
   - [UNSUPPORTED] The incident facts indicate that the affected 5G slice supports a healthcare application, so critical-infrastructure provisions are relevant to examine. Formal CII designation status is not established by the facts. — agent's reading of the facts
-  - [INCOMPLETE] The Telecommunications Act, 2023, Section 19 states: "19. The Central Government may notify standards and conformity assessment measures in respect of— (a) telecommunication equipment, telecommunication identifiers and telecommunication network; (b) telecommunication services, in consonance with … — cites The Telecommunications Act, 2023, Section 19
+  - [INCOMPLETE] Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8 states: "of the results of such tests in the form and manner as may be specified by the Central Government on case to case basis through secure mode. Where upgradation is necessary for addressing or mitigating the … — cites Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 8
+  - [INCOMPLETE] Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 states: "3. Application. – (1) These rules shall apply to telecommunication network, or any part thereof, which has been notified by the Central Government as Critical Telecommunication Infrastructure under … — cites Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3
+  - [INCOMPLETE] Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5 states: "5. Inspection of Critical Telecommunication Infrastructure. – (1) The Central Government, may, by an order, authorise its personnel to access and inspect hardware, software and data pertaining to Critical … — cites Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 5
   - [INCOMPLETE] The Telecommunications Act, 2023, Section 22 states: "22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of … — cites The Telecommunications Act, 2023, Section 22
-  - [INCOMPLETE] The Telecommunications Act, 2023, Section 21 states: "21. The Central Government may, if satisfied that it is necessary or expedient so to do, in the interest of national security, friendly relations with foreign States, or in the event of war, by notification take such measures as are necessary in … — cites The Telecommunications Act, 2023, Section 21
-  - [INCOMPLETE] The Telecommunications Act, 2023, Section 23 states: "23. If it appears necessary or expedient so to do in the public interest, the Central Government may direct any authorised entity to transmit in its telecommunication services or telecommunication network, specific messages, in such manner as … — cites The Telecommunications Act, 2023, Section 23
 - **Uncertainty:** CII designation is UNCONFIRMED at this stage. The service may or may not be formally designated. This uncertainty must be carried through the assessment.
 
 ## standards
@@ -273,8 +273,8 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 
 ## policy_gap
 - **Chunk:** scenario2_T3 — The question asks: what should be reported or escalated, and what policy gap remains?
-- **KB:** International Policy Examples KB (ncsp_2013, ndcp_2018, trai_ai_bigdata_recs_2023)
-- **Passages retrieved:** 22
+- **KB:** International Policy Examples KB (enisa_5g_cybersecurity_standards_2022, enisa_5g_security_controls_matrix, ncsp_2013, ndcp_2018, niti_nsai_2018, telecom_row_rules_2024, trai_ai_bigdata_recs_2023)
+- **Passages retrieved:** 24
 
 ### Retrieval 1
 - **Query:** The question asks: what should be reported or escalated, and what policy gap remains?
@@ -288,13 +288,13 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 
 ### Retrieval 2
 - **Query:** policy for 5G and next generation network technologies and their security
-- **Source:** National Digital Communications Policy 2018 (Government of India (Department of Telecommunications); India; Policy)
-- **Section:** Para 11 (p. 4-22)
-- **Date issued:** 2018 · **In force:** not verified · **Amendments checked:** False
-- **Why relevant:** returned by the query above with cosine similarity 0.758; query terms in passage: 5g, generation, network, next, policy, security, technologies
-- **Chunk ID:** `ndcp_2018:para-11:20`
+- **Source:** ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy (European Union Agency for Cybersecurity (ENISA); International; Policy analysis (EU))
+- **Section:** p. 1 (p. 1)
+- **Date issued:** March 2022 · **In force:** not verified · **Amendments checked:** False
+- **Why relevant:** returned by the query above with cosine similarity 0.847; query terms in passage: 5g, policy
+- **Chunk ID:** `enisa_5g_cybersecurity_standards_2022:p-1:1`
 
-> services and network elements incorporating international best practices Earmarking adequate licensed and unlicensed spectrum for IoT/ M2M services Encourage use of Open APIs for emerging technologies (b) Promoting innovation in the creation of Communication services and network infrastructure by Developing a policy framework for ‘Over The Top’ services (c) Ensuring the Transition to IPv6 for all existing communications systems, equipment, networks and devices (d) Enabling Hi-speed internet, Internet of Things and M2M by rollout of 5G technologies: Implementing an action plan for rollout of …
+> 5G CYBERSECURITY STANDARDS Analysis of standardisation requirements in support of cybersecurity policy
 
 ### Retrieval 3
 - **Query:** coordination between agencies for cyber security incident response
@@ -309,8 +309,8 @@ Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents wit
 ### Structured agent output
 - **Summary:** Policy gap assessment: 3 candidate area(s) from verified findings; 3 potential gap(s) raised after Canonical KB examination. Potential gaps are for expert review, not conclusions of inadequacy.
 - **Claims:**
-  - [INCOMPLETE] Potential gap — Emerging technology not explicitly addressed: none of the 485 passages of Indian legal and policy instruments in the Canonical KB (every one examined) mentions network slicing (instruments examined: CERT-In Directions under sub-section (6) of section 70B of the Information … — cites TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40
+  - [INCOMPLETE] Potential gap — Emerging technology not explicitly addressed: none of the 886 passages of Indian legal and policy instruments in the Canonical KB (every one examined) mentions network slicing (instruments examined: CERT-In Directions under sub-section (6) of section 70B of the Information … — cites TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.30; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.35; TRAI Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector, Para 3.40
   - [INCOMPLETE] Potential gap — Overlapping requirements: CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii) and Digital Personal Data Protection Rules, 2025, Rule 7 both carry reporting duties for the same incident, and neither passage … — cites CERT-In Directions under sub-section (6) of section 70B of the Information Technology Act, 2000 (28 April 2022), Direction (ii); Digital Personal Data Protection Rules, 2025, Rule 7
-  - [INCOMPLETE] Potential gap — Missing institutional clarity: National Cyber Security Policy - 2013, Part III item 5 addresses NCIIPC and National Digital Communications Policy 2018, Para 11 addresses CERT-In, but none of the 485 passages of Indian legal and policy instruments in the Canonical KB addresses both, … — cites National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11
-  - [INCOMPLETE] Comparator — [REFERENCE ONLY — not Indian law] 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1 states: "as described in clause 5.15.13. The selection of N3IWF/TNGF supporting a set of slice(s) is described in clause 6.3.6 and clause 6.3.12 … — cites 3GPP TS 23.501 V19.9.0 (2026-09) System architecture for the 5G System (5GS), Release 19, Clause 5.15.1
-  - [INCOMPLETE] Comparator — [REFERENCE ONLY — not Indian law] ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1 states: "I n t e r n a t i o n a l T e l e c o m m u n i c a t i o n U n i o n ITU-T Y.3172 TELECOMMUNICATION STANDARDIZATION … — cites ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020, p. 1
+  - [INCOMPLETE] Potential gap — Missing institutional clarity: National Cyber Security Policy - 2013, Part III item 5 addresses NCIIPC and National Digital Communications Policy 2018, Para 11 addresses CERT-In, but none of the 886 passages of Indian legal and policy instruments in the Canonical KB addresses both, … — cites National Cyber Security Policy - 2013, Part III item 5; National Digital Communications Policy 2018, Para 11
+  - [INCOMPLETE] Comparator — [REFERENCE ONLY — not Indian law] ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1 states: "5G CYBERSECURITY STANDARDS Analysis of standardisation requirements in support of cybersecurity policy" — cites ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1
+  - [INCOMPLETE] Comparator — [REFERENCE ONLY — not Indian law] ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2 states: "[DEVSECOPS] 26 * Note: For research and innovation organisations, gaps are intended as areas where further work by … — cites ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2

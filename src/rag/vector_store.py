@@ -37,9 +37,18 @@ _BOILERPLATE = re.compile(
 )
 
 
+# A passage this short is a heading fragment or a cross-reference pointer
+# ("… is described in clause 5.8.2.19"); its embedding is close to
+# meaningless, so it can score above the retrieval floor for unrelated
+# queries.  Kept for exact section lookups, excluded from open searches.
+MIN_SUBSTANTIVE_CHARS = 80
+
+
 def is_boilerplate(chunk: dict) -> bool:
     title = (chunk.get("section_title") or "").strip().rstrip(".:")
     label = (chunk.get("section") or "").strip()
+    if len(" ".join((chunk.get("excerpt") or "").split())) < MIN_SUBSTANTIVE_CHARS:
+        return True
     return bool(_BOILERPLATE.match(title) or _BOILERPLATE.match(label))
 
 

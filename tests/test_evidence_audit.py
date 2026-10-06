@@ -173,7 +173,8 @@ def registry():
 
 
 @pytest.mark.parametrize("query", ["chocolate cake recipe with butter and sugar",
-                                   "football world cup final score"])
+                                   "football world cup final score", "cricket match result",
+                                   "weather forecast for tomorrow"])
 def test_irrelevant_query_retrieves_nothing_in_any_kb(registry, query) -> None:
     for agent_id, kb in registry.agent_kbs.items():
         assert kb.retrieve(query, top_k=5) == [], f"{agent_id.value} returned passages for {query!r}"
@@ -199,3 +200,57 @@ def test_empty_retrieval_for_technical_agent_without_symptoms(registry) -> None:
                           description="A routine status update was received.", new_facts=[])
     assert agent_obj._build_queries(chunk, {}) == []
     assert agent_obj._retrieve_evidence([]) == []
+
+
+# -----------------------------------------------------------------------
+# In-force status and amendments come only from obtained documents
+# -----------------------------------------------------------------------
+
+def _stored(doc_id, section):
+    from src.rag.manifest import KB_ROOT as root
+    for line in (root / "canonical" / "chunks.jsonl").open(encoding="utf-8"):
+        r = json.loads(line)
+        if r["doc_id"] == doc_id and r["section"] == section:
+            return r
+    raise AssertionError(f"{doc_id} {section} not stored")
+
+
+def test_in_force_status_follows_the_commencement_notifications() -> None:
+    s22 = _stored("telecom_act_2023", "Section 22")
+    assert s22["effective"] is True and "S.O. 2408(E)" in s22["effective_status"]
+    s7 = _stored("telecom_act_2023", "Section 7")
+    assert s7["effective"] is True and "S.O. 2623(E)" in s7["effective_status"]
+    s3 = _stored("telecom_act_2023", "Section 3")          # named by neither notification
+    assert s3["effective"] is None and s3["effective_status"] == ""
+    assert all(not r["amendment_checked"] for r in (s22, s7, s3))
+
+
+def test_amendment_notes_follow_the_amendment_rules() -> None:
+    rule7 = _stored("telecom_cyber_security_rules_2024", "Rule 7")
+    rule5 = _stored("telecom_cyber_security_rules_2024", "Rule 5")
+    assert rule7["effective"] is True and rule7["amendment_note"] == ""   # G.S.R. 771(E) leaves rule 7 alone
+    assert "G.S.R. 771(E)" in rule5["amendment_note"]
+    assert not rule7["amendment_checked"] and not rule5["amendment_checked"]
+
+
+def test_verifier_reports_established_status_but_stays_incomplete(registry) -> None:
+    from scenarios.scenario2_healthcare_5g import get_chunks
+    from src.pipeline import Pipeline
+    pipeline = Pipeline(registry)
+    pipeline.run_chunk(get_chunks()[0])
+    t1 = pipeline.run_chunk(get_chunks()[1])
+    rule7 = next(vc for vc in t1.verifier_result.verified_claims
+                 if "Cyber Security) Rules, 2024, Rule 7 states" in vc.claim)
+    assert rule7.outcome == VerifierOutcome.INCOMPLETE
+    assert "in force from 21 November 2024" in rule7.rationale and "amendments not checked" in rule7.rationale
+
+
+def test_catches_unbacked_in_force_status() -> None:
+    from src.rag.evidence_audit import Audit
+    a = Audit(RUN)
+    cid = next(cid for cid, r in a.stored.items()
+               if r["doc_id"] == "dpdp_rules_2025" and r["section"] == "Rule 7")
+    a.stored[cid] = {**a.stored[cid], "effective": True, "effective_status": "in force"}
+    for st in a.run.stages:
+        a.check_stage(st)
+    assert any("not established by an obtained document" in p for p in a.problems)

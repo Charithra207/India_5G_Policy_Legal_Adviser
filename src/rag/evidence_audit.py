@@ -139,10 +139,40 @@ class Audit:
             self.flag(where, "international passage quoted without the reference-only label")
         elif not international and REFERENCE_LABEL in claim:
             self.flag(where, "Indian passage labelled as a reference")
-        if chunk["effective"] is not None or chunk["amendment_checked"]:
-            self.flag(where, "passage claims a checked in-force/amendment status")
+        self.check_status(where, chunk, doc)
         if outcome == "VERIFIED":
             self.flag(where, "claim VERIFIED although in-force status and amendments are unchecked")
+
+    def check_status(self, where: str, chunk: dict, doc: dict) -> None:
+        """
+        In-force status and amendment notes must trace to a manifest entry
+        whose authorising document was ingested (the build has already
+        checked the entry's quoted evidence in that document's text).
+        No passage may claim a complete amendment check.
+        """
+        m = re.match(r"^(?:Section|Rule|Regulation)\s+(\d+[A-Z]?)\b", chunk["section"])
+        unit = m.group(1) if m else None
+
+        def covers(entry: dict) -> bool:
+            return ("*" in entry["units"] and not chunk["section"].startswith("p. ")) or unit in entry["units"]
+
+        if chunk["effective"] is not None:
+            backing = [e for e in doc.get("in_force", []) if covers(e)
+                       and self.ingested.get(e["by"], {}).get("status") == "ingested"]
+            if not backing or chunk["effective"] is not True:
+                self.flag(where, f"in-force status of {chunk['chunk_id']} is not established by an obtained document")
+            elif chunk["effective_status"] not in {e["status"] for e in backing}:
+                self.flag(where, "in-force status text differs from the establishing entry")
+            else:
+                self.counts["in-force statuses traced to a notification"] += 1
+        if chunk["amendment_note"]:
+            if not any(covers(e) and self.ingested.get(e["by"], {}).get("status") == "ingested"
+                       for e in doc.get("amended_by", [])):
+                self.flag(where, f"amendment note on {chunk['chunk_id']} is not backed by an obtained amendment")
+            else:
+                self.counts["amendment notes traced to an amendment"] += 1
+        if chunk["amendment_checked"]:
+            self.flag(where, "passage claims a complete amendment check")
 
     def check_stage(self, stage: dict) -> None:
         label = stage["stage"]["label"]

@@ -9,7 +9,7 @@
   "docx_section": "§7.2",
   "generated_by": "python -m src.rag.foundation",
   "retrieved_on": "2026-10-05",
-  "built_at": "2026-10-06T15:32:31.822232+00:00",
+  "built_at": "2026-10-06T16:34:58.553398+00:00",
   "embedding_model": "BAAI/bge-small-en-v1.5",
   "embedding_dimension": 384,
   "generator_model": "none — agents quote retrieved passages; no generative model is used",
@@ -29,16 +29,20 @@
       ]
     },
     "policy_legal": {
-      "passages": 274,
+      "passages": 603,
       "documents": [
+        "cti_rules_2024",
         "ncsp_2013",
         "ndcp_2018",
+        "niti_nsai_2018",
         "telecom_act_2023",
+        "telecom_act_commencement_so2408e_2024",
+        "telecom_act_commencement_so2623e_2024",
         "trai_act_1997"
       ]
     },
     "cybersecurity": {
-      "passages": 1675,
+      "passages": 1680,
       "documents": [
         "3gpp_ts_33501",
         "certin_directions_2022",
@@ -47,6 +51,7 @@
         "ndcp_2018",
         "nist_csf_2_0",
         "nist_sp_800_61r3",
+        "tcs_amendment_rules_2025",
         "telecom_cyber_security_rules_2024"
       ]
     },
@@ -58,8 +63,9 @@
       ]
     },
     "critical_infrastructure": {
-      "passages": 105,
+      "passages": 126,
       "documents": [
+        "cti_rules_2024",
         "telecom_act_2023"
       ]
     },
@@ -75,29 +81,41 @@
       ]
     },
     "policy_gap": {
-      "passages": 459,
+      "passages": 1029,
       "documents": [
+        "enisa_5g_cybersecurity_standards_2022",
+        "enisa_5g_security_controls_matrix",
         "ncsp_2013",
         "ndcp_2018",
+        "niti_nsai_2018",
+        "telecom_row_rules_2024",
         "trai_ai_bigdata_recs_2023"
       ]
     },
     "canonical": {
-      "passages": 5112,
+      "passages": 5710,
       "documents": [
         "3gpp_ts_23501",
         "3gpp_ts_33501",
         "certin_directions_2022",
+        "cti_rules_2024",
         "dpdp_act_2023",
         "dpdp_rules_2025",
+        "enisa_5g_cybersecurity_standards_2022",
+        "enisa_5g_security_controls_matrix",
         "etsi_gr_nfv_sec_003",
         "itu_t_y3172",
         "ncsp_2013",
         "ndcp_2018",
         "nist_csf_2_0",
         "nist_sp_800_61r3",
+        "niti_nsai_2018",
+        "tcs_amendment_rules_2025",
         "telecom_act_2023",
+        "telecom_act_commencement_so2408e_2024",
+        "telecom_act_commencement_so2623e_2024",
         "telecom_cyber_security_rules_2024",
+        "telecom_row_rules_2024",
         "trai_act_1997",
         "trai_ai_bigdata_recs_2023"
       ]
@@ -112,7 +130,7 @@
       "document_type": "Act",
       "date_issued": "24th December, 2023",
       "date_verified_in_text": true,
-      "effective_status": "not verified",
+      "effective_status": "partly in force: sections 1, 2, 10–30, 42–44, 46, 47, 50–58, 61, 62 from 26 June 2024 (S.O. 2408(E)); sections 6–8, 48 and 59(b) from 5 July 2024 (S.O. 2623(E)); other sections: commencement not verified",
       "amendment_status": "not checked",
       "section_information": {
         "section_style": "numbered",
@@ -149,6 +167,66 @@
           "vectors": "knowledge_base/canonical/vectors.npy",
           "passages": 105
         }
+      },
+      "status_established_by": {
+        "in_force": [
+          {
+            "by": "telecom_act_commencement_so2408e_2024",
+            "units": [
+              "1",
+              "10",
+              "11",
+              "12",
+              "13",
+              "14",
+              "15",
+              "16",
+              "17",
+              "18",
+              "19",
+              "2",
+              "20",
+              "21",
+              "22",
+              "23",
+              "24",
+              "25",
+              "26",
+              "27",
+              "28",
+              "29",
+              "30",
+              "42",
+              "43",
+              "44",
+              "46",
+              "47",
+              "50",
+              "51",
+              "52",
+              "53",
+              "54",
+              "55",
+              "56",
+              "57",
+              "58",
+              "61",
+              "62"
+            ],
+            "passages": 62
+          },
+          {
+            "by": "telecom_act_commencement_so2623e_2024",
+            "units": [
+              "48",
+              "6",
+              "7",
+              "8"
+            ],
+            "passages": 4
+          }
+        ],
+        "amendments": []
       },
       "knowledge_bases": [
         "policy_legal",
@@ -200,6 +278,7 @@
           "passages": 78
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "policy_legal",
         "canonical"
@@ -259,6 +338,7 @@
           "passages": 46
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "policy_legal",
         "cybersecurity",
@@ -277,38 +357,95 @@
       "document_type": "Rules",
       "date_issued": "21st November, 2024",
       "date_verified_in_text": true,
-      "effective_status": "not verified",
-      "amendment_status": "not checked",
+      "effective_status": "in force from 21 November 2024 (rule 1(2): on publication in the Official Gazette); amended by G.S.R. 771(E)",
+      "amendment_status": "Amended by the Telecommunications (Telecom Cyber Security) Amendment Rules, 2025 (G.S.R. 771(E), 22 October 2025): rules 2, 3, 4, 5, 8 and 10 amended, rule 7A inserted. Whether there are further amendments was not checked.",
       "section_information": {
         "section_style": "numbered",
         "section_label": "Rule",
-        "sections_ingested": 11,
-        "sections_labelled_by_page_only": 1,
+        "sections_ingested": 12,
+        "sections_labelled_by_page_only": 2,
         "unmatched_pdf_bookmarks": []
       },
-      "url": "https://thc.nic.in/Central%20Governmental%20Rules/Telecommunications%20(Telecom%20Cyber%20Security)%20Rules,%202024.pdf",
-      "attempted_urls": [],
-      "provenance_note": "Gazette notification G.S.R. 720(E), bilingual; English pages only. Copy hosted on thc.nic.in (a Government NIC domain): the dot.gov.in gazette link returned HTTP 404. The DOCX cites the Rules 'as amended'; amendments were not checked.",
+      "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/cybersecurity-rules-2024.pdf",
+      "attempted_urls": [
+        "https://thc.nic.in/Central%20Governmental%20Rules/Telecommunications%20(Telecom%20Cyber%20Security)%20Rules,%202024.pdf"
+      ],
+      "provenance_note": "Gazette notification G.S.R. 720(E), bilingual; English pages 8–13. Official DoT copy (eservices.dot.gov.in); previously a thc.nic.in mirror copy. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
       "licence": {
         "statement_in_document": null,
         "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
         "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
       },
       "status": "ingested",
-      "sha256": "16f93fbc5e1bbdbdee56b3b98a020e0d49e32f98b524ed8942ac8d6f7dc81494",
-      "chunk_count": 34,
+      "sha256": "1a0876d2e1fb309679e06afaccc230ae88ea145c8b27f683a3a42126dc047bf6",
+      "chunk_count": 26,
       "chunk_id_prefix": "telecom_cyber_security_rules_2024:",
       "vector_index": {
         "cybersecurity": {
           "store": "knowledge_base/cybersecurity/",
           "vectors": "knowledge_base/cybersecurity/vectors.npy",
-          "passages": 34
+          "passages": 26
         },
         "canonical": {
           "store": "knowledge_base/canonical/",
           "vectors": "knowledge_base/canonical/vectors.npy",
-          "passages": 34
+          "passages": 26
         }
+      },
+      "status_established_by": {
+        "in_force": [
+          {
+            "by": "telecom_cyber_security_rules_2024",
+            "units": [
+              "*"
+            ],
+            "passages": 24
+          }
+        ],
+        "amendments": [
+          {
+            "by": "tcs_amendment_rules_2025",
+            "units": [
+              "2"
+            ],
+            "passages": 2
+          },
+          {
+            "by": "tcs_amendment_rules_2025",
+            "units": [
+              "3"
+            ],
+            "passages": 2
+          },
+          {
+            "by": "tcs_amendment_rules_2025",
+            "units": [
+              "4"
+            ],
+            "passages": 5
+          },
+          {
+            "by": "tcs_amendment_rules_2025",
+            "units": [
+              "5"
+            ],
+            "passages": 6
+          },
+          {
+            "by": "tcs_amendment_rules_2025",
+            "units": [
+              "8"
+            ],
+            "passages": 2
+          },
+          {
+            "by": "tcs_amendment_rules_2025",
+            "units": [
+              "10"
+            ],
+            "passages": 2
+          }
+        ]
       },
       "knowledge_bases": [
         "cybersecurity",
@@ -359,6 +496,7 @@
           "passages": 18
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "cybersecurity",
         "canonical"
@@ -418,6 +556,7 @@
           "passages": 45
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "cybersecurity",
         "policy_legal",
@@ -469,6 +608,7 @@
           "passages": 83
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "privacy",
         "canonical"
@@ -518,47 +658,13 @@
           "passages": 76
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "privacy",
         "canonical"
       ],
       "kb_basis": "DOCX 4.2 row 3; 5.1 mapping 6",
       "embedding_model": "BAAI/bge-small-en-v1.5",
-      "generator_model": "none — agents quote retrieved passages; no generative model is used"
-    },
-    {
-      "id": "nciipc_rules_2013",
-      "title": "Information Technology (National Critical Information Infrastructure Protection Centre and Manner of Performing Functions and Duties) Rules, 2013",
-      "authority": "Government of India",
-      "jurisdiction": "India",
-      "document_type": "Rules",
-      "date_issued": null,
-      "date_verified_in_text": false,
-      "effective_status": "not verified",
-      "amendment_status": "not checked",
-      "section_information": null,
-      "url": null,
-      "attempted_urls": [
-        "https://www.indiacode.nic.in/ViewFileUploaded?path=AC_CEN_45_76_00001_200021_1517807324077%2Frulesindividualfile%2F&file=nciipc_function_and_duties_rule_2013.pdf (HTTP 504, three attempts on 2026-10-05)",
-        "https://nciipc.gov.in/ (no response within 90 s)"
-      ],
-      "provenance_note": "NOT INGESTED. The Critical Infrastructure KB currently holds only the Telecommunications Act, 2023.",
-      "licence": {
-        "statement_in_document": null,
-        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
-        "open_access": null
-      },
-      "status": "not ingested: not_available",
-      "sha256": null,
-      "chunk_count": 0,
-      "chunk_id_prefix": null,
-      "vector_index": {},
-      "knowledge_bases": [
-        "critical_infrastructure",
-        "canonical"
-      ],
-      "kb_basis": "DOCX 4.2 row 4; 5.1 mapping 7",
-      "embedding_model": null,
       "generator_model": "none — agents quote retrieved passages; no generative model is used"
     },
     {
@@ -602,6 +708,7 @@
           "passages": 368
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "policy_gap",
         "canonical"
@@ -651,6 +758,7 @@
           "passages": 79
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "standards",
         "canonical"
@@ -705,6 +813,7 @@
           "passages": 2648
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "technical",
         "standards",
@@ -765,6 +874,7 @@
           "passages": 1091
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "technical",
         "standards",
@@ -821,6 +931,7 @@
           "passages": 258
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "standards",
         "cybersecurity",
@@ -876,6 +987,7 @@
           "passages": 74
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "standards",
         "cybersecurity",
@@ -931,6 +1043,7 @@
           "passages": 109
         }
       },
+      "status_established_by": null,
       "knowledge_bases": [
         "standards",
         "cybersecurity",
@@ -938,6 +1051,487 @@
       ],
       "kb_basis": "DOCX 4.1 row 6 (Cybersecurity Agent)",
       "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "telecom_act_commencement_so2408e_2024",
+      "title": "Notification S.O. 2408(E) appointing 26 June 2024 for sections of the Telecommunications Act, 2023",
+      "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+      "jurisdiction": "India",
+      "document_type": "Notification",
+      "date_issued": "21th June, 2024",
+      "date_verified_in_text": true,
+      "effective_status": "not applicable (commencement notification)",
+      "amendment_status": "not applicable",
+      "section_information": {
+        "section_style": "page",
+        "section_label": "p.",
+        "sections_ingested": 1,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/Notification for enforcement of sections of the Telecommunications Act 2023.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Gazette of India, Extraordinary, Part II Section 3(ii); bilingual one-page notification, English lines only. The date is printed as '21th June, 2024'. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "434212f46781b909fa1e1a9d0af71a15252f34d48755867043abaf489761bf5b",
+      "chunk_count": 1,
+      "chunk_id_prefix": "telecom_act_commencement_so2408e_2024:",
+      "vector_index": {
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 1
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 1
+        }
+      },
+      "status_established_by": null,
+      "knowledge_bases": [
+        "policy_legal",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 7.3 KB table: Policy & Legal KB includes government directions/notifications; 3.5 the Verifier checks whether a provision is in force",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "telecom_act_commencement_so2623e_2024",
+      "title": "Notification S.O. 2623(E) appointing 5 July 2024 for sections of the Telecommunications Act, 2023",
+      "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+      "jurisdiction": "India",
+      "document_type": "Notification",
+      "date_issued": "4th July, 2024",
+      "date_verified_in_text": true,
+      "effective_status": "not applicable (commencement notification)",
+      "amendment_status": "not applicable",
+      "section_information": {
+        "section_style": "page",
+        "section_label": "p.",
+        "sections_ingested": 1,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/Notification for enforcement of sections of the Telecommunications Act, 2023.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Gazette of India, Extraordinary, Part II Section 3(ii); bilingual one-page notification, English lines only. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "315caff5aa2c96def6e69b2baab7ab28861a34f361c91e521ec17f08e78865c5",
+      "chunk_count": 1,
+      "chunk_id_prefix": "telecom_act_commencement_so2623e_2024:",
+      "vector_index": {
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 1
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 1
+        }
+      },
+      "status_established_by": null,
+      "knowledge_bases": [
+        "policy_legal",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 7.3 KB table: Policy & Legal KB includes government directions/notifications; 3.5 the Verifier checks whether a provision is in force",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "cti_rules_2024",
+      "title": "Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024",
+      "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+      "jurisdiction": "India",
+      "document_type": "Rules",
+      "date_issued": "22nd November, 2024",
+      "date_verified_in_text": true,
+      "effective_status": "in force from 22 November 2024 (rule 1(2): on publication in the Official Gazette)",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Rule",
+        "sections_ingested": 11,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/Critical Telecommunication Infrastructure Rules, 2024_0.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Gazette notification G.S.R. 723(E), bilingual; English pages 6–10. Official DoT copy. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "116466ec2799bb80750e9d810495fbfb1c0b041366dbb3625da03b2085199f4d",
+      "chunk_count": 21,
+      "chunk_id_prefix": "cti_rules_2024:",
+      "vector_index": {
+        "critical_infrastructure": {
+          "store": "knowledge_base/critical_infrastructure/",
+          "vectors": "knowledge_base/critical_infrastructure/vectors.npy",
+          "passages": 21
+        },
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 21
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 21
+        }
+      },
+      "status_established_by": {
+        "in_force": [
+          {
+            "by": "cti_rules_2024",
+            "units": [
+              "*"
+            ],
+            "passages": 19
+          }
+        ],
+        "amendments": []
+      },
+      "knowledge_bases": [
+        "critical_infrastructure",
+        "policy_legal",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 7.3 KB table: Critical Infrastructure KB — critical-telecommunication-infrastructure provisions; 7.3 Laws and regulations (Canonical)",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "tcs_amendment_rules_2025",
+      "title": "Telecommunications (Telecom Cyber Security) Amendment Rules, 2025",
+      "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+      "jurisdiction": "India",
+      "document_type": "Rules (amendment)",
+      "date_issued": "22nd October, 2025",
+      "date_verified_in_text": true,
+      "effective_status": "in force from 22 October 2025 (rule 1(2): on publication in the Official Gazette)",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Rule",
+        "sections_ingested": 9,
+        "sections_labelled_by_page_only": 1,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/telecom-cyber-security-amendment-rules-2025.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Gazette notification G.S.R. 771(E), bilingual; English pages 5–7. Official DoT copy. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "fe249008ba43a70bd50da278f0150b61e3a42161f21899882afca5057d895363",
+      "chunk_count": 13,
+      "chunk_id_prefix": "tcs_amendment_rules_2025:",
+      "vector_index": {
+        "cybersecurity": {
+          "store": "knowledge_base/cybersecurity/",
+          "vectors": "knowledge_base/cybersecurity/vectors.npy",
+          "passages": 13
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 13
+        }
+      },
+      "status_established_by": {
+        "in_force": [
+          {
+            "by": "tcs_amendment_rules_2025",
+            "units": [
+              "*"
+            ],
+            "passages": 11
+          }
+        ],
+        "amendments": []
+      },
+      "knowledge_bases": [
+        "cybersecurity",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 5.1 mapping 3: Telecom Cyber Security Rules, 2024 'as amended'",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "telecom_row_rules_2024",
+      "title": "Telecommunications (Right of Way) Rules, 2024",
+      "authority": "Government of India (Ministry of Communications, Department of Telecommunications)",
+      "jurisdiction": "India",
+      "document_type": "Rules",
+      "date_issued": "17th September, 2024",
+      "date_verified_in_text": true,
+      "effective_status": "in force from 1 January 2025 (rule 1(2))",
+      "amendment_status": "not checked",
+      "section_information": {
+        "section_style": "numbered",
+        "section_label": "Rule",
+        "sections_ingested": 24,
+        "sections_labelled_by_page_only": 2,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/telecommunications-right-of-way-rules-2024.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Gazette notification G.S.R. 576(E), bilingual; English pages 19–33. Downloaded from the official DoT URL (the copy in the team folder was a different file and was not used).",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "fe13d8d3a11bf63901b94c501a45fe294bda1d67ff7198ac96e3f62bc02e4145",
+      "chunk_count": 67,
+      "chunk_id_prefix": "telecom_row_rules_2024:",
+      "vector_index": {
+        "policy_gap": {
+          "store": "knowledge_base/policy_gap/",
+          "vectors": "knowledge_base/policy_gap/vectors.npy",
+          "passages": 67
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 67
+        }
+      },
+      "status_established_by": {
+        "in_force": [
+          {
+            "by": "telecom_row_rules_2024",
+            "units": [
+              "*"
+            ],
+            "passages": 64
+          }
+        ],
+        "amendments": []
+      },
+      "knowledge_bases": [
+        "policy_gap",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 7.3 Energy and infrastructure constraints (Technical; Policy Gap): legal material, so assigned to the Policy Gap KB and the Canonical KB rather than the Technical KB",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "niti_nsai_2018",
+      "title": "National Strategy for Artificial Intelligence #AIforAll (NITI Aayog)",
+      "authority": "NITI Aayog, Government of India",
+      "jurisdiction": "India",
+      "document_type": "Strategy",
+      "date_issued": null,
+      "date_verified_in_text": false,
+      "effective_status": "not applicable (national strategy, not law)",
+      "amendment_status": "not applicable",
+      "section_information": {
+        "section_style": "pdf_outline",
+        "section_label": "Section",
+        "sections_ingested": 64,
+        "sections_labelled_by_page_only": 2,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.niti.gov.in/sites/default/files/2023-03/National-Strategy-for-Artificial-Intelligence.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official NITI Aayog copy. No publication date is printed in the document. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "da5404dbb584c8956aae707dfcfe324dc1df11a179bc8288af0e898f4e37dcc5",
+      "chunk_count": 306,
+      "chunk_id_prefix": "niti_nsai_2018:",
+      "vector_index": {
+        "policy_gap": {
+          "store": "knowledge_base/policy_gap/",
+          "vectors": "knowledge_base/policy_gap/vectors.npy",
+          "passages": 306
+        },
+        "policy_legal": {
+          "store": "knowledge_base/policy_legal/",
+          "vectors": "knowledge_base/policy_legal/vectors.npy",
+          "passages": 306
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 306
+        }
+      },
+      "status_established_by": null,
+      "knowledge_bases": [
+        "policy_gap",
+        "policy_legal",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 7.3 National AI strategy and AI mission (Policy Gap; Policy & Legal; Canonical); 5.1 mapping 12",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "enisa_5g_security_controls_matrix",
+      "title": "ENISA 5G Security Controls Matrix (booklet)",
+      "authority": "European Union Agency for Cybersecurity (ENISA)",
+      "jurisdiction": "International",
+      "document_type": "Policy guidance (EU)",
+      "date_issued": null,
+      "date_verified_in_text": false,
+      "effective_status": "not applicable (EU guidance; not Indian law)",
+      "amendment_status": "not applicable",
+      "section_information": {
+        "section_style": "page",
+        "section_label": "p.",
+        "sections_ingested": 5,
+        "sections_labelled_by_page_only": 5,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://enisa.europa.eu/sites/default/files/all_files/5G Security Controls Matrix booklet.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official ENISA copy. No date printed in the booklet. International policy example for comparison only. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "e5db27669101f93721fbbce52917231a61d1cf70bf246f8fe904e5f5e00fdd65",
+      "chunk_count": 14,
+      "chunk_id_prefix": "enisa_5g_security_controls_matrix:",
+      "vector_index": {
+        "policy_gap": {
+          "store": "knowledge_base/policy_gap/",
+          "vectors": "knowledge_base/policy_gap/vectors.npy",
+          "passages": 14
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 14
+        }
+      },
+      "status_established_by": null,
+      "knowledge_bases": [
+        "policy_gap",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 7.1 Policy Gap KB — international policy examples; 5.1 mapping 10",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "enisa_5g_cybersecurity_standards_2022",
+      "title": "ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy",
+      "authority": "European Union Agency for Cybersecurity (ENISA)",
+      "jurisdiction": "International",
+      "document_type": "Policy analysis (EU)",
+      "date_issued": "March 2022",
+      "date_verified_in_text": true,
+      "effective_status": "not applicable (EU analysis; not Indian law)",
+      "amendment_status": "not applicable",
+      "section_information": {
+        "section_style": "pdf_outline",
+        "section_label": "Section",
+        "sections_ingested": 67,
+        "sections_labelled_by_page_only": 3,
+        "unmatched_pdf_bookmarks": []
+      },
+      "url": "https://www.enisa.europa.eu/sites/default/files/publications/ENISA%20-%205G%20Standards.pdf",
+      "attempted_urls": [],
+      "provenance_note": "Official ENISA copy. International policy example for comparison only. Downloaded from the official URL; byte-identical (SHA-256) to the copy supplied in the team folder.",
+      "licence": {
+        "statement_in_document": "© European Union Agency for Cybersecurity (ENISA), 2022 This publication is licenced under CC-BY 4.",
+        "note": "Quoted from the document text.",
+        "open_access": "Downloaded without login from the URL above (retrieved 2026-10-05)."
+      },
+      "status": "ingested",
+      "sha256": "08e66cfbf945b2b9808aaaa7d5c6f8a9f67de18c0b22deaf1dfd3ad9355132fe",
+      "chunk_count": 183,
+      "chunk_id_prefix": "enisa_5g_cybersecurity_standards_2022:",
+      "vector_index": {
+        "policy_gap": {
+          "store": "knowledge_base/policy_gap/",
+          "vectors": "knowledge_base/policy_gap/vectors.npy",
+          "passages": 183
+        },
+        "canonical": {
+          "store": "knowledge_base/canonical/",
+          "vectors": "knowledge_base/canonical/vectors.npy",
+          "passages": 183
+        }
+      },
+      "status_established_by": null,
+      "knowledge_bases": [
+        "policy_gap",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 7.1 Policy Gap KB — international policy examples; 5.1 mapping 10",
+      "embedding_model": "BAAI/bge-small-en-v1.5",
+      "generator_model": "none — agents quote retrieved passages; no generative model is used"
+    },
+    {
+      "id": "nciipc_rules_2013",
+      "title": "Information Technology (National Critical Information Infrastructure Protection Centre and Manner of Performing Functions and Duties) Rules, 2013",
+      "authority": "Government of India",
+      "jurisdiction": "India",
+      "document_type": "Rules",
+      "date_issued": null,
+      "date_verified_in_text": false,
+      "effective_status": "not verified",
+      "amendment_status": "not checked",
+      "section_information": null,
+      "url": null,
+      "attempted_urls": [
+        "https://www.indiacode.nic.in/ViewFileUploaded?path=AC_CEN_45_76_00001_200021_1517807324077%2Frulesindividualfile%2F&file=nciipc_function_and_duties_rule_2013.pdf (HTTP 504, three attempts on 2026-10-05)",
+        "https://nciipc.gov.in/ (no response within 90 s)"
+      ],
+      "provenance_note": "NOT INGESTED. The Critical Infrastructure KB currently holds only the Telecommunications Act, 2023.",
+      "licence": {
+        "statement_in_document": null,
+        "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
+        "open_access": null
+      },
+      "status": "not ingested: not_available",
+      "sha256": null,
+      "chunk_count": 0,
+      "chunk_id_prefix": null,
+      "vector_index": {},
+      "status_established_by": null,
+      "knowledge_bases": [
+        "critical_infrastructure",
+        "canonical"
+      ],
+      "kb_basis": "DOCX 4.2 row 4; 5.1 mapping 7",
+      "embedding_model": null,
       "generator_model": "none — agents quote retrieved passages; no generative model is used"
     },
     {
@@ -953,7 +1547,7 @@
       "section_information": null,
       "url": null,
       "attempted_urls": [],
-      "provenance_note": "NOT INGESTED. The DOCX states the exact foreign instruments 'must be added to final manifest' and names none; choosing them is a team decision. The Policy Gap KB currently holds Indian policy documents only.",
+      "provenance_note": "NOT INGESTED as a named set: the DOCX says the exact foreign instruments 'must be added to final manifest' and names none. Two EU (ENISA) policy documents are now ingested as international policy examples; no neighbouring-country instrument has been obtained.",
       "licence": {
         "statement_in_document": null,
         "note": "No licence or copyright statement was found in the ingested text (front matter may not have been ingested); licence not determined.",
@@ -964,6 +1558,7 @@
       "chunk_count": 0,
       "chunk_id_prefix": null,
       "vector_index": {},
+      "status_established_by": null,
       "knowledge_bases": [
         "policy_gap"
       ],

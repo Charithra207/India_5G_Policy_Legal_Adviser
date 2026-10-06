@@ -43,8 +43,11 @@ Press **Release next chunk (T0)**.
   verified" and the **REFERENCE ONLY — not Indian law** badge.
 - **Verifier result:** INCOMPLETE 4, UNSUPPORTED 2.
 
-> The quotes are supported by the authoritative text, but nobody has checked
-> their in-force status, so they cannot be VERIFIED. The agent's own reading
+> The quotes are supported by the authoritative text. Where we hold the
+> commencement notification, the Verifier names the in-force date: at T1 and
+> T2, open a TCS Rule 7 or Telecommunications Act s.22 claim, which reads
+> "in force from … (S.O. 2408(E))". The amendment history isn't shown to be
+> complete, so they stay INCOMPLETE rather than VERIFIED. The agent's own reading
 > ("the incident involves the UPF…") is UNSUPPORTED: no passage states it.
 
 ## 2:15 – 3:30 Chunk 2 — suspicious authentication and signalling
@@ -64,6 +67,8 @@ Press **Release next chunk (T1)**.
 Press **Release next chunk (T2)**.
 
 - **Active agents:** Critical Infrastructure, Privacy, Policy & Legal.
+- **Critical Infrastructure:** quotes the Critical Telecommunication
+  Infrastructure Rules 2024 (Rules 3, 5, 8) and Telecommunications Act s.22.
 - **What changed:**
   - "Critical-service relevance appears for the first time"
   - "Possible personal-data involvement appears for the first time"
@@ -91,7 +96,7 @@ Talk through it.
 - **Active agents:** Policy & Legal, Cybersecurity, Privacy, Critical
   Infrastructure, Policy Gap.
 - **Potential policy gaps.** Read the categories as written:
-  - **Emerging technology not explicitly addressed:** none of the 485
+  - **Emerging technology not explicitly addressed:** none of the 886
     passages of the Indian legal and policy instruments examined mentions
     network slicing. It appears only in TRAI recommendations, which are
     not law.
@@ -117,14 +122,17 @@ A yellow banner says it uses FIXTURE knowledge bases. Press **Next ▶** to T1.
 - **Verifier result:** VERIFIED 1. Evidence-backed conclusions holds the
   synthetic Direction 4 passage.
 
-> This uses a labelled test passage whose in-force status is recorded as
-> checked. The same Verifier returns VERIFIED when the text supports the
-> claim and the provision is confirmed in force with no amendment. On the
-> real corpus that check hasn't been done, so we show INCOMPLETE rather than
-> pretend.
+> This uses a labelled test passage whose amendment history is recorded as
+> complete. The same Verifier returns VERIFIED when the text supports the
+> claim, the provision is in force, and no amendment applies. For the real
+> sources we hold the in-force notifications but cannot show that no other
+> amendment exists, so we show INCOMPLETE rather than pretend.
 
 ## 7:30 – 8:15 Failure handling: unsupported claim → UNSUPPORTED, and a conflict
 
+- **Policy Gap comparators** are quoted from ENISA's 5G Cybersecurity
+  Standards, an EU policy example, labelled "REFERENCE ONLY — not Indian
+  law".
 - Still in the fixture replay, press **Next ▶** to T2. The **Conflict** shows
   Finding A (Policy & Legal: report to CERT-In within twenty-four hours) and
   Finding B (Cybersecurity, T1: within six hours), each with its evidence.

@@ -165,7 +165,9 @@ def test_source_manifest_matches_ingestion() -> None:
             assert d["sha256"] == rep["sha256"] and d["chunk_count"] == rep["chunks"]
             assert d["embedding_model"] == manifest["embedding_model"]
             assert d["vector_index"], d["id"]
-            assert d["effective_status"].startswith("not")
+            if not d["effective_status"].startswith("not"):
+                # in force only as established by an obtained document
+                assert d["status_established_by"] and d["status_established_by"]["in_force"], d["id"]
         else:
             assert d["sha256"] is None and d["chunk_count"] == 0
 
