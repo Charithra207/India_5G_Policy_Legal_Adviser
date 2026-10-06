@@ -282,7 +282,7 @@ python -m src.rag.build
 # One retrieval test per agent -> knowledge_base/retrieval_tests.md
 python -m src.rag.retrieval_demo
 
-# Run the test suite (103 tests)
+# Run the test suite
 python -m pytest tests -v
 
 # Demonstration UI: live run (chunk by chunk) and replay
@@ -292,6 +292,8 @@ streamlit run src/ui/app.py
 python -m src.scenario.run --stages 2
 python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --reexecute
 python -m src.scenario.run --conflict-demo       # conflict handling (labelled fixtures)
+python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --explain  # decision path per stage
+python -m src.audit.evaluation_report            # evaluation summary from a real test run
 
 # Run Scenario 2 (T0-T3) with the live knowledge bases
 python -c "
@@ -313,6 +315,8 @@ for chunk in get_chunks():
 
 - **RAG / Knowledge Base layer:** `INTEGRATION_RAG_KB.md`
 - **UI layer:** `INTEGRATION_UI.md`
+- **Whole-project run steps:** `INTEGRATION_CHECKLIST.md`
+- **Evaluation summary:** `knowledge_base/evaluation_report.md`
 
 ---
 
@@ -411,7 +415,7 @@ India_5G_Policy_Legal_Adviser/
 | Conflict handling | Complete — structured Finding A / Finding B with evidence; demonstrated with labelled fixtures (the live corpus has no conflicting provisions) |
 | Progressive reassessment | Complete — cumulative facts, carried-forward conclusions, computed changes |
 | Full 4-stage run | Recorded: `outputs/audit/day2_scenario2_full_T0_T3.jsonl` (replays and re-executes exactly) |
-| Tests (103) | Passing — incl. all verifier outcomes, cross-domain links, conflict test, reassessment, live 4-stage chain, audit tamper detection, UI chunk 1 → 2 |
+| Tests | All passing — see `knowledge_base/evaluation_report.md` for per-area counts and status (Working / Partially working / Not yet implemented) |
 
 ---
 

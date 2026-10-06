@@ -96,6 +96,9 @@ def main(argv: list[str] | None = None) -> int:
                     help="run on the labelled FIXTURE KBs in which two agents disagree")
     ap.add_argument("--run-id", help="fixed run ID for the audit file name")
     ap.add_argument("--replay", type=Path, help="replay a recorded audit trail")
+    ap.add_argument("--explain", action="store_true",
+                    help="with --replay: answer, per stage, what happened, who acted, the "
+                         "evidence, the conclusion, the verification and the Coordinator's path")
     ap.add_argument("--reexecute", action="store_true",
                     help="with --replay: re-run the recorded chunks and compare")
     args = ap.parse_args(argv)
@@ -110,6 +113,12 @@ def main(argv: list[str] | None = None) -> int:
             print("  !", problem)
         for entry in run.stages:
             print_stage(entry)
+            if args.explain:
+                from src.audit.explain import explain_stage
+                for question, lines in explain_stage(entry).items():
+                    print(f"\n  {question}")
+                    for line in lines:
+                        print(f"    {line}")
         if args.reexecute:
             diffs = reexecute(run, registry)
             print("=" * WIDTH)

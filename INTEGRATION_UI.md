@@ -389,17 +389,25 @@ for chunk in get_chunks():
 
 ## Integration checklist
 
-- [ ] All five Coordinator categories displayed in Table A1 order
-- [ ] Human review notice always visible (not hidden or collapsible)
-- [ ] Verifier outcomes colour-coded per the table above
-- [ ] Changes-from-prior banner displayed between chunks
-- [ ] Cross-domain relationships visually annotated
-- [ ] KB status display shows live vs stub for each domain, and the sources not ingested
-- [ ] Every quoted claim shows source, section, page, passage, URL and provenance
-- [ ] `effective is None` shown as "in-force status not verified"; `amendment_checked` False shown as "amendments not checked"
-- [ ] `relevance_score` not presented as confidence
-- [ ] Standards claims show `[REFERENCE ONLY — not Indian law]` label
-- [ ] Policy gap statements use non-conclusive language
+Checked against `src/ui/app.py`; the UI tests in `tests/test_scenario_audit.py`
+drive the live four-stage run and a conflict replay.
+
+- [x] All five Coordinator categories displayed in Table A1 order
+- [x] Human review notice always visible (not hidden or collapsible)
+- [x] Verifier outcomes colour-coded per the table above
+- [x] Changes-from-prior banner displayed between chunks
+- [x] Cross-domain relationships listed with the findings they link (drawn links between panels: not yet)
+- [x] KB status display shows live vs stub for each domain, and the sources not ingested
+- [x] Every quoted claim shows source, section, page, passage, URL and provenance
+- [x] `effective is None` shown as "in-force status not verified"; `amendment_checked` False shown as "amendments not checked"
+- [x] `relevance_score` not presented as confidence
+- [x] Standards claims show `[REFERENCE ONLY — not Indian law]` label
+- [x] Policy gap statements use non-conclusive language
+- [x] Uncertainty section: uncertain conclusions, agents' notes, open questions
+- [x] Conflicts shown side by side (Finding A / Finding B, evidence, status, treatment)
+- [x] Replay: decision path per stage (what happened, who acted, evidence, conclusion, verification, Coordinator)
 - [x] Scenario engine releases the DOCX stages one chunk at a time
 - [x] Audit trail with DOCX §7.6 fields; replay with integrity check
-- [ ] `python -m pytest tests -v` passes after changes
+- [x] `python -m pytest tests -v` passes after changes
+
+Whole-project run steps: `INTEGRATION_CHECKLIST.md`.

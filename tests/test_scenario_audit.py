@@ -194,3 +194,52 @@ def test_live_chunk_two_records_retrieved_provisions(tmp_path) -> None:
     assert all(not p["is_stub"] and p["url"] for p in cyber["retrieved_passages"])
     assert all(c["verifier_outcome"] != "VERIFIED" for c in cyber["claims"])
     assert load_run(engine.audit_path).intact
+
+
+def test_ui_full_demo_shows_every_required_element(tmp_path, monkeypatch) -> None:
+    """All four stages in the UI; every element the demo must show is present."""
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+    monkeypatch.setenv("ADVISER_AUDIT_DIR", str(tmp_path))
+    app = os.path.join(os.path.dirname(__file__), "..", "src", "ui", "app.py")
+    at = AppTest.from_file(app, default_timeout=120).run()
+    at.sidebar.toggle[0].set_value(False).run()
+
+    def click(label):
+        next(b for b in at.sidebar.button if b.label.startswith(label)).click().run()
+        assert not at.exception
+
+    click("Start run")
+    for _ in range(4):
+        click("Release next chunk")
+    headers = {h.value for h in at.header}
+    for required in ("Scenario", "Current chunk — T3", "Active agents", "Agent findings",
+                     "Evidence / sources", "Verifier result", "Uncertainty",
+                     "Coordinator assessment", "Policy gap / cross-domain findings",
+                     "Previous findings", "Audit record for this stage"):
+        assert required in headers, f"missing UI section: {required}"
+    subheaders = {s.value for s in at.subheader}
+    assert {"Cross-domain relationships", "Potential policy gaps"} <= subheaders
+    assert any(e.label.startswith("Decision path") for e in at.expander)
+    assert any("Human review required" in w.value for w in at.warning)
+
+
+def test_ui_replay_shows_conflict_side_by_side(tmp_path, monkeypatch) -> None:
+    """Replaying a run with a conflict shows Finding A and B, status and treatment."""
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+    from src.scenario.conflict_fixture import FIXTURE_LABEL, conflict_registry
+    ScenarioEngine("scenario2", registry=conflict_registry(), audit_dir=tmp_path,
+                   registry_note=FIXTURE_LABEL).run_until(4)
+    monkeypatch.setenv("ADVISER_AUDIT_DIR", str(tmp_path))
+    app = os.path.join(os.path.dirname(__file__), "..", "src", "ui", "app.py")
+    at = AppTest.from_file(app, default_timeout=120).run()
+    at.sidebar.radio[0].set_value("Replay").run()
+    for _ in range(3):
+        next(b for b in at.button if b.label.startswith("Next")).click().run()
+    assert not at.exception
+    assert any(s.value.startswith("Conflict —") for s in at.subheader)
+    text = " ".join(m.value for m in at.markdown)
+    assert "Finding A" in text and "Finding B" in text and "Coordinator treatment" in text
+    assert any(FIXTURE_LABEL in w.value for w in at.warning), "fixture runs must be labelled"
+    assert any(e.label.startswith("Decision path") for e in at.expander)

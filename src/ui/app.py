@@ -25,6 +25,7 @@ if str(ROOT) not in sys.path:
 
 import streamlit as st  # noqa: E402
 
+from src.audit.explain import explain_stage  # noqa: E402
 from src.audit.replay import list_runs, load_run, reexecute  # noqa: E402
 from src.audit.trail import audit_dir  # noqa: E402
 from src.scenario.catalog import SCENARIOS, get_scenario  # noqa: E402
@@ -350,6 +351,34 @@ def render_gaps_and_links(entry: dict) -> None:
                    "policy is inadequate.")
 
 
+def render_decision_path(entry: dict, expanded: bool) -> None:
+    """The reviewer's questions, answered from the recorded entry."""
+    with st.expander("Decision path — what happened, who acted, evidence, conclusion, "
+                     "verification, Coordinator", expanded=expanded):
+        for question, lines in explain_stage(entry).items():
+            st.markdown(f"**{question}**")
+            for line in lines:
+                st.markdown(("    " if line.startswith("  ") else "") + f"- {line.strip()}")
+
+
+def render_uncertainty(entry: dict) -> None:
+    coord = entry["coordinator"]
+    st.header("Uncertainty")
+    st.caption("What is not established at this stage. Uncertain conclusions are listed in "
+               "the Coordinator assessment below; nothing here is filled from outside the evidence.")
+    st.metric("Uncertain conclusions", len(coord["uncertain_conclusions"]))
+    notes = [(a["agent_id"], n) for a in entry["agents"] for n in a["uncertainty_notes"]]
+    if notes:
+        with st.expander(f"Agents' uncertainty notes ({len(notes)})"):
+            for agent_id, note in notes:
+                st.markdown(f"- **{agent_name(agent_id)}:** {note}")
+    questions = coord.get("open_questions", [])
+    if questions:
+        with st.expander(f"Missing evidence / open questions ({len(questions)})"):
+            for q in questions:
+                st.markdown(f"- {q}")
+
+
 def render_previous(stages: list[dict], index: int) -> None:
     if index == 0:
         return
@@ -373,15 +402,18 @@ def render_audit_entry(entry: dict, path) -> None:
         st.json(entry, expanded=False)
 
 
-def render_stage(spec, stages: list[dict], index: int, header: dict | None, path) -> None:
+def render_stage(spec, stages: list[dict], index: int, header: dict | None, path,
+                 explain_open: bool = False) -> None:
     entry = stages[index]
     render_stage_progress(spec, stages, index)
     render_scenario(spec, header)
+    render_decision_path(entry, explain_open)
     render_chunk(entry)
     render_agents(entry)
     render_findings(entry)
     render_evidence(entry)
     render_verifier(entry)
+    render_uncertainty(entry)
     render_coordinator(entry)
     render_gaps_and_links(entry)
     render_previous(stages, index)
@@ -520,7 +552,7 @@ def replay_mode() -> None:
             st.success("Re-execution reproduced every recorded stage: same agents, "
                        "passages, claims, verifier outcomes and assessment.")
 
-    render_stage(spec, run.stages, step, run.header, shown_path(path))
+    render_stage(spec, run.stages, step, run.header, shown_path(path), explain_open=True)
 
 
 def main() -> None:
