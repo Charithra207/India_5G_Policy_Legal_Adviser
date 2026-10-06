@@ -318,6 +318,8 @@ for chunk in get_chunks():
 - **Whole-project run steps:** `INTEGRATION_CHECKLIST.md`
 - **Evaluation summary:** `knowledge_base/evaluation_report.md`
 - **Technical explanation (presentation):** `TECHNICAL_EXPLANATION.md`
+- **Final handoff — sources, evidence examples, claims not to make:** `FINAL_HANDOFF.md`
+- **Evidence audit:** `knowledge_base/evidence_audit.md` (`python -m src.rag.evidence_audit`)
 - **Core freeze:** `CORE_FREEZE.json` (`python -m src.core.freeze --check`)
 
 ---

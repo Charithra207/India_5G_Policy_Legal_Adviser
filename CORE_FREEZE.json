@@ -42,13 +42,20 @@
       "files": [
         "(initial freeze)"
       ]
+    },
+    {
+      "at": "2026-10-06T16:01:35.267137+00:00",
+      "reason": "bug fix: Technical Agent issued latency and PDU-session queries for symptoms nobody reported, so an irrelevant chunk got unrelated 3GPP clauses quoted; symptom queries now fire only for released symptoms, and with no technical symptom the agent retrieves nothing (found by the evidence audit's irrelevant-retrieval test)",
+      "files": [
+        "src/agents/technical_agent.py"
+      ]
     }
   ],
   "files": {
     "src/core/orchestrator.py": "b1aff80c85973e96dc69fab977cea4b537e7620cbbc098934a0bfffbd8006116",
     "src/pipeline.py": "b4be369060bf21f4ddf303a5a2099d3fcb9261c777f4891f7ad5ea736401a888",
     "src/agents/base_agent.py": "b729046a3a76a4e68354f0aa3e6c53f3f33bc51e04c47db6de31e67652d22ea2",
-    "src/agents/technical_agent.py": "bf4f874b5e989d1eaa377af731d742302b5dd4f5a7228e4b7c5e0791d44a1da9",
+    "src/agents/technical_agent.py": "8d7a9bbe4b49ee2ecabb4eec1fe5e69bbdab8867dd1b248e4497a6c5cd972d39",
     "src/agents/policy_legal_agent.py": "3325bc4693f833df185f937b2d62b01b844c399aafe2586856c9b5fa91a086e2",
     "src/agents/cybersecurity_agent.py": "4ce3b1351a4d26662e218878d34fa06705be10e0a279b0d4dc1ada0634aed6e5",
     "src/agents/privacy_agent.py": "cf53d2eab78df354e1a1a9e7ea7d4690715166fbfcd689fb42085855815ae5c4",

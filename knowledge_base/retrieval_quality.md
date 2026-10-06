@@ -1,6 +1,6 @@
 # Retrieval quality
 
-Generated 2026-10-06T15:33:01.921296+00:00 by `python -m src.rag.retrieval_quality`.
+Generated 2026-10-06T16:01:39.764389+00:00 by `python -m src.rag.retrieval_quality`.
 
 Each query is labelled with the provision whose own heading or text addresses the topic; the label is checked to exist in the corpus. Results describe this corpus and embedding model only.
 

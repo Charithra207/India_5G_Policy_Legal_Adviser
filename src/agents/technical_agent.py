@@ -41,6 +41,14 @@ class TechnicalAgent(BaseAgent):
         "NFV", "orchestration", "QoS", "throughput", "degradation",
     ]
 
+    # Released-information terms that describe a technical symptom; without
+    # one, the agent retrieves nothing
+    SYMPTOM_TERMS = (
+        "latency", "packet", "delay", "degradation", "quality of service", "qos",
+        "session", "connectivity", "drop", "outage", "throughput", "authentication",
+        "signalling", "signaling", "control-plane", "control plane", "slice", "radio",
+    )
+
     # Technical references this agent may quote (DOCX §4.1 rows 2–3)
     REFERENCES = [
         "3GPP TS 23.501 (System architecture for the 5G System)",
@@ -60,13 +68,22 @@ class TechnicalAgent(BaseAgent):
         """
         # The KB is already restricted to technical material, so queries
         # describe the technical question rather than name documents.
+        # Symptom queries only for symptoms the released information reports:
+        # otherwise passages about symptoms nobody observed would be quoted
+        # as if they bore on the incident.
         base = chunk.description
-        queries = [
-            base,
-            "network slice quality of service, latency and packet delay monitoring",
-            "PDU session release and loss of user plane connectivity",
-        ]
-        if any(kw in base.lower() for kw in ["authentication", "signalling", "control"]):
+        released = " ".join([base, *chunk.new_facts]).lower()
+        # No technical symptom released → nothing technical to look up.
+        # (Embedding similarity is not relevance: an unrelated description
+        # can still score above the retrieval floor against some clause.)
+        if not any(kw in released for kw in self.SYMPTOM_TERMS):
+            return []
+        queries = [base]
+        if any(kw in released for kw in ["latency", "packet", "delay", "degradation", "quality of service", "qos"]):
+            queries.append("network slice quality of service, latency and packet delay monitoring")
+        if any(kw in released for kw in ["session", "connectivity", "drop"]):
+            queries.append("PDU session release and loss of user plane connectivity")
+        if any(kw in released for kw in ["authentication", "signalling", "control"]):
             queries.append(
                 "authentication of the UE and protection of NAS and RRC signalling"
             )

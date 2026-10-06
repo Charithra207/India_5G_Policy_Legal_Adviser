@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-06T15:53:56.593363+00:00",
+  "generated_at": "2026-10-06T16:03:04.206454+00:00",
   "generated_by": "python -m src.audit.evaluation_report",
   "test_totals": {
-    "passed": 373
+    "passed": 386
   },
   "evaluation_areas": [
     {

@@ -1,8 +1,8 @@
 # Evaluation summary (internal)
 
-Generated 2026-10-06T15:53:56 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
+Generated 2026-10-06T16:03:04 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
 
-**Test suite:** 373 passed, 0 failed, 0 skipped.
+**Test suite:** 386 passed, 0 failed, 0 skipped.
 
 **Live 4-stage run** (`outputs/audit/day2_scenario2_full_T0_T3.jsonl`): T0: technical; T1: cybersecurity, standards, technical; T2: critical_infrastructure, policy_legal, privacy; T3: critical_infrastructure, cybersecurity, policy_gap, policy_legal, privacy. Agent sets match the DOCX table: yes. Verifier outcomes: INCOMPLETE 50, UNSUPPORTED 10. Cross-domain links: instrument basis 10, parallel reporting 4, shared provision 8. Conflicts: 0 (none expected — no real provisions disagree). Potential policy gaps at T3: 4. Conflict demonstration on labelled fixtures (`outputs/audit/day2_conflict_demo_FIXTURE.jsonl`): 2 conflict records.
 

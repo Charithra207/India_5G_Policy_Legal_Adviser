@@ -1,6 +1,6 @@
 # Retrieval tests — one per specialist agent
 
-Generated 2026-10-06T15:34:39.336550+00:00 by `python -m src.rag.retrieval_demo`.
+Generated 2026-10-06T16:01:38.605014+00:00 by `python -m src.rag.retrieval_demo`.
 Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs. Agents with a successful retrieval: **7 / 7**.
 
 *Why relevant* is computed (query, cosine similarity, shared terms); whether a passage supports a claim is decided only by the Verifier outcome.
