@@ -1,0 +1,67 @@
+{
+  "frozen_at": "2026-10-06T15:52:17.683186+00:00",
+  "components": {
+    "Orchestrator": [
+      "src/core/orchestrator.py",
+      "src/pipeline.py"
+    ],
+    "Agent protocol and agents": [
+      "src/agents/base_agent.py",
+      "src/agents/technical_agent.py",
+      "src/agents/policy_legal_agent.py",
+      "src/agents/cybersecurity_agent.py",
+      "src/agents/privacy_agent.py",
+      "src/agents/critical_infra_agent.py",
+      "src/agents/standards_agent.py",
+      "src/agents/policy_gap_agent.py"
+    ],
+    "Verifier": [
+      "src/core/verifier.py"
+    ],
+    "Cross-domain logic": [
+      "src/core/cross_domain.py"
+    ],
+    "Coordinator": [
+      "src/core/coordinator.py"
+    ],
+    "Output schema": [
+      "src/core/models.py"
+    ],
+    "Scenario logic": [
+      "scenarios/scenario1_slicing_incident.py",
+      "scenarios/scenario2_healthcare_5g.py",
+      "src/scenario/catalog.py",
+      "src/scenario/engine.py"
+    ]
+  },
+  "rule": "Only genuine bug fixes after the freeze; each is recorded here with its reason.",
+  "change_log": [
+    {
+      "at": "2026-10-06T15:52:17.685823+00:00",
+      "reason": "Initial freeze for the core release candidate, after the hardening tests (includes the agent-failure fix: an agent's execution error is now reported in the assessment's open questions)",
+      "files": [
+        "(initial freeze)"
+      ]
+    }
+  ],
+  "files": {
+    "src/core/orchestrator.py": "b1aff80c85973e96dc69fab977cea4b537e7620cbbc098934a0bfffbd8006116",
+    "src/pipeline.py": "b4be369060bf21f4ddf303a5a2099d3fcb9261c777f4891f7ad5ea736401a888",
+    "src/agents/base_agent.py": "b729046a3a76a4e68354f0aa3e6c53f3f33bc51e04c47db6de31e67652d22ea2",
+    "src/agents/technical_agent.py": "bf4f874b5e989d1eaa377af731d742302b5dd4f5a7228e4b7c5e0791d44a1da9",
+    "src/agents/policy_legal_agent.py": "3325bc4693f833df185f937b2d62b01b844c399aafe2586856c9b5fa91a086e2",
+    "src/agents/cybersecurity_agent.py": "4ce3b1351a4d26662e218878d34fa06705be10e0a279b0d4dc1ada0634aed6e5",
+    "src/agents/privacy_agent.py": "cf53d2eab78df354e1a1a9e7ea7d4690715166fbfcd689fb42085855815ae5c4",
+    "src/agents/critical_infra_agent.py": "789bfca226a00f2b2173c4645b06dd8f9a54488828cdfa68340a1508fe3df4a6",
+    "src/agents/standards_agent.py": "1f79c93d0ed8c358f4e83d35db0e60db85bed11a0e969c4bae584f988adadac0",
+    "src/agents/policy_gap_agent.py": "50ee11e698410aab417912692c135af55409ce10c0319df20bdbe797ec60f086",
+    "src/core/verifier.py": "1492de2193c4c4e70e8a5577197663e62689fbbe86daabb276bd18fd88365ddb",
+    "src/core/cross_domain.py": "0a9dda4e1bc7ed3fd44d8c2fe059cc83f776acfc273c46d9c613691edaa8747b",
+    "src/core/coordinator.py": "3648dadc29f353da796b3ac8dfcf4928f6783e90d1756f22966ab5794fd11b74",
+    "src/core/models.py": "e4b4fcb1253abac9b3e7860fd00918811e4d5d86a85177008e382f2649a6f97a",
+    "scenarios/scenario1_slicing_incident.py": "5479972b3e49bdc1fba9de3e9a8f72e7b1a69200c083aeb6c79fe64480de3ac0",
+    "scenarios/scenario2_healthcare_5g.py": "bad50f18619e20e4313e682f90ea825e5e7722bf38e2f44d8885d167272dd3b2",
+    "src/scenario/catalog.py": "dbcc40ee6992707cb6b340de98c03d1e53cb4f9cace8cf70a2cf82a59b98f510",
+    "src/scenario/engine.py": "32951c60d08a748d120b9c434c4f2ca7b15eb5d784d18abab8da6cbf0862e440"
+  }
+}

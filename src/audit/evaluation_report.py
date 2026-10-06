@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from fnmatch import fnmatch
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
@@ -104,6 +105,14 @@ OTHER = [
      "15 sources ingested and every artefact checked against the stores; NCIIPC Rules, IndiaAI/"
      "national AI strategy, international examples and six host-country categories not obtained.",
      ["test_rag", "test_kb_foundation", "test_foundation"]),
+    ("Failure handling", W,
+     "No evidence, wrong citation, missing section, conflict, incomplete information, unexpected "
+     "chunk, agent failure and empty retrieval all run safely and are stated in the output.",
+     ["test_hardening::test_1_*", "test_hardening::test_2_*", "test_hardening::test_3_*",
+      "test_hardening::test_4_*", "test_hardening::test_5_*", "test_hardening::test_6*",
+      "test_hardening::test_7_*", "test_hardening::test_8_*"]),
+    ("Core freeze", W, "Frozen core files fingerprinted in CORE_FREEZE.json; any change fails the test.",
+     ["test_core_freeze"]),
     ("Team integration (Members 1–3)", W, "One pipeline from scenario to audit; checklist tests pass.",
      ["test_demo_integration::TestIntegrationChecklist", "test_pipeline"]),
     ("In-force / amendment checking", N,
@@ -113,6 +122,40 @@ OTHER = [
     ("Parallel agent execution", N,
      "Agents run sequentially; the asynchronous runner in the Orchestrator is a stub.", []),
     ("ITU AI for Good Sandbox stage", N, "Sandbox not available in this environment.", []),
+]
+
+
+# Final core checklist: an item is ticked only if its tests ran and all passed
+CHECKLIST = [
+    ("7 agents work", ["test_evaluation::TestTechnicalAnalysis", "test_evaluation::TestLegalRegulatoryAnalysis",
+                       "test_evaluation::TestCybersecurityAnalysis", "test_evaluation::TestPrivacyAnalysis",
+                       "test_evaluation::TestCriticalInfrastructureAnalysis",
+                       "test_evaluation::TestInternationalStandards", "test_evaluation::TestPolicyGapIdentification",
+                       "test_rag::test_one_retrieval_per_agent_with_source_and_section"]),
+    ("Orchestrator works", ["test_scenario_audit::test_orchestrator_selection_matches_docx_stage_table*",
+                            "test_pipeline::test_scenario1_annex_a4_agent_sets"]),
+    ("RAG integration works", ["test_rag", "test_foundation::test_retrieval_quality_on_labelled_queries"]),
+    ("Verifier works", ["test_negative", "test_hardening::test_verifier_*"]),
+    ("Coordinator works", ["test_hardening::test_coordinator_*"]),
+    ("4-stage scenario works", ["test_hardening::test_end_to_end_assessment_evolves_with_context",
+                                "test_demo_integration::TestFullFourStageDemo"]),
+    ("Cross-domain verification works", ["test_cross_domain::test_*link*", "test_cross_domain::test_instrument_basis_*",
+                                         "test_cross_domain::test_live_four_stage_cross_domain_chain"]),
+    ("Conflict handling works", ["test_cross_domain::test_conflict_*", "test_cross_domain::test_both_sides_*",
+                                 "test_negative::TestConflict", "test_hardening::test_4_*"]),
+    ("Uncertainty handling works", ["test_evaluation::TestUncertaintyHandling",
+                                    "test_cross_domain::test_insufficient_evidence_is_stated_explicitly",
+                                    "test_hardening::test_1_*", "test_hardening::test_8_*"]),
+    ("Audit trail works", ["test_scenario_audit::test_stage_entry_has_docx_7_6_fields",
+                           "test_scenario_audit::test_edited_entry_is_detected",
+                           "test_scenario_audit::test_removed_entry_is_detected"]),
+    ("Replay works", ["test_demo_integration::TestAuditAndReplay",
+                      "test_scenario_audit::test_replay_*", "test_scenario_audit::test_ui_replay_*"]),
+    ("No fabricated evidence", ["test_verification_evidence::test_stub_kbs_produce_no_unsourced_instrument_content",
+                                "test_evaluation::TestAuditability", "test_foundation::test_every_quote_*",
+                                "test_foundation::test_licence_*", "test_hardening::test_1_*"]),
+    ("No broken integration", ["test_demo_integration::TestIntegrationChecklist", "test_core_freeze",
+                               "test_scenario_audit::test_ui_full_demo_*"]),
 ]
 
 
@@ -140,7 +183,9 @@ def select(results: dict, selectors: list[str]) -> Counter:
     for sel in selectors:
         module, _, rest = sel.partition("::")
         for t in results.get(module, []):
-            if not rest or t["class"] == rest or t["name"] == rest:
+            name = t["name"].split("[")[0]
+            if (not rest or t["class"] == rest or name == rest
+                    or (rest.endswith("*") and fnmatch(name, rest))):
                 counts[t["outcome"]] += 1
     return counts
 
@@ -196,7 +241,21 @@ def build() -> dict:
             "D. Valid evidence-backed claim → VERIFIED": dict(negative["TestVerified"]),
         },
         "recorded_runs": run_facts(),
+        "core_checklist": checklist(results),
     }
+
+
+def checklist(results: dict) -> list[dict]:
+    items = []
+    for item, selectors in CHECKLIST:
+        counts = select(results, selectors)
+        ran = counts.get("passed", 0) + counts.get("failed", 0)
+        state = ("FAILED" if counts.get("failed") else "not checked (tests skipped)" if not ran
+                 else "partly checked (some tests skipped)" if counts.get("skipped") else "checked")
+        items.append({"item": item, "state": state, "passed": counts.get("passed", 0),
+                      "failed": counts.get("failed", 0), "skipped": counts.get("skipped", 0),
+                      "tests": selectors})
+    return items
 
 
 def write(report: dict) -> None:
@@ -223,6 +282,13 @@ def write(report: dict) -> None:
             tests = f"{r['passed']}/{r['failed']}" if r["tests"] else "—"
             lines.append(f"| {r['capability']} | {r['status']} | {tests} | {r['reason']} |")
         lines.append("")
+    lines += ["## Final core checklist", "",
+              "Ticked only when the item's tests ran in this test run and all passed.", ""]
+    for c in report["core_checklist"]:
+        box = "x" if c["state"] == "checked" else " "
+        note = f" ({c['passed']} tests)" if c["state"] == "checked" else f" — {c['state']}"
+        lines.append(f"- [{box}] {c['item']}{note}")
+    lines.append("")
     lines += ["## Negative tests", "", "| Case | Passed | Failed |", "|---|---|---|"]
     for case, c in report["negative_tests"].items():
         lines.append(f"| {case} | {c.get('passed', 0)} | {c.get('failed', 0)} |")
@@ -238,6 +304,8 @@ def main() -> int:
     print(f"tests: {t}")
     for r in report["evaluation_areas"] + report["other_capabilities"]:
         print(f"  {r['status']:<22} {r['capability']}")
+    for c in report["core_checklist"]:
+        print(f"  [{'x' if c['state'] == 'checked' else ' '}] {c['item']:<34} {c['state']} ({c['passed']} passed)")
     return 0 if not t.get("failed") else 1
 
 

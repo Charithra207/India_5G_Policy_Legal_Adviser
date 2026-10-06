@@ -317,6 +317,8 @@ for chunk in get_chunks():
 - **UI layer:** `INTEGRATION_UI.md`
 - **Whole-project run steps:** `INTEGRATION_CHECKLIST.md`
 - **Evaluation summary:** `knowledge_base/evaluation_report.md`
+- **Technical explanation (presentation):** `TECHNICAL_EXPLANATION.md`
+- **Core freeze:** `CORE_FREEZE.json` (`python -m src.core.freeze --check`)
 
 ---
 

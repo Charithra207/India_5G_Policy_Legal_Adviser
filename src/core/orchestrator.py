@@ -426,6 +426,10 @@ class SwarmOrchestrator:
                     chunk_id=chunk.chunk_id,
                     summary=f"[ERROR] Agent failed: {exc}",
                     uncertainty_notes=[f"Agent execution error: {exc}"],
+                    # Surfaces in the Verifier's missing evidence and the
+                    # Coordinator's open questions, so the failure is explicit
+                    missing_facts=[f"AGENT FAILURE — the {agent_id.value} analysis did not "
+                                   f"run ({exc}); this domain is not assessed at this stage."],
                 ))
         return findings
 

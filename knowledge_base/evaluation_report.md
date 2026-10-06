@@ -1,8 +1,8 @@
 # Evaluation summary (internal)
 
-Generated 2026-10-06T15:45:36 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
+Generated 2026-10-06T15:53:56 UTC by `python -m src.audit.evaluation_report` — statuses follow the rules in that module; counts are from the test run and the recorded runs.
 
-**Test suite:** 354 passed, 0 failed, 0 skipped.
+**Test suite:** 373 passed, 0 failed, 0 skipped.
 
 **Live 4-stage run** (`outputs/audit/day2_scenario2_full_T0_T3.jsonl`): T0: technical; T1: cybersecurity, standards, technical; T2: critical_infrastructure, policy_legal, privacy; T3: critical_infrastructure, cybersecurity, policy_gap, policy_legal, privacy. Agent sets match the DOCX table: yes. Verifier outcomes: INCOMPLETE 50, UNSUPPORTED 10. Cross-domain links: instrument basis 10, parallel reporting 4, shared provision 8. Conflicts: 0 (none expected — no real provisions disagree). Potential policy gaps at T3: 4. Conflict demonstration on labelled fixtures (`outputs/audit/day2_conflict_demo_FIXTURE.jsonl`): 2 conflict records.
 
@@ -31,11 +31,31 @@ Generated 2026-10-06T15:45:36 UTC by `python -m src.audit.evaluation_report` —
 | Full 4-stage demo (live KBs) | Working | 11/0 | All four stages run end to end; agent sets match the DOCX table. |
 | Demonstration UI | Working | 3/0 | Live 4-stage run, replay and conflict display driven by tests through Streamlit's AppTest; every required section checked. |
 | Knowledge foundation / RAG | Partially working | 122/0 | 15 sources ingested and every artefact checked against the stores; NCIIPC Rules, IndiaAI/national AI strategy, international examples and six host-country categories not obtained. |
+| Failure handling | Working | 9/0 | No evidence, wrong citation, missing section, conflict, incomplete information, unexpected chunk, agent failure and empty retrieval all run safely and are stated in the output. |
+| Core freeze | Working | 1/0 | Frozen core files fingerprinted in CORE_FREEZE.json; any change fails the test. |
 | Team integration (Members 1–3) | Working | 51/0 | One pipeline from scenario to audit; checklist tests pass. |
 | In-force / amendment checking | Not yet implemented | — | Not done for any source; this is what blocks VERIFIED on the real corpus. |
 | Generative synthesis (DOCX §5.2 generative-AI perspective) | Not yet implemented | — | No generative model is used: agents quote passages and the Coordinator organises verified claims. |
 | Parallel agent execution | Not yet implemented | — | Agents run sequentially; the asynchronous runner in the Orchestrator is a stub. |
 | ITU AI for Good Sandbox stage | Not yet implemented | — | Sandbox not available in this environment. |
+
+## Final core checklist
+
+Ticked only when the item's tests ran in this test run and all passed.
+
+- [x] 7 agents work (39 tests)
+- [x] Orchestrator works (3 tests)
+- [x] RAG integration works (17 tests)
+- [x] Verifier works (26 tests)
+- [x] Coordinator works (5 tests)
+- [x] 4-stage scenario works (12 tests)
+- [x] Cross-domain verification works (4 tests)
+- [x] Conflict handling works (10 tests)
+- [x] Uncertainty handling works (8 tests)
+- [x] Audit trail works (3 tests)
+- [x] Replay works (16 tests)
+- [x] No fabricated evidence (14 tests)
+- [x] No broken integration (14 tests)
 
 ## Negative tests
 

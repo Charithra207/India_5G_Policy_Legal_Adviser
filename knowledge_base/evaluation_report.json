@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-10-06T15:45:36.696697+00:00",
+  "generated_at": "2026-10-06T15:53:56.593363+00:00",
   "generated_by": "python -m src.audit.evaluation_report",
   "test_totals": {
-    "passed": 354
+    "passed": 373
   },
   "evaluation_areas": [
     {
@@ -192,6 +192,35 @@
       "skipped": 0
     },
     {
+      "capability": "Failure handling",
+      "status": "Working",
+      "reason": "No evidence, wrong citation, missing section, conflict, incomplete information, unexpected chunk, agent failure and empty retrieval all run safely and are stated in the output.",
+      "tests": [
+        "test_hardening::test_1_*",
+        "test_hardening::test_2_*",
+        "test_hardening::test_3_*",
+        "test_hardening::test_4_*",
+        "test_hardening::test_5_*",
+        "test_hardening::test_6*",
+        "test_hardening::test_7_*",
+        "test_hardening::test_8_*"
+      ],
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "capability": "Core freeze",
+      "status": "Working",
+      "reason": "Frozen core files fingerprinted in CORE_FREEZE.json; any change fails the test.",
+      "tests": [
+        "test_core_freeze"
+      ],
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
       "capability": "Team integration (Members 1–3)",
       "status": "Working",
       "reason": "One pipeline from scenario to audit; checklist tests pass.",
@@ -276,5 +305,166 @@
     "potential_policy_gaps_final": 4,
     "conflicts_fixture_demo": 2,
     "fixture_run": "outputs/audit/day2_conflict_demo_FIXTURE.jsonl"
-  }
+  },
+  "core_checklist": [
+    {
+      "item": "7 agents work",
+      "state": "checked",
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_evaluation::TestTechnicalAnalysis",
+        "test_evaluation::TestLegalRegulatoryAnalysis",
+        "test_evaluation::TestCybersecurityAnalysis",
+        "test_evaluation::TestPrivacyAnalysis",
+        "test_evaluation::TestCriticalInfrastructureAnalysis",
+        "test_evaluation::TestInternationalStandards",
+        "test_evaluation::TestPolicyGapIdentification",
+        "test_rag::test_one_retrieval_per_agent_with_source_and_section"
+      ]
+    },
+    {
+      "item": "Orchestrator works",
+      "state": "checked",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_scenario_audit::test_orchestrator_selection_matches_docx_stage_table*",
+        "test_pipeline::test_scenario1_annex_a4_agent_sets"
+      ]
+    },
+    {
+      "item": "RAG integration works",
+      "state": "checked",
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_rag",
+        "test_foundation::test_retrieval_quality_on_labelled_queries"
+      ]
+    },
+    {
+      "item": "Verifier works",
+      "state": "checked",
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_negative",
+        "test_hardening::test_verifier_*"
+      ]
+    },
+    {
+      "item": "Coordinator works",
+      "state": "checked",
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_hardening::test_coordinator_*"
+      ]
+    },
+    {
+      "item": "4-stage scenario works",
+      "state": "checked",
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_hardening::test_end_to_end_assessment_evolves_with_context",
+        "test_demo_integration::TestFullFourStageDemo"
+      ]
+    },
+    {
+      "item": "Cross-domain verification works",
+      "state": "checked",
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_cross_domain::test_*link*",
+        "test_cross_domain::test_instrument_basis_*",
+        "test_cross_domain::test_live_four_stage_cross_domain_chain"
+      ]
+    },
+    {
+      "item": "Conflict handling works",
+      "state": "checked",
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_cross_domain::test_conflict_*",
+        "test_cross_domain::test_both_sides_*",
+        "test_negative::TestConflict",
+        "test_hardening::test_4_*"
+      ]
+    },
+    {
+      "item": "Uncertainty handling works",
+      "state": "checked",
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_evaluation::TestUncertaintyHandling",
+        "test_cross_domain::test_insufficient_evidence_is_stated_explicitly",
+        "test_hardening::test_1_*",
+        "test_hardening::test_8_*"
+      ]
+    },
+    {
+      "item": "Audit trail works",
+      "state": "checked",
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_scenario_audit::test_stage_entry_has_docx_7_6_fields",
+        "test_scenario_audit::test_edited_entry_is_detected",
+        "test_scenario_audit::test_removed_entry_is_detected"
+      ]
+    },
+    {
+      "item": "Replay works",
+      "state": "checked",
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_demo_integration::TestAuditAndReplay",
+        "test_scenario_audit::test_replay_*",
+        "test_scenario_audit::test_ui_replay_*"
+      ]
+    },
+    {
+      "item": "No fabricated evidence",
+      "state": "checked",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_verification_evidence::test_stub_kbs_produce_no_unsourced_instrument_content",
+        "test_evaluation::TestAuditability",
+        "test_foundation::test_every_quote_*",
+        "test_foundation::test_licence_*",
+        "test_hardening::test_1_*"
+      ]
+    },
+    {
+      "item": "No broken integration",
+      "state": "checked",
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0,
+      "tests": [
+        "test_demo_integration::TestIntegrationChecklist",
+        "test_core_freeze",
+        "test_scenario_audit::test_ui_full_demo_*"
+      ]
+    }
+  ]
 }
