@@ -1,0 +1,169 @@
+{
+  "_about": [
+    "Y.3172 pipeline traceability (DOCX §4.3 / Task 6).",
+    "Maps each stage of the ITU-T Y.3172 ML pipeline to the concrete components",
+    "in this project that implement or correspond to that stage.",
+    "",
+    "ITU-T Y.3172 (June 2019): 'Architectural framework for machine learning in",
+    "future networks including IMT-2020' defines a pipeline:",
+    "  Source → Collection → Preprocessing → Model → Policy → Distribution → Sandbox",
+    "",
+    "IMPORTANT COMPLIANCE NOTE:",
+    "  This project does not claim formal ITU-T Y.3172 compliance.",
+    "  The mapping records architectural correspondence only — where the project's",
+    "  components perform the function described by Y.3172, and where they do not.",
+    "  Formal compliance requires assessment by a qualified body; that has not been done.",
+    "",
+    "The ITU AI for Good Sandbox stage was not executed in this environment.",
+    "This is recorded in knowledge_base/ingestion_manifest.json under 'sandbox'.",
+    "",
+    "Source: knowledge_base/standards/itu_t_y3172 (79 chunks, 27 sections, ingested)."
+  ],
+  "schema_version": "1.0",
+  "standard": "ITU-T Recommendation Y.3172 (06/2019)",
+  "standard_authority": "International Telecommunication Union (ITU-T)",
+  "standard_url": "https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-Y.3172-201906-I!!PDF-E&type=items",
+  "compliance_disclaimer": "This mapping records architectural correspondence only. Formal ITU-T Y.3172 compliance has not been assessed by a qualified body. Do not claim compliance based on this document.",
+  "pipeline_stages": [
+    {
+      "stage": "Source",
+      "y3172_description": "The origin of data used for the ML pipeline. In future networks, this includes network telemetry, logs, configuration data, and management-plane data from network functions.",
+      "project_implementation": {
+        "description": "The source corpus defined in knowledge_base/sources/manifest.json. Each document is a legally and technically authoritative source with recorded provenance (authority, jurisdiction, URL, SHA-256, date, effective_status).",
+        "files": [
+          "knowledge_base/sources/manifest.json — curated source registry (16 entries)",
+          "knowledge_base/sources/raw/ — downloaded source files (PDFs and DOCX)"
+        ],
+        "evidence_preserved": "SHA-256 checksums, download URLs, date_evidence strings, provenance_notes",
+        "coverage_notes": "14 of 16 sources successfully downloaded; 2 unavailable (nciipc_rules_2013, international_policy_examples) — recorded with attempted URLs and reasons."
+      },
+      "y3172_correspondence": "PARTIAL — project uses policy/legal/standards documents as sources rather than live network telemetry. The provenance-tracking function (source identity, integrity, origin URL) corresponds to the Y.3172 Source stage."
+    },
+    {
+      "stage": "Collection",
+      "y3172_description": "Gathering raw data from the Source, applying initial filtering and selection.",
+      "project_implementation": {
+        "description": "PDF and DOCX extraction using PyMuPDF and python-docx. Text is extracted with page provenance, language filtering (English-only for bilingual Gazette notifications), and page-header/footer removal.",
+        "files": [
+          "src/rag/extract.py — extract_pdf(), extract_docx(), pdf_outline()"
+        ],
+        "safeguards": [
+          "Title-evidence check: a document is collected only if its title_evidence string is found in the extracted text (rejects wrong files saved under correct names)",
+          "Date-evidence check: date_issued is kept only when date_evidence is found verbatim in extracted text",
+          "English-only filtering for bilingual Gazette notifications"
+        ]
+      },
+      "y3172_correspondence": "CORRESPONDS — extraction with provenance tracking and integrity checks corresponds to the Y.3172 Collection stage."
+    },
+    {
+      "stage": "Preprocessing",
+      "y3172_description": "Cleaning, normalising, and structuring raw data for use by the model.",
+      "project_implementation": {
+        "description": "Running-header/footer removal, section detection (numbered, roman_items, outline, clauses, numbered_paras, docx_headings, PDF bookmark outline), text joining (hyphen rejoining), and chunking with overlap.",
+        "files": [
+          "src/rag/sections.py — remove_running_lines(), split_sections(), split_by_outline(), chunk_sections()"
+        ],
+        "parameters": {
+          "max_chars_per_chunk": 1200,
+          "overlap_chars": 150,
+          "unit": "within one detected section"
+        },
+        "metadata_preserved_per_chunk": [
+          "chunk_id", "doc_id", "source_title", "authority", "jurisdiction",
+          "document_type", "section", "section_title", "page",
+          "date_issued", "effective", "effective_status",
+          "amendment_note", "amendment_checked", "amendment_status",
+          "url", "related_documents", "institutions", "domains", "provenance_note"
+        ],
+        "boilerplate_suppression": "Sections identified as boilerplate (table of contents, abbreviations, references) are excluded from open searches but remain in the store for exact lookups."
+      },
+      "y3172_correspondence": "CORRESPONDS — section-aware chunking with full metadata propagation corresponds to the Y.3172 Preprocessing stage."
+    },
+    {
+      "stage": "Model",
+      "y3172_description": "The ML model trained or applied to the preprocessed data to produce outputs.",
+      "project_implementation": {
+        "description": "Embedding model BAAI/bge-small-en-v1.5 (fastembed, ONNX, CPU, 384-dimensional L2-normalised vectors). Cosine similarity search (dot product on normalised vectors) for retrieval. No generative model is used — agents quote retrieved passages directly.",
+        "files": [
+          "src/rag/embedding.py — FastEmbedEmbedder (embed_passages, embed_query)",
+          "src/rag/vector_store.py — VectorStore (search, cosine similarity)",
+          "src/rag/vector_kb.py — VectorKnowledgeBase, VectorCanonicalKB"
+        ],
+        "model_id": "BAAI/bge-small-en-v1.5",
+        "model_recorded_in": "knowledge_base/ingestion_manifest.json (embedding_model field) and knowledge_base/<kb>/index.json",
+        "generator_model": "none — no generative model is used; agents quote retrieved passages only",
+        "generator_model_recorded_in": "knowledge_base/ingestion_manifest.json (generator_model field)"
+      },
+      "y3172_correspondence": "CORRESPONDS — the embedding model performs the function of the Y.3172 Model stage (transforming preprocessed data into a queryable representation). There is no generative model; retrieval and quoting replace generation."
+    },
+    {
+      "stage": "Policy",
+      "y3172_description": "Applying policies or rules to model outputs — determining what actions or responses are appropriate given the model's results.",
+      "project_implementation": {
+        "description": "The Verifier applies the VERIFIED/UNSUPPORTED/INCOMPLETE/CONFLICT policy rules to agent claims and retrieved evidence. The Coordinator applies categorisation rules (confirmed facts, evidence-backed conclusions, uncertain conclusions, conflicting findings, potential policy gaps). The Policy Gap Agent applies the six coverage-category rules (DOCX §5.1).",
+        "files": [
+          "src/core/verifier.py — Verifier, LexicalSupportJudge (VERIFIED/INCOMPLETE/UNSUPPORTED/CONFLICT rules)",
+          "src/core/coordinator.py — Coordinator (categorisation rules, Table A1)",
+          "src/agents/policy_gap_agent.py — PolicyGapAgent (six coverage categories)",
+          "src/core/cross_domain.py — find_relationships() (cross-domain link and conflict detection)"
+        ],
+        "policy_rules": [
+          "A claim is VERIFIED only when the Canonical KB passage supports it and in-force status + amendments are confirmed",
+          "International standards claims always carry [REFERENCE ONLY — not Indian law]",
+          "Policy Gap claims always carry the non-conclusive disclaimer",
+          "Cross-domain links are established from evidence only, never from mere co-activation",
+          "Conflicts are never silently resolved; both sides are preserved with their evidence"
+        ]
+      },
+      "y3172_correspondence": "CORRESPONDS — the Verifier and Coordinator together implement the Policy stage: applying evidence-grounded rules to model (retrieval) outputs to produce structured, auditable assessments."
+    },
+    {
+      "stage": "Distribution",
+      "y3172_description": "Delivering the model and policy outputs to consumers — network management functions, operators, or other systems.",
+      "project_implementation": {
+        "description": "The pipeline output is delivered as structured AuditRecord objects serialised to JSON (outputs/audit/), formatted assessment text (outputs/), and via the Streamlit UI (src/ui/app.py). The Coordinator's assessment is the primary distributed output.",
+        "files": [
+          "src/utils/output_formatter.py — save_assessment_text(), save_audit_json()",
+          "src/ui/app.py — Streamlit web UI (real-time display of findings, evidence, audit trail)",
+          "outputs/audit/ — JSONL audit trail files",
+          "outputs/ — assessment text files"
+        ],
+        "audit_fields_per_finding": [
+          "chunk_id", "agent_id", "claims", "evidence (full EvidenceItem list)",
+          "claim_citations", "verifier_outcome", "cross_domain_flag",
+          "coordinator_category", "human_review_required"
+        ]
+      },
+      "y3172_correspondence": "CORRESPONDS — the output formatter and UI implement the Distribution stage, delivering assessments to human reviewers and to the audit system."
+    },
+    {
+      "stage": "Sandbox",
+      "y3172_description": "A controlled environment for testing and validating the pipeline before deployment. In Y.3172, the Sandbox allows isolated experimentation and validation of the ML pipeline without affecting live systems.",
+      "project_implementation": {
+        "description": "NOT EXECUTED. The ITU AI for Good Sandbox is not available in this environment. This is recorded in knowledge_base/ingestion_manifest.json (field 'sandbox': 'not executed — the ITU AI for Good Sandbox is not available in this environment').",
+        "files": ["knowledge_base/ingestion_manifest.json — sandbox field"],
+        "alternative_validation": [
+          "Unit and integration tests: tests/ directory (95 tests pass, 8 skipped for live vector stores)",
+          "In-memory KB fixture tests: tests/test_verification_evidence.py (exercises full VERIFIED/INCOMPLETE/UNSUPPORTED/CONFLICT paths)",
+          "Scenario-based end-to-end tests: tests/test_pipeline.py (T0–T3 for both Scenario 1 and Scenario 2)",
+          "Cross-domain link tests: tests/test_cross_domain.py",
+          "Retrieval quality tests: knowledge_base/retrieval_tests.json (7 agents, generated by python -m src.rag.retrieval_demo)"
+        ],
+        "sandbox_ownership": "The Sandbox environment, if implemented, belongs to the team member responsible for deployment infrastructure. This KB/RAG layer provides the clean interface and evidence/metadata needed for Sandbox integration."
+      },
+      "y3172_correspondence": "NOT EXECUTED — sandbox not available. Automated tests serve as the available validation environment. This does not constitute Sandbox execution in the Y.3172 sense."
+    }
+  ],
+  "pipeline_traceability_matrix": {
+    "description": "One-line summary of how each Y.3172 stage maps to project files.",
+    "rows": [
+      {"y3172_stage": "Source",        "project_component": "knowledge_base/sources/manifest.json + raw/ files",           "status": "IMPLEMENTED"},
+      {"y3172_stage": "Collection",    "project_component": "src/rag/extract.py",                                          "status": "IMPLEMENTED"},
+      {"y3172_stage": "Preprocessing", "project_component": "src/rag/sections.py",                                         "status": "IMPLEMENTED"},
+      {"y3172_stage": "Model",         "project_component": "src/rag/embedding.py + vector_store.py + vector_kb.py",       "status": "IMPLEMENTED"},
+      {"y3172_stage": "Policy",        "project_component": "src/core/verifier.py + coordinator.py + policy_gap_agent.py", "status": "IMPLEMENTED"},
+      {"y3172_stage": "Distribution",  "project_component": "src/utils/output_formatter.py + src/ui/app.py",               "status": "IMPLEMENTED"},
+      {"y3172_stage": "Sandbox",       "project_component": "Not available in this environment",                           "status": "NOT EXECUTED"}
+    ]
+  }
+}

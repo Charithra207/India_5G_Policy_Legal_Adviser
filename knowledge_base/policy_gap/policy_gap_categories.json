@@ -1,0 +1,247 @@
+{
+  "_about": [
+    "Policy Gap KB — six coverage categories (DOCX §5.1).",
+    "Each category entry records: the DOCX-defined category name, the CoverageCategory enum value",
+    "used in src/core/models.py, the triggering conditions the Policy Gap Agent uses to select it,",
+    "the examination method applied against the Canonical KB, the non-conclusive language rules,",
+    "the verifier outcome that applies, and the sources currently available to examine each area.",
+    "",
+    "IMPORTANT:",
+    "  - Categories are mutually exclusive per candidate area but a single incident may trigger",
+    "    several candidate areas (each examined independently).",
+    "  - The Policy Gap Agent NEVER concludes that Indian policy is inadequate.",
+    "  - Every raised gap carries the disclaimer: 'This is a potential gap or area of regulatory",
+    "    ambiguity identified for expert review. No conclusion of policy failure is drawn.'",
+    "  - Categories are derived from DOCX §5.1 only; no requirements are invented here.",
+    "  - The distinction between 'potential policy gap' and 'law does not exist' is preserved:",
+    "    absence of a provision in the examined corpus is recorded as a potential gap in coverage,",
+    "    not as a conclusion that no law exists.",
+    "",
+    "Implementation reference: src/agents/policy_gap_agent.py (PolicyGapAgent)",
+    "Enum values: src/core/models.py (CoverageCategory)"
+  ],
+  "schema_version": "1.0",
+  "docx_section": "§5.1",
+  "agent": "PolicyGapAgent",
+  "agent_module": "src/agents/policy_gap_agent.py",
+  "enum_class": "src.core.models.CoverageCategory",
+  "non_conclusive_language_rule": {
+    "required_terms_at_least_one": [
+      "potential gap",
+      "regulatory ambiguity",
+      "not explicitly addressed",
+      "unclear coverage",
+      "overlapping requirements",
+      "missing institutional clarity",
+      "for expert review"
+    ],
+    "required_disclaimer": "This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+    "forbidden_phrases": [
+      "Indian policy is inadequate",
+      "the policy is inadequate",
+      "framework is inadequate",
+      "regulation is inadequate",
+      "policy is inadequate"
+    ],
+    "enforcement": "test_t3_policy_gap_uses_non_conclusive_language in tests/test_pipeline.py; test_policy_gaps_raised_only_from_examined_corpus in tests/test_verification_evidence.py"
+  },
+  "distinction_potential_gap_vs_law_does_not_exist": {
+    "rule": "The system records absence of a provision in the examined corpus as a 'potential gap in coverage', not as 'this law does not exist'. The corpus is finite and may not contain every relevant Indian instrument.",
+    "example_correct": "Potential gap — Emerging technology not explicitly addressed: none of the 159 Indian passages in the Canonical KB mentions network slicing (instruments examined: ...). This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn.",
+    "example_incorrect": "There is no Indian law on network slicing."
+  },
+  "categories": [
+    {
+      "category_id": 1,
+      "name": "Explicit coverage",
+      "enum_value": "explicit_coverage",
+      "docx_reference": "DOCX §5.1 item 1",
+      "description": "The relevant regulatory area is explicitly and unambiguously addressed by at least one ingested Indian instrument.",
+      "outcome_label": "Coverage check",
+      "raises_potential_gap": false,
+      "triggering_conditions": [
+        "The Canonical KB scan or search finds one or more Indian passages that directly address the candidate area",
+        "The passage text uses the relevant terminology (e.g. 'network slicing', 'NCIIPC', 'CERT-In')"
+      ],
+      "examination_method": {
+        "primary": "Canonical KB scan with jurisdiction filter 'India'; search for candidate-area keywords in passage text",
+        "scan_type": "exhaustive (canonical_kb.scan) when available; top-k search otherwise",
+        "result_if_found": "Coverage check — [area]: [source, section] mention [area]. No potential gap is raised; whether the coverage is explicit or partial is for expert review."
+      },
+      "verifier_outcome": "INCOMPLETE (a coverage check is an observation, not a verified conclusion)",
+      "sources_in_corpus": [
+        "telecom_act_2023 (India)",
+        "trai_act_1997 (India)",
+        "ndcp_2018 (India)",
+        "telecom_cyber_security_rules_2024 (India)",
+        "certin_directions_2022 (India)",
+        "ncsp_2013 (India)",
+        "dpdp_act_2023 (India)",
+        "dpdp_rules_2025 (India)"
+      ],
+      "sources_missing": ["nciipc_rules_2013 (NOT INGESTED)"],
+      "example_scenario": "If the Canonical KB scan finds that Telecom Cyber Security Rules 2024 Rule 7 explicitly addresses security incident reporting, the agent raises a Coverage check, not a potential gap."
+    },
+    {
+      "category_id": 2,
+      "name": "Partial coverage",
+      "enum_value": "partial_coverage",
+      "docx_reference": "DOCX §5.1 item 2",
+      "description": "The relevant area is partially addressed — some aspect is covered but significant gaps remain in the ingested corpus.",
+      "outcome_label": "Potential gap — Partial coverage",
+      "raises_potential_gap": true,
+      "triggering_conditions": [
+        "Some but not all aspects of the candidate area are found in the ingested corpus",
+        "E.g. incident reporting is addressed for cyber events but not for AI-model failures in 5G networks"
+      ],
+      "examination_method": {
+        "primary": "Canonical KB search for the covered aspect; separate search for the uncovered aspect",
+        "result_if_partial": "Potential gap — Partial coverage: [source, section] addresses [covered aspect] but no passage found addressing [uncovered aspect]. [DISCLAIMER]"
+      },
+      "verifier_outcome": "INCOMPLETE when cited passages confirmed in Canonical KB",
+      "sources_in_corpus": ["Same as category 1"],
+      "sources_missing": ["international_policy_examples (NOT INGESTED — comparators unavailable)"],
+      "current_activation": "Not directly triggered by Scenario 2 candidate areas. Activated if future scenarios reveal partial coverage."
+    },
+    {
+      "category_id": 3,
+      "name": "Unclear coverage",
+      "enum_value": "unclear_coverage",
+      "docx_reference": "DOCX §5.1 item 3",
+      "description": "A provision exists in the ingested corpus but its applicability to the specific technology or context is ambiguous.",
+      "outcome_label": "Potential gap — Unclear coverage",
+      "raises_potential_gap": true,
+      "triggering_conditions": [
+        "A provision's text does not clearly include or exclude the relevant technology",
+        "E.g. a telecom security rule applies to 'telecom entities' without clarifying whether private 5G network operators qualify"
+      ],
+      "examination_method": {
+        "primary": "Retrieve the provision; assess whether its text explicitly names or excludes the technology",
+        "language": "The text of [source, section] does not explicitly address whether [technology/context] falls within its scope. This is a potential area of regulatory ambiguity for expert review."
+      },
+      "verifier_outcome": "INCOMPLETE when cited passages confirmed in Canonical KB",
+      "sources_in_corpus": ["Same as category 1"],
+      "sources_missing": ["international_policy_examples (NOT INGESTED)"],
+      "current_activation": "May be triggered if a retrieved passage's scope is ambiguous with respect to network slicing or private 5G."
+    },
+    {
+      "category_id": 4,
+      "name": "Overlapping requirements",
+      "enum_value": "overlapping_requirements",
+      "docx_reference": "DOCX §5.1 item 4",
+      "description": "Two or more instruments impose duties for the same triggering event without cross-referencing each other, creating potential coordination uncertainty.",
+      "outcome_label": "Potential gap — Overlapping requirements",
+      "raises_potential_gap": true,
+      "triggering_conditions": [
+        "incident_state.cyber_event_suspected is True AND incident_state.data_exposure_suspected is True",
+        "Both a cybersecurity instrument and a data-protection instrument are found in the Canonical KB with reporting duties for the same incident type"
+      ],
+      "examination_method": {
+        "step_1": "Retrieve Indian passages containing reporting/notification words from cybersecurity instruments",
+        "step_2": "Retrieve Indian passages containing reporting/notification words from data-protection instruments",
+        "step_3": "Check whether either passage refers to the other instrument",
+        "result_if_overlap_without_cross_ref": "Potential gap — Overlapping requirements: [cyber source, section] and [data source, section] both carry reporting duties for the same incident, and neither passage refers to the other, so their relationship is unclear in the text examined. [DISCLAIMER]",
+        "result_if_cross_referenced": "Coverage check — reporting: [cyber source, section] and [data source, section] both carry reporting duties and one refers to the other. No potential gap is raised; the relationship is for expert review."
+      },
+      "verifier_outcome": "INCOMPLETE when both cited passages confirmed in Canonical KB",
+      "concrete_scenario_2_example": {
+        "instrument_a": "Telecommunications (Telecom Cyber Security) Rules 2024, Rule 7 — report to DoT within 6 hours",
+        "instrument_b": "Digital Personal Data Protection Act 2023, Section 8(6) — intimate Data Protection Board of personal data breach",
+        "trigger": "A 5G network incident that is simultaneously a security incident and a personal data breach",
+        "finding_if_raised": "Potential gap — Overlapping requirements: Telecom Cyber Security Rules 2024, Rule 7 and DPDP Act 2023, Section 8(6) both carry reporting duties for the same incident, and neither passage refers to the other, so their relationship is unclear in the text examined. This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn."
+      },
+      "sources_in_corpus": [
+        "telecom_cyber_security_rules_2024 (India) — Rule 7: report to DoT",
+        "certin_directions_2022 (India) — Direction (ii): report to CERT-In",
+        "dpdp_act_2023 (India) — Section 8(6): intimate Data Protection Board",
+        "dpdp_rules_2025 (India) — Rule 7: intimation procedure"
+      ],
+      "sources_missing": ["international_policy_examples (NOT INGESTED)"]
+    },
+    {
+      "category_id": 5,
+      "name": "Missing institutional clarity",
+      "enum_value": "missing_institutional_clarity",
+      "docx_reference": "DOCX §5.1 item 5",
+      "description": "It is unclear from the ingested corpus which institution leads on an issue where multiple institutions have relevant roles.",
+      "outcome_label": "Potential gap — Missing institutional clarity",
+      "raises_potential_gap": true,
+      "triggering_conditions": [
+        "incident_state.cyber_event_suspected is True AND incident_state.cii_flagged is True",
+        "Both NCIIPC and CERT-In are mentioned in the Canonical KB for the same issue domain",
+        "No single passage addresses both institutions together with a clear lead-institution designation"
+      ],
+      "examination_method": {
+        "step_1": "Scan every Indian passage in the Canonical KB for passages mentioning both 'NCIIPC' and 'CERT-In' together",
+        "step_2": "If both-mention passages found: Coverage check (no gap raised)",
+        "step_3": "If no both-mention passages: check separately for NCIIPC-only and CERT-In-only passages",
+        "step_4_gap_condition": "NCIIPC passages found AND CERT-In passages found AND no passage addresses both",
+        "result_if_gap": "Potential gap — Missing institutional clarity: [NCIIPC source, section] addresses NCIIPC and [CERT-In source, section] addresses CERT-In, but none of the [N] Indian passages in the Canonical KB addresses both, so which institution leads is unclear in the text examined. [DISCLAIMER]",
+        "result_if_not_examined": "Candidate area NOT EXAMINED — passages naming both NCIIPC and CERT-In roles were not available."
+      },
+      "verifier_outcome": "INCOMPLETE when cited passages confirmed in Canonical KB",
+      "concrete_scenario_2_example": {
+        "nciipc_source": "nciipc_rules_2013 — NOT INGESTED (source unavailable)",
+        "certin_source": "certin_directions_2022 (India) — Direction (ii): report to CERT-In",
+        "consequence_of_missing_nciipc": "If nciipc_rules_2013 is not in the corpus, the examination will find CERT-In passages but no NCIIPC passages, and will report 'NOT EXAMINED — passages naming both NCIIPC and CERT-In roles were not available.'",
+        "gap_will_be_raisable_when": "nciipc_rules_2013 is ingested and the vector stores are rebuilt"
+      },
+      "sources_in_corpus": [
+        "certin_directions_2022 (India) — CERT-In role",
+        "ncsp_2013 (India) — references to NCIIPC and CERT-In (general policy only)",
+        "telecom_act_2023 (India) — DoT and Central Government roles"
+      ],
+      "sources_missing": [
+        "nciipc_rules_2013 (NOT INGESTED — critical gap for this category)",
+        "international_policy_examples (NOT INGESTED)"
+      ]
+    },
+    {
+      "category_id": 6,
+      "name": "Emerging technology not explicitly addressed",
+      "enum_value": "emerging_technology_not_explicitly_addressed",
+      "docx_reference": "DOCX §5.1 item 6",
+      "description": "The technology involved (e.g. 5G network slicing, AI-driven network management) is not explicitly addressed in any ingested Indian instrument.",
+      "outcome_label": "Potential gap — Emerging technology not explicitly addressed",
+      "raises_potential_gap": true,
+      "triggering_conditions": [
+        "incident_state.verified_findings contains a claim about 'slice' or 'slicing'",
+        "The candidate area involves a technology not explicitly named in any ingested Indian instrument"
+      ],
+      "examination_method": {
+        "step_1": "Exhaustive scan of every Indian passage in the Canonical KB (canonical_kb.scan with jurisdiction='India')",
+        "step_2": "Search all passages for mentions of the technology keyword (e.g. 'slic' for slicing)",
+        "step_3_if_found": "Coverage check — [technology]: [source, section] mention [technology]. No potential gap raised.",
+        "step_3_if_not_found": "Potential gap — Emerging technology not explicitly addressed: none of the [N] Indian passages in the Canonical KB (every one examined) mentions [technology] (instruments examined: [list]). [DISCLAIMER]",
+        "absence_claim_note": "This is an absence claim — it cites no passage because there is nothing to cite. The claim names the entire corpus examined so the reader can judge the scope of the absence check."
+      },
+      "verifier_outcome": "INCOMPLETE (no cited passage — absence claim verified by noting what was examined)",
+      "concrete_scenario_2_example": {
+        "technology": "5G network slicing",
+        "keyword": "slic",
+        "expected_corpus_size": "159 Indian passages across telecom_act_2023, trai_act_1997, ndcp_2018, telecom_cyber_security_rules_2024, certin_directions_2022, ncsp_2013, dpdp_act_2023, dpdp_rules_2025",
+        "finding_if_absent": "Potential gap — Emerging technology not explicitly addressed: none of the 159 Indian passages in the Canonical KB (every one examined) mentions network slicing (instruments examined: The Telecommunications Act, 2023; The Telecom Regulatory Authority of India Act, 1997; National Digital Communications Policy 2018; Telecommunications (Telecom Cyber Security) Rules, 2024; CERT-In Directions ...; National Cyber Security Policy - 2013; The Digital Personal Data Protection Act, 2023; Digital Personal Data Protection Rules, 2025). This is a potential gap or area of regulatory ambiguity identified for expert review. No conclusion of policy failure is drawn."
+      },
+      "sources_in_corpus": ["All ingested Indian sources — exhaustive scan"],
+      "sources_missing": [
+        "nciipc_rules_2013 (NOT INGESTED — may contain slicing provisions)",
+        "international_policy_examples (NOT INGESTED — comparators unavailable)"
+      ]
+    }
+  ],
+  "candidate_area_selection_logic": {
+    "description": "The Policy Gap Agent selects candidate areas from incident_state, not from assumptions. Areas not indicated by verified findings are not examined.",
+    "conditions": {
+      "EMERGING_TECHNOLOGY": "Any verified finding contains 'slice' or 'slicing'",
+      "OVERLAPPING_REQUIREMENTS": "cyber_event_suspected is True AND data_exposure_suspected is True",
+      "MISSING_INSTITUTIONAL_CLARITY": "cyber_event_suspected is True AND cii_flagged is True"
+    },
+    "source": "PolicyGapAgent._candidate_areas() in src/agents/policy_gap_agent.py"
+  },
+  "comparator_sourcing": {
+    "rule": "International comparators are retrieved from the Policy Gap KB (international_policy_examples) and Standards KB, not from agent memory.",
+    "current_status": "NOT AVAILABLE — international_policy_examples not yet ingested.",
+    "label_when_retrieved": "[REFERENCE ONLY — not Indian law]",
+    "label_enforcement": "BaseAgent._reference_label() in src/agents/base_agent.py"
+  }
+}
