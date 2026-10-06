@@ -10,7 +10,7 @@ run shows.
 | # | Step | Command | Expected |
 |---|---|---|---|
 | 1 | Install | `pip install -r requirements.txt` | Installs PyMuPDF, python-docx, numpy, fastembed, Streamlit, pytest |
-| 2 | Sources | Download each `source_url` in `knowledge_base/sources/manifest.json` to its `file` path under `knowledge_base/sources/raw/` | 23 files; the NCIIPC Rules and neighbouring-country instruments are recorded as not obtained |
+| 2 | Sources | `python -m src.rag.fetch_sources` | Downloads all 23 sources from their official URLs into `knowledge_base/sources/raw/` and checks each SHA-256: "23 of 23 sources ready" (needs internet; uses curl where a site refuses Python's client) |
 | 3 | Build the KBs (Member 2) | `python -m src.rag.build` | 8 stores; Canonical KB holds all 23 documents; in-force and amendment status applied from the notifications; `ingestion_manifest.json` rewritten |
 | 4 | Retrieval checks | `python -m src.rag.retrieval_demo` and `python -m src.rag.retrieval_quality` | 7/7 agents retrieve evidence; labelled queries isolated to each agent's KB |
 | 5 | Full 4-stage run (Members 1+3) | `python -m src.scenario.run --run-id <id>` | T0 Technical; T1 +Cybersecurity, Standards; T2 Critical Infrastructure, Privacy, Policy & Legal; T3 + Policy Gap — each "→ match" with the DOCX table; written to `outputs/audit/<id>.jsonl` |

@@ -36,8 +36,12 @@ tables are reproduced verbatim; values not obtained are written as such.
 | `knowledge_base/itu_ai_readiness_mapping.json` | §5.2 | The DOCX's eight readiness perspectives (verbatim) with corpus passages and project artefacts as evidence; no score |
 
 The downloaded source files (`knowledge_base/sources/raw/`), the built
-stores and the embedding-model cache are git-ignored. Re-download them from
-the URLs in `knowledge_base/sources/manifest.json`, then run the build.
+stores and the embedding-model cache are git-ignored. Several sources forbid
+redistribution (ITU, 3GPP, ETSI: "no part may be reproduced"), so the
+repository holds the manifest, not the files. Download them with
+`python -m src.rag.fetch_sources`, which fetches every source from its
+official URL and checks it against the recorded SHA-256. Then run the
+build.
 
 ---
 

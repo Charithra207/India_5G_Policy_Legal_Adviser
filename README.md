@@ -276,7 +276,10 @@ Two scenarios are provided:
 ```powershell
 pip install -r requirements.txt
 
-# Build the knowledge bases from knowledge_base/sources (~6 min on CPU)
+# Download the source documents from their official URLs (checked by SHA-256)
+python -m src.rag.fetch_sources
+
+# Build the knowledge bases from knowledge_base/sources (~10-12 min on CPU)
 python -m src.rag.build
 
 # One retrieval test per agent -> knowledge_base/retrieval_tests.md
