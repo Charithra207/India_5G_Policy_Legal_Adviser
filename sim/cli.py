@@ -26,6 +26,8 @@ def _value(text: str):
     try:
         return json.loads(text)
     except ValueError:
+        if text.startswith("[") and text.endswith("]"):     # PowerShell 5.1 strips inner quotes
+            return [v.strip().strip("'\"") for v in text[1:-1].split(",") if v.strip()]
         return text
 
 
@@ -45,7 +47,7 @@ def format_args(args: dict) -> str:
     """The inverse of parse_args, for printing commands an operator can paste."""
     parts = []
     for key, value in args.items():
-        text = value if isinstance(value, str) and _value(value) == value else json.dumps(value)
+        text = value if isinstance(value, str) and _value(value) == value else json.dumps(value, separators=(",", ":"))
         parts.append(f"{key}={text}")
     return " ".join(parts)
 

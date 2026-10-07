@@ -15,6 +15,8 @@ from __future__ import annotations
 from sim.engine import FUNCTIONS, NFS
 
 _NF = {"type": "string", "enum": list(NFS), "description": "network function"}
+_SLICE = {"type": "string", "enum": ["embb", "urllc-hospital", "mmtc"], "description": "network slice"}
+_STR = {"type": "string"}
 
 _SCHEMAS: dict[str, tuple[str, dict, list[str]]] = {
     "get_logs": ("Recent log lines of a network function.",
@@ -32,13 +34,55 @@ _SCHEMAS: dict[str, tuple[str, dict, list[str]]] = {
     "list_registered_nfs": ("NF instances registered in the NRF and whether they are signed.", {}, []),
     "check_mgmt_exposure": ("Whether the OAM interface is exposed and uses default credentials.", {}, []),
     "get_alerts": ("Active alerts.", {}, []),
+    "list_gnbs": ("Base stations connected to the AMF: in the cell inventory or not, registration rate each.", {}, []),
+    "get_ran_kpis": ("RAN KPIs for TA-4501: LTE fallbacks, radio link failures, cells UEs report that are not in "
+                     "the inventory, hostile/ignored cells and field tickets.", {}, []),
+    "get_egress_flows": ("Active outbound flows from core hosts, isolated instances, preserved evidence.", {}, []),
+    "check_slice_sessions": ("PDU sessions on a slice, its allow-list, and sessions not on the allow-list.",
+                             {"slice": _SLICE}, ["slice"]),
+    "get_subscriber_changes": ("Subscriber-database change records (who changed which profile, from where).", {}, []),
+    "get_upf_flows": ("UPF source-address validation state, flows with spoofed inner source, flows to internal "
+                      "ranges, ACL blocks.", {}, []),
+    "get_device_stats": ("Per-device traffic on a slice (offered/effective rate, destination), anomalous devices, "
+                         "quarantined devices.", {"slice": _SLICE, "top": {"type": "integer", "minimum": 1,
+                                                                          "maximum": 40}}, []),
+    "get_flow_logs": ("Earlier connections from devices to outside destinations; destinations many devices "
+                      "contacted (command-server candidates).", {}, []),
+    "get_service_health": ("Inbound load, status and latency of a service.",
+                           {"service": {"type": "string", "enum": ["hospital-portal"]}}, ["service"]),
     "rate_limit_nf": ("STATE-CHANGING: cap the request rate accepted by an NF.",
                       {"nf": _NF, "limit": {"type": "integer", "minimum": 1}}, ["nf", "limit"]),
     "block_source": ("STATE-CHANGING: block one traffic source / consumer at an NF.",
                      {"nf": _NF, "source": {"type": "string"}}, ["nf", "source"]),
     "isolate_nf": ("STATE-CHANGING: isolate an NF from the service mesh (stops its traffic).", {"nf": _NF}, ["nf"]),
     "restore_nf": ("STATE-CHANGING: re-attach an isolated NF.", {"nf": _NF}, ["nf"]),
-    "block_neighbor": ("STATE-CHANGING: remove and bar a gNB neighbour.", {"gnb_id": {"type": "string"}}, ["gnb_id"]),
+    "disconnect_gnb": ("STATE-CHANGING: release a base station's NG connection to the AMF and bar it.",
+                       {"gnb_id": _STR}, ["gnb_id"]),
+    "flag_cell_hostile": ("STATE-CHANGING: flag a cell id as hostile and remove it from neighbour lists.",
+                          {"cell_id": _STR}, ["cell_id"]),
+    "push_device_policy": ("STATE-CHANGING: tell UEs in the area not to camp on or hand over to a cell.",
+                           {"cell_id": _STR}, ["cell_id"]),
+    "dispatch_field_team": ("STATE-CHANGING: open a field-team ticket to locate a transmitter (recorded handoff).",
+                            {"cell_id": _STR}, ["cell_id"]),
+    "restrict_admin_access": ("STATE-CHANGING: allow admin logins only from the jump host.", {}, []),
+    "capture_evidence": ("STATE-CHANGING: preserve a forensic snapshot of a component before containment.",
+                         {"target": _STR}, ["target"]),
+    "isolate_instance": ("STATE-CHANGING: network-isolate a (rogue) NF instance / container.",
+                         {"instance_id": _STR}, ["instance_id"]),
+    "cut_flow": ("STATE-CHANGING: terminate outbound flows from a source.", {"src": _STR}, ["src"]),
+    "end_session": ("STATE-CHANGING: release a PDU session.", {"session_id": _STR}, ["session_id"]),
+    "restore_profile": ("STATE-CHANGING: restore a subscriber profile from the known-good snapshot.",
+                        {"supi": _STR}, ["supi"]),
+    "block_route": ("STATE-CHANGING: UPF ACL dropping traffic from one address range to another.",
+                    {"src_range": _STR, "dst_range": _STR}, ["src_range", "dst_range"]),
+    "rate_limit_slice": ("STATE-CHANGING: per-device rate limit on a slice.",
+                         {"slice": _SLICE, "per_device": {"type": "integer", "minimum": 1}}, ["slice", "per_device"]),
+    "quarantine_devices": ("STATE-CHANGING: move devices to the quarantine slice (only infected ones!).",
+                           {"devices": {"type": "array", "items": _STR, "minItems": 1}}, ["devices"]),
+    "block_destination": ("STATE-CHANGING: block traffic to an outside address for all slices.",
+                          {"address": _STR}, ["address"]),
+    "enable_traffic_filter": ("STATE-CHANGING: enable traffic filtering in front of a service.",
+                              {"service": {"type": "string", "enum": ["hospital-portal"]}}, ["service"]),
     "rotate_keys": ("STATE-CHANGING: rotate keys/credentials.",
                     {"scope": {"type": "string", "enum": ["subscriber", "oam_credentials", "nf_certificates"]}},
                     ["scope"]),

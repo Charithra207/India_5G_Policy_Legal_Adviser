@@ -331,8 +331,8 @@ before every escalation.
 | Part | Path | What it does |
 |---|---|---|
 | Index | `kb/build_index.py`, `kb/retriever.py`, `kb/index/` | 276 unique PDFs from the team folder; text by pymupdf, Tesseract OCR for scanned pages; ~450-token chunks; bge-small-en-v1.5 (fastembed, CPU); one FAISS index per category: `law_and_acts`, `cyber_incident_rules`, `gpp_security`, `gpp_architecture`, `threat_frameworks`, `data_protection`, `spectrum_licensing_row`, `trai_consultations`, `other_rules`. `manifest.json` has each document's category plus the hashes of the index files. |
-| Simulator | `sim/engine.py`, `sim/inject.py`, `sim/cli.py` | gNB, AMF, SMF, UPF, UDM, AUSF, NEF, NRF, OAM; deterministic; state in `<work>/state.json`, logs in `<work>/logs/*.log` |
-| Catalog | `catalog/attacks.yaml` | 10 attacks, each with ENISA / 3GPP references, Indian obligations (verbatim phrase + document), resolution checks and Basic / Intermediate / Advanced playbooks. Editable; validated on load. |
+| Simulator | `sim/engine.py`, `sim/inject.py`, `sim/cli.py` | gNB, AMF, SMF, UPF, UDM, AUSF, NEF, NRF, OAM, plus connected base stations, slices (embb, urllc-hospital with an allow-list, mmtc), subscriber profiles with a known-good snapshot, PDU sessions, UPF flows and per-device mMTC traffic. Deterministic. State goes to `<work>/state.json`; logs go to `<work>/logs/*.log` in Open5GS layout. |
+| Catalog | `catalog/attacks.yaml` | 13 attacks, each with ENISA / 3GPP references, Indian obligations (verbatim phrase + document), resolution checks and Basic / Intermediate / Advanced playbooks. Editable; validated on load. |
 | Engine | `ir/engine.py`, `ir/llm.py`, `ir/policy.py`, `ir/report.py` | Tier state machine and gates; Claude tool use (`LLM_PROVIDER=anthropic`) or the deterministic offline playbook |
 | CLI / UI | `run.py`, `ir/ui.py` | CLI is the source of truth; one-file Streamlit page |
 | Sandbox | `sandbox/` | Windows Sandbox config and setup |
@@ -375,9 +375,34 @@ How a run goes:
    recap) is written to `<work>/reports/`.
 
 "Resolved" is decided by the catalog's `resolved_when` checks against the
-simulator, never by the agent's own claim. With the offline playbook,
-`core_ddos_upf` resolves in Basic. `subscriber_cred_compromise` and
-`nf_host_ransomware` need Advanced. The other seven resolve in Intermediate.
+simulator, never by the agent's own claim.
+
+The six attacks from the team's attack sheet resolve in the tier that
+matches their difficulty there:
+
+| Attack sheet | id | Difficulty | Resolves in |
+|---|---|---|---|
+| 1 Signalling storm | `signalling_storm_amf` | easy | Basic |
+| 2 Fake base station | `rogue_base_station` | medium | Intermediate |
+| 3 Profile tampering / slice breach | `subscriber_profile_tampering` | difficult | Advanced |
+| 4 Rogue NF + data theft | `supply_chain_rogue_nf` | advanced | Advanced |
+| 5 GTP-U spoofing | `gtpu_spoofing_upf` | medium | Intermediate |
+| 6 IoT botnet in the mMTC slice | `iot_botnet_mmtc` | medium-advanced | Advanced |
+
+The other seven resolve as follows. `core_ddos_upf` resolves in Basic.
+`subscriber_cred_compromise` and `nf_host_ransomware` need Advanced. The
+rest (`sba_api_abuse_nef`, `subscriber_data_exfiltration`,
+`exposed_mgmt_interface`, `n2_n3_mitm`) resolve in Intermediate.
+
+Some attacks carry built-in traps:
+- In profile tampering, Basic changes nothing, because the edit could be an
+  honest mistake.
+- In the rogue NF attack, the agent first asks the operator whether to
+  preserve evidence or kill the component. Isolating before capturing loses
+  the evidence.
+- In the botnet attack, quarantining healthy meters counts as a failure.
+- The fake-cell field-team step is a recorded hand-off, because physical
+  removal happens in the real world.
 
 **Policy panel caveat.** Before an obligation is shown with its file and
 page, its phrase is searched for word for word in the cited document. If the

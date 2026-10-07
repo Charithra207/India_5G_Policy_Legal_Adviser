@@ -91,12 +91,14 @@ attacks:
   # REFERENCE ENTRY — every field used, every step commented
   # ---------------------------------------------------------------------------
   - id: signalling_storm_amf
-    name: Signalling storm on the AMF
+    name: Signalling storm (registration flood)
     description: >-
-      A flood of initial-registration requests (repeated SUCI, no follow-up
-      service requests) from one UE range overloads the AMF: CPU above 90%,
-      N1/N2 queues full, legitimate registrations time out.
-    affected_nf: [amf]
+      Hundreds of devices try to register at once and the AMF, the core's
+      front desk, is overwhelmed: CPU above 90%, N1/N2 queues full, and
+      legitimate devices' registrations are rejected. All of it comes through
+      one base station that is not in the cell inventory, from one block of
+      subscriber IDs. Difficulty: easy (loud, one source, obvious cause).
+    affected_nf: [amf, gnb]
     enisa_ref: >-
       ENISA Threat Landscape for 5G Networks (Update), threat "Signalling
       storms" (ENISA 5G Threat Landscape - Update.pdf, p. 107) and "Flooding of
@@ -110,12 +112,13 @@ attacks:
       query: report a security incident affecting the telecommunication network, denial of service
       obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *telecom_act_s22]
     retrieval_categories: [gpp_architecture, gpp_security, threat_frameworks, cyber_incident_rules]
-    # Resolved = AMF healthy with headroom AND the storm source is blocked
-    # (rate limiting alone mitigates; it does not remove the cause).
+    # Resolved = the unauthorised base station is off the AMF, the storm range
+    # is blocked, and LEGITIMATE registrations recover (failure rate < 2%).
     resolved_when:
-      - {fn: get_metrics, args: {nf: amf}, path: cpu, op: "<", value: 70}
-      - {fn: get_nf_health, args: {nf: amf}, path: amf, op: "==", value: ok}
+      - {fn: list_gnbs, path: unauthorised_connected, op: empty}
       - {fn: get_top_talkers, args: {nf: amf}, path: top.0.blocked, op: "==", value: true}
+      - {fn: get_metrics, args: {nf: amf}, path: registration_failure_pct, op: "<", value: 2}
+      - {fn: get_nf_health, args: {nf: amf}, path: amf, op: "==", value: ok}
     playbook:
       basic:
         - id: b1_alerts
@@ -127,62 +130,62 @@ attacks:
           action: {fn: get_nf_health, args: {nf: amf}}
           is_state_changing: false
         - id: b3_metrics
-          description: Read AMF CPU, offered and accepted registration rate
+          description: Read AMF CPU, registration rate and registration failure rate
           action: {fn: get_metrics, args: {nf: amf}}
           is_state_changing: false
         - id: b4_logs
           description: Read recent AMF logs for the registration pattern (repeated SUCI, no service request)
           action: {fn: get_logs, args: {nf: amf, last: 10}}
           is_state_changing: false
-        - id: b5_top_talkers
-          description: Identify which UE ranges generate the registrations
+        - id: b5_gnbs
+          description: List base stations on the AMF; find any not in the cell inventory
+          action: {fn: list_gnbs, args: {}}
+          is_state_changing: false
+        - id: b6_top_talkers
+          description: Identify the subscriber range and the base station it comes through
           action: {fn: get_top_talkers, args: {nf: amf}}
           is_state_changing: false
-        - id: b6_auth_config
-          description: Rule out an authentication misconfiguration causing re-registration loops
-          action: {fn: check_auth_config, args: {}}
-          is_state_changing: false
-        - id: b7_rate_limit
-          description: Cap accepted registrations at 1000/min (AMF overload control; safe, idempotent, reversible)
-          action: {fn: rate_limit_nf, args: {nf: amf, limit: 1000}}
+        - id: b7_disconnect_gnb
+          description: Disconnect the base station that is not in the cell inventory (safe - it is not ours; idempotent)
+          action: {fn: disconnect_gnb, args: {gnb_id: {from: {fn: list_gnbs, path: unauthorised_connected.0}}}}
           is_state_changing: true
           auto_safe: true
-          success_check: {fn: get_metrics, args: {nf: amf}, path: accepted_rate, op: "<=", value: 1000}
-          source: TS 23.501 5.19.5 AMF Control Of Overload (ts_123501v190800p.pdf, p. 360)
-        - id: b8_scale_out
-          description: Add a second AMF instance for headroom (safe, idempotent)
-          action: {fn: scale_out, args: {nf: amf, replicas: 2}}
-          is_state_changing: true
-          auto_safe: true
-          success_check: {fn: get_metrics, args: {nf: amf}, path: cpu, op: "<", value: 70}
-      intermediate:
-        - id: i1_block_top_source
-          description: Block the top registration source found by get_top_talkers (needs approval — legitimate UEs in the range are cut off)
+          success_check: {fn: list_gnbs, path: unauthorised_connected, op: empty}
+        - id: b8_block_range
+          description: Block the subscriber range that generated the storm (safe - every request from it was storm traffic; idempotent)
           action: {fn: block_source, args: {nf: amf, source: {from: {fn: get_top_talkers, args: {nf: amf}, path: top.0.source}}}}
           is_state_changing: true
+          auto_safe: true
           success_check: {fn: get_top_talkers, args: {nf: amf}, path: top.0.blocked, op: "==", value: true}
-        - id: i2_tighten_overload_config
-          description: Lower the configured maximum registration rate to 1000/min
-          action: {fn: patch_config, args: {nf: amf, key: max_registration_rate, value: 1000}}
+        - id: b9_verify
+          description: Confirm legitimate registrations recover (failure rate below 2%)
+          action: {fn: get_metrics, args: {nf: amf}}
+          is_state_changing: false
+          success_check: {fn: get_metrics, args: {nf: amf}, path: registration_failure_pct, op: "<", value: 2}
+      intermediate:
+        - id: i1_rate_limit
+          description: Cap accepted registrations at 1500/min as overload protection against a repeat (AMF overload control)
+          action: {fn: rate_limit_nf, args: {nf: amf, limit: 1500}}
+          is_state_changing: true
+          source: TS 23.501 5.19.5 AMF Control Of Overload (ts_123501v190800p.pdf, p. 360)
+        - id: i2_scale_out
+          description: Add a second AMF instance for headroom
+          action: {fn: scale_out, args: {nf: amf, replicas: 2}}
           is_state_changing: true
         - id: i3_verify
-          description: Re-check AMF health and metrics
+          description: Re-check AMF metrics
           action: {fn: get_metrics, args: {nf: amf}}
           is_state_changing: false
       advanced:
-        - id: a1_block_second_source
-          description: Block the second-highest source as well
-          action: {fn: block_source, args: {nf: amf, source: {from: {fn: get_top_talkers, args: {nf: amf}, path: top.1.source}}}}
-          is_state_changing: true
-        - id: a2_restart_amf
+        - id: a1_restart_amf
           description: Restart the AMF with clean runtime state (drops in-flight registrations)
           action: {fn: reset_nf, args: {nf: amf}}
           is_state_changing: true
-        - id: a3_reapply_limit
+        - id: a2_reapply_limit
           description: Re-apply the registration rate limit after the restart
-          action: {fn: rate_limit_nf, args: {nf: amf, limit: 1000}}
+          action: {fn: rate_limit_nf, args: {nf: amf, limit: 1500}}
           is_state_changing: true
-        - id: a4_verify
+        - id: a3_verify
           description: Final AMF health check
           action: {fn: get_nf_health, args: {nf: amf}}
           is_state_changing: false
@@ -239,56 +242,67 @@ attacks:
 
   # ---------------------------------------------------------------------------
   - id: rogue_base_station
-    name: Rogue (false) base station
+    name: Fake base station (rogue cell)
     description: >-
-      An unplanned cell gnb-666 appears in UE measurement reports with high
-      signal strength; neighbour whitelisting is off and some UEs answer
-      identity requests with null-scheme SUCI (permanent identity exposed).
-    affected_nf: [gnb, udm]
+      A fake cell stronger than the real ones appears in TA-4501. Nearby phones
+      report a cell id that is not in the cell inventory, and clusters of
+      devices drop off or fall back to LTE (denial of service and downgrade;
+      5G's SUCI still hides the permanent identity). Difficulty: medium - the
+      evidence is statistical rather than one obvious log line.
+    affected_nf: [gnb]
     enisa_ref: >-
       ENISA 5G Threat Landscape (Update), "Man in the middle / Session
       hijacking — Session hijacking via rogue base station — Downgrade attacks
       via rogue base station" (ENISA 5G Threat Landscape - Update.pdf, p. 108)
     threegpp_ref: >-
-      3GPP TS 33.501 clause 6.12.2 Subscription Concealed Identifier (SUCI)
-      (ts_133501v181200p.pdf, p. 114); null-scheme (p. 34)
+      3GPP TS 33.501 Annex E "UE-assisted network-based detection of false base
+      station" (ts_133501v181200p.pdf, pp. 250-251) and clause 6.12.2 SUCI
+      (p. 114). (3GPP TR 33.809, the false-base-station study, is not in the
+      knowledge base.)
     policy_tags:
-      categories: [cyber_incident_rules, law_and_acts, data_protection]
-      query: interception of communications and exposure of subscriber identity security incident
-      obligations: [*certin_6h, *tcs_rule7, *certin_logs, *dpdp_s8_6, *dpdp_commencement]
+      categories: [cyber_incident_rules, law_and_acts]
+      query: interference with telecommunication network false base station security incident
+      obligations: [*certin_6h, *tcs_rule7, *certin_logs, *telecom_act_s22]
     retrieval_categories: [gpp_security, threat_frameworks, cyber_incident_rules]
     resolved_when:
-      - {fn: list_neighbors, path: unknown, op: empty}
+      - {fn: get_ran_kpis, path: fallback_to_lte_ues, op: "==", value: 0}
+      - {fn: get_ran_kpis, path: hostile_cells, op: contains, value: gnb-666}
+      - {fn: get_ran_kpis, path: field_ticket_cells, op: contains, value: gnb-666}
       - {fn: list_neighbors, path: whitelist, op: "==", value: enforced}
-      - {fn: check_auth_config, path: suci_protection, op: "!=", value: null-scheme}
     playbook:
       basic:
         - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
-        - {id: b2_neighbors, description: List gNB neighbours and those not in the planned list, action: {fn: list_neighbors, args: {}}, is_state_changing: false}
-        - {id: b3_gnb_logs, description: Read gNB logs (measurement reports), action: {fn: get_logs, args: {nf: gnb, last: 10}}, is_state_changing: false}
-        - {id: b4_amf_logs, description: Read AMF logs (identity responses), action: {fn: get_logs, args: {nf: amf, last: 10}}, is_state_changing: false}
-        - {id: b5_auth, description: Check SUCI protection and integrity settings, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
-        - id: b6_whitelist
+        - {id: b2_ran_kpis, description: Read RAN KPIs - unknown cells in measurement reports, LTE fallbacks, link failures, action: {fn: get_ran_kpis, args: {}}, is_state_changing: false}
+        - {id: b3_neighbors, description: Compare reported cells with the planned neighbour list, action: {fn: list_neighbors, args: {}}, is_state_changing: false}
+        - {id: b4_gnb_logs, description: Read gNB logs (measurement reports), action: {fn: get_logs, args: {nf: gnb, last: 10}}, is_state_changing: false}
+        - {id: b5_amf_logs, description: Read AMF logs (downgraded registrations), action: {fn: get_logs, args: {nf: amf, last: 10}}, is_state_changing: false}
+        - {id: b6_auth, description: Confirm SUCI protection is still on (identity not exposed), action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+        - id: b7_whitelist
           description: Re-enable the planned-neighbour whitelist (restores the baseline control; safe, idempotent)
           action: {fn: patch_config, args: {nf: gnb, key: neighbor_whitelist, value: enforced}}
           is_state_changing: true
           auto_safe: true
           success_check: {fn: list_neighbors, path: whitelist, op: "==", value: enforced}
       intermediate:
-        - id: i1_bar_cell
-          description: Remove and bar the unknown neighbour found by list_neighbors
-          action: {fn: block_neighbor, args: {gnb_id: {from: {fn: list_neighbors, path: unknown.0}}}}
+        - id: i1_flag_hostile
+          description: Flag the cell that is not in the inventory as hostile
+          action: {fn: flag_cell_hostile, args: {cell_id: {from: {fn: get_ran_kpis, path: unknown_cells_reported.0.cell}}}}
           is_state_changing: true
-          success_check: {fn: list_neighbors, path: unknown, op: empty}
-        - id: i2_suci
-          description: Restore SUCI protection to Profile A (no null-scheme)
-          action: {fn: patch_config, args: {nf: udm, key: suci_protection, value: profile_A}}
+          success_check: {fn: get_ran_kpis, path: hostile_cells, op: contains, value: gnb-666}
+        - id: i2_device_policy
+          description: Push a policy telling devices in TA-4501 to ignore that cell
+          action: {fn: push_device_policy, args: {cell_id: {from: {fn: get_ran_kpis, path: unknown_cells_reported.0.cell}}}}
           is_state_changing: true
-          source: TS 33.501 6.12.2 (ts_133501v181200p.pdf, p. 114)
-        - {id: i3_verify, description: Re-check authentication configuration, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+          success_check: {fn: get_ran_kpis, path: fallback_to_lte_ues, op: "==", value: 0}
+        - id: i3_field_team
+          description: Hand off to a field team to locate the transmitter (physical removal is a real-world action; recorded here)
+          action: {fn: dispatch_field_team, args: {cell_id: {from: {fn: get_ran_kpis, path: unknown_cells_reported.0.cell}}}}
+          is_state_changing: true
+          source: TS 33.501 Annex E (ts_133501v181200p.pdf, pp. 250-251)
+        - {id: i4_verify, description: Re-read RAN KPIs, action: {fn: get_ran_kpis, args: {}}, is_state_changing: false}
       advanced:
-        - {id: a1_rotate_subscriber_keys, description: Re-key subscribers whose identity was exposed, action: {fn: rotate_keys, args: {scope: subscriber}}, is_state_changing: true}
-        - {id: a2_verify, description: Final neighbour check, action: {fn: list_neighbors, args: {}}, is_state_changing: false}
+        - {id: a1_fbs_detection, description: Turn on continuous UE-assisted false-base-station detection, action: {fn: patch_config, args: {nf: gnb, key: fbs_detection, value: enabled}}, is_state_changing: true}
+        - {id: a2_verify, description: Final RAN KPI check, action: {fn: get_ran_kpis, args: {}}, is_state_changing: false}
 
   # ---------------------------------------------------------------------------
   - id: subscriber_cred_compromise
@@ -592,45 +606,253 @@ attacks:
 
   # ---------------------------------------------------------------------------
   - id: supply_chain_rogue_nf
-    name: Supply-chain rogue NF registered in the NRF
+    name: Rogue network function and subscriber data theft
     description: >-
-      An SMF instance smf-x9 with an unsigned profile and an unapproved image
-      digest registered in the NRF after signed-profile enforcement was
-      switched off.
-    affected_nf: [nrf, smf]
+      A compromised container (unapproved image) registers itself with the NRF
+      as an SMF - the NRF accepts registrations without authentication. Now
+      trusted, it queries the UDM for subscriber identities and profiles and
+      slowly uploads them out. Difficulty: advanced - low and slow signals
+      across several sources, and the response must happen in order, starting
+      with a human decision: preserve evidence first or kill it now.
+    affected_nf: [nrf, udm, upf]
     enisa_ref: >-
-      ENISA 5G Threat Landscape (Update), "Malicious network functions"
-      (ENISA 5G Threat Landscape - Update.pdf, p. 105)
+      ENISA 5G Threat Landscape (Update), "Malicious network functions" (p. 105),
+      "Data breach, leak, theft and manipulation of information" (p. 106) and
+      NRF vulnerabilities (pp. 72-73) (ENISA 5G Threat Landscape - Update.pdf)
     threegpp_ref: >-
       3GPP TS 33.501 clause 5.9.2.1 requirements for service registration,
-      discovery and authorization (ts_133501v181200p.pdf, p. 39)
+      discovery and authorization - "The NRF shall act as authorization server"
+      (ts_133501v181200p.pdf, pp. 39-40) and 13.4.1 OAuth 2.0 (p. 194)
     policy_tags:
-      categories: [cyber_incident_rules, law_and_acts]
-      query: trusted sources telecommunication equipment security incident
-      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *telecom_act_s22]
-    retrieval_categories: [gpp_security, threat_frameworks, cyber_incident_rules]
+      categories: [cyber_incident_rules, data_protection, law_and_acts]
+      query: personal data breach by unauthorised access to the network, intimation and incident reporting
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *dpdp_s8_6, *dpdp_rule7, *dpdp_commencement]
+    retrieval_categories: [gpp_security, threat_frameworks, data_protection, cyber_incident_rules]
     resolved_when:
       - {fn: list_registered_nfs, path: unsigned, op: empty}
-      - {fn: list_registered_nfs, path: require_signed_nf_profiles, op: "==", value: true}
+      - {fn: list_registered_nfs, path: registration_auth, op: "==", value: required}
+      - {fn: get_metrics, args: {nf: udm}, path: bulk_reads_active, op: "==", value: 0}
+      - {fn: get_egress_flows, path: active, op: empty}
+      - {fn: get_egress_flows, path: isolated_instances, op: contains, value: nf-x9}
     playbook:
       basic:
         - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
-        - {id: b2_registry, description: List registered NF instances and unsigned ones, action: {fn: list_registered_nfs, args: {}}, is_state_changing: false}
-        - {id: b3_logs, description: Read NRF logs, action: {fn: get_logs, args: {nf: nrf, last: 10}}, is_state_changing: false}
-        - {id: b4_health, description: Check NF health, action: {fn: get_nf_health, args: {}}, is_state_changing: false}
-        - {id: b5_smf_metrics, description: Check SMF load - is the rogue instance taking sessions, action: {fn: get_metrics, args: {nf: smf}}, is_state_changing: false}
-        - id: b6_require_signed
-          description: Re-enable signed NF profile enforcement (restores the baseline; safe, idempotent)
-          action: {fn: patch_config, args: {nf: nrf, key: require_signed_nf_profiles, value: true}}
+        - {id: b2_registry, description: List NRF registrations - unsigned instances, unexpected hosts, authentication mode, action: {fn: list_registered_nfs, args: {}}, is_state_changing: false}
+        - {id: b3_nrf_logs, description: Read NRF logs, action: {fn: get_logs, args: {nf: nrf, last: 10}}, is_state_changing: false}
+        - {id: b4_udm_access, description: Who is reading subscriber data from the UDM, action: {fn: check_api_access_log, args: {nf: udm}}, is_state_changing: false}
+        - {id: b5_udm_logs, description: Read UDM logs (query volume per consumer), action: {fn: get_logs, args: {nf: udm, last: 10}}, is_state_changing: false}
+        - {id: b6_egress, description: Look for slow steady uploads from core hosts, action: {fn: get_egress_flows, args: {}}, is_state_changing: false}
+      intermediate:
+        - id: i1_preserve_evidence
+          description: "DECISION - preserve evidence first? Approve = take a forensic snapshot before containment; decline = kill the rogue component immediately"
+          action: {fn: capture_evidence, args: {target: {from: {fn: list_registered_nfs, path: unexpected_hosts.0}}}}
+          is_state_changing: true
+        - id: i2_deregister
+          description: Deregister the rogue component from the NRF (its UDM queries stop)
+          action: {fn: deregister_nf, args: {instance_id: {from: {fn: get_egress_flows, path: flows.0.src}}}}
+          is_state_changing: true
+          success_check: {fn: get_metrics, args: {nf: udm}, path: bulk_reads_active, op: "==", value: 0}
+        - {id: i3_verify, description: Confirm the suspicious UDM queries stopped, action: {fn: check_api_access_log, args: {nf: udm}}, is_state_changing: false}
+      advanced:
+        - id: a1_isolate
+          description: Network-isolate the rogue container
+          action: {fn: isolate_instance, args: {instance_id: {from: {fn: get_egress_flows, path: flows.0.src}}}}
+          is_state_changing: true
+        - id: a2_cut_exfil
+          description: Cut the exfiltration session
+          action: {fn: cut_flow, args: {src: {from: {fn: get_egress_flows, path: flows.0.src}}}}
+          is_state_changing: true
+          success_check: {fn: get_egress_flows, path: active, op: empty}
+        - id: a3_require_auth
+          description: Turn on authentication for NF registration at the NRF
+          action: {fn: patch_config, args: {nf: nrf, key: registration_auth, value: required}}
+          is_state_changing: true
+          source: TS 33.501 5.9.2.1 (ts_133501v181200p.pdf, pp. 39-40)
+        - {id: a4_require_signed, description: Require signed NF profiles again, action: {fn: patch_config, args: {nf: nrf, key: require_signed_nf_profiles, value: true}}, is_state_changing: true}
+        - {id: a5_verify, description: Verify the registry and that the queries stay stopped, action: {fn: list_registered_nfs, args: {}}, is_state_changing: false}
+
+  # ---------------------------------------------------------------------------
+  - id: subscriber_profile_tampering
+    name: Subscriber profile tampering (slice breach)
+    description: >-
+      Someone logs into the core's admin panel with the default credentials and
+      quietly edits one subscriber's profile so the device can join the
+      protected hospital slice (urllc-hospital). At first this looks exactly
+      like an operator's honest mistake. Difficulty: difficult - do not call it
+      an attack before the admin login, the database change and the session
+      line up.
+    affected_nf: [oam, udm, smf]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Manipulation of network
+      configuration/data forging - CORE configuration data tampering"
+      (pp. 103-104) and default accounts / weak passwords (p. 115)
+      (ENISA 5G Threat Landscape - Update.pdf)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 16.2 Authorization for network slice access
+      (ts_133501v181200p.pdf, pp. 215-216)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: unauthorised access and modification of telecommunication network configuration incident reporting
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *telecom_act_s22]
+    retrieval_categories: [gpp_security, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: check_slice_sessions, args: {slice: urllc-hospital}, path: not_on_allow_list, op: empty}
+      - {fn: get_subscriber_changes, path: unreverted, op: empty}
+      - {fn: check_mgmt_exposure, path: default_credentials, op: "==", value: false}
+      - {fn: check_mgmt_exposure, path: admin_access, op: "==", value: jump-host-only}
+    playbook:
+      # Basic changes nothing on purpose: one edit could be an honest mistake,
+      # so the agent first correlates the session, the change record and the login.
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_slice_sessions, description: Sessions on the hospital slice that are not on its allow-list, action: {fn: check_slice_sessions, args: {slice: urllc-hospital}}, is_state_changing: false}
+        - {id: b3_db_changes, description: Subscriber-database change records (who changed what, from where), action: {fn: get_subscriber_changes, args: {}}, is_state_changing: false}
+        - {id: b4_admin_logins, description: Admin login log - was the change made from an unusual source, action: {fn: get_logs, args: {nf: oam, last: 10}}, is_state_changing: false}
+        - {id: b5_mgmt, description: Are default admin credentials still in use, action: {fn: check_mgmt_exposure, args: {}}, is_state_changing: false}
+        - {id: b6_smf_logs, description: When was the session established, action: {fn: get_logs, args: {nf: smf, last: 10}}, is_state_changing: false}
+      intermediate:
+        - id: i1_end_session
+          description: End the session that is not on the slice allow-list
+          action: {fn: end_session, args: {session_id: {from: {fn: check_slice_sessions, args: {slice: urllc-hospital}, path: not_on_allow_list.0.id}}}}
+          is_state_changing: true
+          success_check: {fn: check_slice_sessions, args: {slice: urllc-hospital}, path: not_on_allow_list, op: empty}
+        - {id: i2_verify, description: Re-check the change records (the profile still allows the slice), action: {fn: get_subscriber_changes, args: {}}, is_state_changing: false}
+      advanced:
+        - id: a1_restore_profile
+          description: Restore the edited profile from the known-good snapshot
+          action: {fn: restore_profile, args: {supi: {from: {fn: get_subscriber_changes, path: unreverted.0.supi}}}}
+          is_state_changing: true
+          success_check: {fn: get_subscriber_changes, path: unreverted, op: empty}
+        - id: a2_rotate_admin
+          description: Rotate the admin credentials (remove the default account password)
+          action: {fn: rotate_keys, args: {scope: oam_credentials}}
+          is_state_changing: true
+        - id: a3_restrict_admin
+          description: Restrict admin access to the jump host
+          action: {fn: restrict_admin_access, args: {}}
+          is_state_changing: true
+        - id: a4_verify
+          description: Verify slice membership is back to the allow-list
+          action: {fn: check_slice_sessions, args: {slice: urllc-hospital}}
+          is_state_changing: false
+          source: TS 33.501 16.2 (ts_133501v181200p.pdf, pp. 215-216)
+
+  # ---------------------------------------------------------------------------
+  - id: gtpu_spoofing_upf
+    name: User-plane tunnel abuse (GTP-U spoofing)
+    description: >-
+      A device crafts packets inside its own GTP-U tunnel with a forged inner
+      source address and sends them towards the management address range. The
+      UPF does not check that the inner source matches the session's assigned
+      address. Difficulty: medium - clear once you look at the right field.
+    affected_nf: [upf]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Identity fraud/account or service -
+      IP spoofing" (pp. 106-107) and "Manipulation of network traffic ...
+      Malicious diversion of traffic" (pp. 107-108)
+      (ENISA 5G Threat Landscape - Update.pdf)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 9.3 Security mechanisms for the N3 interface
+      (ts_133501v181200p.pdf, p. 159)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: unauthorised access to network systems through user traffic, incident reporting
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs]
+    retrieval_categories: [gpp_security, gpp_architecture, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: get_upf_flows, path: source_address_validation, op: "==", value: enabled}
+      - {fn: get_upf_flows, path: spoofed, op: empty}
+      - {fn: get_upf_flows, path: to_internal_ranges, op: empty}
+      - {fn: get_upf_flows, path: acl_blocks, op: contains, value: 10.45.0.0/16->10.10.0.0/16}
+      - {fn: check_slice_sessions, args: {slice: embb}, path: session_ids, op: not_contains, value: pdu-5001}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_upf_flows, description: Compare each flow's inner source with the session's assigned address, action: {fn: get_upf_flows, args: {}}, is_state_changing: false}
+        - {id: b3_upf_logs, description: Read UPF logs, action: {fn: get_logs, args: {nf: upf, last: 10}}, is_state_changing: false}
+        - {id: b4_sessions, description: Find the session and subscriber behind the flow, action: {fn: check_slice_sessions, args: {slice: embb}}, is_state_changing: false}
+        - {id: b5_metrics, description: UPF load, action: {fn: get_metrics, args: {nf: upf}}, is_state_changing: false}
+        - id: b6_sav
+          description: Enable source-address validation on the UPF (restores the baseline; safe, idempotent)
+          action: {fn: patch_config, args: {nf: upf, key: source_address_validation, value: enabled}}
           is_state_changing: true
           auto_safe: true
+          success_check: {fn: get_upf_flows, path: spoofed, op: empty}
       intermediate:
-        - id: i1_deregister
-          description: Deregister the unsigned NF instance found in the registry
-          action: {fn: deregister_nf, args: {instance_id: {from: {fn: list_registered_nfs, path: unsigned.0}}}}
+        - id: i1_block_route
+          description: Block the device address range from reaching the internal management range
+          action: {fn: block_route, args: {src_range: {from: {fn: get_upf_flows, path: flows.0.src_range}}, dst_range: {from: {fn: get_upf_flows, path: flows.0.dst_range}}}}
           is_state_changing: true
-          success_check: {fn: list_registered_nfs, path: unsigned, op: empty}
-        - {id: i2_verify, description: Re-list the registry, action: {fn: list_registered_nfs, args: {}}, is_state_changing: false}
+        - id: i2_end_session
+          description: Drop the offending session
+          action: {fn: end_session, args: {session_id: {from: {fn: get_upf_flows, path: flows.0.session}}}}
+          is_state_changing: true
+        - id: i3_verify
+          description: Confirm the spoofed traffic stopped
+          action: {fn: get_upf_flows, args: {}}
+          is_state_changing: false
+          success_check: {fn: get_upf_flows, path: to_internal_ranges, op: empty}
       advanced:
-        - {id: a1_rotate_certs, description: Rotate NF certificates (the rogue NF may have obtained tokens), action: {fn: rotate_keys, args: {scope: nf_certificates}}, is_state_changing: true}
-        - {id: a2_restart_smf, description: Restart the legitimate SMF to drop sessions steered via the rogue NF, action: {fn: reset_nf, args: {nf: smf}}, is_state_changing: true}
+        - {id: a1_rotate_oam, description: Rotate OAM credentials (the management range was targeted), action: {fn: rotate_keys, args: {scope: oam_credentials}}, is_state_changing: true}
+        - {id: a2_oam_logs, description: Check OAM logs for logins from the device range, action: {fn: get_logs, args: {nf: oam, last: 10}}, is_state_changing: false}
+
+  # ---------------------------------------------------------------------------
+  - id: iot_botnet_mmtc
+    name: IoT botnet inside the massive-IoT slice
+    description: >-
+      Cheap smart meters on the mmtc slice, infected through default
+      passwords, are told by a command server to flood the hospital's patient
+      portal on the urllc-hospital slice. The attack starts in one slice and
+      hurts another. Difficulty: medium-advanced - many sources, two slices,
+      and infected devices must be separated from healthy ones.
+    affected_nf: [upf, amf]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Malicious code/software - Botnet"
+      (pp. 104-105), "Distributed denial of service (DDoS)" (p. 104) and
+      default accounts (p. 115) (ENISA 5G Threat Landscape - Update.pdf)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 16 security procedures for network slices
+      (ts_133501v181200p.pdf, pp. 215-216); TS 23.501 5.19 overload control
+      (ts_123501v190800p.pdf, p. 359)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: attacks on IoT devices and denial of service, incident reporting
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *telecom_act_s22]
+    retrieval_categories: [gpp_security, gpp_architecture, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: get_service_health, args: {service: hospital-portal}, path: status, op: "==", value: ok}
+      - {fn: get_flow_logs, path: unblocked_c2, op: empty}
+      - {fn: get_device_stats, args: {slice: mmtc}, path: anomalous, op: empty}
+      - {fn: get_device_stats, args: {slice: mmtc}, path: healthy_quarantined, op: "==", value: 0}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_target, description: Health of the target service, action: {fn: get_service_health, args: {service: hospital-portal}}, is_state_changing: false}
+        - {id: b3_devices, description: Per-device traffic on the mmtc slice - which devices changed behaviour, action: {fn: get_device_stats, args: {slice: mmtc}}, is_state_changing: false}
+        - {id: b4_flow_logs, description: Earlier connections from those devices - a common command server, action: {fn: get_flow_logs, args: {}}, is_state_changing: false}
+        - {id: b5_upf_logs, description: Read UPF logs, action: {fn: get_logs, args: {nf: upf, last: 10}}, is_state_changing: false}
+        - id: b6_slice_limit
+          description: Per-device rate limit of 20 on the mmtc slice (healthy meters send 1; safe, idempotent)
+          action: {fn: rate_limit_slice, args: {slice: mmtc, per_device: 20}}
+          is_state_changing: true
+          auto_safe: true
+          success_check: {fn: get_service_health, args: {service: hospital-portal}, path: status, op: "==", value: ok}
+      intermediate:
+        - id: i1_filter
+          description: Protect the hospital portal with traffic filtering
+          action: {fn: enable_traffic_filter, args: {service: hospital-portal}}
+          is_state_changing: true
+        - id: i2_block_c2
+          description: Block the command server the infected devices contacted
+          action: {fn: block_destination, args: {address: {from: {fn: get_flow_logs, path: c2_candidates.0}}}}
+          is_state_changing: true
+          success_check: {fn: get_flow_logs, path: new_devices_contacting_c2, op: "==", value: 0}
+        - {id: i3_verify, description: Check no new devices join the flood, action: {fn: get_flow_logs, args: {}}, is_state_changing: false}
+      advanced:
+        - id: a1_quarantine
+          description: Quarantine ONLY the devices with anomalous traffic (healthy meters stay in service)
+          action: {fn: quarantine_devices, args: {devices: {from: {fn: get_device_stats, args: {slice: mmtc}, path: anomalous}}}}
+          is_state_changing: true
+          success_check: {fn: get_device_stats, args: {slice: mmtc}, path: healthy_quarantined, op: "==", value: 0}
+        - {id: a2_verify_devices, description: Verify no anomalous devices remain, action: {fn: get_device_stats, args: {slice: mmtc}}, is_state_changing: false}
+        - {id: a3_verify_target, description: Verify the target recovered, action: {fn: get_service_health, args: {service: hospital-portal}}, is_state_changing: false}

@@ -20,13 +20,17 @@ from sim.engine import Sim
 
 def _signalling_storm_amf(sim: Sim) -> None:
     s = sim.state
-    s["traffic"]["amf"] += [{"source": "ue-range-404-45-77xx", "rate": 7800},
-                            {"source": "ue-range-404-45-12xx", "rate": 900}]
-    for _ in range(6):
-        sim.log("amf", "WARN", "registration request burst: 7800/min from ue-range-404-45-77xx "
+    # one base station that is not in the cell inventory carries the whole storm
+    s["gnbs"].append({"id": "gnb-207", "in_inventory": False, "connected": True})
+    s["traffic"]["amf"] += [{"source": "ue-range-404-45-77xx", "rate": 7800, "via": "gnb-207"},
+                            {"source": "ue-range-404-45-12xx", "rate": 900, "via": "gnb-102"}]
+    sim.log("amf", "INFO", "NG setup request from gnb-207 (not in the cell inventory) accepted")
+    for _ in range(5):
+        sim.log("amf", "WARN", "registration request burst: 7800/min via gnb-207 from ue-range-404-45-77xx "
                                "(initial registrations, repeated SUCI, no service request)")
     sim.log("amf", "ERROR", "N1/N2 message queue above 95%; registration latency 4.8 s")
-    sim.alert("AMF CPU above 90% for 3 consecutive ticks (registration storm suspected)")
+    sim.log("amf", "WARN", "registration reject (cause #22 congestion) for UEs on gnb-101/102/103")
+    sim.alert("AMF CPU above 90% for 3 consecutive ticks; legitimate registrations failing")
 
 
 def _core_ddos_upf(sim: Sim) -> None:
@@ -41,11 +45,13 @@ def _core_ddos_upf(sim: Sim) -> None:
 def _rogue_base_station(sim: Sim) -> None:
     s = sim.state
     s["neighbors"].append("gnb-666")
-    s["nfs"]["udm"]["config"]["suci_protection"] = "null-scheme"
+    s["fake_cells"].append("gnb-666")
     s["nfs"]["gnb"]["config"]["neighbor_whitelist"] = "disabled"
-    sim.log("gnb", "WARN", "measurement reports list cell gnb-666 (PCI 999, unknown PLMN) at high RSRP")
-    sim.log("amf", "WARN", "identity requests answered with null-scheme SUCI from 37 UEs near gnb-666")
-    sim.alert("Unknown neighbour gnb-666 not in the planned neighbour list")
+    sim.log("gnb", "WARN", "measurement reports from 214 UEs in TA-4501 list cell gnb-666 (PCI 999, RSRP -61 dBm); "
+                           "no such cell in the cell inventory")
+    sim.log("gnb", "WARN", "38 UEs in TA-4501 fell back to LTE and 12 radio link failures in 10 min")
+    sim.log("amf", "WARN", "registration attempts with downgraded security capabilities from UEs in TA-4501")
+    sim.alert("UE measurement reports show a cell that is not in the cell inventory (TA-4501)")
 
 
 def _subscriber_cred_compromise(sim: Sim) -> None:
@@ -103,10 +109,64 @@ def _n2_n3_mitm(sim: Sim) -> None:
 
 def _supply_chain_rogue_nf(sim: Sim) -> None:
     s = sim.state
-    s["registered_nfs"].append({"id": "smf-x9", "type": "SMF", "signed": False})
+    s["nfs"]["nrf"]["config"]["registration_auth"] = "disabled"
     s["nfs"]["nrf"]["config"]["require_signed_nf_profiles"] = False
-    sim.log("nrf", "WARN", "NF instance smf-x9 registered with an unsigned profile and an unapproved image digest")
-    sim.alert("Unsigned NF instance smf-x9 in the NRF registry")
+    s["registered_nfs"].append({"id": "nf-x9", "type": "SMF", "signed": False, "host": "10.45.9.99"})
+    s["rogue_instances"].append("nf-x9")
+    s["exfiltration"].append("nf-x9")
+    s["traffic"]["udm"].append({"source": "nf-x9", "rate": 40})
+    s["egress_flows"].append({"src": "nf-x9", "dst": "203.0.113.200:443", "kbps": 96, "active": True})
+    sim.log("nrf", "INFO", "NF instance nf-x9 (SMF) registered from 10.45.9.99 without client authentication; "
+                           "image digest not in the approved list")
+    sim.log("udm", "INFO", "Nudm_SDM_Get from nf-x9: 1,240 SUPIs in 6 h (an SMF normally queries 0 full profiles)")
+    sim.log("upf", "INFO", "steady 96 kbps upload 10.45.9.99 -> 203.0.113.200:443 for 6 h")
+    sim.alert("NRF registration from an unexpected host (10.45.9.99)")
+
+
+def _subscriber_profile_tampering(sim: Sim) -> None:
+    s = sim.state
+    supi = "imsi-404450000000777"
+    s["nfs"]["oam"]["config"]["default_credentials"] = True
+    s["nfs"]["oam"]["config"]["admin_access"] = "any-internal"
+    s["subscribers"][supi]["slices"].append("urllc-hospital")
+    s["subscriber_changes"].append({"supi": supi, "field": "allowed_slices", "old": ["embb"],
+                                    "new": ["embb", "urllc-hospital"], "by": "admin", "from": "10.20.30.77",
+                                    "reverted": False})
+    s["sessions"].append({"id": "pdu-9001", "supi": supi, "slice": "urllc-hospital", "ue_ip": "10.46.0.177"})
+    sim.log("oam", "INFO", "admin login (default account 'admin') from 10.20.30.77; usual source is the jump host")
+    sim.log("udm", "INFO", f"subscription data updated for {supi}: allowed NSSAI += urllc-hospital (by admin)")
+    sim.log("smf", "INFO", f"PDU session pdu-9001 established for {supi} on S-NSSAI urllc-hospital")
+    sim.alert("Session on urllc-hospital from a subscriber that is not on the slice allow-list")
+
+
+def _gtpu_spoofing_upf(sim: Sim) -> None:
+    s = sim.state
+    s["nfs"]["upf"]["config"]["source_address_validation"] = "disabled"
+    s["upf_flows"].append({"session": "pdu-5001", "supi": "imsi-404450000000555", "assigned_ip": "10.45.0.55",
+                           "inner_src": "10.45.0.12", "dst": "10.10.0.5:22", "src_range": "10.45.0.0/16",
+                           "dst_range": "10.10.0.0/16", "pps": 812})
+    sim.log("upf", "WARN", "pdu-5001 (UE IP 10.45.0.55): 812 pkt/s with inner source 10.45.0.12, "
+                           "which does not match the session address")
+    sim.log("upf", "WARN", "GTP-U payload from pdu-5001 to 10.10.0.5:22 (OAM management range)")
+    sim.alert("UPF: user-plane packets with a spoofed inner source towards the management range")
+
+
+INFECTED = [f"meter-{i:04d}" for i in (2, 3, 5, 7, 8, 11, 12, 14, 15, 17, 19, 20, 22, 23, 25, 26,
+                                        28, 29, 31, 32, 34, 35, 37, 38)]
+
+
+def _iot_botnet_mmtc(sim: Sim) -> None:
+    s = sim.state
+    s["infected_devices"] = list(INFECTED)
+    for d in INFECTED:
+        s["devices"][d].update(rate=300, dst="hospital-portal")
+        s["c2_contacts"].append({"device": d, "dst": "203.0.113.66:23", "at": "08:12"})
+    s["c2_contacts"] += [{"device": "meter-0004", "dst": "198.51.100.20:443", "at": "08:30"},
+                         {"device": "meter-0010", "dst": "198.51.100.20:443", "at": "08:31"}]
+    sim.log("upf", "WARN", "24 devices on slice mmtc: rate up from 1 to 300 msg/min, all towards hospital-portal")
+    sim.log("upf", "INFO", "flow log: 24 mmtc devices opened sessions to 203.0.113.66:23 between 08:10 and 08:14")
+    sim.log("smf", "WARN", "hospital-portal (slice urllc-hospital) latency 290 ms, availability degraded")
+    sim.alert("hospital-portal degraded: synchronised traffic from many mMTC devices")
 
 
 ATTACKS = {
@@ -120,6 +180,9 @@ ATTACKS = {
     "exposed_mgmt_interface": _exposed_mgmt_interface,
     "n2_n3_mitm": _n2_n3_mitm,
     "supply_chain_rogue_nf": _supply_chain_rogue_nf,
+    "subscriber_profile_tampering": _subscriber_profile_tampering,
+    "gtpu_spoofing_upf": _gtpu_spoofing_upf,
+    "iot_botnet_mmtc": _iot_botnet_mmtc,
 }
 
 

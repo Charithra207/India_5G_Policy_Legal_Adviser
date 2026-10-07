@@ -136,15 +136,86 @@ def test_sim_signalling_storm_inject_diagnose_fix():
     assert sim.get_nf_health("amf") == {"amf": "ok"}
     inject(sim, "signalling_storm_amf")
     assert sim.get_nf_health("amf") == {"amf": "degraded"}
-    assert sim.get_metrics("amf")["cpu"] == 100
+    assert sim.get_metrics("amf")["registration_failure_pct"] > 80          # legitimate devices fail too
+    assert sim.list_gnbs()["unauthorised_connected"] == ["gnb-207"]
     top = sim.get_top_talkers("amf")["top"][0]
-    assert top["source"] == "ue-range-404-45-77xx" and not top["blocked"]
+    assert top["source"] == "ue-range-404-45-77xx" and top["via"] == "gnb-207" and not top["blocked"]
     assert any("registration request burst" in line for line in sim.get_logs("amf")["lines"])
-    sim.rate_limit_nf("amf", 1000)
-    sim.scale_out("amf", 2)
-    assert sim.get_metrics("amf")["cpu"] < 70 and sim.get_nf_health("amf") == {"amf": "ok"}
+    sim.rate_limit_nf("amf", 1000)                                         # mitigation is not a fix:
+    assert sim.get_metrics("amf")["registration_failure_pct"] > 80         # the limit rejects legit UEs too
+    sim.disconnect_gnb("gnb-207")
     sim.block_source("amf", top["source"])
-    assert sim.get_top_talkers("amf")["top"][0]["blocked"] is True
+    assert sim.get_metrics("amf")["registration_failure_pct"] < 2
+    assert sim.get_nf_health("amf") == {"amf": "ok"}
+
+
+def test_logs_use_open5gs_layout():
+    import re
+    sim = Sim(persist=False)
+    inject(sim, "gtpu_spoofing_upf")
+    line = sim.get_logs("upf", 1)["lines"][0]
+    assert re.match(r"^\d\d/\d\d \d\d:\d\d:\d\d\.\d{3}: \[upf\] (INFO|WARNING|ERROR): ", line), line
+
+
+def test_sim_fake_base_station_statistical_evidence_and_containment():
+    sim = Sim(persist=False)
+    inject(sim, "rogue_base_station")
+    kpis = sim.get_ran_kpis()
+    assert kpis["fallback_to_lte_ues"] > 0 and kpis["unknown_cells_reported"][0]["in_cell_inventory"] is False
+    assert sim.check_auth_config()["suci_protection"] == "profile_A"      # SUCI still hides the identity
+    sim.flag_cell_hostile("gnb-666")
+    assert sim.get_ran_kpis()["fallback_to_lte_ues"] > 0                  # devices still camp until told
+    sim.push_device_policy("gnb-666")
+    sim.dispatch_field_team("gnb-666")
+    kpis = sim.get_ran_kpis()
+    assert kpis["fallback_to_lte_ues"] == 0 and kpis["field_ticket_cells"] == ["gnb-666"]
+
+
+def test_sim_rogue_nf_evidence_is_lost_if_isolated_first():
+    sim = Sim(persist=False)
+    inject(sim, "supply_chain_rogue_nf")
+    assert sim.list_registered_nfs()["unexpected_hosts"] == ["nf-x9"]
+    assert sim.get_metrics("udm")["bulk_reads_active"] == 1 and sim.get_egress_flows()["active"]
+    sim.deregister_nf("nf-x9")
+    assert sim.get_metrics("udm")["bulk_reads_active"] == 0                # queries stop ...
+    assert sim.get_egress_flows()["active"]                               # ... the upload does not
+    sim.isolate_instance("nf-x9")
+    assert sim.capture_evidence("nf-x9")["ok"] is False                   # wrong order: evidence gone
+
+
+def test_sim_profile_tampering_and_restore():
+    sim = Sim(persist=False)
+    inject(sim, "subscriber_profile_tampering")
+    bad = sim.check_slice_sessions("urllc-hospital")["not_on_allow_list"]
+    assert [x["id"] for x in bad] == ["pdu-9001"]
+    change = sim.get_subscriber_changes()["unreverted"][0]
+    assert change["by"] == "admin" and change["from"] == "10.20.30.77"
+    sim.end_session("pdu-9001")
+    sim.restore_profile(change["supi"])
+    assert sim.state["subscribers"][change["supi"]]["slices"] == ["embb"]
+    assert sim.get_subscriber_changes()["unreverted"] == []
+
+
+def test_sim_gtpu_spoofing_needs_more_than_sav():
+    sim = Sim(persist=False)
+    inject(sim, "gtpu_spoofing_upf")
+    flows = sim.get_upf_flows()
+    assert flows["spoofed"][0]["inner_src"] != flows["spoofed"][0]["assigned_ip"]
+    sim.patch_config("upf", "source_address_validation", "enabled")
+    assert sim.get_upf_flows()["spoofed"] == [] and sim.get_upf_flows()["to_internal_ranges"]
+    sim.block_route("10.45.0.0/16", "10.10.0.0/16")
+    assert sim.get_upf_flows()["to_internal_ranges"] == []
+
+
+def test_sim_botnet_separate_infected_from_healthy():
+    sim = Sim(persist=False)
+    inject(sim, "iot_botnet_mmtc")
+    assert sim.get_service_health("hospital-portal")["status"] == "degraded"
+    stats = sim.get_device_stats("mmtc")
+    assert len(stats["anomalous"]) == 24 and stats["devices"] == 40
+    assert sim.get_flow_logs()["c2_candidates"] == ["203.0.113.66:23"]   # not the 2-device distractor
+    sim.quarantine_devices(list(sim.state["devices"]))                    # over-reaction
+    assert sim.get_device_stats("mmtc")["healthy_quarantined"] == 16
 
 
 def test_sim_state_persists_for_operator_commands(lab_work_dir):
@@ -184,8 +255,8 @@ def test_sim_cli_arguments_round_trip():
 # Catalog
 # ---------------------------------------------------------------------------
 
-def test_catalog_has_the_ten_attacks_and_validates(catalog):
-    assert [a["id"] for a in catalog["attacks"]] == list(ATTACKS)
+def test_catalog_has_the_thirteen_attacks_and_validates(catalog):
+    assert [a["id"] for a in catalog["attacks"]] == list(ATTACKS) and len(ATTACKS) == 13
     for a in catalog["attacks"]:
         assert 5 <= len(a["playbook"]["basic"]) <= 10
         assert a["policy_tags"]["obligations"], a["id"]
@@ -211,11 +282,14 @@ def test_arg_references_resolve_from_live_findings():
 
 
 @pytest.mark.parametrize("attack,tier", [
-    ("signalling_storm_amf", "intermediate"), ("core_ddos_upf", "basic"),
+    ("signalling_storm_amf", "basic"), ("core_ddos_upf", "basic"),
     ("rogue_base_station", "intermediate"), ("subscriber_cred_compromise", "advanced"),
     ("sba_api_abuse_nef", "intermediate"), ("subscriber_data_exfiltration", "intermediate"),
     ("nf_host_ransomware", "advanced"), ("exposed_mgmt_interface", "intermediate"),
-    ("n2_n3_mitm", "intermediate"), ("supply_chain_rogue_nf", "intermediate")])
+    ("n2_n3_mitm", "intermediate"), ("supply_chain_rogue_nf", "advanced"),
+    # the attacks from the team's attack sheet resolve at its difficulty level
+    ("subscriber_profile_tampering", "advanced"), ("gtpu_spoofing_upf", "intermediate"),
+    ("iot_botnet_mmtc", "advanced")])
 def test_offline_playbook_resolves_each_attack_in_its_tier(catalog, attack, tier):
     inc = Incident(attack, provider=OfflineProvider(), human=Operator(["agent", "agent"]),
                    catalog=catalog, search=no_search)
@@ -244,12 +318,11 @@ class MockLLM:
 
 
 STORM_PLAN = {
-    "basic": [("get_top_talkers", {"nf": "amf"}),
-              ("block_source", {"nf": "amf", "source": "ue-range-404-45-77xx"}),   # not auto-safe
-              ("rate_limit_nf", {"nf": "amf", "limit": 1000}),
-              ("rate_limit_nf", {"nf": "amf", "limit": 5}),                        # wrong args
-              ("scale_out", {"nf": "amf", "replicas": 2})],
-    "intermediate": [("block_source", {"nf": "amf", "source": "ue-range-404-45-77xx"})],
+    "basic": [("list_gnbs", {}),
+              ("block_source", {"nf": "amf", "source": "ue-range-404-45-77xx"}),   # auto-safe step, same args
+              ("disconnect_gnb", {"gnb_id": "gnb-101"}),                           # wrong args: a real cell
+              ("rate_limit_nf", {"nf": "amf", "limit": 1000})],                    # not a Basic step
+    "intermediate": [("disconnect_gnb", {"gnb_id": "gnb-207"})],
 }
 
 
@@ -258,12 +331,13 @@ def test_basic_refuses_non_auto_safe_actions_then_gate_to_intermediate(catalog):
     inc = Incident("signalling_storm_amf", provider=llm, human=human, catalog=catalog, search=no_search)
     report = inc.run()
     refused = [fn for t, fn, r in llm.calls if t == "basic" and r.get("ok") is False]
-    assert refused == ["block_source", "rate_limit_nf"]                   # not auto-safe; wrong args
-    assert inc.sim.get_metrics("amf")["rate_limit"] == 1000
+    assert refused == ["disconnect_gnb", "rate_limit_nf"]                 # wrong args; not auto-safe
+    assert inc.sim.get_top_talkers("amf")["top"][0]["blocked"] is True     # the auto-safe step ran
+    assert all(g["connected"] for g in inc.sim.state["gnbs"] if g["id"] == "gnb-101")
     assert human.asked == ["Basic steps did not resolve it. Intermediate tier?"]
-    assert len(human.confirmations) == 1 and human.confirmations[0].startswith("block_source(")
+    assert len(human.confirmations) == 1 and human.confirmations[0].startswith("disconnect_gnb(")
     assert report["resolved"] and report["data"]["resolved_in"] == "intermediate"
-    assert "## What fixed it" in report["markdown"] and "block_source" in report["markdown"]
+    assert "## What fixed it" in report["markdown"] and "disconnect_gnb" in report["markdown"]
     assert len(report["paths"]) == 2 and all(os.path.exists(p) for p in report["paths"])
 
 
@@ -304,11 +378,34 @@ def test_manual_mode_operator_runs_cli_commands(catalog):
             sim_cli(line.split()[3:])
         return "done"
 
-    inc = Incident("signalling_storm_amf", provider=OfflineProvider(), catalog=catalog, search=no_search,
+    inc = Incident("rogue_base_station", provider=OfflineProvider(), catalog=catalog, search=no_search,
                    human=Operator(["manual"], run_manual=operator_runs))
     report = inc.run()
     assert report["resolved"] and inc.tier_outcomes["intermediate"]["mode"] == "manual"
     assert inc.human.confirmations == []                       # the agent changed nothing itself
+
+
+def test_rogue_nf_evidence_decision_declined_still_contains(catalog):
+    class KillFirst(Operator):                  # declines only the evidence decision
+        def confirm(self, description):
+            self.confirmations.append(description)
+            return not description.startswith("capture_evidence(")
+
+    human = KillFirst(["agent", "agent"])
+    inc = Incident("supply_chain_rogue_nf", provider=OfflineProvider(), human=human, catalog=catalog,
+                   search=no_search)
+    report = inc.run()
+    assert report["resolved"] and report["data"]["resolved_in"] == "advanced"
+    assert inc.sim.get_egress_flows()["evidence"] == []                   # the operator chose speed
+    assert any("DECISION" in c for c in human.confirmations)
+
+
+def test_profile_tampering_basic_changes_nothing(catalog):
+    inc = Incident("subscriber_profile_tampering", provider=OfflineProvider(), human=Operator(["stop"]),
+                   catalog=catalog, search=no_search)
+    inc.run()
+    assert [e for e in inc.timeline if e.state_changing and e.action != "inject"] == []
+    assert inc.phase == "stopped"
 
 
 def test_policy_panel_marks_obligations_unverified_without_index(catalog, monkeypatch, tmp_path):
@@ -347,12 +444,13 @@ def test_anthropic_provider_tool_loop_with_fake_client(catalog):
     responses = [
         SimpleNamespace(stop_reason="tool_use", content=[
             _block("text", text="Checking talkers."),
-            _block("tool_use", id="t1", name="get_top_talkers", input={"nf": "amf"})]),
+            _block("tool_use", id="t1", name="list_gnbs", input={})]),
         SimpleNamespace(stop_reason="tool_use", content=[
-            _block("tool_use", id="t2", name="block_source", input={"nf": "amf", "source": "ue-range-404-45-77xx"}),
-            _block("tool_use", id="t3", name="search_kb", input={"query": "AMF overload"})]),
+            _block("tool_use", id="t2", name="disconnect_gnb", input={"gnb_id": "gnb-207"}),
+            _block("tool_use", id="t3", name="block_source", input={"nf": "amf", "source": "ue-range-404-45-77xx"}),
+            _block("tool_use", id="t4", name="search_kb", input={"query": "AMF overload"})]),
         SimpleNamespace(stop_reason="tool_use", content=[
-            _block("tool_use", id="t4", name="report_tier_outcome", input={"resolved": True, "summary": "blocked"})]),
+            _block("tool_use", id="t5", name="report_tier_outcome", input={"resolved": True, "summary": "blocked"})]),
     ]
     provider = AnthropicProvider.__new__(AnthropicProvider)
     fake = FakeMessages(responses)
@@ -362,16 +460,14 @@ def test_anthropic_provider_tool_loop_with_fake_client(catalog):
                    search=lambda q, categories, k: [{"doc": "ts_123501.pdf", "page_start": 360, "page_end": 360, "score": 0.8,
                                                     "category": categories[0], "text": "AMF overload"}])
     inc.start()
-    inc.sim.rate_limit_nf("amf", 1000)
-    inc.sim.scale_out("amf", 2)
     out = provider.run_tier(inc, "intermediate")
     assert out["summary"] == "blocked" and inc.resolved()
-    assert human.confirmations and human.confirmations[0].startswith("block_source(")
+    assert [c.split("(")[0] for c in human.confirmations] == ["disconnect_gnb", "block_source"]
     results = [m["content"] for m in fake.requests[-1]["messages"]
                if m["role"] == "user" and isinstance(m["content"], list)]
     second_turn = results[1]
-    assert [r["tool_use_id"] for r in second_turn] == ["t2", "t3"]       # all results in one message
-    assert "ts_123501.pdf, p. 360" in second_turn[1]["content"]
+    assert [r["tool_use_id"] for r in second_turn] == ["t2", "t3", "t4"]   # all results in one message
+    assert "ts_123501.pdf, p. 360" in second_turn[2]["content"]
     assert fake.requests[0]["model"] and "tools" in fake.requests[0]
 
 
