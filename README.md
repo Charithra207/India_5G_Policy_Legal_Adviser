@@ -314,6 +314,110 @@ for chunk in get_chunks():
 
 ---
 
+## Incident-response lab (contained 5G attack simulation)
+
+A self-contained module beside the adviser (it does not touch `src/`).
+An attack is injected into a **simulated** 5G core. Two panels then show
+what applies: a **Policy panel** listing the Indian obligations with file
+and page, and a **Technical panel** showing NF health, alerts and the
+playbook. An agent works through tiered playbooks, and a human gate stands
+before every escalation.
+
+> **Contained by design.** The "network" is Python dicts in `sim/engine.py`;
+> the "attacks" in `sim/inject.py` edit those dicts and contain no exploit code.
+> Nothing opens a socket, scans or touches any real host. The only network use
+> is the optional Claude API call (and `pip`/Python download in the sandbox).
+
+| Part | Path | What it does |
+|---|---|---|
+| Index | `kb/build_index.py`, `kb/retriever.py`, `kb/index/` | 276 unique PDFs from the team folder; text by pymupdf, Tesseract OCR for scanned pages; ~450-token chunks; bge-small-en-v1.5 (fastembed, CPU); one FAISS index per category: `law_and_acts`, `cyber_incident_rules`, `gpp_security`, `gpp_architecture`, `threat_frameworks`, `data_protection`, `spectrum_licensing_row`, `trai_consultations`, `other_rules`. `manifest.json` has each document's category plus the hashes of the index files. |
+| Simulator | `sim/engine.py`, `sim/inject.py`, `sim/cli.py` | gNB, AMF, SMF, UPF, UDM, AUSF, NEF, NRF, OAM; deterministic; state in `<work>/state.json`, logs in `<work>/logs/*.log` |
+| Catalog | `catalog/attacks.yaml` | 10 attacks, each with ENISA / 3GPP references, Indian obligations (verbatim phrase + document), resolution checks and Basic / Intermediate / Advanced playbooks. Editable; validated on load. |
+| Engine | `ir/engine.py`, `ir/llm.py`, `ir/policy.py`, `ir/report.py` | Tier state machine and gates; Claude tool use (`LLM_PROVIDER=anthropic`) or the deterministic offline playbook |
+| CLI / UI | `run.py`, `ir/ui.py` | CLI is the source of truth; one-file Streamlit page |
+| Sandbox | `sandbox/` | Windows Sandbox config and setup |
+
+**Train once, nobody retrains.** The index is built a single time and
+committed in `kb/index/` together with its manifest. Users only load it, and
+`kb.retriever.verify()` checks the files against the hashes in the manifest.
+
+### Run it (host)
+
+```bash
+pip install -r requirements.txt
+copy .env.example .env            # optional: add ANTHROPIC_API_KEY for the Claude agent
+
+python run.py --list
+python run.py --attack signalling_storm_amf                 # interactive gates and y/n
+python run.py --attack nf_host_ransomware --provider offline
+python run.py --attack core_ddos_upf --auto                 # non-interactive demo
+streamlit run ir/ui.py                                      # web UI
+
+python -m kb.retriever "report a security incident within six hours" --categories cyber_incident_rules
+python -m sim.inject --attack rogue_base_station            # just inject; then:
+python -m sim.cli list_neighbors                            # operator commands (key=value args)
+python -m pytest tests/test_ir_lab.py -q
+```
+
+How a run goes:
+
+1. The simulation is reset and the attack injected; both panels are printed.
+2. **Basic**: the agent runs the diagnostics and applies only the fixes
+   marked `auto_safe` (safe and idempotent), checking each one afterwards.
+3. If the incident is not resolved, a gate appears:
+   *"Basic steps did not resolve it. Intermediate tier?"*
+   `[1] Agent runs it` `[2] I'll run it` `[3] Stop`.
+   - In agent mode, every state-changing step is printed and needs `y/n`.
+   - In manual mode, the commands (`python -m sim.cli …`) are printed; you
+     run them, paste the output, and the agent interprets it.
+4. The same gate appears before **Advanced**.
+5. A final report (timeline, what fixed it or the escalation, and a policy
+   recap) is written to `<work>/reports/`.
+
+"Resolved" is decided by the catalog's `resolved_when` checks against the
+simulator, never by the agent's own claim. With the offline playbook,
+`core_ddos_upf` resolves in Basic. `subscriber_cred_compromise` and
+`nf_host_ransomware` need Advanced. The other seven resolve in Intermediate.
+
+**Policy panel caveat.** Before an obligation is shown with its file and
+page, its phrase is searched for word for word in the cited document. If the
+phrase isn't found, the panel says so instead. The DPDP Act s.8(6) and DPDP
+Rules r.7 breach duties are labelled as commencing 18 months after 13 Nov 2025
+(G.S.R. 843(E)). The panel is decision support for a training lab, not legal
+advice.
+
+### Run it in Windows Sandbox
+
+```powershell
+powershell -ExecutionPolicy Bypass -File sandbox\launch.ps1              # downloads Python + packages inside
+powershell -ExecutionPolicy Bypass -File sandbox\launch.ps1 -HostPython  # reuse the host's Python (read-only)
+powershell -ExecutionPolicy Bypass -File sandbox\launch.ps1 -Offline     # no network at all (offline agent)
+```
+
+- The sandbox is **ephemeral**. Everything inside it is discarded when it
+  closes, except `sandbox\work\` (sim state, logs, reports), the only
+  writable mapping.
+- The repository, including the committed **`kb\index\`**, is mounted from
+  the host **read-only**. The index is loaded, never rebuilt, and its hashes
+  are checked at start-up.
+- Embeddings run on the **CPU** (fastembed ONNX). There is no GPU, Docker or
+  WSL inside. The host's model cache is copied in, so nothing is downloaded.
+- Network is needed only for the **Claude API**, plus downloading Python and
+  packages unless `-HostPython` is used. With `-Offline`, the deterministic
+  playbook provider runs.
+- `sandbox\5g-sandbox.wsb` is a template, because Windows Sandbox needs
+  absolute paths. `launch.ps1` fills them in and writes
+  `sandbox\5g-sandbox.local.wsb`, which is git-ignored.
+
+### Rebuild the index (maintainers only, once)
+
+```bash
+# needs the team source folder ("knowledge base/" or data/knowledge_base/, git-ignored) and Tesseract
+python -m kb.build_index            # ~10.4M tokens, 21,779 chunks; CPU, a few hours
+```
+
+---
+
 ## Integration interfaces
 
 - **RAG / Knowledge Base layer:** `INTEGRATION_RAG_KB.md`

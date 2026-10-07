@@ -1,0 +1,636 @@
+# =============================================================================
+# Attack catalog for the contained 5G incident-response lab
+# =============================================================================
+# Every attack here is SIMULATED: sim/inject.py edits the in-memory state of
+# sim/engine.py.  Nothing in this file or the lab reaches a real network.
+#
+# Shape of one entry (signalling_storm_amf is the fully commented reference):
+#   id, name, description, affected_nf
+#   enisa_ref / threegpp_ref   where the threat and the control are described
+#                              (file, page in the knowledge base)
+#   policy_tags                Indian obligations shown in the Policy panel
+#     categories               KB categories searched for related passages
+#     query                    the similarity query for those passages
+#     obligations              id, summary, applies_when, doc, phrase — the
+#                              phrase is looked up verbatim in `doc` in the
+#                              index; if it is not found the panel says so
+#   retrieval_categories       KB categories the agent's search_kb may use
+#   resolved_when              diagnostic checks that ALL must pass; the lab,
+#                              not the agent, decides "resolved"
+#   playbook.basic             5-10 most common steps.  Read-only diagnostics
+#                              run freely; a state-changing step runs in Basic
+#                              only if it is `auto_safe: true` (safe and
+#                              idempotent).
+#   playbook.intermediate /    every state-changing step needs the operator's
+#   playbook.advanced          explicit yes (agent mode) or is run by the
+#                              operator (manual mode)
+#   step fields: id, description, action {fn, args}, is_state_changing,
+#                [auto_safe], [success_check {fn, args, path, op, value}],
+#                [source] (where the step comes from)
+#   An argument can come from a live finding instead of a fixed value:
+#     source: {from: {fn: get_top_talkers, args: {nf: amf}, path: top.0.source}}
+#
+# Validated by catalog/loader.py (python -c "from catalog.loader import load_catalog; load_catalog()").
+# =============================================================================
+
+# Obligations reused by several attacks (YAML anchors).  Each phrase was
+# checked against the PDF text; the Policy panel re-checks it in the index.
+obligation_library:
+  - &certin_6h
+    id: certin_6h
+    summary: Report the cyber incident to CERT-In within 6 hours of noticing it
+    applies_when: the incident is of a type listed in Annexure I of the CERT-In Directions (e.g. targeted scanning, compromise of critical systems, attacks on servers, DoS/DDoS, data breach, unauthorised access)
+    doc: CERT-In_Directions_70B_28.04.2022.pdf
+    phrase: within 6 hours of noticing such incidents
+  - &certin_logs
+    id: certin_logs_180d
+    summary: Keep ICT system logs for a rolling 180 days and provide them to CERT-In on request
+    applies_when: always (preserve the incident's logs; do not let them roll over)
+    doc: CERT-In_Directions_70B_28.04.2022.pdf
+    phrase: rolling period of 180 days
+  - &tcs_rule7
+    id: tcs_rules_rule7_6h
+    summary: Telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require
+    applies_when: the incident affects the telecommunication network or service
+    doc: cybersecurity-rules-2024.pdf
+    phrase: within six hours of becoming aware of a security incident
+  - &cti_rules
+    id: cti_rules_reporting
+    summary: If the affected network is notified as Critical Telecommunication Infrastructure, follow the CTI Rules, 2024 incident-reporting timelines
+    applies_when: the affected network or element is notified as Critical Telecommunication Infrastructure
+    doc: Critical Telecommunication Infrastructure Rules, 2024_0.pdf
+    phrase: reporting of security incidents
+  - &telecom_act_s22
+    id: telecom_act_s22
+    summary: Telecommunications Act, 2023 s.22 — measures to protect and ensure the cyber security of telecommunication networks and services
+    applies_when: always (statutory basis of the Telecom Cyber Security Rules)
+    doc: new-telecom-Act-2023.pdf
+    phrase: protect and ensure cyber security of telecommunication networks
+  - &dpdp_s8_6
+    id: dpdp_act_s8_6
+    summary: DPDP Act, 2023 s.8(6) — on a personal data breach, intimate the Data Protection Board and each affected Data Principal
+    applies_when: subscribers' personal data was (or may have been) accessed or disclosed; NOTE s.8 commences 18 months after 13 Nov 2025 (G.S.R. 843(E)) — plan for it now, verify the commencement date before relying on it
+    doc: 2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf
+    phrase: In the event of a personal data breach
+  - &dpdp_rule7
+    id: dpdp_rules_rule7_72h
+    summary: DPDP Rules, 2025 rule 7 — detailed intimation to the Board within seventy-two hours of becoming aware of the breach
+    applies_when: personal data breach; NOTE rule 7 commences eighteen months after publication of the Rules (Nov 2025) — verify before relying on it
+    doc: 53450e6e5dc0bfa85ebd78686cadad39.pdf
+    phrase: within seventy-two hours of becoming aware of the breach
+  - &dpdp_commencement
+    id: dpdp_commencement
+    summary: Commencement notification G.S.R. 843(E), 13 Nov 2025 — the breach-intimation provisions (ss. 3-17 incl. s.8) come into force eighteen months after publication
+    applies_when: deciding whether the DPDP breach duties already apply on the incident date
+    doc: c56ceae6c383460ca69577428d36828b.pdf
+    phrase: eighteen months from the date of publication
+
+attacks:
+
+  # ---------------------------------------------------------------------------
+  # REFERENCE ENTRY — every field used, every step commented
+  # ---------------------------------------------------------------------------
+  - id: signalling_storm_amf
+    name: Signalling storm on the AMF
+    description: >-
+      A flood of initial-registration requests (repeated SUCI, no follow-up
+      service requests) from one UE range overloads the AMF: CPU above 90%,
+      N1/N2 queues full, legitimate registrations time out.
+    affected_nf: [amf]
+    enisa_ref: >-
+      ENISA Threat Landscape for 5G Networks (Update), threat "Signalling
+      storms" (ENISA 5G Threat Landscape - Update.pdf, p. 107) and "Flooding of
+      core network components" (p. 104)
+    threegpp_ref: >-
+      3GPP TS 23.501 clause 5.19 Control Plane Load Control, Congestion and
+      Overload Control and 5.19.5 AMF Control Of Overload
+      (ts_123501v190800p.pdf, pp. 359-360)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: report a security incident affecting the telecommunication network, denial of service
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *telecom_act_s22]
+    retrieval_categories: [gpp_architecture, gpp_security, threat_frameworks, cyber_incident_rules]
+    # Resolved = AMF healthy with headroom AND the storm source is blocked
+    # (rate limiting alone mitigates; it does not remove the cause).
+    resolved_when:
+      - {fn: get_metrics, args: {nf: amf}, path: cpu, op: "<", value: 70}
+      - {fn: get_nf_health, args: {nf: amf}, path: amf, op: "==", value: ok}
+      - {fn: get_top_talkers, args: {nf: amf}, path: top.0.blocked, op: "==", value: true}
+    playbook:
+      basic:
+        - id: b1_alerts
+          description: Read the active alerts to confirm what the monitoring saw
+          action: {fn: get_alerts, args: {}}
+          is_state_changing: false
+        - id: b2_health
+          description: Check AMF health (ok / degraded / down)
+          action: {fn: get_nf_health, args: {nf: amf}}
+          is_state_changing: false
+        - id: b3_metrics
+          description: Read AMF CPU, offered and accepted registration rate
+          action: {fn: get_metrics, args: {nf: amf}}
+          is_state_changing: false
+        - id: b4_logs
+          description: Read recent AMF logs for the registration pattern (repeated SUCI, no service request)
+          action: {fn: get_logs, args: {nf: amf, last: 10}}
+          is_state_changing: false
+        - id: b5_top_talkers
+          description: Identify which UE ranges generate the registrations
+          action: {fn: get_top_talkers, args: {nf: amf}}
+          is_state_changing: false
+        - id: b6_auth_config
+          description: Rule out an authentication misconfiguration causing re-registration loops
+          action: {fn: check_auth_config, args: {}}
+          is_state_changing: false
+        - id: b7_rate_limit
+          description: Cap accepted registrations at 1000/min (AMF overload control; safe, idempotent, reversible)
+          action: {fn: rate_limit_nf, args: {nf: amf, limit: 1000}}
+          is_state_changing: true
+          auto_safe: true
+          success_check: {fn: get_metrics, args: {nf: amf}, path: accepted_rate, op: "<=", value: 1000}
+          source: TS 23.501 5.19.5 AMF Control Of Overload (ts_123501v190800p.pdf, p. 360)
+        - id: b8_scale_out
+          description: Add a second AMF instance for headroom (safe, idempotent)
+          action: {fn: scale_out, args: {nf: amf, replicas: 2}}
+          is_state_changing: true
+          auto_safe: true
+          success_check: {fn: get_metrics, args: {nf: amf}, path: cpu, op: "<", value: 70}
+      intermediate:
+        - id: i1_block_top_source
+          description: Block the top registration source found by get_top_talkers (needs approval — legitimate UEs in the range are cut off)
+          action: {fn: block_source, args: {nf: amf, source: {from: {fn: get_top_talkers, args: {nf: amf}, path: top.0.source}}}}
+          is_state_changing: true
+          success_check: {fn: get_top_talkers, args: {nf: amf}, path: top.0.blocked, op: "==", value: true}
+        - id: i2_tighten_overload_config
+          description: Lower the configured maximum registration rate to 1000/min
+          action: {fn: patch_config, args: {nf: amf, key: max_registration_rate, value: 1000}}
+          is_state_changing: true
+        - id: i3_verify
+          description: Re-check AMF health and metrics
+          action: {fn: get_metrics, args: {nf: amf}}
+          is_state_changing: false
+      advanced:
+        - id: a1_block_second_source
+          description: Block the second-highest source as well
+          action: {fn: block_source, args: {nf: amf, source: {from: {fn: get_top_talkers, args: {nf: amf}, path: top.1.source}}}}
+          is_state_changing: true
+        - id: a2_restart_amf
+          description: Restart the AMF with clean runtime state (drops in-flight registrations)
+          action: {fn: reset_nf, args: {nf: amf}}
+          is_state_changing: true
+        - id: a3_reapply_limit
+          description: Re-apply the registration rate limit after the restart
+          action: {fn: rate_limit_nf, args: {nf: amf, limit: 1000}}
+          is_state_changing: true
+        - id: a4_verify
+          description: Final AMF health check
+          action: {fn: get_nf_health, args: {nf: amf}}
+          is_state_changing: false
+
+  # ---------------------------------------------------------------------------
+  - id: core_ddos_upf
+    name: Volumetric DDoS on the UPF (N6)
+    description: >-
+      Three data-network hosts send far more traffic than the UPF can carry;
+      GTP-U buffers fill and packets are dropped for every slice.
+    affected_nf: [upf]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Distributed denial of service
+      (DDoS)" and "Flooding of core network components" (ENISA 5G Threat
+      Landscape - Update.pdf, p. 104)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 9.3 security of the N3 interface
+      (ts_133501v181200p.pdf, p. 159); user-plane overload handled by
+      operator traffic management (TS 23.501 5.19, ts_123501v190800p.pdf, p. 359)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: denial of service attack on telecommunication network incident reporting
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs]
+    retrieval_categories: [gpp_architecture, gpp_security, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: get_metrics, args: {nf: upf}, path: packet_drop_pct, op: "<", value: 5}
+      - {fn: get_nf_health, args: {nf: upf}, path: upf, op: "==", value: ok}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_health, description: Check UPF health, action: {fn: get_nf_health, args: {nf: upf}}, is_state_changing: false}
+        - {id: b3_metrics, description: Read UPF offered/accepted rate and packet drop, action: {fn: get_metrics, args: {nf: upf}}, is_state_changing: false}
+        - {id: b4_logs, description: Read recent UPF logs, action: {fn: get_logs, args: {nf: upf, last: 10}}, is_state_changing: false}
+        - {id: b5_top_talkers, description: Identify the N6 sources of the flood, action: {fn: get_top_talkers, args: {nf: upf}}, is_state_changing: false}
+        - id: b6_rate_limit
+          description: Police UPF ingress at 3000 units (safe, idempotent)
+          action: {fn: rate_limit_nf, args: {nf: upf, limit: 3000}}
+          is_state_changing: true
+          auto_safe: true
+        - id: b7_scale_out
+          description: Add a second UPF instance (safe, idempotent)
+          action: {fn: scale_out, args: {nf: upf, replicas: 2}}
+          is_state_changing: true
+          auto_safe: true
+          success_check: {fn: get_metrics, args: {nf: upf}, path: packet_drop_pct, op: "<", value: 5}
+      intermediate:
+        - {id: i1_block_1, description: Block the largest flood source, action: {fn: block_source, args: {nf: upf, source: {from: {fn: get_top_talkers, args: {nf: upf}, path: top.0.source}}}}, is_state_changing: true}
+        - {id: i2_block_2, description: Block the second flood source, action: {fn: block_source, args: {nf: upf, source: {from: {fn: get_top_talkers, args: {nf: upf}, path: top.1.source}}}}, is_state_changing: true}
+        - {id: i3_block_3, description: Block the third flood source, action: {fn: block_source, args: {nf: upf, source: {from: {fn: get_top_talkers, args: {nf: upf}, path: top.2.source}}}}, is_state_changing: true}
+      advanced:
+        - {id: a1_upstream_scrubbing, description: Mark N6 for upstream scrubbing by the transit provider, action: {fn: patch_config, args: {nf: upf, key: n6_upstream_scrubbing, value: enabled}}, is_state_changing: true}
+        - {id: a2_restart_upf, description: Restart the UPF with clean runtime state, action: {fn: reset_nf, args: {nf: upf}}, is_state_changing: true}
+        - {id: a3_verify, description: Final UPF metrics, action: {fn: get_metrics, args: {nf: upf}}, is_state_changing: false}
+
+  # ---------------------------------------------------------------------------
+  - id: rogue_base_station
+    name: Rogue (false) base station
+    description: >-
+      An unplanned cell gnb-666 appears in UE measurement reports with high
+      signal strength; neighbour whitelisting is off and some UEs answer
+      identity requests with null-scheme SUCI (permanent identity exposed).
+    affected_nf: [gnb, udm]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Man in the middle / Session
+      hijacking — Session hijacking via rogue base station — Downgrade attacks
+      via rogue base station" (ENISA 5G Threat Landscape - Update.pdf, p. 108)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 6.12.2 Subscription Concealed Identifier (SUCI)
+      (ts_133501v181200p.pdf, p. 114); null-scheme (p. 34)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts, data_protection]
+      query: interception of communications and exposure of subscriber identity security incident
+      obligations: [*certin_6h, *tcs_rule7, *certin_logs, *dpdp_s8_6, *dpdp_commencement]
+    retrieval_categories: [gpp_security, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: list_neighbors, path: unknown, op: empty}
+      - {fn: list_neighbors, path: whitelist, op: "==", value: enforced}
+      - {fn: check_auth_config, path: suci_protection, op: "!=", value: null-scheme}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_neighbors, description: List gNB neighbours and those not in the planned list, action: {fn: list_neighbors, args: {}}, is_state_changing: false}
+        - {id: b3_gnb_logs, description: Read gNB logs (measurement reports), action: {fn: get_logs, args: {nf: gnb, last: 10}}, is_state_changing: false}
+        - {id: b4_amf_logs, description: Read AMF logs (identity responses), action: {fn: get_logs, args: {nf: amf, last: 10}}, is_state_changing: false}
+        - {id: b5_auth, description: Check SUCI protection and integrity settings, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+        - id: b6_whitelist
+          description: Re-enable the planned-neighbour whitelist (restores the baseline control; safe, idempotent)
+          action: {fn: patch_config, args: {nf: gnb, key: neighbor_whitelist, value: enforced}}
+          is_state_changing: true
+          auto_safe: true
+          success_check: {fn: list_neighbors, path: whitelist, op: "==", value: enforced}
+      intermediate:
+        - id: i1_bar_cell
+          description: Remove and bar the unknown neighbour found by list_neighbors
+          action: {fn: block_neighbor, args: {gnb_id: {from: {fn: list_neighbors, path: unknown.0}}}}
+          is_state_changing: true
+          success_check: {fn: list_neighbors, path: unknown, op: empty}
+        - id: i2_suci
+          description: Restore SUCI protection to Profile A (no null-scheme)
+          action: {fn: patch_config, args: {nf: udm, key: suci_protection, value: profile_A}}
+          is_state_changing: true
+          source: TS 33.501 6.12.2 (ts_133501v181200p.pdf, p. 114)
+        - {id: i3_verify, description: Re-check authentication configuration, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+      advanced:
+        - {id: a1_rotate_subscriber_keys, description: Re-key subscribers whose identity was exposed, action: {fn: rotate_keys, args: {scope: subscriber}}, is_state_changing: true}
+        - {id: a2_verify, description: Final neighbour check, action: {fn: list_neighbors, args: {}}, is_state_changing: false}
+
+  # ---------------------------------------------------------------------------
+  - id: subscriber_cred_compromise
+    name: Subscriber credential compromise (cloned SIM)
+    description: >-
+      One SUPI authenticates from two tracking areas 900 km apart within
+      minutes and from three devices — the subscriber's long-term key is
+      likely cloned.
+    affected_nf: [ausf, udm]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Abuse of authentication" (p. 105)
+      and "Identity theft" (p. 106) (ENISA 5G Threat Landscape - Update.pdf)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 6.1.3.2 Authentication procedure for 5G AKA
+      (ts_133501v181200p.pdf, p. 53)
+    policy_tags:
+      categories: [cyber_incident_rules, data_protection, law_and_acts]
+      query: unauthorised access to subscriber credentials personal data breach
+      obligations: [*certin_6h, *tcs_rule7, *certin_logs, *dpdp_s8_6, *dpdp_rule7, *dpdp_commencement]
+    retrieval_categories: [gpp_security, threat_frameworks, data_protection, cyber_incident_rules]
+    resolved_when:
+      - {fn: check_auth_config, path: subscriber_keys_compromised, op: "==", value: false}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_ausf_logs, description: Read AUSF authentication logs, action: {fn: get_logs, args: {nf: ausf, last: 10}}, is_state_changing: false}
+        - {id: b3_auth, description: Check the authentication method and key version, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+        - {id: b4_health, description: Check core NF health, action: {fn: get_nf_health, args: {}}, is_state_changing: false}
+        - {id: b5_amf_logs, description: Read AMF logs for the same SUPI, action: {fn: get_logs, args: {nf: amf, last: 10}}, is_state_changing: false}
+      intermediate:
+        - id: i1_concurrent_auth_guard
+          description: Enable the AUSF concurrent-authentication guard (reject a SUPI already attached elsewhere)
+          action: {fn: patch_config, args: {nf: ausf, key: concurrent_auth_guard, value: enabled}}
+          is_state_changing: true
+        - id: i2_rotate_nf_certs
+          description: Rotate NF certificates in case the key material leaked from the core
+          action: {fn: rotate_keys, args: {scope: nf_certificates}}
+          is_state_changing: true
+        - {id: i3_verify, description: Re-check authentication state, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+      advanced:
+        - id: a1_rekey_subscriber
+          description: Re-provision the subscriber's long-term key (new SIM / key version) — invalidates the clone
+          action: {fn: rotate_keys, args: {scope: subscriber}}
+          is_state_changing: true
+          success_check: {fn: check_auth_config, path: subscriber_keys_compromised, op: "==", value: false}
+          source: TS 33.501 6.1.3.2 5G AKA (ts_133501v181200p.pdf, p. 53)
+        - {id: a2_verify, description: Final authentication check, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+
+  # ---------------------------------------------------------------------------
+  - id: sba_api_abuse_nef
+    name: SBA API abuse through the NEF
+    description: >-
+      An unregistered application function calls the NEF event-exposure API
+      4200 times per minute; OAuth2 on the NEF was relaxed to optional.
+    affected_nf: [nef]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Exploitation of software, hardware
+      vulnerabilities — API exploitation" (p. 104) and "Improper API Access
+      implementation" (p. 190) (ENISA 5G Threat Landscape - Update.pdf)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 13.4.1 OAuth 2.0 based authorization of NF
+      service access (ts_133501v181200p.pdf, p. 194)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: unauthorised access to network functions application programming interface incident
+      obligations: [*certin_6h, *tcs_rule7, *certin_logs]
+    retrieval_categories: [gpp_security, gpp_architecture, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: check_api_access_log, args: {nf: nef}, path: oauth2, op: "==", value: required}
+      - {fn: check_api_access_log, args: {nf: nef}, path: abusive_tokens, op: empty}
+      - {fn: get_metrics, args: {nf: nef}, path: api_calls_per_min, op: "<", value: 200}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_access_log, description: Read the NEF API access log (OAuth2 mode, abusive tokens), action: {fn: check_api_access_log, args: {nf: nef}}, is_state_changing: false}
+        - {id: b3_metrics, description: Read NEF call rate, action: {fn: get_metrics, args: {nf: nef}}, is_state_changing: false}
+        - {id: b4_top_talkers, description: Identify the calling application functions, action: {fn: get_top_talkers, args: {nf: nef}}, is_state_changing: false}
+        - {id: b5_logs, description: Read NEF logs, action: {fn: get_logs, args: {nf: nef, last: 10}}, is_state_changing: false}
+        - id: b6_rate_limit
+          description: Cap NEF API calls at 500/min (safe, idempotent)
+          action: {fn: rate_limit_nf, args: {nf: nef, limit: 500}}
+          is_state_changing: true
+          auto_safe: true
+      intermediate:
+        - id: i1_revoke
+          description: Revoke the tokens of the abusive application function
+          action: {fn: revoke_tokens, args: {nf: nef}}
+          is_state_changing: true
+          success_check: {fn: check_api_access_log, args: {nf: nef}, path: abusive_tokens, op: empty}
+        - id: i2_require_oauth
+          description: Make OAuth2 mandatory again on the NEF
+          action: {fn: patch_config, args: {nf: nef, key: oauth2, value: required}}
+          is_state_changing: true
+          source: TS 33.501 13.4.1 (ts_133501v181200p.pdf, p. 194)
+        - {id: i3_verify, description: Re-read the API access log, action: {fn: check_api_access_log, args: {nf: nef}}, is_state_changing: false}
+      advanced:
+        - {id: a1_isolate, description: Detach the NEF from the mesh while the API gateway is reviewed, action: {fn: isolate_nf, args: {nf: nef}}, is_state_changing: true}
+        - {id: a2_rotate_certs, description: Rotate NF certificates, action: {fn: rotate_keys, args: {scope: nf_certificates}}, is_state_changing: true}
+        - {id: a3_restore, description: Re-attach the NEF, action: {fn: restore_nf, args: {nf: nef}}, is_state_changing: true}
+
+  # ---------------------------------------------------------------------------
+  - id: subscriber_data_exfiltration
+    name: Subscriber data exfiltration from the UDM
+    description: >-
+      A consumer application reads tens of thousands of subscriber profiles
+      (SUPI, MSISDN, location) through a bulk-export interface that should be
+      disabled.
+    affected_nf: [udm]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Data breach, leak, theft and
+      manipulation of information" (ENISA 5G Threat Landscape - Update.pdf, p. 106)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 5.9.2.1 requirements for service registration,
+      discovery and authorization (ts_133501v181200p.pdf, p. 39) and 13.4.1
+      OAuth 2.0 authorization (p. 194)
+    policy_tags:
+      categories: [data_protection, cyber_incident_rules, law_and_acts]
+      query: personal data breach intimation to the Board and affected data principals
+      obligations: [*certin_6h, *tcs_rule7, *dpdp_s8_6, *dpdp_rule7, *dpdp_commencement, *certin_logs]
+    retrieval_categories: [gpp_security, threat_frameworks, data_protection, cyber_incident_rules]
+    resolved_when:
+      - {fn: get_metrics, args: {nf: udm}, path: bulk_reads_active, op: "==", value: 0}
+      - {fn: check_api_access_log, args: {nf: udm}, path: bulk_export, op: "==", value: disabled}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_access_log, description: Read the UDM access log (bulk export, bulk readers), action: {fn: check_api_access_log, args: {nf: udm}}, is_state_changing: false}
+        - {id: b3_metrics, description: Read UDM metrics (active bulk reads), action: {fn: get_metrics, args: {nf: udm}}, is_state_changing: false}
+        - {id: b4_top_talkers, description: Identify the consumers reading the UDM, action: {fn: get_top_talkers, args: {nf: udm}}, is_state_changing: false}
+        - {id: b5_logs, description: Read UDM logs (what data was read), action: {fn: get_logs, args: {nf: udm, last: 10}}, is_state_changing: false}
+        - id: b6_disable_bulk
+          description: Disable bulk export again (restores the baseline control; safe, idempotent)
+          action: {fn: patch_config, args: {nf: udm, key: bulk_export, value: disabled}}
+          is_state_changing: true
+          auto_safe: true
+      intermediate:
+        - id: i1_revoke
+          description: Revoke the access tokens of the bulk reader
+          action: {fn: revoke_tokens, args: {nf: udm}}
+          is_state_changing: true
+          success_check: {fn: get_metrics, args: {nf: udm}, path: bulk_reads_active, op: "==", value: 0}
+        - {id: i2_block, description: Block the reading consumer at the UDM, action: {fn: block_source, args: {nf: udm, source: {from: {fn: get_top_talkers, args: {nf: udm}, path: top.0.source}}}}, is_state_changing: true}
+        - {id: i3_verify, description: Re-read the UDM access log, action: {fn: check_api_access_log, args: {nf: udm}}, is_state_changing: false}
+      advanced:
+        - {id: a1_rotate_certs, description: Rotate NF certificates used by consumers, action: {fn: rotate_keys, args: {scope: nf_certificates}}, is_state_changing: true}
+        - {id: a2_isolate, description: Isolate the UDM for forensic review, action: {fn: isolate_nf, args: {nf: udm}}, is_state_changing: true}
+        - {id: a3_restore, description: Re-attach the UDM after review, action: {fn: restore_nf, args: {nf: udm}}, is_state_changing: true}
+
+  # ---------------------------------------------------------------------------
+  - id: nf_host_ransomware
+    name: Ransomware on an NF host (SMF)
+    description: >-
+      Files on the SMF host are encrypted and renamed *.locked; the SMF has
+      crashed and new PDU sessions fail.
+    affected_nf: [smf]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Ransomware" and "Abuse of remote
+      access to the network" (ENISA 5G Threat Landscape - Update.pdf, p. 105)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 5.9.2.1 NF service registration, discovery and
+      authorization (ts_133501v181200p.pdf, p. 39) — the restored SMF must
+      re-register with valid credentials
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: compromise of critical systems ransomware incident reporting
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *telecom_act_s22]
+    retrieval_categories: [gpp_security, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: check_file_integrity, args: {nf: smf}, path: files_encrypted, op: "==", value: false}
+      - {fn: get_nf_health, args: {nf: smf}, path: smf, op: "==", value: ok}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_health, description: Check health of all NFs for spread, action: {fn: get_nf_health, args: {}}, is_state_changing: false}
+        - {id: b3_integrity, description: Check SMF file integrity and the last clean backup, action: {fn: check_file_integrity, args: {nf: smf}}, is_state_changing: false}
+        - {id: b4_logs, description: Read SMF logs, action: {fn: get_logs, args: {nf: smf, last: 10}}, is_state_changing: false}
+        - {id: b5_upf_integrity, description: Check the neighbouring UPF host for encryption, action: {fn: check_file_integrity, args: {nf: upf}}, is_state_changing: false}
+        - id: b6_isolate
+          description: Isolate the SMF host from the mesh to stop spread (it is already down; safe, idempotent)
+          action: {fn: isolate_nf, args: {nf: smf}}
+          is_state_changing: true
+          auto_safe: true
+          success_check: {fn: get_nf_health, args: {nf: smf}, path: smf, op: "!=", value: ok}
+      intermediate:
+        - id: i1_rotate_oam
+          description: Rotate OAM credentials (likely entry point for the ransomware)
+          action: {fn: rotate_keys, args: {scope: oam_credentials}}
+          is_state_changing: true
+        - {id: i2_mgmt_exposure, description: Check the management interface exposure, action: {fn: check_mgmt_exposure, args: {}}, is_state_changing: false}
+        - {id: i3_rotate_certs, description: Rotate NF certificates, action: {fn: rotate_keys, args: {scope: nf_certificates}}, is_state_changing: true}
+      advanced:
+        - id: a1_restore_backup
+          description: Rebuild the SMF from the last clean backup
+          action: {fn: restore_from_backup, args: {nf: smf}}
+          is_state_changing: true
+          success_check: {fn: check_file_integrity, args: {nf: smf}, path: files_encrypted, op: "==", value: false}
+        - id: a2_reattach
+          description: Re-attach the restored SMF to the mesh
+          action: {fn: restore_nf, args: {nf: smf}}
+          is_state_changing: true
+          success_check: {fn: get_nf_health, args: {nf: smf}, path: smf, op: "==", value: ok}
+        - {id: a3_verify, description: Confirm PDU sessions are back, action: {fn: get_metrics, args: {}}, is_state_changing: false}
+
+  # ---------------------------------------------------------------------------
+  - id: exposed_mgmt_interface
+    name: Management (OAM) interface exposed to the internet
+    description: >-
+      The OAM interface is reachable from outside the operator network and an
+      external address logged in with the default admin account.
+    affected_nf: [oam]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Abuse of remote access to the
+      network" (p. 105) and default accounts / weak passwords (p. 115)
+      (ENISA 5G Threat Landscape - Update.pdf)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 5.9.2.1 authorization requirements
+      (ts_133501v181200p.pdf, p. 39)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: unauthorised access to systems default credentials incident reporting
+      obligations: [*certin_6h, *tcs_rule7, *certin_logs, *telecom_act_s22]
+    retrieval_categories: [gpp_security, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: check_mgmt_exposure, path: exposed_to_internet, op: "==", value: false}
+      - {fn: check_mgmt_exposure, path: default_credentials, op: "==", value: false}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_exposure, description: Check OAM exposure and credentials, action: {fn: check_mgmt_exposure, args: {}}, is_state_changing: false}
+        - {id: b3_logs, description: Read OAM login logs, action: {fn: get_logs, args: {nf: oam, last: 10}}, is_state_changing: false}
+        - {id: b4_health, description: Check NF health for signs of misuse, action: {fn: get_nf_health, args: {}}, is_state_changing: false}
+        - id: b5_close
+          description: Close the management interface to external networks (safe, idempotent)
+          action: {fn: close_mgmt_interface, args: {}}
+          is_state_changing: true
+          auto_safe: true
+          success_check: {fn: check_mgmt_exposure, path: exposed_to_internet, op: "==", value: false}
+      intermediate:
+        - id: i1_rotate_oam
+          description: Replace the default admin credentials (rotate OAM credentials)
+          action: {fn: rotate_keys, args: {scope: oam_credentials}}
+          is_state_changing: true
+          success_check: {fn: check_mgmt_exposure, path: default_credentials, op: "==", value: false}
+        - {id: i2_verify, description: Re-check exposure, action: {fn: check_mgmt_exposure, args: {}}, is_state_changing: false}
+      advanced:
+        - {id: a1_rotate_certs, description: Rotate NF certificates the OAM could reach, action: {fn: rotate_keys, args: {scope: nf_certificates}}, is_state_changing: true}
+        - {id: a2_integrity, description: Check AMF host integrity after the unauthorised login, action: {fn: check_file_integrity, args: {nf: amf}}, is_state_changing: false}
+
+  # ---------------------------------------------------------------------------
+  - id: n2_n3_mitm
+    name: Man-in-the-middle on the N2/N3 backhaul
+    description: >-
+      After a transport-network change, N2 (control) and N3 (user plane) run
+      without IPsec and user-plane integrity protection is off; GTP-U packets
+      arrive via an unknown hop.
+    affected_nf: [gnb, upf, amf]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Man in the middle / Session
+      hijacking" (ENISA 5G Threat Landscape - Update.pdf, p. 108)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 9.2 Security mechanisms for the N2 interface and
+      9.3 for the N3 interface (ts_133501v181200p.pdf, p. 159)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts, data_protection]
+      query: interception of communications on the network security incident
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *dpdp_s8_6, *dpdp_commencement]
+    retrieval_categories: [gpp_security, gpp_architecture, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: check_interface_security, path: N2.ipsec, op: "==", value: true}
+      - {fn: check_interface_security, path: N3.ipsec, op: "==", value: true}
+      - {fn: check_auth_config, path: up_integrity, op: "==", value: required}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_interfaces, description: Check IPsec on N2 and N3, action: {fn: check_interface_security, args: {}}, is_state_changing: false}
+        - {id: b3_auth, description: Check user-plane integrity setting, action: {fn: check_auth_config, args: {}}, is_state_changing: false}
+        - {id: b4_gnb_logs, description: Read gNB logs, action: {fn: get_logs, args: {nf: gnb, last: 10}}, is_state_changing: false}
+        - {id: b5_upf_logs, description: Read UPF logs (unexpected TEIDs), action: {fn: get_logs, args: {nf: upf, last: 10}}, is_state_changing: false}
+        - id: b6_ipsec_n2
+          description: Re-enable IPsec on N2 (restores the baseline; safe, idempotent)
+          action: {fn: enable_ipsec, args: {interface: N2}}
+          is_state_changing: true
+          auto_safe: true
+          source: TS 33.501 9.2 (ts_133501v181200p.pdf, p. 159)
+        - id: b7_ipsec_n3
+          description: Re-enable IPsec on N3 (restores the baseline; safe, idempotent)
+          action: {fn: enable_ipsec, args: {interface: N3}}
+          is_state_changing: true
+          auto_safe: true
+          source: TS 33.501 9.3 (ts_133501v181200p.pdf, p. 159)
+      intermediate:
+        - id: i1_up_integrity
+          description: Require user-plane integrity protection on the gNB (renegotiates bearers)
+          action: {fn: patch_config, args: {nf: gnb, key: up_integrity, value: required}}
+          is_state_changing: true
+          success_check: {fn: check_auth_config, path: up_integrity, op: "==", value: required}
+        - {id: i2_verify, description: Re-check interfaces, action: {fn: check_interface_security, args: {}}, is_state_changing: false}
+      advanced:
+        - {id: a1_rotate_certs, description: Rotate NF certificates (keys may have been observed), action: {fn: rotate_keys, args: {scope: nf_certificates}}, is_state_changing: true}
+        - {id: a2_restart_upf, description: Restart the UPF to drop hijacked tunnels, action: {fn: reset_nf, args: {nf: upf}}, is_state_changing: true}
+
+  # ---------------------------------------------------------------------------
+  - id: supply_chain_rogue_nf
+    name: Supply-chain rogue NF registered in the NRF
+    description: >-
+      An SMF instance smf-x9 with an unsigned profile and an unapproved image
+      digest registered in the NRF after signed-profile enforcement was
+      switched off.
+    affected_nf: [nrf, smf]
+    enisa_ref: >-
+      ENISA 5G Threat Landscape (Update), "Malicious network functions"
+      (ENISA 5G Threat Landscape - Update.pdf, p. 105)
+    threegpp_ref: >-
+      3GPP TS 33.501 clause 5.9.2.1 requirements for service registration,
+      discovery and authorization (ts_133501v181200p.pdf, p. 39)
+    policy_tags:
+      categories: [cyber_incident_rules, law_and_acts]
+      query: trusted sources telecommunication equipment security incident
+      obligations: [*certin_6h, *tcs_rule7, *cti_rules, *certin_logs, *telecom_act_s22]
+    retrieval_categories: [gpp_security, threat_frameworks, cyber_incident_rules]
+    resolved_when:
+      - {fn: list_registered_nfs, path: unsigned, op: empty}
+      - {fn: list_registered_nfs, path: require_signed_nf_profiles, op: "==", value: true}
+    playbook:
+      basic:
+        - {id: b1_alerts, description: Read the active alerts, action: {fn: get_alerts, args: {}}, is_state_changing: false}
+        - {id: b2_registry, description: List registered NF instances and unsigned ones, action: {fn: list_registered_nfs, args: {}}, is_state_changing: false}
+        - {id: b3_logs, description: Read NRF logs, action: {fn: get_logs, args: {nf: nrf, last: 10}}, is_state_changing: false}
+        - {id: b4_health, description: Check NF health, action: {fn: get_nf_health, args: {}}, is_state_changing: false}
+        - {id: b5_smf_metrics, description: Check SMF load - is the rogue instance taking sessions, action: {fn: get_metrics, args: {nf: smf}}, is_state_changing: false}
+        - id: b6_require_signed
+          description: Re-enable signed NF profile enforcement (restores the baseline; safe, idempotent)
+          action: {fn: patch_config, args: {nf: nrf, key: require_signed_nf_profiles, value: true}}
+          is_state_changing: true
+          auto_safe: true
+      intermediate:
+        - id: i1_deregister
+          description: Deregister the unsigned NF instance found in the registry
+          action: {fn: deregister_nf, args: {instance_id: {from: {fn: list_registered_nfs, path: unsigned.0}}}}
+          is_state_changing: true
+          success_check: {fn: list_registered_nfs, path: unsigned, op: empty}
+        - {id: i2_verify, description: Re-list the registry, action: {fn: list_registered_nfs, args: {}}, is_state_changing: false}
+      advanced:
+        - {id: a1_rotate_certs, description: Rotate NF certificates (the rogue NF may have obtained tokens), action: {fn: rotate_keys, args: {scope: nf_certificates}}, is_state_changing: true}
+        - {id: a2_restart_smf, description: Restart the legitimate SMF to drop sessions steered via the rogue NF, action: {fn: reset_nf, args: {nf: smf}}, is_state_changing: true}

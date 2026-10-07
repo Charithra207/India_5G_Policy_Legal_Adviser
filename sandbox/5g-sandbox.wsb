@@ -1,0 +1,40 @@
+<Configuration>
+  <!--
+    Windows Sandbox configuration for the contained 5G incident-response lab.
+    TEMPLATE: Windows Sandbox needs absolute host paths, so do not open this file
+    directly. Run   powershell -ExecutionPolicy Bypass -File sandbox\launch.ps1
+    which fills in this checkout's paths, writes sandbox\5g-sandbox.local.wsb
+    and opens it.
+  
+    Inside the sandbox:
+      C:\lab\repo    this repository, READ-ONLY (code, catalog, and the prebuilt
+                     kb\index\ - loaded, never rebuilt)
+      C:\lab\work    sandbox\work\ on the host, writable (sim state, logs, reports
+                     survive after the sandbox closes)
+      C:\lab\python  optional: the host's Python, READ-ONLY (launch.ps1 -HostPython)
+    The sandbox is ephemeral: everything else is discarded when it closes.
+  -->
+  <VGpu>Disable</VGpu>
+  <Networking>__NETWORKING__</Networking>
+  <AudioInput>Disable</AudioInput>
+  <VideoInput>Disable</VideoInput>
+  <PrinterRedirection>Disable</PrinterRedirection>
+  <ClipboardRedirection>Enable</ClipboardRedirection>
+  <MemoryInMB>8192</MemoryInMB>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>__REPO__</HostFolder>
+      <SandboxFolder>C:\lab\repo</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>__WORK__</HostFolder>
+      <SandboxFolder>C:\lab\work</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+    __PYTHON_MAPPING__
+  </MappedFolders>
+  <LogonCommand>
+    <Command>cmd.exe /c "echo logon > C:\lab\work\logon.txt &amp; start powershell.exe -NoExit -ExecutionPolicy Bypass -File C:\lab\repo\sandbox\setup.ps1"</Command>
+  </LogonCommand>
+</Configuration>

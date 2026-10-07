@@ -8,3 +8,9 @@ fastembed>=0.4       # BAAI/bge-small-en-v1.5 embeddings (ONNX, CPU)
 streamlit>=1.40
 # Tests:
 pytest>=8
+# Incident-response lab (kb/, sim/, catalog/, ir/, run.py):
+faiss-cpu>=1.8       # per-category vector indexes in kb/index/ (CPU)
+pyyaml>=6            # catalog/attacks.yaml
+anthropic>=1.0       # optional: Claude as the agent (LLM_PROVIDER=anthropic)
+# Only to build kb/index/ once (python -m kb.build_index), not to run the lab:
+pytesseract>=0.3     # OCR fallback for scanned PDFs; needs the Tesseract program

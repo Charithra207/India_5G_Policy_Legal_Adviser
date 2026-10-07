@@ -1,0 +1,2868 @@
+{
+  "_about": "Built once by `python -m kb.build_index`; load with kb/retriever.py. Do not rebuild to use it.",
+  "built_at": "2026-10-07T17:03:41.141612+00:00",
+  "build_seconds": 3503.2,
+  "source_folder": "knowledge base",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "dimension": 384,
+  "similarity": "cosine (inner product)",
+  "chunking": {
+    "words": 340,
+    "overlap_words": 60,
+    "approx_tokens": 450,
+    "approx_overlap_tokens": 80
+  },
+  "categories": {
+    "law_and_acts": {
+      "documents": 26,
+      "chunks": 209
+    },
+    "cyber_incident_rules": {
+      "documents": 6,
+      "chunks": 45
+    },
+    "gpp_security": {
+      "documents": 13,
+      "chunks": 2572
+    },
+    "gpp_architecture": {
+      "documents": 15,
+      "chunks": 10385
+    },
+    "threat_frameworks": {
+      "documents": 14,
+      "chunks": 966
+    },
+    "data_protection": {
+      "documents": 7,
+      "chunks": 113
+    },
+    "spectrum_licensing_row": {
+      "documents": 46,
+      "chunks": 939
+    },
+    "trai_consultations": {
+      "documents": 145,
+      "chunks": 6370
+    },
+    "other_rules": {
+      "documents": 4,
+      "chunks": 180
+    }
+  },
+  "documents": [
+    {
+      "file": "092d793d6ea912a5dd79bf0c26ea1a84.pdf",
+      "sha256": "607ab35072f43b60cb56211a0d58960ab26436dd6ea19f6449709814b2681392",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:^(092d793d|cbud cg-dl-e-21032025)",
+      "pages": 12,
+      "ocr_pages": 0,
+      "chunks": 9,
+      "status": "indexed"
+    },
+    {
+      "file": "201307301203459034124draft.pdf",
+      "sha256": "68f317c8b0586cc90b706b6385bcbb74a1e72df2425ec8bba96d98838a1790cf",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 5,
+      "ocr_pages": 0,
+      "chunks": 3,
+      "status": "indexed"
+    },
+    {
+      "file": "201501280536587299303draft-4th.pdf",
+      "sha256": "cd27873c51d9b3d588bbfd3847fc7cdc79e87bc5d42e174517653e3c3dc3e0a2",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "27octconspap_0.pdf",
+      "sha256": "6c2cbb6e5e563185af212a1337e80ec9ff758acc81aabf8217892efd29da9f39",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 45,
+      "ocr_pages": 0,
+      "chunks": 42,
+      "status": "indexed"
+    },
+    {
+      "file": "2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15",
+      "category": "data_protection",
+      "rule": "filename:^(53450e6e|2bf1f0e9|3c7ebbae|cc217843|f6c08379)",
+      "pages": 21,
+      "ocr_pages": 0,
+      "chunks": 38,
+      "status": "indexed"
+    },
+    {
+      "file": "381137eng.pdf",
+      "sha256": "dc2bf5f1aec39476ff29717f22be695e916ca6ae5c71638ba424c6aaa3134d1a",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 44,
+      "ocr_pages": 0,
+      "chunks": 52,
+      "status": "indexed"
+    },
+    {
+      "file": "3c7ebbae0e5456f493f486e6845df86b.pdf",
+      "sha256": "8f8d9526b511801889f8ae022b6d7c5db449283e90fe32792e5896314b32f994",
+      "category": "data_protection",
+      "rule": "filename:^(53450e6e|2bf1f0e9|3c7ebbae|cc217843|f6c08379)",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "3G_0.pdf",
+      "sha256": "afe404cc79343ecea1a61b2e877f7f9d6ceb6cc8f128143324972473b5cc3b97",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=22",
+      "pages": 62,
+      "ocr_pages": 0,
+      "chunks": 60,
+      "status": "indexed"
+    },
+    {
+      "file": "53450e6e5dc0bfa85ebd78686cadad39.pdf",
+      "sha256": "eabc7d05e013144615d78ddc0e8b9c9aac1920e814f4fad38ce6560951f5aa08",
+      "category": "data_protection",
+      "rule": "filename:^(53450e6e|2bf1f0e9|3c7ebbae|cc217843|f6c08379)",
+      "pages": 41,
+      "ocr_pages": 0,
+      "chunks": 37,
+      "status": "indexed"
+    },
+    {
+      "file": "5G Security Controls Matrix booklet.pdf",
+      "sha256": "e5db27669101f93721fbbce52917231a61d1cf70bf246f8fe904e5f5e00fdd65",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 5,
+      "ocr_pages": 0,
+      "chunks": 6,
+      "status": "indexed"
+    },
+    {
+      "file": "743514e61357b71b818dcbb96ca2bdab.pdf",
+      "sha256": "39cf3e5a35c7feb6ffe8b021ddd0cabeeddc2fe3f24d6b6f10275cbc072c0c19",
+      "category": "other_rules",
+      "rule": "filename:^743514e6",
+      "pages": 22,
+      "ocr_pages": 0,
+      "chunks": 20,
+      "status": "indexed"
+    },
+    {
+      "file": "Addendum_16_Jul_2003.pdf",
+      "sha256": "26465f56d2246e744bca13c8aed8b51aea9015cb26325c907279605dff91a344",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=4",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "Administration of Digital Bharat Nidhi Rules, 2024_0 (1).pdf",
+      "sha256": "cf5aa15359d944eb7015e536e57acfe01dda1fb3b6e88692091acef18f0bfb3f",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 8,
+      "ocr_pages": 0,
+      "chunks": 6,
+      "status": "indexed"
+    },
+    {
+      "file": "Administration of Digital Bharat Nidhi Rules, 2024_0.pdf",
+      "sha256": "cf5aa15359d944eb7015e536e57acfe01dda1fb3b6e88692091acef18f0bfb3f",
+      "status": "duplicate of Administration of Digital Bharat Nidhi Rules, 2024_0 (1).pdf"
+    },
+    {
+      "file": "amateur-services-rules-2024.pdf",
+      "sha256": "63d31e444b1fea70f719a526d85903cb2a2ed4dfc2388965018355f8beb85b85",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 15,
+      "ocr_pages": 0,
+      "chunks": 15,
+      "status": "indexed"
+    },
+    {
+      "file": "architect-guide.pdf",
+      "sha256": "09cd8e0f9cb74baa67a0aa09be3e2f98c0b16a945961d365e6d42b0208ad953f",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 48,
+      "ocr_pages": 0,
+      "chunks": 49,
+      "status": "indexed"
+    },
+    {
+      "file": "BharatNet as Special Project under rule 12(1) of Telecommunications (Right of Way) Rules, 2024 (1).pdf",
+      "sha256": "31619f895dfe35b6a5062805dbc617a372bf35e5dc9bcb1dfbe14c948d5a8c03",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "BharatNet as Special Project under rule 12(1) of Telecommunications (Right of Way) Rules, 2024.pdf",
+      "sha256": "31619f895dfe35b6a5062805dbc617a372bf35e5dc9bcb1dfbe14c948d5a8c03",
+      "status": "duplicate of BharatNet as Special Project under rule 12(1) of Telecommunications (Right of Way) Rules, 2024 (1).pdf"
+    },
+    {
+      "file": "brief_preconsultation_paper[1] (1).pdf",
+      "sha256": "2469ca66910219cbbde44892d1bacc7193550200356009ebe26464529a81cece",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 11,
+      "ocr_pages": 0,
+      "chunks": 9,
+      "status": "indexed"
+    },
+    {
+      "file": "Broadband_CP_20082020.pdf",
+      "sha256": "1a822d632bfcab4f9e71ac7ecc3ed7a519781f66396d837416cf51a359cde2cb",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=11",
+      "pages": 115,
+      "ocr_pages": 0,
+      "chunks": 94,
+      "status": "indexed"
+    },
+    {
+      "file": "Broadband_Policy_2004.pdf",
+      "sha256": "618147f6eb3f0c0d3ba662fccc32c1cfcae1181294ecc48306fa71b8ff9bbdde",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=5",
+      "pages": 5,
+      "ocr_pages": 0,
+      "chunks": 8,
+      "status": "indexed"
+    },
+    {
+      "file": "c56ceae6c383460ca69577428d36828b.pdf",
+      "sha256": "6df25cd8c76ac8eb18cae81835d51d51128ffbf2ed13262843395efddf0998e5",
+      "category": "law_and_acts",
+      "rule": "filename:^c56ceae6",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "captive-telecom-services-rules-2026.pdf",
+      "sha256": "4abb772a15cfbc0ad3a64e151602169d8cb82e727cc56d47ff7f09334739f9f4",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 52,
+      "ocr_pages": 0,
+      "chunks": 52,
+      "status": "indexed"
+    },
+    {
+      "file": "CBuD CG-DL-E-21032025-261799.pdf",
+      "sha256": "2436fdd24f4a208f558327760912251f4103a543439292ceec0a642a8ba204c5",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:^(092d793d|cbud cg-dl-e-21032025)",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "cc217843dc3bcb37b2b05bcc3b4e031f.pdf",
+      "sha256": "5cc76d1fedf9f93655ef92a297dd7e590a78a145ba0d25a40fe2190faecae65b",
+      "category": "data_protection",
+      "rule": "filename:^(53450e6e|2bf1f0e9|3c7ebbae|cc217843|f6c08379)",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "CERT-In_Directions_70B_28.04.2022.pdf",
+      "sha256": "202c2f3953d792dcfb3ecb3634fc82ab75437ee596de89b8d59a211e8e42431f",
+      "category": "cyber_incident_rules",
+      "rule": "filename:cert-?in|cybersecurity-rules|telecom-cyber-security|critical telecommunication infrastructure|icdr-portal",
+      "pages": 8,
+      "ocr_pages": 0,
+      "chunks": 7,
+      "status": "indexed"
+    },
+    {
+      "file": "Cloud Security Guide for SMEs.pdf",
+      "sha256": "da6d522fec9717b53528afbcaf3f050805cea17a479f5573c158fc3d1cecf5a9",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 50,
+      "ocr_pages": 0,
+      "chunks": 56,
+      "status": "indexed"
+    },
+    {
+      "file": "Cloud_Computing_Consultation_paper_10_june_2016.pdf",
+      "sha256": "80da08e6c6c40c33ef2db08e5e9af848e324ec76e35f3dfda49d40c070267ab7",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 119,
+      "ocr_pages": 0,
+      "chunks": 101,
+      "status": "indexed"
+    },
+    {
+      "file": "commercial-radio-operator-certificate-of-proficiency-to-operate-global-maritime-distress-and-safety-system-rules-2024.pdf",
+      "sha256": "281b8e4e264efc236b53ed03eaf5ce1de27799a8b6a6cda45930dbc87ad2b340",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 9,
+      "ocr_pages": 0,
+      "chunks": 10,
+      "status": "indexed"
+    },
+    {
+      "file": "concmts_0.pdf",
+      "sha256": "94bf9aca0b46dca63f7b7fa15ba812c5511f9352fae566bd965acf02327e77f2",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=7",
+      "pages": 108,
+      "ocr_pages": 0,
+      "chunks": 101,
+      "status": "indexed"
+    },
+    {
+      "file": "conpaper22jul05_0.pdf",
+      "sha256": "1a7c29673cd730e563c6eca1047192e1a3071fa1139a47d7a7ab9b89ae08481b",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 44,
+      "ocr_pages": 0,
+      "chunks": 38,
+      "status": "indexed"
+    },
+    {
+      "file": "conpaper23feb05_0.pdf",
+      "sha256": "962333dbc27cdfc31ad78e54850ef1c898f4d428fcb8b3df886ef4031a59018d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 42,
+      "ocr_pages": 0,
+      "chunks": 33,
+      "status": "indexed"
+    },
+    {
+      "file": "conpaper24jun05.pdf",
+      "sha256": "2bee37a4ae9bfe13b672f9bd9d0b9789ff394411c5f7d4c72ccaaa882894cfec",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 20,
+      "ocr_pages": 0,
+      "chunks": 16,
+      "status": "indexed"
+    },
+    {
+      "file": "consulcelu.pdf",
+      "sha256": "b36829a8ef1603415b745f026a97904c33fc947ec51f0ed0f9fd679b7fd16095",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 31,
+      "ocr_pages": 0,
+      "chunks": 35,
+      "status": "indexed"
+    },
+    {
+      "file": "consullise1.pdf",
+      "sha256": "9db19e7ab503c677bec2b66c90dd08cb6f6cb8bba0e038f388d067ca4a11a6c1",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 54,
+      "ocr_pages": 0,
+      "chunks": 51,
+      "status": "indexed"
+    },
+    {
+      "file": "consullise12june2000.pdf",
+      "sha256": "ff5b15d0462104340b97b5ffae57bfb267c21c7279a265110f83c198789db537",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "consulpre.pdf",
+      "sha256": "8053dd32b6f4ffc71a3a1ab291f426bc2e447b626b87ff34c9189b38006df8d1",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 95,
+      "ocr_pages": 0,
+      "chunks": 150,
+      "status": "indexed"
+    },
+    {
+      "file": "consultaionpapertdradiv28dec10_2_0.pdf",
+      "sha256": "fddcbd15d42aabc8dd77f0ef6c1e9ae76bb58e935d9bda5fbf85d5104841f506",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 55,
+      "ocr_pages": 0,
+      "chunks": 44,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation Paper AGR Internet services final 2812.pdf",
+      "sha256": "9ebc9b792989344d063847c4c07526b4f28130f3b9ff876eee978c3b856bb3c1",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 46,
+      "ocr_pages": 0,
+      "chunks": 26,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation Paper on amendment to wireless data regln 21042014.pdf",
+      "sha256": "f29e496cc571af1b202390b336541b74754644f57dccae7d6de10b8bb6e67504",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 23,
+      "ocr_pages": 0,
+      "chunks": 19,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation Paper on Broadband 24Sep2014.pdf",
+      "sha256": "0df31b33e7e23090cdd9771ea3b661357442ddbde4c66f7d40bdfe1bd27bf5ee",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 78,
+      "ocr_pages": 0,
+      "chunks": 73,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation Paper on metering and billing 27Nov2012Final.pdf",
+      "sha256": "c90fd965f397423a2eebe8322cacdbea783b555279c691fdf3960b0478c173ac",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 27,
+      "ocr_pages": 0,
+      "chunks": 27,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation Paper_29092017.pdf",
+      "sha256": "55edc45b6873b7f0b5b8de7f764b2dee9ccd42fd15ec1f38a32211656c94f13c",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 39,
+      "ocr_pages": 0,
+      "chunks": 30,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation-DoT-reference-on-BWA -final.pdf",
+      "sha256": "9ba550137471bfd06bea45bbb7888201cb3c612f90447cfd0d5d10d8a6087473",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 21,
+      "ocr_pages": 0,
+      "chunks": 5,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation-paper20aug2000.pdf",
+      "sha256": "0b5c3e09b2d9ba27ea76b12d7e0ddebe2936cf6f1689ad1edb0c1539c254ed55",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 51,
+      "ocr_pages": 0,
+      "chunks": 59,
+      "status": "indexed"
+    },
+    {
+      "file": "consultation27dec06.pdf",
+      "sha256": "2d974ee376ec37ba64d8cfb67afaff9ff769d9c67b3342977d85c58363faf09b",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 55,
+      "ocr_pages": 0,
+      "chunks": 40,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Note_15_November_2016_1.pdf",
+      "sha256": "dc53c4814279af373abeef2f3945ee75ce85a1f469fd73ce9d1e1c7fa892fac1",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 16,
+      "ocr_pages": 0,
+      "chunks": 10,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper _on_Privacy_Security_ownership_of_data_09082017_0.pdf",
+      "sha256": "b2f7b6d73dd916b185269d4648b04f2e0c168e379283115c9e73b9066d1280a7",
+      "category": "data_protection",
+      "rule": "filename:dpdp|privacy|personal.data",
+      "pages": 28,
+      "ocr_pages": 0,
+      "chunks": 23,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper_20082020.pdf",
+      "sha256": "4899d8a21d4880af90d4424becd90e20d0f4be566b3561add9f7b2d8b3f8fcdb",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 55,
+      "ocr_pages": 0,
+      "chunks": 48,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper_on_Internet_Telphony.pdf_1_0.pdf",
+      "sha256": "0b5ec2c3ee76864c0404c719dd4d10f6a3977f3db11f94047742024d0aa789c9",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 40,
+      "ocr_pages": 0,
+      "chunks": 31,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper_PPDR _09102017 (1).pdf",
+      "sha256": "1a0cfceb5b052e432c5113333d32ebb81d9a1bf7bc7eea48a4381cf4b21906e4",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 61,
+      "ocr_pages": 0,
+      "chunks": 46,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper_Review_of_VMS_Audiotex_UMSL_14_june_2016.pdf",
+      "sha256": "b6756809833bd5f7fd5d830d25a4d12ff3268a7ff586e3953f5274b080db0697",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 48,
+      "ocr_pages": 0,
+      "chunks": 39,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper_vno_20032017.pdf",
+      "sha256": "7ef18db9adf93cb67b824bfc7a5e537d3ab115bcc888ad85ab8c651cb4a3d65c",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 53,
+      "ocr_pages": 0,
+      "chunks": 58,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper_VoLTE_CSFB_26022018.pdf",
+      "sha256": "6be271d1b8c6a31eb18856de56bf453a0dcf48fdc46ed2fa5da8e318095d5cbf",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 27,
+      "ocr_pages": 0,
+      "chunks": 26,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultation_Paper_VSAT policy issues_28_10_2016.pdf",
+      "sha256": "278772cd1a1a7d85d2657527fa5c081c767766da5930342dcef856a5a583bf41",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 60,
+      "ocr_pages": 0,
+      "chunks": 16,
+      "status": "indexed"
+    },
+    {
+      "file": "consultationon10june10jun2010_0.pdf",
+      "sha256": "6dc740d09b7915bf33093c6a2ecde3fef410c283e36abe928d90f04259ea75f9",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 106,
+      "ocr_pages": 0,
+      "chunks": 71,
+      "status": "indexed"
+    },
+    {
+      "file": "Consultationpaper1nov06pdf.pdf",
+      "sha256": "5556715e21d6e316d09680d30ba46de49f5ab65220a0c7762c3728d9b3244c76",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 23,
+      "ocr_pages": 0,
+      "chunks": 20,
+      "status": "indexed"
+    },
+    {
+      "file": "consuluni.pdf",
+      "sha256": "1fc45c4a505aa72b8ec6010c24ff6242c0c37d83479c7faf022ee828c6dbb599",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 126,
+      "ocr_pages": 0,
+      "chunks": 139,
+      "status": "indexed"
+    },
+    {
+      "file": "corrigendum_19062008.pdf",
+      "sha256": "2fc6f830f5d732213f4d6916d3c6f158536b93c4a065b33a76c0a9463fa0155e",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=3",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "cp-13mar04.pdf",
+      "sha256": "430b6466b0e86c671bf24a6b80f93c32cbd5e5cc17f7e8df96b33fd6de690cb5",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 101,
+      "ocr_pages": 0,
+      "chunks": 113,
+      "status": "indexed"
+    },
+    {
+      "file": "CP-VNO-5.12.2014.pdf",
+      "sha256": "3a7825eadfcc2ca03efb433f440896237f8134cba470d2ace698684067734347",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 98,
+      "ocr_pages": 0,
+      "chunks": 74,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_01092020.pdf",
+      "sha256": "08b1e04394c6c960152ba22346b169703a5eae3cd5cd3cb35e844fe62f99ef58",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 37,
+      "ocr_pages": 0,
+      "chunks": 35,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_02012020_0.pdf",
+      "sha256": "9c101ca3265d241204f1ab4bb35e61e963b4cf2eee90b21f0b02fa7314e2c566",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 38,
+      "ocr_pages": 0,
+      "chunks": 45,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_02052023.pdf",
+      "sha256": "f3b5a3031d4e0d469ad7e2787971b3dc678d1a3bb184c4c16b3262ddbeac85e8",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 21,
+      "ocr_pages": 0,
+      "chunks": 12,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_04072025.pdf",
+      "sha256": "0d257f3769249167ecd63d80edb698172bf7160f93f9a69e59f59287c0e0b3cb",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 71,
+      "ocr_pages": 0,
+      "chunks": 43,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_05082022.pdf",
+      "sha256": "486fc608492c964685ab5f734072555afa91c0619b4deb586b5955c316baee59",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 173,
+      "ocr_pages": 0,
+      "chunks": 155,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_05082026.pdf",
+      "sha256": "1482e4b82d822709a93f4bb613114ab4cc1780a43d7fae8c1ee0cc0bc6666f3b",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 203,
+      "ocr_pages": 0,
+      "chunks": 162,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_06122000.pdf",
+      "sha256": "40c339593365f6b91ffe19a1a658b68bc36d68be1a5275b2fe36f6b36723f03e",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 55,
+      "ocr_pages": 0,
+      "chunks": 62,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_07022024.pdf",
+      "sha256": "657f6e4b57f9e97abe849db8399e4ea8b01a2f01b097b9232bdf9abeb82c6898",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 61,
+      "ocr_pages": 0,
+      "chunks": 34,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_07072023.pdf",
+      "sha256": "c104823ba697a1b3be1e30ba9bb5ece5a460c76c0b9aa24a779f0dc1d13f5eee",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 100,
+      "ocr_pages": 0,
+      "chunks": 82,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_07_free_data_consultation_0.pdf",
+      "sha256": "7a19c5e202a625b6c9dd84722063fc5cc126bb96d43fd96f2208e14aeb846729",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 9,
+      "ocr_pages": 0,
+      "chunks": 7,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_08042026.pdf",
+      "sha256": "fa9d9c6846abc09bab0a88dfa4af1386ec0c1a1d18a74674ddfde5e2d3042a12",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 271,
+      "ocr_pages": 0,
+      "chunks": 211,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_09122019.pdf",
+      "sha256": "1c42c2f68012775c2fcbccc057648430f86ccfaab7e68927f914d753429b788d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 23,
+      "ocr_pages": 0,
+      "chunks": 16,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_11072024.pdf",
+      "sha256": "c908e41ac92c8eb44c66c172ead857d0190646756a378c4224992bd3ee32ee78",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 282,
+      "ocr_pages": 0,
+      "chunks": 222,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_12032021.pdf",
+      "sha256": "b01c9b33275532f7d5d8ac7841aed0569ae2eef6387f2e4c4c9750fe7a586f81",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 55,
+      "ocr_pages": 0,
+      "chunks": 42,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_15112021.pdf",
+      "sha256": "c8a2c54f6d4db29ca506ed722c749882e593a8724ccc961196aba6ab9c2afaa6",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 49,
+      "ocr_pages": 0,
+      "chunks": 38,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_16092019 (1).pdf",
+      "sha256": "1f2f0a14c87a74cb0e758887c957aaa7dc94096962d859bd385bd1c41e643871",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 25,
+      "ocr_pages": 0,
+      "chunks": 27,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_17_11_2015_new_0.pdf",
+      "sha256": "563a4ce9b40d6a6a193b2369b7b4ec6b2545e6012f197e982f344be887572d49",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 42,
+      "ocr_pages": 0,
+      "chunks": 34,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_18082023_0.pdf",
+      "sha256": "86093e35ce832a3eb094959aed13b85a8d5037dd70640c1e7cf7b09b64a400af",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 149,
+      "ocr_pages": 0,
+      "chunks": 133,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_19052021.pdf",
+      "sha256": "167e2633b208f79ffb75ffac4068cf190cb1bc7d62c8ddedf17152dd3b19481d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 45,
+      "ocr_pages": 0,
+      "chunks": 33,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_19062023_1.pdf",
+      "sha256": "8beec2544dd5ac920d57973e90dd4457c8f9e57f92698801b8d67ffe94105023",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 51,
+      "ocr_pages": 0,
+      "chunks": 44,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_19092019_1.pdf",
+      "sha256": "0014a592e71a6f58e18a047fef48a54c0c337f3c8bbdded80ef26ae43804ced2",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 42,
+      "ocr_pages": 0,
+      "chunks": 19,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_22102024 (1).pdf",
+      "sha256": "46e3fa182b4359173d4529bc7400969349809862bc34c448ecbae533fa23f1f6",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 169,
+      "ocr_pages": 0,
+      "chunks": 104,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_23032022.pdf",
+      "sha256": "99c8aad38c45a817af7cb1939b074e0ebf4d3281f14604f65a43ebdc827e4e83",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 83,
+      "ocr_pages": 0,
+      "chunks": 60,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_23102019.pdf",
+      "sha256": "2b3de5e37907b3b954fa298f8cbfeaf9ba608e181950bc748c78b83de8368a59",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 35,
+      "ocr_pages": 0,
+      "chunks": 41,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_23122022_0.pdf",
+      "sha256": "e02be484536a6a02f59dc4906019aa3e8d85bcb4c607d1c335f12736a134bc73",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 52,
+      "ocr_pages": 0,
+      "chunks": 37,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_24062024.pdf",
+      "sha256": "adddd7b3b71c6d946510ee36285213fe010581c6691dda38bdd41e5f2cb0caec",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 56,
+      "ocr_pages": 0,
+      "chunks": 38,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_25032022.pdf",
+      "sha256": "717cfc4c38cbba8690293bfafb526c1fe1c5f2722de9d4f8ee80c78fa7fe8cf5",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 162,
+      "ocr_pages": 0,
+      "chunks": 141,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_25072022.pdf",
+      "sha256": "0b7cb755018684e0b090f867ed88d120ecaf6084c1a13a76ac1a8cd03dc548f5",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 55,
+      "ocr_pages": 0,
+      "chunks": 41,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_26072022_0.pdf",
+      "sha256": "39cb8b8d281efacdbe413a7782df1f9d34220e228062f3a2bbd6ceba04e1b2ff",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 42,
+      "ocr_pages": 0,
+      "chunks": 29,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_27022026.pdf",
+      "sha256": "4a0ff59baed603175d2507558fa6ab527e6804da3d542d56d364f7a54b6d73eb",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 315,
+      "ocr_pages": 0,
+      "chunks": 198,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_27042026.pdf",
+      "sha256": "c1282003f6ef9f58687bf74baeb78248e08ad95883590b46076bc4f0ca71acb4",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 125,
+      "ocr_pages": 0,
+      "chunks": 112,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_28082024.pdf",
+      "sha256": "cd847f5ceedb618b563d23bd30bdb102a62409d3d0286cf07c1b1ff7ec4a5105",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 113,
+      "ocr_pages": 0,
+      "chunks": 112,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_29012020.pdf",
+      "sha256": "d9b046574622ac149077899489bc45efd6cb0404a5b05f948cb4496afb70102c",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 39,
+      "ocr_pages": 0,
+      "chunks": 22,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_29082023.pdf",
+      "sha256": "97a165d1c77ce933f195b9f11f33449f4c7d4d28c5d78d25fe3ae767cc118c6e",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 116,
+      "ocr_pages": 0,
+      "chunks": 94,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_30012023.pdf",
+      "sha256": "a8d46740cbed71c4b8611a0d19ed845d74fccaa6ea5a54d7cba834cbd1101d06",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 153,
+      "ocr_pages": 0,
+      "chunks": 129,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_30042026.pdf",
+      "sha256": "75fe4291b60f1b3bd688c138ebdcf72d751bc4a05b447368c730d5d13a244966",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 263,
+      "ocr_pages": 0,
+      "chunks": 168,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_31122019.pdf",
+      "sha256": "ad1d1e4bc8c20af7b1989d49c07242735e6964812acce6385e1e00560884f64e",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 17,
+      "ocr_pages": 0,
+      "chunks": 10,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_Data_speed_01062017_0.pdf",
+      "sha256": "7b0cca9d87e179d64aa0636a915142ce2f3be686cf5c98cc523b974b3995c2a0",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 30,
+      "ocr_pages": 0,
+      "chunks": 22,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_NetNeutrality2017_01_04_1.pdf",
+      "sha256": "bebac216a99dc9cd97c032e0b01227a22b5ec8b33ec9afa5fa56bfdf75630cfd",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 65,
+      "ocr_pages": 0,
+      "chunks": 60,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_NSL-II_01052017.pdf",
+      "sha256": "8547d7046b1a16460c6bdb96376bfb7eed711da3af3989306ea9c5589248bfcb",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 18,
+      "ocr_pages": 0,
+      "chunks": 11,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_on_ issues_on_Closure_of_Access_Services_30112016_0.pdf",
+      "sha256": "e246294f12e4e8fc1d5331d629beec251a68d1fcf7367f3a193e3b9688a62fee",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 25,
+      "ocr_pages": 0,
+      "chunks": 23,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_on_Manufacturing_18_09_17_0.pdf",
+      "sha256": "14eae6a4761ded4425890215921929ed1e87e0f4a630f26a8150f25ff1fa1eb1",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 42,
+      "ocr_pages": 0,
+      "chunks": 37,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_on_Review_of_Network_related_QoS.pdf",
+      "sha256": "0622e4196c25a917644f587fe3404aa55f254cf1f5f68a43ef0c7b1c718e709d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 30,
+      "ocr_pages": 0,
+      "chunks": 28,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_OSP_29032019.pdf",
+      "sha256": "8d872d5fcc27d6b27c4daddb0196a87090c46291d616165177770cee81e9b13b",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 56,
+      "ocr_pages": 0,
+      "chunks": 46,
+      "status": "indexed"
+    },
+    {
+      "file": "CP_SIR_24062019_0.pdf",
+      "sha256": "8ac609888b0356815673cd25574253c0f8740faff8b6e13ec57fa0fa551cc6e8",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 83,
+      "ocr_pages": 0,
+      "chunks": 52,
+      "status": "indexed"
+    },
+    {
+      "file": "cpaper12june07.pdf",
+      "sha256": "9f301470d576fb5c0244620cf7655a6fda690ff7ee8e4bc2b34c81da750b4782",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 153,
+      "ocr_pages": 0,
+      "chunks": 156,
+      "status": "indexed"
+    },
+    {
+      "file": "cpaper12may08 (1).pdf",
+      "sha256": "226884dd343c007524613853a16e66f37abe42cde684e1b6617b85817b5bc330",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 54,
+      "ocr_pages": 0,
+      "chunks": 45,
+      "status": "indexed"
+    },
+    {
+      "file": "cpaper12may08.pdf",
+      "sha256": "226884dd343c007524613853a16e66f37abe42cde684e1b6617b85817b5bc330",
+      "status": "duplicate of cpaper12may08 (1).pdf"
+    },
+    {
+      "file": "cpaper20jan10no2_0.pdf",
+      "sha256": "be03c882bf0caf557c50045701fc06160b0af83fc180f55c7fe832bfee6f6a4b",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 25,
+      "ocr_pages": 0,
+      "chunks": 24,
+      "status": "indexed"
+    },
+    {
+      "file": "Cpaper24may06no7 (1).pdf",
+      "sha256": "a3b88d21ed2804c4d505d87c9ab5592060e1b7dd335761ae70c84f3feae0aed7",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 20,
+      "ocr_pages": 0,
+      "chunks": 15,
+      "status": "indexed"
+    },
+    {
+      "file": "Cpaper24may06no7.pdf",
+      "sha256": "a3b88d21ed2804c4d505d87c9ab5592060e1b7dd335761ae70c84f3feae0aed7",
+      "status": "duplicate of Cpaper24may06no7 (1).pdf"
+    },
+    {
+      "file": "cpaper7may08_0 (1).pdf",
+      "sha256": "8b497650083cd9154536d947e744ffdbcb596c0aa7414eb9c99c27a5ffabad94",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 65,
+      "ocr_pages": 0,
+      "chunks": 55,
+      "status": "indexed"
+    },
+    {
+      "file": "cpaper7may08_0.pdf",
+      "sha256": "8b497650083cd9154536d947e744ffdbcb596c0aa7414eb9c99c27a5ffabad94",
+      "status": "duplicate of cpaper7may08_0 (1).pdf"
+    },
+    {
+      "file": "CPaper_QoS_21May2014 (1).pdf",
+      "sha256": "25b15e4c1db102257789fca00a7d6737ed0869a7b131129b88479e22cd4b2d11",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 21,
+      "ocr_pages": 0,
+      "chunks": 16,
+      "status": "indexed"
+    },
+    {
+      "file": "CPILD03092001.pdf",
+      "sha256": "24cfd3024d87691fd482ff62c32dec66b635c8ce9f980120812215ce5bb42056",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=5",
+      "pages": 43,
+      "ocr_pages": 0,
+      "chunks": 34,
+      "status": "indexed"
+    },
+    {
+      "file": "CPOTT12112018.pdf",
+      "sha256": "0f01825d6d36fe038c7077ad5af25b73d21a85da20088b610501ee1fbe967e0a",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=9",
+      "pages": 42,
+      "ocr_pages": 0,
+      "chunks": 47,
+      "status": "indexed"
+    },
+    {
+      "file": "Critical Telecommunication Infrastructure Rules, 2024_0.pdf",
+      "sha256": "116466ec2799bb80750e9d810495fbfb1c0b041366dbb3625da03b2085199f4d",
+      "category": "cyber_incident_rules",
+      "rule": "filename:cert-?in|cybersecurity-rules|telecom-cyber-security|critical telecommunication infrastructure|icdr-portal",
+      "pages": 10,
+      "ocr_pages": 0,
+      "chunks": 9,
+      "status": "indexed"
+    },
+    {
+      "file": "cybersecurity-rules-2024.pdf",
+      "sha256": "1a0876d2e1fb309679e06afaccc230ae88ea145c8b27f683a3a42126dc047bf6",
+      "category": "cyber_incident_rules",
+      "rule": "filename:cert-?in|cybersecurity-rules|telecom-cyber-security|critical telecommunication infrastructure|icdr-portal",
+      "pages": 13,
+      "ocr_pages": 0,
+      "chunks": 12,
+      "status": "indexed"
+    },
+    {
+      "file": "DOT-letter_22.08.130001_0.pdf",
+      "sha256": "77ecbeda511a65c7f5762c82d6cac7ce9cc47d41fcbde136ab59495ece9deb49",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=12",
+      "pages": 1,
+      "ocr_pages": 1,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "downloaddocument_mtcte_standards-may25-1.pdf",
+      "sha256": "1cb4dff8a48c2b35857c1b9020093bef1d5440d16b2dfedf1963d40857402912",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 9,
+      "ocr_pages": 0,
+      "chunks": 9,
+      "status": "indexed"
+    },
+    {
+      "file": "DPDT_11082024.pdf",
+      "sha256": "4deb23981d3010c8225a2ff6149e7243dc2268455b299e283afebdd7b72a7d15",
+      "status": "duplicate of 2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf"
+    },
+    {
+      "file": "Draft Direction 20.1.16.pdf",
+      "sha256": "4df5ccda618e22a4459a2749650c4a5b0e08679c86d8d5b9b3252254518aef11",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 5,
+      "ocr_pages": 0,
+      "chunks": 3,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_Consultation160112.pdf",
+      "sha256": "46a65157897d92695bc3486f6639b099cf9f2a34393a0d8e8d0be4c906b5ee83",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 32,
+      "ocr_pages": 0,
+      "chunks": 24,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_CP_13032026_0.pdf",
+      "sha256": "cf88a25b647704decc0e209a52b67c60a5f8bc4f5d75495fd98e4ed1013c4c93",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 117,
+      "ocr_pages": 0,
+      "chunks": 139,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_Guidelines_24022023.pdf",
+      "sha256": "2f2811862050019ce9a270d064aa0f73ebf06e39037af5a4825becddf1766a99",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 32,
+      "ocr_pages": 0,
+      "chunks": 28,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_Guidelines_Migration.pdf",
+      "sha256": "80ebac226012d0eb8d451cdf3e099711017f1b6d3f2011cc8b6130754a7c387a",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 44,
+      "ocr_pages": 0,
+      "chunks": 35,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_Recommendations_1992017.pdf",
+      "sha256": "c25f7d6366823c6a1dc643009a676e79040da7b21e25c9ee10c4e3c7cb2a4767",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 30,
+      "ocr_pages": 0,
+      "chunks": 28,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_Regulation_24022023.pdf",
+      "sha256": "9c524c424eebb3d3ae8a41ce2b9e7c717284f14c024e58d901c9e7d7e7b788ba",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 36,
+      "ocr_pages": 0,
+      "chunks": 41,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_Regulations_03042023_0.pdf",
+      "sha256": "be5d6ad75636bb306d8825fbf0d6279adadcdcae385776ed81037370a433b971",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "Draft_TCPR-amendment_29Apr2015_0.pdf",
+      "sha256": "a43ffbf36d94c65d3239c8903f735fcb869fcb963669c489a9394e5c242dc239",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 10,
+      "ocr_pages": 0,
+      "chunks": 8,
+      "status": "indexed"
+    },
+    {
+      "file": "Draftexitpolicy_0.pdf",
+      "sha256": "4f41e5afca4a00f16d7c0255a53884e3a35b7c55979c3bee7c57b2b5880cbb13",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 14,
+      "ocr_pages": 0,
+      "chunks": 14,
+      "status": "indexed"
+    },
+    {
+      "file": "EM_13082025.pdf",
+      "sha256": "9fdbd560dd450051e32445c4041026ba7fcb89e02c57c3173607fdf3370d39e4",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 21,
+      "ocr_pages": 0,
+      "chunks": 40,
+      "status": "indexed"
+    },
+    {
+      "file": "ENISA - 5G Standards.pdf",
+      "sha256": "08e66cfbf945b2b9808aaaa7d5c6f8a9f67de18c0b22deaf1dfd3ad9355132fe",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 82,
+      "ocr_pages": 0,
+      "chunks": 83,
+      "status": "indexed"
+    },
+    {
+      "file": "ENISA 5G Threat Landscape - Update.pdf",
+      "sha256": "f951b3792fa8517733675f664a33951ea094624462cff845acdcba5c79c8bf80",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 252,
+      "ocr_pages": 0,
+      "chunks": 338,
+      "status": "indexed"
+    },
+    {
+      "file": "Explanatory-Note-DPDP-Rules-2025.pdf",
+      "sha256": "74ba6cd1cfee3e7f8b131bb5f2dfa2cc8b5fa6c82b2bd1b085f0c1c2874d1006",
+      "category": "data_protection",
+      "rule": "filename:dpdp|privacy|personal.data",
+      "pages": 6,
+      "ocr_pages": 0,
+      "chunks": 12,
+      "status": "indexed"
+    },
+    {
+      "file": "Extension_Letter_Net_Netu_14_02_2017.pdf",
+      "sha256": "4da056b2ba40bfa1f8ecf7ec6fd6ed8cd4c1dbdf475a8c314101fa48f7c2fe56",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Extension_letter_netnautrality_15032017_0.pdf",
+      "sha256": "4acc0d405e741db1a52bde7a3e2bfd9e6ce009caa2d11105066a835b7eb8db16",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Extension_Press_Release_no47_17_june_2016.pdf",
+      "sha256": "0f63c696570d61d8ef92e534fc08978d7088461ac222e5a6ba0492fd58422afe",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "f6c0837972422cf79d890bfe84cc04d6.pdf",
+      "sha256": "812fe0ce802fe78f0bcbb0c032f74a5110ce23417e9b78889d21a6b7b77ba6a7",
+      "category": "data_protection",
+      "rule": "filename:^(53450e6e|2bf1f0e9|3c7ebbae|cc217843|f6c08379)",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "final-Pre-consultation-paper-on-Delinking-of-licence-03.09.2014.pdf",
+      "sha256": "d9817b3343faad716ee352704d9f56cbae6ebbf593497d9aeaca8aa1e135a6b6",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 16,
+      "ocr_pages": 0,
+      "chunks": 12,
+      "status": "indexed"
+    },
+    {
+      "file": "Final4Gnotice10feb10[1]_0.pdf",
+      "sha256": "b289d9798f7be17710030c54b1f9734b1fee00c7a706ac7f64b77f70ec8c5767",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=7",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "Final_CP_on_VSAT_ISP_19 August_2016.pdf",
+      "sha256": "9ef5d1c5fb3c3d9dd2117847aa17c79b4480cb71ff12efa07370b59c39f0c47a",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=10",
+      "pages": 43,
+      "ocr_pages": 0,
+      "chunks": 27,
+      "status": "indexed"
+    },
+    {
+      "file": "finalconsutation1-16-july.pdf",
+      "sha256": "49119d39d1f3f2abec3548bd92038397ce4cc58028c6859008836601cd9b4542",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=10",
+      "pages": 39,
+      "ocr_pages": 0,
+      "chunks": 41,
+      "status": "indexed"
+    },
+    {
+      "file": "flight-and-maritime-connectivity-amendment-rules-2022.pdf",
+      "sha256": "76dd6c343245a92e681d00a293dfe9be1f9ebf59d53f953c9959c34818455f69",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "G.S.R_20(E).pdf",
+      "sha256": "83d4aab32876ebb2162f2a8d627a565197eac9edcea498d508dfd34b5987e809",
+      "category": "cyber_incident_rules",
+      "rule": "filename:^g\\.s\\.r_20\\(e\\)",
+      "pages": 6,
+      "ocr_pages": 6,
+      "chunks": 10,
+      "status": "indexed"
+    },
+    {
+      "file": "gumin.pdf",
+      "sha256": "a38b9a3dacc0917c7825b21d37c136becc4552a55e2801847f9ee823fccd1c79",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=15",
+      "pages": 123,
+      "ocr_pages": 0,
+      "chunks": 128,
+      "status": "indexed"
+    },
+    {
+      "file": "IFMC 14.12.2018.pdf",
+      "sha256": "dfe9e714a8675b62f716ca16aa41f7e1cba0fda8fe54d8089db153168a629cef",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 15,
+      "ocr_pages": 0,
+      "chunks": 12,
+      "status": "indexed"
+    },
+    {
+      "file": "IFMC rules amendment.pdf",
+      "sha256": "813d319064f1514e45b07ea3e83f70d67e6636f1364c270ff527ad420c6a6b29",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "Indian Telegraph (5th Amendment) Rules, 2022 (1).pdf",
+      "sha256": "a9bb166d5e2ee74ba6d02373c35cfa24de7216cfa36a7f9d40453f6730fd79db",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "Indian Telegraph (5th Amendment) Rules, 2022.pdf",
+      "sha256": "a9bb166d5e2ee74ba6d02373c35cfa24de7216cfa36a7f9d40453f6730fd79db",
+      "status": "duplicate of Indian Telegraph (5th Amendment) Rules, 2022 (1).pdf"
+    },
+    {
+      "file": "Indian Telegraph (Infrastructure Safety) Rules, 2022.pdf",
+      "sha256": "6756ebf5b34b638e1bd16e36bcb17fe924ef050d2c25bea348af69d57c5b04b1",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=7",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 3,
+      "status": "indexed"
+    },
+    {
+      "file": "Indian Telegraph Right of Way (Amendment) Rules, 2023.pdf",
+      "sha256": "0bd85bff6ce270cb07a4888b18491ce9745f0630cc3b054ed688f8c4ec5e6620",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 6,
+      "ocr_pages": 0,
+      "chunks": 5,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-4th-amendment-rules-2022.pdf",
+      "sha256": "85630cbef95ab36b1b6e71d34c1991b396ebf2f6c27b51171ae83cfbe9fe460c",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=3",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-7th-amendment-rules-2017.pdf",
+      "sha256": "4c92897181b6d9a8e2a3f904a4a356823216dfa7b88f9ff195fac8e465e6cee2",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-amendment-rules-2017-28-mar-2017.pdf",
+      "sha256": "53c592e36075e9912c8d9a8c0203242d2318685d70b90dfa03866ab9719036fc",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-amendment-rules-2017-mtcte.pdf",
+      "sha256": "a11ff1fcba065fddd05def7e350b95ccca0ccd713d02828b36276c2671f0bec5",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 7,
+      "ocr_pages": 0,
+      "chunks": 6,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-amendment-rules-2017.pdf",
+      "sha256": "7415ca96a59869165881cfe17f837ff18637224bd9d5fe56a19b9c1b57d9ee99",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-fifth-amendment-rules-2017.pdf",
+      "sha256": "f61ed28ea3057c499575fc966270df1c6a5b6fbfba6f7bdc0445b16933d2cb27",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-fourth-amendment-rules-2017.pdf",
+      "sha256": "255d30569c06dee825ec064bbe02426ba0505cb7cc2da82cd7ba7fcce0d65c7f",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-right-of-way-amendment-rules-2021.pdf",
+      "sha256": "ccb10e43df17bc94ae46daf32a1a62a3753a6e1bb7fb6806b968e141e0915efd",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-right-of-way-amendment-rules-2022.pdf",
+      "sha256": "c08e193a087a6a91121599f0c74d2bc1cc46aff5ec420c485f08af5f450ecc75",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 8,
+      "ocr_pages": 0,
+      "chunks": 7,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-right-of-way-rules-2016-as-amended-in-2017-2021-2022-2023.pdf",
+      "sha256": "d02b96b4d2b8ea61586cb2d17ae931ecbacab8a43a398f0edbc1116037ad7d79",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 14,
+      "ocr_pages": 0,
+      "chunks": 18,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-row-rules-2016.pdf",
+      "sha256": "6e901226a06a503c5465fb7202fe82228c608ed9d4e06f3016bdf7e0b1041013",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 12,
+      "ocr_pages": 0,
+      "chunks": 12,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-sixth-amendment-rules-2017.pdf",
+      "sha256": "900047c9aa6dbc119d9760d5113d168eed5aa409b77f91233eafaf0da2c861d4",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 4,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-telegraph-third-amendment-rules-2017.pdf",
+      "sha256": "72c80b5c3cc6707c680543381eba75f2217c38ecae2839aa1754819bad9ffefd",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 5,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-wireless-telegraphy-cell-broadcasting-service-for-disaster-alerts-amendment-rules-2024.pdf",
+      "sha256": "284f3307a5ea819afd41d76aef5e6fef5e3dd5c49863bf5114ec8d7b369e7ef3",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "indian-wireless-telegraphy-cell-broadcasting-service-for-disaster-alerts-rules-2023.pdf",
+      "sha256": "f26f3aaf10cbf26e36d1668a3957b88080e98ce8dd2c3511215663756d09cb7e",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 3,
+      "status": "indexed"
+    },
+    {
+      "file": "Indian_Telegraph_Act_1885.pdf",
+      "sha256": "dc0a280500fefff68fd21793fa646177b710a12aa06ab0c73a47732a0c397d6b",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 12,
+      "ocr_pages": 0,
+      "chunks": 22,
+      "status": "indexed"
+    },
+    {
+      "file": "Indian_Wireless_Telegraphy_Act_1933.pdf",
+      "sha256": "83086b88debb68bd87c22fdc109f69e0b54f4553992085764af2eef96b972af0",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "Internet and Broadband Consultation Paper 2003-11-28 FINAL.pdf",
+      "sha256": "b4f73bf45474152b2b58b334e060a30781b8534bcf7934ecf9a1ce01ace72c30",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 84,
+      "ocr_pages": 0,
+      "chunks": 88,
+      "status": "indexed"
+    },
+    {
+      "file": "IP TELEPHONY VERSION-final.pdf",
+      "sha256": "87e5288b262f24b83f462c98839385cb45080ce59f12b8eeb79b4b62a75d0227",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=7",
+      "pages": 57,
+      "ocr_pages": 0,
+      "chunks": 44,
+      "status": "indexed"
+    },
+    {
+      "file": "mandatory-testing-and-certification-of-telecommunication-equipment-mtcte.pdf",
+      "sha256": "33df0a16f6bf0825566ddecbcb7b77704063cf3a5e0c84417f37f85260d61db9",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "mh-udd2_giudelines_19122022.pdf",
+      "sha256": "34f73a9129d3b69bbba229ef182c2231ed68707a7b291bf78ab01c64481ca98a",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=10",
+      "pages": 41,
+      "ocr_pages": 0,
+      "chunks": 55,
+      "status": "indexed"
+    },
+    {
+      "file": "migration-rules-2026.pdf",
+      "sha256": "96ff14161fe36a957cfeb725e6be4a9d43b19de9ccd5fd360931a133f20478e5",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 8,
+      "ocr_pages": 0,
+      "chunks": 7,
+      "status": "indexed"
+    },
+    {
+      "file": "misc-telecom-services-rules-2026.pdf",
+      "sha256": "65239e3403e89d0e4c58936630856381746e4e303af41d3e5b662ddc2a8b5d34",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 73,
+      "ocr_pages": 0,
+      "chunks": 69,
+      "status": "indexed"
+    },
+    {
+      "file": "modified_regulations_210812.pdf",
+      "sha256": "46a164a499c5a4619cde62811017e94d7f26c7e7634b4f0cd0efd24b7a26250b",
+      "category": "trai_consultations",
+      "rule": "keywords:trai_consultations=3",
+      "pages": 10,
+      "ocr_pages": 0,
+      "chunks": 7,
+      "status": "indexed"
+    },
+    {
+      "file": "National Telecom Policy 1994.pdf",
+      "sha256": "8cc0de2364360a5f0560f78405ac85518bd656c6df9e314ca06f62689c3bb55c",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=3",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 5,
+      "status": "indexed"
+    },
+    {
+      "file": "National-Strategy-for-Artificial-Intelligence.pdf",
+      "sha256": "da5404dbb584c8956aae707dfcfe324dc1df11a179bc8288af0e898f4e37dcc5",
+      "category": "other_rules",
+      "rule": "default",
+      "pages": 114,
+      "ocr_pages": 0,
+      "chunks": 148,
+      "status": "indexed"
+    },
+    {
+      "file": "Net_Neutality_Preconsultation_30_may_2016.pdf",
+      "sha256": "6e8609bf4aa0171d7b4d96de8b391bcc4efa3c29fc0c797794de456ce3620412",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 13,
+      "ocr_pages": 0,
+      "chunks": 14,
+      "status": "indexed"
+    },
+    {
+      "file": "network-services-rules-july-2026.pdf",
+      "sha256": "95f7627a2d095ffefbafc724ec60d2f851c4e05f408615dc32331d9c4a0e7e67",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 53,
+      "ocr_pages": 0,
+      "chunks": 49,
+      "status": "indexed"
+    },
+    {
+      "file": "new-telecom-Act-2023.pdf",
+      "sha256": "2cc91966898e03644d608a7b4f0d26bff0c68af5ad2049e7f8aff86a7a6cf73f",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 26,
+      "ocr_pages": 0,
+      "chunks": 42,
+      "status": "indexed"
+    },
+    {
+      "file": "New_Telecom_Policy 1999.pdf",
+      "sha256": "077f3409830db5598408491fbb5e8d19a43ccc8f9cefdccedc314877f3ac5ff6",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=11",
+      "pages": 12,
+      "ocr_pages": 0,
+      "chunks": 20,
+      "status": "indexed"
+    },
+    {
+      "file": "NIST.AI.100-1.pdf",
+      "sha256": "7576edb531d9848825814ee88e28b1795d3a84b435b4b797d3670eafdc4a89f1",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 48,
+      "ocr_pages": 0,
+      "chunks": 57,
+      "status": "indexed"
+    },
+    {
+      "file": "NIST.AI.600-1.pdf",
+      "sha256": "6e73620ab6b64e90ef2c04bf0e0d6246185a2f4b1b13cab0df494496cff89b6a",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 64,
+      "ocr_pages": 0,
+      "chunks": 75,
+      "status": "indexed"
+    },
+    {
+      "file": "Notice_13052025.pdf",
+      "sha256": "b03301867578b70a3e938fb8ee97306f184de0a83542869f9fd035a7419b6da9",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 141,
+      "ocr_pages": 0,
+      "chunks": 107,
+      "status": "indexed"
+    },
+    {
+      "file": "Notification for enforcement of sections of the Telecommunications Act 2023.pdf",
+      "sha256": "434212f46781b909fa1e1a9d0af71a15252f34d48755867043abaf489761bf5b",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Notification for enforcement of sections of the Telecommunications Act, 2023.pdf",
+      "sha256": "315caff5aa2c96def6e69b2baab7ab28861a34f361c91e521ec17f08e78865c5",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "notification-of-portal.pdf",
+      "sha256": "fbf0eb0956d21ce5714f38558b7453302461f44df9cf283510b8403d0c7bf405",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=1",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "NTP_2012.pdf",
+      "sha256": "8b9b1e94ce6cd4225fd73e654fa4bf34fed5333b977110b55bd2de0995bbc70c",
+      "category": "spectrum_licensing_row",
+      "rule": "keywords:spectrum_licensing_row=1",
+      "pages": 21,
+      "ocr_pages": 0,
+      "chunks": 23,
+      "status": "indexed"
+    },
+    {
+      "file": "OTT-CP-27032015.pdf",
+      "sha256": "8d31e7109fd9750166a9b6a9b3fa785faa7e45ac4f2d33f4502451a2b71d76be",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 118,
+      "ocr_pages": 0,
+      "chunks": 106,
+      "status": "indexed"
+    },
+    {
+      "file": "panic-button-and-global-positioning-system-facility-in-all-mobile.pdf",
+      "sha256": "4635c6d601d2b35f6b5ca2b930ba2d4b4b17b7ad1e025fa3bc7d5c4e4504e690",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Part2-Responsible-AI-12082021.pdf",
+      "sha256": "65f46c3b632759a6280c6bef9285fbdaa71329454351e0b062092d3db28972db",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 53,
+      "ocr_pages": 0,
+      "chunks": 48,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.106of2023_0.pdf",
+      "sha256": "cef3af6b340378ae8b022c51d9bbc6f04fd09f1ee904dae5198e2f41655e810d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.117of2023.pdf",
+      "sha256": "8b5dcb944efa806cbe35290dc193ace62251e6b95fda1eb57d7af960ea0c825d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.119of2019_0.pdf",
+      "sha256": "cd66c11eb5f31692cfa0edad8095309cd7196c5d1771996bdd2b294d35f656fe",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.125of2023_0.pdf",
+      "sha256": "127edd822a8c93f4dc8df99e59ec1957c3cf67102e9f0369d447e4df115f0a1f",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.130of2023_0.pdf",
+      "sha256": "95f7d91fb96a2236fef701afd58eec376e54047aec5170eacb8d4a5da242fd8a",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.20of2023_0.pdf",
+      "sha256": "b4b1a6d4b89ee544abd3f87d7c0595b9a637580cb34fe1d3fe6f5b18d731e156",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.20of2023_0_0.pdf",
+      "sha256": "b4b1a6d4b89ee544abd3f87d7c0595b9a637580cb34fe1d3fe6f5b18d731e156",
+      "status": "duplicate of PR_No.20of2023_0.pdf"
+    },
+    {
+      "file": "PR_No.27of2022.pdf",
+      "sha256": "5e70be014c88e6d6b8b15410296d57224f0adab91ab663356f4756a999126726",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 1,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.32of2023_0.pdf",
+      "sha256": "3b7e23848400978898a5f7708fa8d255103ae9cd4db640b65cb5e92444e1135d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.33of2023.pdf",
+      "sha256": "037ed14efceed13739afb32bde87eb330c5710540d2ca99933cde460ddf9ee17",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.38of2022_0.pdf",
+      "sha256": "175ba0f9e6375c45d1d77636c4a499f5d5ae52cd31a06b0cd39eeba9e666b6de",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 1,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.40of2026_0.pdf",
+      "sha256": "07a0f7751cb952d784708b2c425bcd72afe40b94112c977f2753a6f5b33a66a0",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.45of2025_0.pdf",
+      "sha256": "5836e119721ed18575fd3f73ffe4067db092c23347e84b5cf8cfcbb83820f677",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.51of2026_0.pdf",
+      "sha256": "3f329a964acbc9a1b9b2b6181b3023a1eb18f607c635e97fac51b6d29eda49aa",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.60of2022_0.pdf",
+      "sha256": "045f6a599215eb36638f8dfb59c4018104217cbe6cc5431f90a79db90f4282bd",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.66of2024_0.pdf",
+      "sha256": "0fbbe9c41187fb89284d25f71d8b0f2146f96e4c202e980124dc122a68a23074",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.68of2022.pdf",
+      "sha256": "d55ca5dcf3b0826c6b36fcd5e5b72fc3fdf1b98061ac5e889f94d52a6effbca4",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.71of2016.pdf",
+      "sha256": "cc10a7cfbd272da89ece6ea4ea1a9757c7ba84eb94e0b41ac57a5494599f2427",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.81of2020.pdf",
+      "sha256": "32e91364846f14e851ff57db07f100da4a130d807684ff0602093e7b68798eec",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 1,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No.81of2023_0.pdf",
+      "sha256": "081db9e411fbbe1fc59e7e27a258d3d31f75cf80044efe131ea0c5611085569f",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No115of2026_0.pdf",
+      "sha256": "afc3b44c6b1778afb681caa4c1b251bd09cd121c2e1244656cf192ad78e45ef8",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "PR_No33_14032018.pdf",
+      "sha256": "b9e61bc9c0ab83972a89c090dfd006164bde095b25fc6901f5c08615e507a5dc",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 1,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Pre-Consultation Paper20-2-2013.pdf",
+      "sha256": "c09e2324436a628beb5642856aa115a244b63f4821c54d5bf2ef4c57bf1215fe",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 13,
+      "ocr_pages": 0,
+      "chunks": 10,
+      "status": "indexed"
+    },
+    {
+      "file": "Preconsultation_paper_ULR_15_nov_2003.pdf",
+      "sha256": "7b75aa76ae1fbeae1a895b32f633e5f66229489b7af57b96f6d1e46ce366c30b",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 29,
+      "ocr_pages": 0,
+      "chunks": 27,
+      "status": "indexed"
+    },
+    {
+      "file": "Press-Release-630001_0.pdf",
+      "sha256": "eed86cfbfd8b6d94c8a45e689cea771e1077005af51866b2eca091dd55c110d5",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 2,
+      "ocr_pages": 2,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Press_Release_No.64_06July2016.pdf",
+      "sha256": "a9df64b6750977f406cdbff2c0702db73dd3b4d4fa9c154948868c5ef91be55a",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Press_Release_No81_09_Aug_2016.pdf",
+      "sha256": "23af55efa5928b56a755bd75f9e836ab195f071fbbf5c8337b02f799476b1722",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Press_release_No85_11102017(1)_0.pdf",
+      "sha256": "de2c08a37b0033f9c0fde521d5f9be5e59e097981921380179f52eb60135f254",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "principal-telecom-services-rule-2026.pdf",
+      "sha256": "52608d4a74075233add8acfa9f75c880212916b8117bd085e2e76e8548d3d6c5",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 133,
+      "ocr_pages": 0,
+      "chunks": 127,
+      "status": "indexed"
+    },
+    {
+      "file": "principles-point-of-focus.pdf",
+      "sha256": "8baad8c7b6d966e07aef8bebe115dcd03477012a6570254f9f8bcb0578ad274a",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 5,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "PRNo11807122018_0.pdf",
+      "sha256": "59ed0387709a0ea4469255a8389e7a8fa56f03a9aa7cacf629c707b69647dd77",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "procedures-and-safeguards-for-lawful-interception-of-messages-rules-2024.pdf",
+      "sha256": "cd0a0f7d8e5deb8bd2c9338f3b7a3001594064176dc8db6544b8703a233557ea",
+      "category": "other_rules",
+      "rule": "default",
+      "pages": 9,
+      "ocr_pages": 0,
+      "chunks": 8,
+      "status": "indexed"
+    },
+    {
+      "file": "Proof-of-concept.pdf",
+      "sha256": "a39db86cccb916baeece4edf7b896da59a7f3ab9f748992a59266e27e84be855",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 67,
+      "ocr_pages": 0,
+      "chunks": 77,
+      "status": "indexed"
+    },
+    {
+      "file": "publication-of-gazette-notification-for-amendment-in-flight-and-maritime-connectivity-rules-2018.pdf",
+      "sha256": "8dccca0a5036aede541a2a5de5b79c467c323ba5c01ffc8240ca9d33d1559d66",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "QOS_8OCT.pdf",
+      "sha256": "07e6226708bf90cb049e470febaa78839ddc6c7641b098afc2771c0f39370b76",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 16,
+      "ocr_pages": 0,
+      "chunks": 10,
+      "status": "indexed"
+    },
+    {
+      "file": "Rating_Manual_09062026_2.pdf",
+      "sha256": "3f269a8e522cae9ae38a80cc11d8381fa1ced1c5067ffe7e2a8d0321128512a0",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 235,
+      "ocr_pages": 0,
+      "chunks": 175,
+      "status": "indexed"
+    },
+    {
+      "file": "recom11iv.pdf",
+      "sha256": "588745b0d4fece3dc195be11613aee4d04bf2dffb860f42bf5c4343ccd66822d",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 24,
+      "ocr_pages": 0,
+      "chunks": 28,
+      "status": "indexed"
+    },
+    {
+      "file": "Responsible-AI-22022021.pdf",
+      "sha256": "381272dfa3b7a098a98df31adad95a32b3b7d182eb1ef8b21ec4873ae9c70254",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 64,
+      "ocr_pages": 0,
+      "chunks": 46,
+      "status": "indexed"
+    },
+    {
+      "file": "rtr-rules-2025.pdf",
+      "sha256": "eadafed30910817367cd54b32148475a7afde6d57d42ca75b13ecb9b295dd801",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 17,
+      "ocr_pages": 0,
+      "chunks": 13,
+      "status": "indexed"
+    },
+    {
+      "file": "synopsis_09091999.pdf",
+      "sha256": "9bbc491a9935d76ab3d7fa1b875347f32367b67def7943ae3e0d8c79394cbdd1",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 16,
+      "ocr_pages": 0,
+      "chunks": 27,
+      "status": "indexed"
+    },
+    {
+      "file": "T-REC-Y.3172-201906-I!!PDF-E.pdf",
+      "sha256": "e42f9a3be3f951d3e19b9007f876f0b389c81b4693f0d8576e18185a1acfe67b",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 34,
+      "ocr_pages": 0,
+      "chunks": 37,
+      "status": "indexed"
+    },
+    {
+      "file": "T-REC-Y.3174-202002-I!!PDF-E.pdf",
+      "sha256": "9012d10bfafc8459b88e35f5c9775aa3e3cf706223fec65efe1f84f5e93c4020",
+      "category": "threat_frameworks",
+      "rule": "filename:enisa|controls matrix|^nist\\.ai|cloud security guide|^t-rec-y\\.31|proof-of-concept|architect-guide|responsible-ai|principles-point-of-focus|^381137eng",
+      "pages": 36,
+      "ocr_pages": 0,
+      "chunks": 38,
+      "status": "indexed"
+    },
+    {
+      "file": "telecom-cyber-security-amendment-rules-2025.pdf",
+      "sha256": "fe249008ba43a70bd50da278f0150b61e3a42161f21899882afca5057d895363",
+      "category": "cyber_incident_rules",
+      "rule": "filename:cert-?in|cybersecurity-rules|telecom-cyber-security|critical telecommunication infrastructure|icdr-portal",
+      "pages": 7,
+      "ocr_pages": 0,
+      "chunks": 6,
+      "status": "indexed"
+    },
+    {
+      "file": "Telecommunications Right of Way Rules 2024.pdf",
+      "sha256": "afd12206a2b8e6da729b5f424d43d4da9c06e0edbadcbeedf19fe749893ed3fe",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 33,
+      "ocr_pages": 0,
+      "chunks": 32,
+      "status": "indexed"
+    },
+    {
+      "file": "telecommunications-radio-equipment-possession-authorisation-rules-2026.pdf",
+      "sha256": "a1d3ebf0f61bce01ca7893a957d5e75e96645f7c612f1c813f132615b159a9e8",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 12,
+      "ocr_pages": 0,
+      "chunks": 12,
+      "status": "indexed"
+    },
+    {
+      "file": "Telecommunications_01012024.pdf",
+      "sha256": "302df7ba4ed69e9054202d55248f604d32d8568a22a2e5489ac3041478635577",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 26,
+      "ocr_pages": 0,
+      "chunks": 42,
+      "status": "indexed"
+    },
+    {
+      "file": "Telecommunications_17092024.pdf",
+      "sha256": "7855625fe65e9d8787ab496b3bc9c13a86f6db45a518b685f23fe8be684b7e2b",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 33,
+      "ocr_pages": 0,
+      "chunks": 32,
+      "status": "indexed"
+    },
+    {
+      "file": "Telecommunications_30082024.pdf",
+      "sha256": "3ef4548e99dfd0255305f8a1b63be980f65502c4a89bd39825cd8d795a152b74",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 8,
+      "ocr_pages": 0,
+      "chunks": 6,
+      "status": "indexed"
+    },
+    {
+      "file": "temporary-suspension-of-services-rules-2024.pdf",
+      "sha256": "f60ca6db4d91b116b8ef9bf543faff095d019a6bb631da553c695bf020f07735",
+      "category": "other_rules",
+      "rule": "default",
+      "pages": 5,
+      "ocr_pages": 0,
+      "chunks": 4,
+      "status": "indexed"
+    },
+    {
+      "file": "temporary-suspension-of-telecom-services-public-emergency-or-public-safety-rules-2017.pdf",
+      "sha256": "2961650dc5b9700b6797171c5512a7b8b8d2d30ea1023fa60239a4aa0c588d52",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 3,
+      "ocr_pages": 0,
+      "chunks": 3,
+      "status": "indexed"
+    },
+    {
+      "file": "the-indian-telegraph-amendment-rules-1951.pdf",
+      "sha256": "da865d30e8cfea9d61703a2fdeb944c9c92b702670c12039b092bdbe7293f013",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "the-prevention-of-tampering-of-the-mobile-device-equipment-identification-number-amendment-rules-2022.pdf",
+      "sha256": "c08fcea2fbff3e94f5e6438032c0db7629b84cf0bbed85e170badada38d56e5e",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=3",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "the-prevention-of-tampering-of-the-mobile-device-equipment-identification-number-rules-2017.pdf",
+      "sha256": "56f860919b5e678197608c24ea590d800f248e2e11936ce65b9baf653cd2b295",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "the-use-of-low-power-radio-frequency-devices-in-the-frequency-band-433.05-to-434.79-mhz-exemption-from-license-rules-2022.pdf",
+      "sha256": "37155a1a0a8ffe2c7d79fe6935766073695bd215b42b61009a855162a91f906f",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 8,
+      "ocr_pages": 0,
+      "chunks": 5,
+      "status": "indexed"
+    },
+    {
+      "file": "The_TRAI_(Amendment)_2014.pdf",
+      "sha256": "3a5cc8a99a76abd9056465c627723b44741cdff488a09090fb5926cb13410041",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 2,
+      "status": "indexed"
+    },
+    {
+      "file": "The_TRAI_(Amendment)_Act_2000.pdf",
+      "sha256": "24b0df05fecf40afcd9b93f64bd7ee14bb983c7b4dedb915953f17195e98bafa",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 12,
+      "ocr_pages": 0,
+      "chunks": 19,
+      "status": "indexed"
+    },
+    {
+      "file": "The_TRAI_Act_1997.pdf",
+      "sha256": "785d4f348e9e31a26c8b25801bfa3d5f94742f5bbd2c90d2fc80a226f9198bea",
+      "category": "law_and_acts",
+      "rule": "filename:telegraph_act|wireless_telegraphy_act|trai_act|trai_\\(amendment\\)|telecom-act-2023|^telecommunications_0101|enforcement of sections",
+      "pages": 17,
+      "ocr_pages": 17,
+      "chunks": 32,
+      "status": "indexed"
+    },
+    {
+      "file": "theindiantelegraph2ndamendmentrules2022nw_repaired_0.pdf",
+      "sha256": "bf45a9cd2987fbe704e4369222fd3232e6b0bbbfd160508f842ceac653a8e63d",
+      "category": "law_and_acts",
+      "rule": "keywords:law_and_acts=2",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "tr_121905v190200p.pdf",
+      "sha256": "71f34b4cdf51f8d9cb6f4a79c993eec24129c52b0c1032d044aaa93564982c57",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 71,
+      "ocr_pages": 0,
+      "chunks": 100,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_122268v180501p.pdf",
+      "sha256": "ed114eda8f2418fb9a7d1142d270ad0d847aa8dd97790db4d0b02269dc8fc505",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 23,
+      "ocr_pages": 0,
+      "chunks": 30,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123228v181200p.pdf",
+      "sha256": "06f32cd77fd608938ba2fc6fe60fe43aeb3f69c51ec45fe17fd131bf22a72e6c",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 392,
+      "ocr_pages": 0,
+      "chunks": 584,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123228v190700p.pdf",
+      "sha256": "61f6217c23cf0dba96bb3a0c570ea457f9da0d3952bf973526f72c8649631f85",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 489,
+      "ocr_pages": 0,
+      "chunks": 748,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123273v181200p.pdf",
+      "sha256": "69f08d5497f2161e3844efd8e9812b913aec0a23dbf7a76e1c4876a8009d8188",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 173,
+      "ocr_pages": 0,
+      "chunks": 302,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123273v190700p.pdf",
+      "sha256": "a24409ea4c189aa6720fd39d51c1af0750d9f061c6ea192e91df8b075e539ebe",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 194,
+      "ocr_pages": 0,
+      "chunks": 339,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123288v181300p.pdf",
+      "sha256": "bfe558ff91286fa6fb65753139f83763b320b7f838fa6f27f188431399f78188",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 330,
+      "ocr_pages": 0,
+      "chunks": 549,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123288v190700p.pdf",
+      "sha256": "50b8efa21c545dd01de2e9ec0ddd3bed408ba3927c60d3874b7e0abb5b3ad1b0",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 403,
+      "ocr_pages": 0,
+      "chunks": 659,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123369v190400p.pdf",
+      "sha256": "ddd22294a9e8341bcf972aedb87fee7daa53db08e1127991274ab8140538a6eb",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 44,
+      "ocr_pages": 0,
+      "chunks": 57,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123401v190600p.pdf",
+      "sha256": "3050e4496e3b3647bf89cabb48b746c76a81195feb996095b84c61e79f4cf083",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 479,
+      "ocr_pages": 0,
+      "chunks": 1029,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123501v190800p.pdf",
+      "sha256": "9395c6ba9a50c2f3350af204bdc81b2631fd36f52c50ff813c6e8e194702239a",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 798,
+      "ocr_pages": 0,
+      "chunks": 1659,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123502v181400p.pdf",
+      "sha256": "364c25272697b06d2ae07c98488e456d9198ac284fda8d91982f686d2036701f",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 935,
+      "ocr_pages": 0,
+      "chunks": 1696,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123502v190800p.pdf",
+      "sha256": "74193d54bbefac2c674f9ac56acedd66ea63ec450566fc3d4a98b5575df261b6",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 980,
+      "ocr_pages": 0,
+      "chunks": 1792,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123503v181200p.pdf",
+      "sha256": "36301efe6278786760126f6ef4ccdbafe02214e6ac8792c1e4bbcb34585bdd49",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 188,
+      "ocr_pages": 0,
+      "chunks": 405,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_123503v190800p.pdf",
+      "sha256": "3f91433085ec2fcd5cc02957a7d3d9fbcf3be22b43f92a8284fd7f3612618bee",
+      "category": "gpp_architecture",
+      "rule": "filename:^(ts_12[23]\\d{3}|tr_121\\d{3})",
+      "pages": 197,
+      "ocr_pages": 0,
+      "chunks": 436,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133122v180500p.pdf",
+      "sha256": "08adf886f97de05d58b434d8496eb334739fba84889e57bfdc1719f6c1270fbd",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 35,
+      "ocr_pages": 0,
+      "chunks": 44,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133122v190400p.pdf",
+      "sha256": "40e5b2c04ab2ab18c596cd97aa4a9944a72e95fb0e9a3faabbc3fae984366090",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 43,
+      "ocr_pages": 0,
+      "chunks": 57,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133328v180500p.pdf",
+      "sha256": "e5c0c5bfaa10e2d718a7fdf7693ca1d659126f427493ce395bab0935b207375e",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 88,
+      "ocr_pages": 0,
+      "chunks": 129,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133328v190300p.pdf",
+      "sha256": "1c18751f6333ce654f0000ebda10d8636ccf8a7c5c1cc2176bafd524c25db96a",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 91,
+      "ocr_pages": 0,
+      "chunks": 133,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133369v190300p.pdf",
+      "sha256": "211c27b63224263ef5ed2980cbaf513d213f2548e98f0d740c5ed79204d48808",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 24,
+      "ocr_pages": 0,
+      "chunks": 26,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133501v152000p.pdf",
+      "sha256": "f11fea226d49af815e3810b3bd00140821cc5e36b05fd3701c462105d3b80de7",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 196,
+      "ocr_pages": 0,
+      "chunks": 342,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133501v162000p.pdf",
+      "sha256": "29a54cd8bdcd328a80d7190649313ec310658b8caeb19a4fac3fed97ed1bfc10",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 262,
+      "ocr_pages": 0,
+      "chunks": 445,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133501v171600p.pdf",
+      "sha256": "ccdc4c905f86ef061a812f0b063e6084f3aa800a5070fa4f4594a252d365aef1",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 298,
+      "ocr_pages": 0,
+      "chunks": 506,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133501v181200p.pdf",
+      "sha256": "160103789db415a13c1be2659f569dba5c028cce70b8cc9f7a3d50882b9246aa",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 335,
+      "ocr_pages": 0,
+      "chunks": 567,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133503v180600p.pdf",
+      "sha256": "6f2bfa8feb15cb5567196d42fbf034acbb537b9590f9ac6a4e90af85f869dbd9",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 67,
+      "ocr_pages": 0,
+      "chunks": 114,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133503v190300p.pdf",
+      "sha256": "5b866d9d143e4c7a590b1a1e3c02eea6abae837a24513ab7467a72f0650cfdcb",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 79,
+      "ocr_pages": 0,
+      "chunks": 136,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133512v180300p.pdf",
+      "sha256": "0aaa82235fbc6b9c2870b3ad0a3073e7bb1ffb86bb6f9716adfcaa28e74a20aa",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 31,
+      "ocr_pages": 0,
+      "chunks": 37,
+      "status": "indexed"
+    },
+    {
+      "file": "ts_133512v190100p.pdf",
+      "sha256": "723a00374116c221a2a8b77ef6a4953e9a26db58352bde05125e77b749f10273",
+      "category": "gpp_security",
+      "rule": "filename:^ts_133\\d{3}",
+      "pages": 30,
+      "ocr_pages": 0,
+      "chunks": 36,
+      "status": "indexed"
+    },
+    {
+      "file": "UCC_CP_14092017.pdf",
+      "sha256": "37a8f50c8a02657c96d758d803004e6abacc2f3a17feaa6fb3c902e71ec19051",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 81,
+      "ocr_pages": 0,
+      "chunks": 92,
+      "status": "indexed"
+    },
+    {
+      "file": "use-of-icdr-portal-under-the-telecom-cyber-security-rules.pdf",
+      "sha256": "882b10034842693a5c5b61334db6bccbdbfc0bd807fc5d2eda0b2323c6b8aaac",
+      "category": "cyber_incident_rules",
+      "rule": "filename:cert-?in|cybersecurity-rules|telecom-cyber-security|critical telecommunication infrastructure|icdr-portal",
+      "pages": 1,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "use-of-low-power-and-very-low-power-short-range-radio-frequency-devices-exemption-from-licensing-requirement-amendment-rules-2024.pdf",
+      "sha256": "b0746eea30e24618c7463d22551bd7d542b406ec1e8e5fb4a7c772ecb7989165",
+      "category": "spectrum_licensing_row",
+      "rule": "filename:right of way|right-of-way|row-rules|row rules|bharatnet|bharat nidhi|spectrum|ifmc|wireless|radio|amateur|licen[cs]e|mtcte|low-power|flight-and-maritime|telecommunications_(17092024|30082024)|migration-rules|captive-telecom|network-services-rules|principal-telecom|misc-telecom|rtr-rules",
+      "pages": 2,
+      "ocr_pages": 0,
+      "chunks": 1,
+      "status": "indexed"
+    },
+    {
+      "file": "Wi-Fi_consultation Paper_13_july_2016.pdf",
+      "sha256": "66e689c25c35f8061b6149403e001a500242d3b4afd593652eeab8eb6b249728",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 40,
+      "ocr_pages": 0,
+      "chunks": 32,
+      "status": "indexed"
+    },
+    {
+      "file": "WLL(M)_CONSULTATION_PAPER_28_AUG_2003.pdf",
+      "sha256": "5a13e9f17b2ad436dc5ab01c70d6f16737361dd08775eb0627ac516081b09ea3",
+      "category": "trai_consultations",
+      "rule": "filename:^cp[_-]|consult|consul|cpaper|conpaper|conspap|pre-?consultation|draft|^pr_?no|press[-_ ]release|extension|recom|synopsis|^qos_|rating_manual|^ott-cp|^ucc_cp|^em_\\d|^notice_|preconsultation",
+      "pages": 59,
+      "ocr_pages": 0,
+      "chunks": 72,
+      "status": "indexed"
+    }
+  ],
+  "files": {
+    "law_and_acts.faiss": "c9cf1bc08debf9b571ef36171e75ec73dafa00ba0a1435223b14fb7304ea6f9a",
+    "cyber_incident_rules.faiss": "d5bd782a4d77372363c3d3affffb25c3e44d3106d89e08cb416d678e814b93c6",
+    "gpp_security.faiss": "8b1b50ac11c5fc51218d9e99d340b23c175cf424294c5c638de5be43370bb2f8",
+    "gpp_architecture.faiss": "bff6e14411fec5e9406bb9330bbabbf0189971e885af2bebef7b8a25823ae470",
+    "threat_frameworks.faiss": "71977bb27ddf8561d40e0a57bca78b7897497cf4774fb95e737f5943937f5847",
+    "data_protection.faiss": "af8fa80783bdf28462a991c64c8383b02f2c5023fccd2b1d162ed60d87f05bfa",
+    "spectrum_licensing_row.faiss": "8f416f8b27b14e51180c96f9266aebcb5aed87c130420ab037a83785b12efe50",
+    "trai_consultations.faiss": "4bc46a14954694de97951069e3baf3e6e5ca947d848474d10687bc669e50a5d2",
+    "other_rules.faiss": "6f0eafaa94d4466f9485fb176eb9bb05201af5f2f4e6c2e5024db8d08d53d5a3",
+    "chunks.jsonl.gz": "17730c0779bf656df0c0fc1c58798ee2d2d33195bc593aa405adadf8cb95c687"
+  },
+  "index_hash": "cb1caf8b0b026c862dff7ba2c88be5d64ebf21c712e634aca0584a045884ef28"
+}

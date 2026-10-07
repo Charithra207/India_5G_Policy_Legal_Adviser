@@ -81,3 +81,12 @@ knowledge_base/.model_cache/
 # uses are copied into knowledge_base/sources/raw/ and recorded in
 # knowledge_base/sources/manifest.json with their official URLs.
 knowledge base/
+
+# Incident-response lab: runtime state, logs and reports are per run.
+# kb/index/ (the prebuilt index and its manifest) IS committed.
+sim/state.json
+sim/logs/
+sim/reports/
+sandbox/work/
+sandbox/*.local.wsb
+data/knowledge_base/
