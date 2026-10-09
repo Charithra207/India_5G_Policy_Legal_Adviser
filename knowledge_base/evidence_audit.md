@@ -1,6 +1,6 @@
 # Evidence audit
 
-Run audited: `outputs/audit/day2_scenario2_full_T0_T3.jsonl`. Generated 2026-10-06T16:45:16 UTC by `python -m src.rag.evidence_audit`.
+Run audited: `outputs/audit/day2_scenario2_full_T0_T3.jsonl`. Generated 2026-10-09T20:30:39 UTC by `python -m src.rag.evidence_audit`.
 
 **Checked:** 60 claims, 53 cited passages, 3 potential gaps, every Coordinator line, and 25 manifest sources.
 
@@ -81,7 +81,7 @@ Selection rule: for the Indian-law agents, the highest-ranked quoted Indian pass
 - **Retrieved evidence:** "3. Application. – (1) These rules shall apply to telecommunication network, or any part thereof, which has been notified by the Central Government as Critical Telecommunication Infrastructure under sub-section (3) of section 22 of the Act, based on an assessment that disruption of such infrastructure shall have a debilitating impact on national security, economy, public health or safety of the nat…"
 - **Conclusion:** Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3 states: "3. Application. – (1) These rules shall apply to telecommunication network, or any part thereof, which has been notified by the Central Government as Critical Telecommunication Infrastructure under sub-section (3) of section 22 of the Act, based on an assessment that disruption of such infrastructure shall 
 - **Verification status:** INCOMPLETE — Supported by the authoritative text (Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, Rule 3), but amendments not checked for this source. Recorded status: in force from 22 November 2024 (rule 1(2): on publication in the Official Gazette).
-- **Trace:** `cti_rules_2024:rule-3:1` · cosine 0.8308 · https://eservices.dot.gov.in/sites/default/files/circular-notifications/Critical Telecommunication Infrastructure Rules, 2024_0.pdf
+- **Trace:** `cti_rules_2024:rule-3:1` · cosine 0.8309 · https://eservices.dot.gov.in/sites/default/files/circular-notifications/Critical Telecommunication Infrastructure Rules, 2024_0.pdf
 
 ### standards (T1)
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-06T16:38:00.654446+00:00",
+  "generated_at": "2026-10-09T20:31:15.632079+00:00",
   "scenario": "Scenario 2 (DOCX §2.5), chunks T0–T3, full pipeline with live KBs",
   "agents_with_successful_retrieval": 7,
   "results": [
@@ -80,7 +80,7 @@
           "passage": "The following features described in 5.33 may be used to enhance 5GS to support Ultra Reliable Low Latency Communication (URLLC): - Redundant transmission for high reliability communication. In this Release, URLLC applies to 3GPP access only. When a PDU Session is to serve URLLC QoS Flow, the UE and SMF should establish the PDU Session as always-on PDU Session as described in clause 5.6.13. NOTE 1: How the UE knows whether a PDU Session is to serve a URLLC QoS Flow when triggering PDU Session establishment is up to UE implementation. NOTE 2: No additional functionality is specified for URLLC in order to support Home Routed roaming scenario in this Release.",
           "why_relevant": {
             "returned_by_query": "Intermittent latency and session drops in the private 5G slice.",
-            "cosine_similarity": 0.7003,
+            "cosine_similarity": 0.7002,
             "query_terms_in_passage": [
               "latency",
               "session"
@@ -481,7 +481,7 @@
           "passage": "facts, concepts, opinions or instructions in a manner suitable for communication, interpretation or processing by human beings or by automated means; (i) “Data Fiduciary” means any person who alone or in conjunction with other persons determines the purpose and means of processing of personal data; (j) “Data Principal” means the individual to whom the personal data relates and where such individual is— (i) a child, includes the parents or lawful guardian of such a child; (ii) a person with disability, includes her lawful guardian, acting on her behalf; (k) “Data Processor” means any person who processes personal data on behalf of a Data Fiduciary; (l) “Data Protection Officer” means an individual appointed by the Significant Data Fiduciary under clause (a) of sub-section (2) of section 10; (m) “digital office” means an office that adopts an online mechanism wherein the proceedings, from receipt of intimation or complaint or reference or directions or appeal, as the case may be, to the disposal thereof, are conducted in online or digital mode; (n) “digital personal data” means personal data in digital form;",
           "why_relevant": {
             "returned_by_query": "The slice supports a healthcare application and may carry identifiable patient information.",
-            "cosine_similarity": 0.6801,
+            "cosine_similarity": 0.6802,
             "query_terms_in_passage": [],
             "kb": "Privacy KB"
           }
@@ -659,7 +659,7 @@
           "passage": "3. Application. – (1) These rules shall apply to telecommunication network, or any part thereof, which has been notified by the Central Government as Critical Telecommunication Infrastructure under sub-section (3) of section 22 of the Act, based on an assessment that disruption of such infrastructure shall have a debilitating impact on national security, economy, public health or safety of the nation. The Central Government shall specify on the portal the form and manner in which every telecommunication entity shall provide the details of its telecommunication network, telecommunication services, and elements of such network and services.",
           "why_relevant": {
             "returned_by_query": "notification of critical telecommunication infrastructure and measures for its protection",
-            "cosine_similarity": 0.8308,
+            "cosine_similarity": 0.8309,
             "query_terms_in_passage": [
               "critical",
               "infrastructure",
@@ -1019,7 +1019,7 @@
             "verifier_rationale": "Policy-gap examination based on cited passages confirmed in the Canonical KB. A potential gap or coverage check is an observation for expert review, not a verified conclusion."
           },
           {
-            "claim": "Comparator — [REFERENCE ONLY — not Indian law] ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1 states: \"5G CYBERSECURITY STANDARDS Analysis of standardisation requirements in support of cybersecurity policy\"",
+            "claim": "Comparator — [REFERENCE ONLY — not Indian law] [International reference — International] ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1 states: \"5G CYBERSECURITY STANDARDS Analysis of standardisation requirements in support of cybersecurity policy\"",
             "cites": [
               "ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1"
             ],
@@ -1027,7 +1027,7 @@
             "verifier_rationale": "Supported by the authoritative text (ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, p. 1), but in-force status not verified and amendments not checked for this source."
           },
           {
-            "claim": "Comparator — [REFERENCE ONLY — not Indian law] ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2 states: \"[DEVSECOPS] 26 * Note: For research and innovation organisations, gaps are intended as areas where further work by these organisations is required. ** Note: area that might be addressed by soft measures, not standards. Moderate gap: Areas partly covered by the existing literature • Evaluation methods for monitoring capabilities • Evaluation methods for the capabilities of automated testbeds …\"",
+            "claim": "Comparator — [REFERENCE ONLY — not Indian law] [International reference — International] ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2 states: \"[DEVSECOPS] 26 * Note: For research and innovation organisations, gaps are intended as areas where further work by these organisations is required. ** Note: area that might be addressed by soft measures, not standards. Moderate gap: Areas partly covered by the existing literature • Evaluation methods for monitoring capabilities • Evaluation methods for the capabilities of automated testbeds …\"",
             "cites": [
               "ENISA 5G Cybersecurity Standards — Analysis of standardisation requirements in support of cybersecurity policy, Section 4.2"
             ],
@@ -1039,7 +1039,7 @@
         "uncertainty_notes": [],
         "missing_facts": [
           "Final manifest of exact Indian instruments confirmed by KB retrieval.",
-          "Neighbouring-country comparators from the Policy Gap KB (to be added during RAG/KB integration)."
+          "No neighbouring-country comparator was retrieved from the Policy Gap KB."
         ]
       },
       "success": true
