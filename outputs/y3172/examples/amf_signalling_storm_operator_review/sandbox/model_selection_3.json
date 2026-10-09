@@ -1,0 +1,124 @@
+{
+  "reason": "monitoring: rolling accuracy 0.6667 below 0.75 at tick 15",
+  "selected": "iforest_rf",
+  "meets_intent": true,
+  "rule": "highest macro_f1 among candidates with macro_f1 \u2265 0.85 and p95 inference \u2264 80.0 ms",
+  "training_load": [
+    0.8,
+    6.41
+  ],
+  "samples": 450,
+  "train_samples": 312,
+  "test_samples": 138,
+  "features": 52,
+  "data_seconds": 0.24,
+  "candidates": [
+    {
+      "model_id": "threshold_centroid",
+      "train_seconds": 0.002,
+      "eligible": false,
+      "metrics": {
+        "macro_f1": 0.8197,
+        "detection_f1": 0.8933,
+        "detection_precision": 0.8816,
+        "detection_recall": 0.9054,
+        "false_alarm_rate": 0.1406,
+        "unknown_anomaly_predictions": 0,
+        "per_class_f1": {
+          "core_ddos_upf": 0.7671,
+          "normal": 0.873,
+          "rogue_base_station": 0.9412,
+          "signalling_storm_amf": 0.6977
+        },
+        "inference_ms_mean": 0.021,
+        "inference_ms_p95": 0.051,
+        "test_samples": 138
+      },
+      "card": {
+        "model_id": "threshold_centroid",
+        "description": "Baseline: max per-feature z-score against normal operation with a trained threshold; nearest class centroid names the incident",
+        "threshold_max_abs_z": 4.153,
+        "classes": [
+          "core_ddos_upf",
+          "rogue_base_station",
+          "signalling_storm_amf"
+        ]
+      }
+    },
+    {
+      "model_id": "iforest_rf",
+      "train_seconds": 0.434,
+      "eligible": true,
+      "metrics": {
+        "macro_f1": 0.9809,
+        "detection_f1": 0.9799,
+        "detection_precision": 0.9733,
+        "detection_recall": 0.9865,
+        "false_alarm_rate": 0.0312,
+        "unknown_anomaly_predictions": 0,
+        "per_class_f1": {
+          "core_ddos_upf": 1.0,
+          "normal": 0.9764,
+          "rogue_base_station": 1.0,
+          "signalling_storm_amf": 0.9474
+        },
+        "inference_ms_mean": 20.534,
+        "inference_ms_p95": 30.946,
+        "test_samples": 138
+      },
+      "card": {
+        "model_id": "iforest_rf",
+        "description": "IsolationForest on normal operation (unknown anomalies) + RandomForest classifier (known incident classes)",
+        "iforest_threshold": -0.6312,
+        "classes": [
+          "core_ddos_upf",
+          "normal",
+          "rogue_base_station",
+          "signalling_storm_amf"
+        ],
+        "top_features": [
+          {
+            "feature": "upf.metrics.accepted_rate",
+            "importance": 0.1224
+          },
+          {
+            "feature": "upf.metrics.offered_rate",
+            "importance": 0.1001
+          },
+          {
+            "feature": "gnb.metrics.radio_link_failures",
+            "importance": 0.0742
+          },
+          {
+            "feature": "gnb.metrics.fallback_to_lte_ues",
+            "importance": 0.0661
+          },
+          {
+            "feature": "amf.metrics.accepted_rate",
+            "importance": 0.066
+          },
+          {
+            "feature": "gnb.ran.unknown_neighbours",
+            "importance": 0.065
+          },
+          {
+            "feature": "gnb.ran.neighbour_whitelist_off",
+            "importance": 0.063
+          },
+          {
+            "feature": "amf.metrics.offered_rate",
+            "importance": 0.0605
+          },
+          {
+            "feature": "amf.metrics.cpu",
+            "importance": 0.0403
+          },
+          {
+            "feature": "upf.metrics.cpu",
+            "importance": 0.0345
+          }
+        ]
+      }
+    }
+  ]
+}

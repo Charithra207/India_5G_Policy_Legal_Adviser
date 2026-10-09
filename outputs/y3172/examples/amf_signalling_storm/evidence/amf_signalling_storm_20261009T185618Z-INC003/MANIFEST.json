@@ -1,0 +1,16 @@
+{
+  "incident_id": "amf_signalling_storm_20261009T185618Z-INC003",
+  "tick": 21,
+  "sha256": {
+    "state.json": "2b2879101e0e070560a361656f492c62a5c3d50648fda4bb9f7f3846593b4b1b",
+    "logs/gnb.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/amf.log": "dc240d4c3308985f5880e48841c5b4b7d68a18933988ae3b0dd23b71245f5eff",
+    "logs/smf.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/upf.log": "28e3eda970bdfecdd40ced4d7e83e06f623215fa3e723c213f487d260acc9d83",
+    "logs/udm.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/ausf.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/nef.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/nrf.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "logs/oam.log": "69096fd9ea21ba4f96dc1ed5b36124874171796d3772d47ba8c58a49d8b3509f"
+  }
+}

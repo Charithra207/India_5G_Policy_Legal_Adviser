@@ -1,0 +1,128 @@
+{
+  "reason": "initial",
+  "selected": "iforest_rf",
+  "meets_intent": true,
+  "rule": "highest macro_f1 among candidates with macro_f1 \u2265 0.85 and p95 inference \u2264 80.0 ms",
+  "training_load": [
+    0.8,
+    1.2
+  ],
+  "samples": 540,
+  "train_samples": 378,
+  "test_samples": 162,
+  "features": 76,
+  "data_seconds": 0.37,
+  "candidates": [
+    {
+      "model_id": "threshold_centroid",
+      "train_seconds": 0.011,
+      "eligible": true,
+      "metrics": {
+        "macro_f1": 0.8804,
+        "detection_f1": 0.8939,
+        "detection_precision": 0.8247,
+        "detection_recall": 0.9756,
+        "false_alarm_rate": 0.2125,
+        "unknown_anomaly_predictions": 0,
+        "per_class_f1": {
+          "core_ddos_upf": 0.9434,
+          "gtpu_spoofing_upf": 0.6667,
+          "iot_botnet_mmtc": 1.0,
+          "normal": 0.869,
+          "subscriber_profile_tampering": 0.9231
+        },
+        "inference_ms_mean": 0.02,
+        "inference_ms_p95": 0.036,
+        "test_samples": 162
+      },
+      "card": {
+        "model_id": "threshold_centroid",
+        "description": "Baseline: max per-feature z-score against normal operation with a trained threshold; nearest class centroid names the incident",
+        "threshold_max_abs_z": 3.916,
+        "classes": [
+          "core_ddos_upf",
+          "gtpu_spoofing_upf",
+          "iot_botnet_mmtc",
+          "subscriber_profile_tampering"
+        ]
+      }
+    },
+    {
+      "model_id": "iforest_rf",
+      "train_seconds": 0.767,
+      "eligible": true,
+      "metrics": {
+        "macro_f1": 0.9781,
+        "detection_f1": 0.975,
+        "detection_precision": 1.0,
+        "detection_recall": 0.9512,
+        "false_alarm_rate": 0.0,
+        "unknown_anomaly_predictions": 0,
+        "per_class_f1": {
+          "core_ddos_upf": 0.9434,
+          "gtpu_spoofing_upf": 0.9714,
+          "iot_botnet_mmtc": 1.0,
+          "normal": 0.9756,
+          "subscriber_profile_tampering": 1.0
+        },
+        "inference_ms_mean": 19.1,
+        "inference_ms_p95": 22.965,
+        "test_samples": 162
+      },
+      "card": {
+        "model_id": "iforest_rf",
+        "description": "IsolationForest on normal operation (unknown anomalies) + RandomForest classifier (known incident classes)",
+        "iforest_threshold": -0.5625,
+        "classes": [
+          "core_ddos_upf",
+          "gtpu_spoofing_upf",
+          "iot_botnet_mmtc",
+          "normal",
+          "subscriber_profile_tampering"
+        ],
+        "top_features": [
+          {
+            "feature": "upf.user_plane.source_validation_off",
+            "importance": 0.0781
+          },
+          {
+            "feature": "upf.metrics.cpu",
+            "importance": 0.0768
+          },
+          {
+            "feature": "upf.metrics.offered_rate",
+            "importance": 0.0722
+          },
+          {
+            "feature": "smf.slices.sessions_not_on_allow_list",
+            "importance": 0.0689
+          },
+          {
+            "feature": "upf.user_plane.flows_to_internal_ranges",
+            "importance": 0.0654
+          },
+          {
+            "feature": "amf.devices.unblocked_c2_destinations",
+            "importance": 0.0646
+          },
+          {
+            "feature": "upf.metrics.accepted_rate",
+            "importance": 0.0645
+          },
+          {
+            "feature": "udm.subscribers.unreverted_profile_changes",
+            "importance": 0.061
+          },
+          {
+            "feature": "upf.user_plane.spoofed_flows",
+            "importance": 0.0597
+          },
+          {
+            "feature": "oam.oam.default_credentials",
+            "importance": 0.0493
+          }
+        ]
+      }
+    }
+  ]
+}
