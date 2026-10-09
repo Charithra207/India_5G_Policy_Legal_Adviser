@@ -129,7 +129,9 @@ class Distributor:
     def _provider(self):
         if self._provider_factory is not None:
             return self._provider_factory()
-        from ir.llm import OfflineProvider, get_provider
+        from ir.llm import OfflineProvider, OllamaProvider, get_provider
+        if self.intent.remediation_agent == "ollama":
+            return OllamaProvider()
         return get_provider() if self.intent.remediation_agent == "anthropic" else OfflineProvider()
 
     def remediate(self, prediction: Prediction, decision: PolicyDecision) -> dict:

@@ -54,6 +54,7 @@ class ReplayRun:
             description  = s["stage"]["information_released"],
             new_facts    = list(s["stage"]["new_facts"]),
             prior_chunks = list(s["stage"]["prior_chunks"]),
+            agent_views  = {k: list(v) for k, v in s["stage"].get("agent_views", {}).items()},
         ) for s in self.stages]
 
 
@@ -121,14 +122,28 @@ def reexecute(run: ReplayRun, registry=None) -> list[str]:
     from src.pipeline import Pipeline
     from src.scenario.catalog import SCENARIOS
 
+    from src import llm
     spec = SCENARIOS.get(run.header["scenario_id"])
     pipeline = Pipeline(registry)
     diffs: list[str] = []
     previous: list[str] = []
-    for recorded, chunk in zip(run.stages, run.chunks()):
-        record = pipeline.run_chunk(chunk)
-        stage_spec = spec.stages[chunk.chunk_index] if spec else None
-        rerun = stage_entry(record, run.header["scenario_id"], stage_spec, previous)
-        previous = rerun["orchestrator"]["active_agents"]
-        diffs.extend(compare_stage(recorded, rerun))
+    # A run recorded without a model is re-executed without one, whatever is
+    # configured now, so the comparison stays exact.  A run recorded with a
+    # model cannot be reproduced exactly: its LLM-assisted claims may differ.
+    recorded_llm = (run.header.get("llm") or {}).get("provider", "offline")
+    configured = llm.active()
+    if recorded_llm == "offline":
+        llm.configure("offline")
+    else:
+        diffs.append(f"note: recorded with LLM {recorded_llm}; LLM-assisted claims are not "
+                     "deterministic and may differ on re-execution")
+    try:
+        for recorded, chunk in zip(run.stages, run.chunks()):
+            record = pipeline.run_chunk(chunk)
+            stage_spec = spec.stages[chunk.chunk_index] if spec else None
+            rerun = stage_entry(record, run.header["scenario_id"], stage_spec, previous)
+            previous = rerun["orchestrator"]["active_agents"]
+            diffs.extend(compare_stage(recorded, rerun))
+    finally:
+        llm.configure(provider=configured)
     return diffs

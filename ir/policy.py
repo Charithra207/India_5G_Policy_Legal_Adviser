@@ -52,6 +52,9 @@ def build_policy_panel(attack: dict, search: Callable | None = None) -> dict:
                    for h in search(tags.get("query", attack["name"]), categories=tags["categories"], k=5)]
     except FileNotFoundError as exc:
         error, related = error or f"index not available ({exc})", []
+    except Exception as exc:                       # noqa: BLE001 — e.g. embedding model not downloadable offline
+        error, related = error or (f"similarity search unavailable ({type(exc).__name__}: {exc}); the "
+                                   "obligations above were still checked word for word"), []
     if error:
         return {"error": error, "categories": tags["categories"], "obligations": obligations, "related": []}
     return {"categories": tags["categories"], "obligations": obligations, "related": related,

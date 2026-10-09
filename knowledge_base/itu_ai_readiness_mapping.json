@@ -52,7 +52,7 @@
       "evidence_items": [
         {
           "evidence_type": "project artefact",
-          "claim": "The policy adviser (src/) uses no generative model: its agents quote retrieved passages and the Coordinator organises verified claims; generator_model is recorded as 'none'.",
+          "claim": "By default the policy adviser (src/) uses no generative model: its agents quote retrieved passages and the Coordinator organises verified claims; the knowledge-base build records generator_model as 'none'.",
           "files": [
             "knowledge_base/ingestion_manifest.json",
             "src/agents/base_agent.py"
@@ -60,14 +60,22 @@
         },
         {
           "evidence_type": "project artefact",
-          "claim": "The separate incident-response lab (ir/) can use a Claude model through the Anthropic API for tool use (LLM_PROVIDER=anthropic, model set by ANTHROPIC_MODEL); without a key or the SDK it falls back to the deterministic offline playbook.",
+          "claim": "Optional LLM reasoning per specialist agent (ADVISER_LLM=ollama for a local open-weight model, or anthropic): the model sees only the agent's own information and retrieved passages; claims that cite no retrieved passage are rejected, the rest are checked by the Verifier; prompts, raw response and the model's stated rationale are kept in the audit trail.",
+          "files": [
+            "src/llm/synthesis.py",
+            "src/llm/provider.py"
+          ]
+        },
+        {
+          "evidence_type": "project artefact",
+          "claim": "The separate incident-response lab (ir/) can use Claude through the Anthropic API (LLM_PROVIDER=anthropic) or a local model through Ollama (LLM_PROVIDER=ollama) for tool use; without a model it falls back to the deterministic offline playbook.",
           "files": [
             "ir/llm.py"
           ]
         }
       ],
       "evidence_unavailable": [
-        "The policy adviser uses no generator model, so none is recorded for it.",
+        "No evaluation of LLM-assisted claims against expert judgement is recorded.",
         "No evaluation of the lab's generative agent is recorded."
       ]
     },
@@ -167,6 +175,14 @@
             "policy_gap"
           ],
           "quote": "…al of the ENISA 5G security controls matrix is to support the national authorities in the EU Member States with implementing the technical measures of the EU’s 5G Cybersecurity toolbox. The ENISA 5G security controls matrix follows the overall structure of the ENISA Guideline for Security measures under the EECC, the European Electronic Commu…"
+        },
+        {
+          "evidence_type": "project artefact",
+          "claim": "Sources carry a region (India, neighbouring South Asia, other regions) and the policy-gap register sets Indian provisions beside global and neighbouring-region examples per domain; examples whose documents are not yet ingested are marked pending.",
+          "files": [
+            "src/rag/regions.py",
+            "knowledge_base/gap_register.md"
+          ]
         }
       ],
       "evidence_unavailable": [
@@ -256,6 +272,14 @@
             "policy_gap"
           ],
           "quote": "Telecom Regulatory Authority of India Recommendations on Leveraging Artificial Intelligence and Big Data in Telecommunication Sector 20th July 2023 Mahanagar Doorsanchar Bhawan Jawahar Lal Nehru Marg New Delhi – 110002"
+        },
+        {
+          "evidence_type": "project artefact",
+          "claim": "Policy-gap register: five domain-specific potential gaps (reporting clocks, log retention, critical-infrastructure designation, network slicing, human oversight of AI-driven remediation), each with Indian provisions checked word for word and global examples.",
+          "files": [
+            "knowledge_base/gap_register.md",
+            "src/gap/register.py"
+          ]
         }
       ],
       "evidence_unavailable": [

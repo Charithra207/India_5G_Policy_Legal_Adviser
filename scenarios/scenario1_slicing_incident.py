@@ -33,6 +33,12 @@ _CHUNKS: list[ScenarioChunk] = [
             "No further information about the cause is available at this stage.",
         ],
         prior_chunks = [],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "technical": [
+                "Slice monitoring: latency four times the service-level target and 2% packet loss on the slice's user plane since 07:40.",
+            ],
+        },
     ),
 
     ScenarioChunk(
@@ -49,6 +55,18 @@ _CHUNKS: list[ScenarioChunk] = [
             "cybersecurity analysis.",
         ],
         prior_chunks = ["scenario1_C1"],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "technical": [
+                'Signalling counters show NAS messages towards the AMF serving the slice from sources that are not registered.',
+            ],
+            "cybersecurity": [
+                "Firewall alert: control-plane traffic from an IP range that is not on the operator's allow-list.",
+            ],
+            "standards": [
+                "The slice's security design references 3GPP TS 33.501 for slice-specific authentication.",
+            ],
+        },
     ),
 
     ScenarioChunk(
@@ -63,6 +81,15 @@ _CHUNKS: list[ScenarioChunk] = [
             "Critical Infrastructure Agent and Policy & Legal Agent are activated.",
         ],
         prior_chunks = ["scenario1_C1", "scenario1_C2"],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "critical_infrastructure": [
+                'The critical service is an emergency-response dispatch application of a state agency.',
+            ],
+            "policy_legal": [
+                'The slice is provided to the state agency under a service agreement with the operator.',
+            ],
+        },
     ),
 
     ScenarioChunk(
@@ -78,6 +105,18 @@ _CHUNKS: list[ScenarioChunk] = [
             "Personal-data protection implications must be assessed.",
         ],
         prior_chunks = ["scenario1_C1", "scenario1_C2", "scenario1_C3"],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "privacy": [
+                'The records that may have been exposed include subscriber names and phone numbers.',
+            ],
+            "policy_legal": [
+                'The legal team asks whether the exposure must be reported, to whom and by when.',
+            ],
+            "cybersecurity": [
+                "Exfiltration indicator: an outbound transfer of about 2 GB from the slice's data store to an unknown host.",
+            ],
+        },
     ),
 ]
 

@@ -29,8 +29,8 @@ Recorded reference runs in the repository:
 
 Known limits (see `knowledge_base/evaluation_report.md`): nothing can be
 VERIFIED until in-force and amendment status are checked; NCIIPC Rules and
-neighbouring-country instruments are not ingested; no generative model in the
-adviser (the incident-response lab can optionally use one); agents run
+neighbouring-country instruments are not ingested; no generative model by default
+(optional Ollama/Claude reasoning per agent via `--llm`, verified and audited); agents run
 sequentially; the ITU AI for Good Sandbox was not available, so everything runs
 locally; the Y.3172 ML pipeline (`src/y3172/`) runs over the contained
 simulator, not a live network, with logical reference points and levels.

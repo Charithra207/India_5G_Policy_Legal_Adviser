@@ -695,9 +695,11 @@ _Y3172_NOT_IMPLEMENTED = [
                        "not a standardised metalanguage."},
 ]
 _GENERATOR_SCOPE = (
-    "Applies to the policy adviser (src/). The separate incident-response lab (ir/llm.py) can "
-    "use a Claude model through the Anthropic API (LLM_PROVIDER=anthropic); without a key or the "
-    "SDK it falls back to the deterministic offline playbook."
+    "'none' records the knowledge-base build: no generative model ingests, writes or answers from "
+    "the knowledge bases. At run time each specialist agent can optionally use an LLM (src/llm: "
+    "ADVISER_LLM=ollama for a local open-weight model, or anthropic); off by default. Its claims must "
+    "cite retrieved passages and are checked by the Verifier. The incident-response lab (ir/llm.py) "
+    "can use Claude or Ollama, falling back to the deterministic offline playbook."
 )
 
 
@@ -764,8 +766,9 @@ def y3172_traceability(c: Corpus, run: dict) -> dict:
          {"section": passage["section"], "section_title": passage["section_title"],
           "page": passage["page"], "chunk_id": passage["chunk_id"]}, "IMPLEMENTED"),
         ("Model", node("Clause 8.1", "M (model): This is a machine learning model, in a form which is usable in a machine learning pipeline."),
-         {"description": "Sentence-embedding model for retrieval within each agent's own KB. No generative "
-                         "model: agents quote retrieved passages.",
+         {"description": "Sentence-embedding model for retrieval within each agent's own KB. By default no "
+                         "generative model: agents quote retrieved passages (an optional LLM step is "
+                         "described under generator_model_scope).",
           "model_id": ing["embedding_model"],
           "generator_model": ing["generator_model"],
           "generator_model_scope": _GENERATOR_SCOPE,
@@ -873,15 +876,20 @@ def itu_readiness(c: Corpus, manifest: dict, run: dict) -> dict:
         ("Generative AI content ecosystem",
          "Generative AI synthesizes verified multi-domain findings while preserving citations and uncertainty.",
          "Addressed architecturally; exact generator model name must be added.",
-         [artefact("The policy adviser (src/) uses no generative model: its agents quote retrieved "
-                   "passages and the Coordinator organises verified claims; generator_model is "
-                   "recorded as 'none'.",
+         [artefact("By default the policy adviser (src/) uses no generative model: its agents quote "
+                   "retrieved passages and the Coordinator organises verified claims; the knowledge-base "
+                   "build records generator_model as 'none'.",
                    "knowledge_base/ingestion_manifest.json", "src/agents/base_agent.py"),
-          artefact("The separate incident-response lab (ir/) can use a Claude model through the "
-                   "Anthropic API for tool use (LLM_PROVIDER=anthropic, model set by "
-                   "ANTHROPIC_MODEL); without a key or the SDK it falls back to the deterministic "
-                   "offline playbook.", "ir/llm.py")],
-         ["The policy adviser uses no generator model, so none is recorded for it.",
+          artefact("Optional LLM reasoning per specialist agent (ADVISER_LLM=ollama for a local "
+                   "open-weight model, or anthropic): the model sees only the agent's own information "
+                   "and retrieved passages; claims that cite no retrieved passage are rejected, the rest "
+                   "are checked by the Verifier; prompts, raw response and the model's stated rationale "
+                   "are kept in the audit trail.", "src/llm/synthesis.py", "src/llm/provider.py"),
+          artefact("The separate incident-response lab (ir/) can use Claude through the Anthropic API "
+                   "(LLM_PROVIDER=anthropic) or a local model through Ollama (LLM_PROVIDER=ollama) for "
+                   "tool use; without a model it falls back to the deterministic offline playbook.",
+                   "ir/llm.py")],
+         ["No evaluation of LLM-assisted claims against expert judgement is recorded.",
           "No evaluation of the lab's generative agent is recorded."]),
         ("Contextualization of AI solutions and regional development",
          "India-specific legal, regulatory and institutional context with a regional comparison layer.",
@@ -896,7 +904,11 @@ def itu_readiness(c: Corpus, manifest: dict, run: dict) -> dict:
                  "Intimation of personal data breach"),
           {"evidence_type": "corpus passage",
            "claim": "An EU policy example used for comparison (not Indian law).",
-           **c.find("enisa_5g_security_controls_matrix", "5G Cybersecurity toolbox")}],
+           **c.find("enisa_5g_security_controls_matrix", "5G Cybersecurity toolbox")},
+          artefact("Sources carry a region (India, neighbouring South Asia, other regions) and the "
+                   "policy-gap register sets Indian provisions beside global and neighbouring-region "
+                   "examples per domain; examples whose documents are not yet ingested are marked pending.",
+                   "src/rag/regions.py", "knowledge_base/gap_register.md")],
          ["No neighbouring-country instrument was obtained; the regional comparison layer has EU "
           "examples only."]),
         ("AI integration in domains and cross-domain analysis",
@@ -923,7 +935,11 @@ def itu_readiness(c: Corpus, manifest: dict, run: dict) -> dict:
          [artefact(f"{len(gaps)} potential-gap entries in the final stage of the recorded run, each "
                    "naming the instruments examined.", run["path"], "src/agents/policy_gap_agent.py"),
           corpus("TRAI recommendations on AI and Big Data in telecom, used as policy reference.",
-                 "trai_ai_bigdata_recs_2023", "p. 1", "Leveraging Artificial Intelligence and Big Data")],
+                 "trai_ai_bigdata_recs_2023", "p. 1", "Leveraging Artificial Intelligence and Big Data"),
+          artefact("Policy-gap register: five domain-specific potential gaps (reporting clocks, log "
+                   "retention, critical-infrastructure designation, network slicing, human oversight of "
+                   "AI-driven remediation), each with Indian provisions checked word for word and global "
+                   "examples.", "knowledge_base/gap_register.md", "src/gap/register.py")],
          ["Unclear coverage is not produced by the current agent; explicit/partial coverage is left "
           "to expert review.", "No neighbouring-country policy examples are ingested."]),
         ("AI for social inclusion",

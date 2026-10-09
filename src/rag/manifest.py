@@ -13,6 +13,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
+from src.rag.regions import REGIONS, ROLES, region_of
+
 PROJECT_ROOT  = Path(__file__).resolve().parents[2]
 KB_ROOT       = PROJECT_ROOT / "knowledge_base"
 SOURCES_DIR   = KB_ROOT / "sources"
@@ -62,10 +64,18 @@ class SourceDocument:
     # Amendments made by an obtained document:
     # [{"by": doc_id, "evidence": verbatim text, "units": ["2", "3", ...], "note": "…"}]
     amended_by: list[dict] = field(default_factory=list)
+    # Region and role of the source (src/rag/regions.py); region is derived
+    # from the jurisdiction when left empty
+    region: str = ""
+    role: str = ""
 
     @property
     def path(self) -> Path:
         return SOURCES_DIR / self.file
+
+    @property
+    def effective_region(self) -> str:
+        return region_of(self.jurisdiction, self.region)
 
     @property
     def ingestible(self) -> bool:
@@ -83,5 +93,9 @@ def load_manifest(path: Path = MANIFEST_PATH) -> list[SourceDocument]:
         bad_kbs = set(raw.get("kbs", [])) - set(ALL_KBS)
         if bad_kbs:
             raise ValueError(f"Manifest entry {raw['id']} assigns unknown KBs: {sorted(bad_kbs)}")
+        if raw.get("region") and raw["region"] not in REGIONS:
+            raise ValueError(f"Manifest entry {raw['id']}: unknown region {raw['region']!r}; known: {list(REGIONS)}")
+        if raw.get("role") and raw["role"] not in ROLES:
+            raise ValueError(f"Manifest entry {raw['id']}: unknown role {raw['role']!r}; known: {list(ROLES)}")
         docs.append(SourceDocument(**raw))
     return docs

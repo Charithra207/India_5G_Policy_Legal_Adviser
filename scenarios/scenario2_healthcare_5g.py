@@ -46,6 +46,12 @@ _CHUNKS: list[ScenarioChunk] = [
             "by the slice is available at this stage.",
         ],
         prior_chunks = [],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "technical": [
+                'NOC dashboard: one-way latency on the private slice peaks at 180 ms against a 20 ms target; about 3% of PDU sessions on the slice were released abnormally in the last hour.',
+            ],
+        },
     ),
 
     ScenarioChunk(
@@ -65,6 +71,18 @@ _CHUNKS: list[ScenarioChunk] = [
             "suggests the incident may have a cybersecurity dimension.",
         ],
         prior_chunks = ["scenario2_T0"],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "technical": [
+                'AMF logs: bursts of initial registration requests with repeated SUCIs from one tracking area, without follow-up service requests.',
+            ],
+            "cybersecurity": [
+                'SOC ticket: authentication failures for a small set of subscription identities are about 40 times the baseline, outside business hours; no successful unauthorised access is confirmed yet.',
+            ],
+            "standards": [
+                "The operator's security baseline cites 3GPP TS 33.501 for primary authentication on the slice.",
+            ],
+        },
     ),
 
     ScenarioChunk(
@@ -86,6 +104,18 @@ _CHUNKS: list[ScenarioChunk] = [
             "remain unresolved.",
         ],
         prior_chunks = ["scenario2_T0", "scenario2_T1"],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "critical_infrastructure": [
+                'Hospital IT confirms the slice carries remote patient-monitoring telemetry for an intensive-care unit.',
+            ],
+            "privacy": [
+                "The hospital's data-protection officer says the telemetry records include patient names and bed numbers.",
+            ],
+            "policy_legal": [
+                "The hospital is a private entity; the slice is provided under the operator's enterprise service agreement.",
+            ],
+        },
     ),
 
     ScenarioChunk(
@@ -107,6 +137,21 @@ _CHUNKS: list[ScenarioChunk] = [
             "remaining policy gaps or ambiguities.",
         ],
         prior_chunks = ["scenario2_T0", "scenario2_T1", "scenario2_T2"],
+        # Released to one agent only (not in the DOCX table; see ScenarioChunk.agent_views)
+        agent_views  = {
+            "policy_legal": [
+                'Management asks which notifications are due today, to whom, and by when.',
+            ],
+            "cybersecurity": [
+                'Core-network logs for the period are kept for 30 days under the current retention setting.',
+            ],
+            "privacy": [
+                "It is not yet confirmed whether any patient record left the operator's network.",
+            ],
+            "critical_infrastructure": [
+                'The operator does not know whether the hospital network or the slice is notified as critical infrastructure.',
+            ],
+        },
     ),
 ]
 

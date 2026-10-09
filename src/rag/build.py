@@ -114,6 +114,8 @@ def process_document(doc: SourceDocument) -> tuple[list[dict], dict]:
             "source_title":      doc.title,
             "authority":         doc.authority,
             "jurisdiction":      doc.jurisdiction,
+            "region":            doc.effective_region,
+            "role":              doc.role,
             "document_type":     doc.document_type,
             "section":           chunk.section,
             "section_title":     chunk.section_title,

@@ -29,7 +29,7 @@ POLICY_MODES = ("advisory", "blocking")
 SINKS = ("remediation", "regulatory_notices", "evidence_preservation", "escalation")
 SELECTION_METRICS = ("macro_f1", "detection_f1")
 MONITORING_METRICS = ("accuracy", "macro_f1", "detection_f1")
-REMEDIATION_AGENTS = ("offline", "anthropic")
+REMEDIATION_AGENTS = ("offline", "anthropic", "ollama")
 TIERS = ("basic", "intermediate", "advanced")
 BENIGN_EVENTS = ("flash_crowd", "billing_batch", "maintenance_window")
 

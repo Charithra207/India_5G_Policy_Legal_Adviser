@@ -5,6 +5,11 @@ LLM_PROVIDER selects the provider:
   anthropic (default)  Claude via the Messages API with tool use; needs
                        ANTHROPIC_API_KEY (or ANTHROPIC_AUTH_TOKEN). Uses
                        claude-opus-5-5 with server-side refusal fallback.
+  ollama               A local open-weight model through Ollama with tool
+                       calling (OLLAMA_MODEL, default qwen2.5:7b-instruct;
+                       OLLAMA_HOST, default http://localhost:11434). Free;
+                       falls back to the offline playbook if Ollama is not
+                       reachable.
   offline              Deterministic: follows the YAML playbook step by step.
                        No network, no key.
 If "anthropic" is selected but no credential is configured or the SDK is
@@ -58,6 +63,27 @@ class OfflineProvider:
                 "Operator results received; still failing: " + "; ".join(failing))
 
 
+def system_prompt(incident, tier: str) -> str:
+    """The tier instructions shared by the Claude and Ollama agents."""
+    a = incident.attack
+    steps = "\n".join(f"- {s['id']}: {s['description']} -> {s['action']['fn']}"
+                      f"{' [state-changing' + (', auto-safe' if s.get('auto_safe') else ', needs approval') + ']' if s['is_state_changing'] else ''}"
+                      for s in a["playbook"][tier])
+    return (
+        "You are the incident-response agent in a contained 5G security training lab. The network is a "
+        "local Python simulation; your tools are its diagnostic and remediation functions plus a "
+        "knowledge-base search. Nothing you do reaches a real system.\n\n"
+        f"Incident: {a['name']} — {a['description']}\nAffected NF(s): {', '.join(a['affected_nf'])}\n"
+        f"Current tier: {tier.upper()}. Playbook steps for this tier (guidance, in order):\n{steps}\n\n"
+        "Work through the tier: run diagnostics, read the results, decide, and apply fixes. "
+        "State-changing calls are gated by the lab: in the Basic tier only auto-safe steps run; in later "
+        "tiers the operator approves each one, so state exactly why you need it. Use the identifiers you "
+        "observe in diagnostics (sources, neighbour ids, instance ids) as arguments. Cite the knowledge "
+        "base (file and page) when a rule or standard informs a step. When done, call "
+        "report_tier_outcome once with whether you think the incident is resolved and a short summary."
+    )
+
+
 class AnthropicProvider:
     name = "anthropic"
 
@@ -66,23 +92,7 @@ class AnthropicProvider:
         self.client = anthropic.Anthropic()
 
     def _system(self, incident, tier: str) -> str:
-        a = incident.attack
-        steps = "\n".join(f"- {s['id']}: {s['description']} -> {s['action']['fn']}"
-                          f"{' [state-changing' + (', auto-safe' if s.get('auto_safe') else ', needs approval') + ']' if s['is_state_changing'] else ''}"
-                          for s in a["playbook"][tier])
-        return (
-            "You are the incident-response agent in a contained 5G security training lab. The network is a "
-            "local Python simulation; your tools are its diagnostic and remediation functions plus a "
-            "knowledge-base search. Nothing you do reaches a real system.\n\n"
-            f"Incident: {a['name']} — {a['description']}\nAffected NF(s): {', '.join(a['affected_nf'])}\n"
-            f"Current tier: {tier.upper()}. Playbook steps for this tier (guidance, in order):\n{steps}\n\n"
-            "Work through the tier: run diagnostics, read the results, decide, and apply fixes. "
-            "State-changing calls are gated by the lab: in the Basic tier only auto-safe steps run; in later "
-            "tiers the operator approves each one, so state exactly why you need it. Use the identifiers you "
-            "observe in diagnostics (sources, neighbour ids, instance ids) as arguments. Cite the knowledge "
-            "base (file and page) when a rule or standard informs a step. When done, call "
-            "report_tier_outcome once with whether you think the incident is resolved and a short summary."
-        )
+        return system_prompt(incident, tier)
 
     def _create(self, **kwargs):
         # Server-side refusal fallback: a declined turn is re-run on a fallback model
@@ -137,6 +147,83 @@ class AnthropicProvider:
         return next((b.text for b in response.content if b.type == "text"), "")
 
 
+class OllamaProvider:
+    """
+    The tier agent on a local open-weight model (Ollama /api/chat with tools).
+    Acts only through Incident.execute, like every provider; if Ollama cannot
+    be reached the tier falls back to the offline playbook.
+    """
+    name = "ollama"
+
+    def __init__(self, model: str | None = None, host: str | None = None, timeout: float = 180.0) -> None:
+        self.model = model or os.environ.get("OLLAMA_MODEL", "qwen2.5:7b-instruct")
+        self.host = (host or os.environ.get("OLLAMA_HOST", "http://localhost:11434")).rstrip("/")
+        self.timeout = timeout
+
+    def _chat(self, messages: list[dict], tools: list[dict] | None = None) -> dict:
+        import urllib.request
+        body = {"model": self.model, "messages": messages, "stream": False, "options": {"temperature": 0}}
+        if tools:
+            body["tools"] = [{"type": "function", "function": {"name": t["name"], "description": t["description"],
+                                                              "parameters": t["input_schema"]}} for t in tools]
+        request = urllib.request.Request(f"{self.host}/api/chat", data=json.dumps(body).encode("utf-8"),
+                                         headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(request, timeout=self.timeout) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+
+    def run_tier(self, incident, tier: str) -> dict:
+        from ir.tools import tools_for_tier
+        tools = tools_for_tier(incident.attack["playbook"][tier])
+        messages = [{"role": "system", "content": system_prompt(incident, tier)},
+                    {"role": "user", "content": f"The {tier} tier starts now. Current alerts: "
+                                                f"{json.dumps(incident.sim.get_alerts()['alerts'])}"}]
+        summary = ""
+        for _ in range(MAX_TURNS):
+            try:
+                message = self._chat(messages, tools).get("message") or {}
+            except (OSError, ValueError) as exc:
+                incident.record(tier, "system", "model unavailable", note=f"Ollama: {exc}; offline playbook")
+                return {**OfflineProvider().run_tier(incident, tier), "provider": "ollama→offline (unavailable)"}
+            messages.append({"role": "assistant", "content": message.get("content", ""),
+                             "tool_calls": message.get("tool_calls", [])})
+            calls = message.get("tool_calls") or []
+            if not calls:
+                summary = summary or message.get("content", "")
+                break
+            finished = False
+            for call in calls:
+                fn = (call.get("function") or {})
+                name, args = fn.get("name", ""), fn.get("arguments") or {}
+                if isinstance(args, str):
+                    try:
+                        args = json.loads(args)
+                    except ValueError:
+                        args = {}
+                if name == "report_tier_outcome":
+                    summary, finished = str(args.get("summary", "")), True
+                    content = json.dumps({"recorded": True})
+                elif name == "search_kb":
+                    content = json.dumps(_search(incident, str(args.get("query", ""))))
+                else:
+                    content = json.dumps(incident.execute(tier, name, args, reason="agent decision"), default=str)
+                    content += f"\n(lab resolution checks currently {'PASS' if incident.resolved() else 'FAIL'})"
+                messages.append({"role": "tool", "tool_name": name, "content": content})
+            if finished:
+                break
+        return {"provider": self.name, "summary": summary}
+
+    def interpret(self, incident, tier: str, pasted: str) -> str:
+        ok, details = incident.resolution()
+        try:
+            message = self._chat([{"role": "user", "content": (
+                f"Lab incident '{incident.attack['name']}', {tier} tier, run by the operator. Their pasted "
+                f"command output:\n\n{pasted[:12000]}\n\nLab resolution checks: {json.dumps(details, default=str)}\n"
+                "In 3-5 sentences: what do the results show, is the incident resolved, and what next?")}]).get("message")
+        except (OSError, ValueError):
+            return OfflineProvider().interpret(incident, tier, pasted)
+        return (message or {}).get("content", "") or OfflineProvider().interpret(incident, tier, pasted)
+
+
 def _search(incident, query: str) -> list[dict]:
     from kb.retriever import cite
     from kb.retriever import search as kb_search
@@ -152,6 +239,8 @@ def get_provider():
     choice = os.environ.get("LLM_PROVIDER", "anthropic").lower()
     if choice == "offline":
         return OfflineProvider()
+    if choice == "ollama":
+        return OllamaProvider()
     if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
         print("[ir] no ANTHROPIC_API_KEY set — using the offline playbook provider", file=sys.stderr)
         return OfflineProvider()

@@ -35,7 +35,10 @@ from src.core.models import (
 )
 from src.knowledge_base.base_kb import CanonicalKnowledgeBase, KnowledgeBase
 from src.knowledge_base.text_match import mentions
+from src.rag.regions import comparator_tag, region_of
 from .base_agent import BaseAgent
+
+_REFERENCE = "[REFERENCE ONLY — not Indian law]"
 
 
 _CATEGORY_LABEL = {
@@ -334,9 +337,15 @@ class PolicyGapAgent(BaseAgent):
                     comparator_pool.extend(self.standards_kb.retrieve(result.claim, top_k=2))
             international = [e for e in comparator_pool
                              if e.jurisdiction.strip().lower() not in ("", "india")]
+            # One neighbouring-region example first when there is one (the brief's
+            # "expanded region"), then global examples, in retrieval order
+            neighbours = [e for e in international if region_of(e.jurisdiction) == "south_asia"]
+            international = neighbours[:1] + [e for e in international if e not in neighbours[:1]]
             comparator_claims, comparator_cites = self._cited_claims(international)
             for claim in comparator_claims[:2]:
-                text = f"Comparator — {claim}"
+                tag = comparator_tag(comparator_cites[claim][0].jurisdiction)
+                body = claim.replace(_REFERENCE, f"{_REFERENCE} {tag}", 1) if tag else claim
+                text = f"Comparator — {body}"
                 claims.append(text)
                 citations[text] = comparator_cites[claim]
             if not comparator_claims:
@@ -348,11 +357,9 @@ class PolicyGapAgent(BaseAgent):
         gap_category    = raised[0].raised if raised else None
         gap_description = " | ".join(r.claim.split(":", 1)[0] for r in raised)
 
-        missing_facts = [
-            "Final manifest of exact Indian instruments confirmed by KB retrieval.",
-            "Neighbouring-country comparators from the Policy Gap KB "
-            "(to be added during RAG/KB integration).",
-        ]
+        missing_facts = ["Final manifest of exact Indian instruments confirmed by KB retrieval."]
+        if not any(region_of(e.jurisdiction) == "south_asia" for e in evidence):
+            missing_facts.append("No neighbouring-country comparator was retrieved from the Policy Gap KB.")
 
         return AgentFinding(
             agent_id          = AgentID.POLICY_GAP,

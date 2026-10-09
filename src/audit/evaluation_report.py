@@ -68,7 +68,9 @@ AREAS = [
      "Three of the six DOCX categories are examined (overlapping requirements, institutional "
      "clarity, emerging technology); explicit/partial coverage are left to expert review, "
      "unclear coverage is not produced; international comparators are two EU (ENISA) documents, "
-     "with no neighbouring-country instrument.",
+     "with no neighbouring-country instrument. A domain-framed gap register (src/gap/register.py) "
+     "adds five themes with Indian provisions verified word for word and global / "
+     "neighbouring-region examples, pending until their documents are added.",
      ["test_evaluation::TestPolicyGapIdentification"]),
     ("Verification", P,
      "All four outcomes are produced by the real Verifier. In-force status is now established for "
@@ -127,9 +129,11 @@ OTHER = [
      "audit. Amendment histories are not shown to be complete, so nothing real is VERIFIED.",
      ["test_evidence_audit::test_in_force_status_*", "test_evidence_audit::test_amendment_notes_*",
       "test_evidence_audit::test_verifier_reports_*", "test_evidence_audit::test_catches_unbacked_*"]),
-    ("Generative synthesis (DOCX §5.2 generative-AI perspective)", N,
-     "The policy adviser uses no generative model: agents quote passages and the Coordinator "
-     "organises verified claims. Only the separate incident-response lab (ir/llm.py) can use one.", []),
+    ("Generative synthesis (DOCX §5.2 generative-AI perspective)", P,
+     "Optional and off by default: each specialist agent can use a local open-weight model (Ollama) or "
+     "Claude (src/llm); its claims must cite retrieved passages and are checked by the Verifier, and "
+     "prompts and the model's stated rationale go into the audit trail. The default offline mode keeps "
+     "runs reproducible.", []),
     ("Parallel agent execution", N,
      "Agents run sequentially; the asynchronous runner in the Orchestrator is a stub.", []),
     ("ITU AI for Good Sandbox stage", N,

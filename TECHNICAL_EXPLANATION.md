@@ -24,10 +24,14 @@ separate Canonical KB and links findings across domains → Coordinator →
 assessment → append-only audit trail → replay.
 
 - **Language and models:** Python. Retrieval uses the BAAI/bge-small-en-v1.5
-  embedding model on CPU. **The adviser uses no generative model:** agents
-  quote the passages they retrieve, and the Coordinator organises claims the
-  Verifier has checked. Only the separate incident-response lab (`ir/`) can
-  optionally use a Claude model, with a deterministic offline fallback.
+  embedding model on CPU. **By default the adviser uses no generative model:**
+  agents quote the passages they retrieve, and the Coordinator organises claims
+  the Verifier has checked. Optionally (`--llm ollama|anthropic`, `src/llm/`)
+  each agent can reason over its own retrieved passages and the facts released
+  to it; only claims citing a retrieved passage are kept, the Verifier still
+  checks them, and the prompt, response and decisions are written to the audit
+  trail. The incident-response lab (`ir/`) can use Claude or Ollama, with a
+  deterministic offline fallback.
 - **Execution:** sequential.
 - **UI:** Streamlit.
 
@@ -220,7 +224,7 @@ Replay, in the UI or on the command line, does four things:
 - No IndiaAI Mission documents or neighbouring-country instruments. The
   economic and multilateral categories have no source; labour, IP,
   infrastructure and comparators are partial.
-- No generative synthesis in the adviser.
+- No generative synthesis by default; the optional LLM mode is constrained to cited claims and has not been evaluated for quality.
 - Agents run sequentially, not in parallel.
 - The ITU AI for Good Sandbox was not available; everything runs locally.
 - ITU-T Y.3172: the adviser's document pipeline maps to the SRC, C, PP, M, P
