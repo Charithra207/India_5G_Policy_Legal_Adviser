@@ -223,9 +223,12 @@ Replay, in the UI or on the command line, does four things:
 - No generative synthesis in the adviser.
 - Agents run sequentially, not in parallel.
 - The ITU AI for Good Sandbox was not available; everything runs locally.
-- ITU-T Y.3172: the document pipeline maps to the SRC, C, PP, M, P and D
-  nodes mostly by analogy (only PP directly); SINK, MLFO, ML Intent, the ML
-  sandbox and the reference points are not implemented
+- ITU-T Y.3172: the adviser's document pipeline maps to the SRC, C, PP, M, P
+  and D nodes mostly by analogy (only PP directly). The network ML pipeline
+  (`src/y3172/`, `python run.py --intent intents/amf_signalling_storm.yaml`)
+  implements the ML Intent, SRC/C/PP/M/P/D/SINK nodes, MLFO and ML sandbox, with
+  the adviser as its P node — over the contained simulator, not a live
+  network; reference points and levels are logical, in one process
   (`knowledge_base/y3172_pipeline_traceability.json`).
 - No human-evaluation study or energy measurement.
 

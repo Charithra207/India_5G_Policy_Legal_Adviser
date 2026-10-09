@@ -267,7 +267,7 @@
     {
       "capability": "ITU AI for Good Sandbox stage",
       "status": "Not yet implemented",
-      "reason": "Access to the ITU AI for Good Sandbox was not available; builds and runs are local. The Y.3172 ML sandbox (simulated underlay networks for training and testing ML models) is not implemented either.",
+      "reason": "Access to the ITU AI for Good Sandbox was not available; builds and runs are local. The Y.3172 ML sandbox of the network ML pipeline is local (sim/datagen.py, src/y3172/mlfo.py).",
       "tests": [],
       "passed": 0,
       "failed": 0,

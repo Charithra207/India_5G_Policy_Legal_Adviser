@@ -134,8 +134,7 @@ OTHER = [
      "Agents run sequentially; the asynchronous runner in the Orchestrator is a stub.", []),
     ("ITU AI for Good Sandbox stage", N,
      "Access to the ITU AI for Good Sandbox was not available; builds and runs are local. The "
-     "Y.3172 ML sandbox (simulated underlay networks for training and testing ML models) is not "
-     "implemented either.", []),
+     "Y.3172 ML sandbox of the network ML pipeline is local (sim/datagen.py, src/y3172/mlfo.py).", []),
 ]
 
 

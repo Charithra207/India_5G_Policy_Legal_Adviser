@@ -37,7 +37,7 @@ Generated 2026-10-06T16:45:15 UTC by `python -m src.audit.evaluation_report` —
 | In-force / amendment checking | Partially working | 4/0 | In-force status established from obtained documents (S.O. 2408(E) and S.O. 2623(E) for the Telecommunications Act; the commencement clauses of the TCS, CTI, TCS Amendment and Right of Way Rules) and amendment notes from the TCS Amendment Rules 2025, each traced by the evidence audit. Amendment histories are not shown to be complete, so nothing real is VERIFIED. |
 | Generative synthesis (DOCX §5.2 generative-AI perspective) | Not yet implemented | — | The policy adviser uses no generative model: agents quote passages and the Coordinator organises verified claims. Only the separate incident-response lab (ir/llm.py) can use one. |
 | Parallel agent execution | Not yet implemented | — | Agents run sequentially; the asynchronous runner in the Orchestrator is a stub. |
-| ITU AI for Good Sandbox stage | Not yet implemented | — | Access to the ITU AI for Good Sandbox was not available; builds and runs are local. The Y.3172 ML sandbox (simulated underlay networks for training and testing ML models) is not implemented either. |
+| ITU AI for Good Sandbox stage | Not yet implemented | — | Access to the ITU AI for Good Sandbox was not available; builds and runs are local. The Y.3172 ML sandbox of the network ML pipeline is local (sim/datagen.py, src/y3172/mlfo.py). |
 
 ## Final core checklist
 

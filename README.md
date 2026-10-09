@@ -447,6 +447,66 @@ python -m kb.build_index            # ~10.4M tokens, 21,779 chunks; CPU, a few h
 
 ---
 
+## ITU-T Y.3172 ML pipeline (`src/y3172/`)
+
+The adviser becomes the **policy (P) node** of an ITU-T Y.3172 machine-learning
+pipeline that watches the contained simulated 5G core (`sim/`). An **ML Intent**
+says what the operator wants; the **MLFO** builds the pipeline from it, trains
+and selects a model in an **ML sandbox**, deploys it to a separate "live"
+simulation, and keeps checking it:
+
+```
+                      ML Intent (intents/*.yaml)
+                               │
+   ┌──────────────────── MLFO (src/y3172/mlfo.py) ─────────────────────┐
+   │ instantiate · sandbox train/evaluate/select · validate · deploy · │
+   │ monitor · re-calibrate and re-select                              │
+   └───────┬───────────────────────────────────────────────┬──────────┘
+           │ (ref. points 6, 1-2)                          │ (ref. points 5, 3)
+   ML sandbox: simulated underlay networks          ML pipeline on the live (simulated) network
+   (sim/datagen.py) → labelled telemetry             SRC → C → PP → M → P → D → SINKs
+                                                     NFs   collector  model  │   │   ├─ evidence (hashed)
+                                                     (read-only           policy &  ├─ remediation (ir/engine.py,
+                                                      diagnostics)        legal     │   human gates)
+                                                                          adviser   ├─ regulatory notices
+                                                                                    └─ escalation to a human
+```
+
+| Y.3172 component | Here |
+|---|---|
+| ML Intent (cl. 7.4) | `intents/*.yaml`, validated by `src/y3172/intent.py` (sources and their levels, target incidents, candidate models and selection rule, P-node mode, SINKs, time constraints, monitoring) |
+| SRC / C / PP (cl. 8.1) | Simulated NFs; the collector only calls read-only diagnostics; the preprocessor builds a fixed-length vector and its change since the last poll |
+| M (cl. 8.1) | `threshold_centroid` (z-score baseline) and `iforest_rf` (IsolationForest + RandomForest); each prediction carries the signals that deviate from normal and the catalog playbook |
+| P (cl. 8.1 NOTE 5) | `policy_node.py`: unknown / low-confidence / out-of-intent detections go to a human; the attack's Indian obligations are checked word for word in their sources; the specialist-agent swarm assesses the detection; **blocking** holds remediation for a human, **advisory** proceeds with the obligations attached |
+| D and SINKs (cl. 8.1) | Evidence preserved and hashed before any change; remediation through the incident-response engine and its gates; draft notices with deadlines (DoT 6 h / 24 h, CERT-In 6 h, CTI 6 h from occurrence, DPDP without delay / 72 h — marked *not yet in force* before 13 May 2027); escalation |
+| MLFO (cl. 8.1, 8.2) | Placement on UE/AN/CN/management levels, model selection (MNG-001), monitoring and re-selection (MNG-003/004), every decision in a hash-chained audit trail |
+| ML sandbox (cl. 3.2.6, 8.2) | Background load, benign look-alikes (flash crowd, billing batch, maintenance window), attack intensity and post-remediation states; each playbook's effect evaluated in a sandbox simulation before live use |
+
+```bash
+pip install -r requirements.txt
+python run.py --intent intents/amf_signalling_storm.yaml            # interactive: you approve the P-node hold
+python run.py --intent intents/amf_signalling_storm.yaml --auto     # approve everything (demo)
+python run.py --intent intents/hospital_slice_protection.yaml --auto   # advisory mode
+python run.py --intent intents/core_security_full.yaml --auto       # all 13 incident types
+python -m pytest tests/test_y3172.py -q
+```
+
+Each run writes `outputs/y3172/<run id>/`: `report.md` (summary, pipeline,
+sandbox selection, sandbox validation, live timeline, incidents with their
+obligations and SINK results, monitoring), `report.json`, the hash-chained
+audit trail `<run id>.jsonl`, `notices/`, `evidence/`, `escalations/`.
+
+Recorded example runs, with their reports and audit trails: `outputs/y3172/examples/`.
+
+**Limits, stated plainly.** The "live" network is a second instance of the
+contained simulator, not an operator network. Reference points and node levels
+are logical: everything runs in one Python process. Monitoring feedback
+("truth") comes from the simulator; in a real network it would come from
+incident closure. Labels and obligations are decision support for a training
+lab, not legal advice.
+
+---
+
 ## Integration interfaces
 
 - **RAG / Knowledge Base layer:** `INTEGRATION_RAG_KB.md`
@@ -510,7 +570,18 @@ India_5G_Policy_Legal_Adviser/
 │   │   └── app.py             # streamlit run src/ui/app.py
 │   ├── utils/
 │   │   └── output_formatter.py
+│   ├── y3172/                 # ITU-T Y.3172 ML pipeline over the simulated core
+│   │   ├── intent.py          # ML Intent: schema and validation
+│   │   ├── nodes.py           # SRC, C (collector), PP (preprocessor)
+│   │   ├── models.py          # M: candidate models, evaluation, explanations
+│   │   ├── policy_node.py     # P: operator rules + Indian obligations + the agent swarm
+│   │   ├── distributor.py     # D and SINKs (evidence, remediation, notices, escalation)
+│   │   ├── notices.py         # Draft regulatory notices with verified deadlines
+│   │   ├── mlfo.py            # MLFO: instantiate, sandbox, select, deploy, monitor, reselect
+│   │   └── report.py          # Run report (markdown + JSON)
 │   └── pipeline.py            # Top-level entry point
+├── intents/                   # ML Intents (YAML) for the Y.3172 pipeline
+├── sim/                       # Contained simulated 5G core; datagen.py: sandbox data
 ├── scenarios/
 │   ├── scenario1_slicing_incident.py
 │   └── scenario2_healthcare_5g.py
@@ -522,7 +593,8 @@ India_5G_Policy_Legal_Adviser/
 │   ├── retrieval_tests.md     # One retrieval test per agent (generated, in git)
 │   ├── canonical/ technical/ policy_legal/ cybersecurity/ privacy/
 │   │   critical_infrastructure/ standards/ policy_gap/   # vector stores (git-ignored)
-├── outputs/                   # Assessment text/JSON; audit/ holds recorded runs
+├── outputs/                   # Assessment text/JSON; audit/ holds recorded runs;
+│                              # y3172/examples/ holds recorded Y.3172 pipeline runs
 ├── tests/
 │   ├── test_pipeline.py
 │   ├── test_verification_evidence.py
@@ -557,7 +629,7 @@ India_5G_Policy_Legal_Adviser/
 | Conflict handling | Complete — structured Finding A / Finding B with evidence; demonstrated with labelled fixtures (the live corpus has no conflicting provisions) |
 | Progressive reassessment | Complete — cumulative facts, carried-forward conclusions, computed changes |
 | Full 4-stage run | Recorded: `outputs/audit/day2_scenario2_full_T0_T3.jsonl` (replays and re-executes exactly) |
-| ITU-T Y.3172 alignment | Partial, mostly by analogy — the document pipeline is mapped to the SRC, C, PP, M, P and D nodes (only PP corresponds directly); SINK, MLFO, ML Intent, the ML sandbox and the reference points are not implemented. See `knowledge_base/y3172_pipeline_traceability.json` |
+| ITU-T Y.3172 ML pipeline | Implemented over the simulated 5G core (`src/y3172/`): ML Intent, SRC/C/PP/M/P/D/SINK nodes, MLFO, ML sandbox, monitoring and re-selection, with the adviser as the P node. Not a live network; reference points and levels are logical (one process). The adviser's own document pipeline maps to Y.3172 mostly by analogy. See `knowledge_base/y3172_pipeline_traceability.json` |
 | Generative model | None in the adviser (`src/`); the incident-response lab (`ir/`) can optionally use a Claude model, with an offline fallback |
 | ITU AI for Good Sandbox | Not used — access was not available; everything runs locally |
 | Tests | All passing — see `knowledge_base/evaluation_report.md` for per-area counts and status (Working / Partially working / Not yet implemented) |

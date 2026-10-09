@@ -163,7 +163,7 @@ On the full run:
 > - the NCIIPC Rules and international comparators;
 > - a generative model in the adviser;
 > - the ITU AI for Good Sandbox (access was not available; everything runs locally);
-> - the Y.3172 SINK, MLFO, ML Intent and ML sandbox (the pipeline mapping is mostly by analogy).
+> - a live network: the Y.3172 ML pipeline (`python run.py --intent …`) runs on the contained simulator.
 
 ## If something fails
 

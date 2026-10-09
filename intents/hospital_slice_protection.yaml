@@ -1,0 +1,66 @@
+# =============================================================================
+# ML Intent (ITU-T Y.3172 clause 7.4) — validated by src/y3172/intent.py
+# =============================================================================
+# Protect the URLLC hospital slice and the hospital portal it carries.
+# Policy node in ADVISORY mode: remediation goes ahead through the
+# incident-response gates (auto-safe steps only in Basic, a human yes for
+# every later step) and the legal obligations are attached, not blocking.
+#
+#   python run.py --intent intents/hospital_slice_protection.yaml --auto
+# =============================================================================
+
+intent_id: hospital_slice_protection
+title: Protect the hospital slice (URLLC) and its portal
+description: >-
+  A private 5G slice carries a hospital's clinical applications. Detect
+  attacks that reach it through massive-IoT devices, subscriber-profile
+  tampering, user-plane spoofing or volumetric floods; tell them apart from
+  an authorised billing job; attach the critical-infrastructure and
+  personal-data duties that a hospital setting raises.
+
+ml_application:
+  task: incident detection and classification
+  target_classes: [iot_botnet_mmtc, subscriber_profile_tampering, gtpu_spoofing_upf, core_ddos_upf]
+
+sources:
+  - {nf: amf, level: CN, telemetry: [metrics, logs, devices]}
+  - {nf: smf, level: CN, telemetry: [metrics, logs, slices, services]}
+  - {nf: upf, level: CN, telemetry: [metrics, health, logs, user_plane]}
+  - {nf: udm, level: CN, telemetry: [metrics, logs, subscribers]}
+  - {nf: oam, level: management, telemetry: [alerts, oam]}
+
+model:
+  level: CN
+  candidates: [threshold_centroid, iforest_rf]
+  selection: {metric: macro_f1, min_score: 0.85, max_inference_ms: 80}
+
+training:
+  samples_per_class: 60
+  holdout_fraction: 0.3
+  seed: 21
+  background_load: [0.8, 1.2]
+
+policy:
+  level: management
+  mode: advisory
+  jurisdiction: IN
+  min_confidence: 0.6
+  legal_adviser: true
+
+distributor: {level: management}
+sinks: [evidence_preservation, remediation, regulatory_notices, escalation]
+remediation: {agent: offline, max_tier: advanced}
+
+constraints:
+  decision_deadline_ticks: 1
+
+monitoring: {metric: accuracy, window: 8, min_samples: 4, min_score: 0.75, cooldown_ticks: 4}
+
+exercise:
+  ticks: 24
+  seed: 5
+  events:
+    - {at: 3, benign: billing_batch}               # authorised bulk read: not an attack
+    - {at: 7, inject: iot_botnet_mmtc}
+    - {at: 13, benign: maintenance_window}
+    - {at: 17, inject: subscriber_profile_tampering}

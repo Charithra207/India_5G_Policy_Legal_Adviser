@@ -90,3 +90,11 @@ sim/reports/
 sandbox/work/
 sandbox/*.local.wsb
 data/knowledge_base/
+
+# ITU-T Y.3172 pipeline runs (python run.py --intent ...) are per run. The
+# committed examples keep their report, audit trail, notices, escalations,
+# evidence and model selections; not the simulators' working state.
+outputs/y3172/*
+!outputs/y3172/examples/
+outputs/y3172/examples/*/live/
+outputs/y3172/examples/*/sandbox/sim/

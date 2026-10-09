@@ -32,4 +32,5 @@ VERIFIED until in-force and amendment status are checked; NCIIPC Rules and
 neighbouring-country instruments are not ingested; no generative model in the
 adviser (the incident-response lab can optionally use one); agents run
 sequentially; the ITU AI for Good Sandbox was not available, so everything runs
-locally; the Y.3172 SINK, MLFO, ML Intent and ML sandbox are not implemented.
+locally; the Y.3172 ML pipeline (`src/y3172/`) runs over the contained
+simulator, not a live network, with logical reference points and levels.

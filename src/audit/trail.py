@@ -64,6 +64,8 @@ def _plain(value):
         return {str(_plain(k)): _plain(v) for k, v in value.items()}
     if isinstance(value, (list, tuple, set)):
         return [_plain(v) for v in value]
+    if type(value).__module__ == "numpy" and hasattr(value, "item"):   # numpy scalars
+        return value.item()
     return value
 
 
@@ -289,6 +291,27 @@ class AuditTrail:
             "code": _git_commit(),
         })
         return trail
+
+    @classmethod
+    def start_run(cls, run_id: str, header: dict, directory: Path) -> "AuditTrail":
+        """
+        An append-only, hash-chained trail for a run that is not a staged
+        scenario (e.g. the Y.3172 pipeline in src/y3172/mlfo.py).  The first
+        entry is `run_started` with `header`; add entries with `record`.
+        """
+        directory = Path(directory)
+        directory.mkdir(parents=True, exist_ok=True)
+        path = directory / f"{run_id}.jsonl"
+        if path.exists():
+            raise FileExistsError(f"{path} exists; an audit trail is never overwritten")
+        trail = cls(path)
+        trail._append({"type": "run_started", "schema_version": SCHEMA_VERSION, "run_id": run_id,
+                       **_plain(header), "knowledge_base_build": _kb_build(), "code": _git_commit()})
+        return trail
+
+    def record(self, entry_type: str, payload: dict) -> dict:
+        """Append one entry of `entry_type` (JSON-ready after enum/dataclass conversion)."""
+        return self._append({"type": entry_type, **_plain(payload)})
 
     @property
     def run_id(self) -> str:

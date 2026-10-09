@@ -6,6 +6,14 @@ Contained 5G incident-response lab — command line (the source of truth).
     python run.py --attack nf_host_ransomware --provider offline
     python run.py --attack core_ddos_upf --auto        # approve everything, agent at every gate
 
+ITU-T Y.3172 ML pipeline (src/y3172/) driven by an ML Intent:
+    python run.py --intent intents/amf_signalling_storm.yaml
+    python run.py --intent intents/amf_signalling_storm.yaml --auto --mode advisory
+
+The MLFO trains and selects a model in the ML sandbox, deploys it to a live
+simulated network, and on each detection runs the policy & legal adviser as
+the P node before any remediation; see src/y3172/__init__.py.
+
 Resets the simulated core, injects the attack, prints the Policy panel
 (Indian obligations with file and page) and the Technical panel, runs the
 Basic tier automatically and asks before every further tier:
@@ -154,11 +162,16 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--list", action="store_true", help="list attack ids")
     ap.add_argument("--provider", choices=["anthropic", "offline"], help="overrides LLM_PROVIDER")
     ap.add_argument("--auto", action="store_true", help="non-interactive: agent at every gate, approve all")
+    ap.add_argument("--intent", help="ML Intent (YAML) for the Y.3172 pipeline, e.g. intents/amf_signalling_storm.yaml")
+    ap.add_argument("--mode", choices=["advisory", "blocking"], help="with --intent: override the P-node mode")
+    ap.add_argument("--out", help="with --intent: run folder (default outputs/y3172/<run id>)")
     args = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
     _load_dotenv()
+    if args.intent:
+        return run_intent(args)
     from catalog.loader import load_catalog
     catalog = load_catalog()
     if args.list or not args.attack:
@@ -180,6 +193,97 @@ def main(argv: list[str] | None = None) -> int:
     print(report["markdown"])
     print("Saved:", *report["paths"], sep="\n  ")
     return 0 if report["resolved"] else 2
+
+
+def print_pipeline_event(e: dict) -> None:
+    """One line (or a short block) per MLFO event."""
+    k = e["kind"]
+    if k == "instantiated":
+        print("\n" + _rule("MLFO — pipeline instantiated from the ML Intent"))
+        print(f"  {e['chain']}   ({e['feature_count']} features; levels {', '.join(e['levels'])})")
+        for n in e["nodes"]:
+            extra = ", ".join(n.get("telemetry", [])) or n.get("mode", "") or ", ".join(n.get("candidates", []))
+            print(f"    {n['node']:<5} {n['id']:<26} {n['level']:<11} {extra}")
+    elif k == "sandbox_data":
+        print("\n" + _rule("ML SANDBOX — training and selection"))
+        print(f"  {e['samples']} labelled samples, {e['features']} features, {e['classes']} classes, "
+              f"background load {list(e['load'])} ({e['seconds']} s)")
+    elif k == "candidate_evaluated":
+        m = e["metrics"]
+        print(f"    {e['model_id']:<20} macro-F1 {m['macro_f1']:<6}  detection-F1 {m['detection_f1']:<6}  "
+              f"false alarms {m['false_alarm_rate']:<6}  p95 {m['inference_ms_p95']} ms  "
+              f"{'meets intent' if e['eligible'] else 'does NOT meet intent'}")
+    elif k == "model_selected":
+        print(f"  → selected {e['selected']} ({e['reason']}){'' if e['meets_intent'] else '  !! below intent'}")
+    elif k == "sandbox_validated":
+        print("\n" + _rule("ML SANDBOX — effect of each playbook evaluated before live use"))
+        for r in e["rows"]:
+            print(f"    {r['incident']:<28} detected as {r['detected_as']:<28} playbook resolved: "
+                  f"{'yes (' + r['resolved_in'] + ')' if r['playbook_resolved'] else 'no'}")
+    elif k == "deployed":
+        print("\n" + _rule(f"LIVE — {e['model_id']} deployed to the live simulated network"))
+        print(f"  operator commands for this network need LAB_WORK_DIR={e['live']}")
+    elif k == "tick":
+        mark = "" if e["prediction"] == e["scored_truth"] else "  ✘"
+        ev = f"  [{'; '.join(e['events'])}]" if e["events"] else ""
+        print(f"  t{e['tick']:>3} {e['clock']}  {e['prediction']:<28} {e['confidence']:<6} "
+              f"truth={e['truth']}{mark}{ev}")
+    elif k == "detection":
+        p = e["prediction"]
+        print("\n" + _rule(f"DETECTION {e['incident_id']}", "-"))
+        print(f"  M: {p['label']} (confidence {p['confidence']}, model {p['model_id']})")
+        for ev in p["evidence"][:4]:
+            print(f"     {ev['feature']} = {ev['value']}  (normal ≈ {ev['normal_mean']}, z {ev['z']})")
+    elif k == "policy":
+        d = e["decision"]
+        print(f"  P: {d['decision']} ({d['mode']} mode)")
+        for r in d["reasons"]:
+            print(textwrap.fill(" ".join(r.split()), W, initial_indent="     - ", subsequent_indent="       "))
+        for o in d["obligations"]:
+            print(f"     {'✔' if o['verified'] else '✘'} {o['summary'][:95]}")
+            print(f"        {o['citation']}")
+        a = d.get("adviser") or {}
+        if a and "error" not in a:
+            print(f"     specialist agents {a['active_agents']}: verifier {a['verifier_outcomes']}")
+    elif k == "dispatch":
+        for s in e["sinks"]:
+            print(f"  SINK {s['sink']}: {s['status']} — {s.get('detail', '')[:150]}")
+            for n in s.get("notices", []):
+                if "recipient" in n:
+                    print(f"       · {n['recipient'][:55]:<55} deadline {n['deadline']:<20} {n['status'][:40]}")
+        print("-" * W)
+    elif k == "reselecting":
+        print("\n" + _rule("MONITORING — score below the intent's minimum: re-calibrate and re-select", "!"))
+        print(f"  rolling {e['score']}; estimated live background load {e['estimated_load']}; "
+              f"new training load {list(e['new_training_load'])}")
+
+
+def run_intent(args) -> int:
+    from dataclasses import replace
+    from pathlib import Path
+
+    from src.y3172.intent import IntentError, load_intent
+    from src.y3172.mlfo import MLFO
+    try:
+        intent = load_intent(args.intent)
+    except (IntentError, OSError) as exc:
+        print(f"intent error: {exc}")
+        return 1
+    if args.mode:
+        intent = replace(intent, policy=replace(intent.policy, mode=args.mode))
+    if args.provider:
+        intent = replace(intent, remediation_agent=args.provider)
+        os.environ["LLM_PROVIDER"] = args.provider
+    mlfo = MLFO(intent, run_dir=Path(args.out) if args.out else None, human=CliHuman(args.auto),
+                on_event=print_pipeline_event, incident_event=print_event)
+    os.environ["LAB_WORK_DIR"] = str(mlfo.run_dir / "live")      # operator commands (manual tiers)
+    print(_rule(f"Y.3172 PIPELINE — {intent.title} — P node: {intent.policy.mode}"))
+    report = mlfo.run()
+    print("\n" + _rule("RUN SUMMARY"))
+    for k, v in report["data"]["summary"].items():
+        print(f"  {k.replace('_', ' '):<34} {v}")
+    print("\nSaved:", *[f"{k}: {v}" for k, v in report["paths"].items()], sep="\n  ")
+    return 0
 
 
 def _load_dotenv() -> None:
