@@ -496,7 +496,16 @@ sandbox selection, sandbox validation, live timeline, incidents with their
 obligations and SINK results, monitoring), `report.json`, the hash-chained
 audit trail `<run id>.jsonl`, `notices/`, `evidence/`, `escalations/`.
 
-Recorded example runs, with their reports and audit trails: `outputs/y3172/examples/`.
+Recorded example runs (`outputs/y3172/examples/`, each with its report, audit trail, notices, escalations and evidence):
+
+| run | P node | sandbox: playbooks validated | attacks detected within 1 tick | live tick accuracy | false-alarm ticks | remediations on a wrong classification | re-selections | draft notices | escalations |
+|---|---|---|---|---|---|---|---|---|---|
+| [AMF storm — operator reviews each hold (answers piped to `python run.py --intent …`: decline, approve, intermediate tier)](outputs/y3172/examples/amf_signalling_storm_operator_review/report.md) | blocking | 3/3 | 1/1 | 0.8077 | 5 | 0 | 2 | 8 | 2 |
+| [AMF storm — `--auto` (every hold approved)](outputs/y3172/examples/amf_signalling_storm/report.md) | blocking | 3/3 | 1/1 | 0.8846 | 3 | 2 | 1 | 12 | 0 |
+| [Hospital slice — advisory mode, `--auto`](outputs/y3172/examples/hospital_slice_protection/report.md) | advisory | 4/4 | 2/2 | 1.0 | 0 | 0 | 0 | 8 | 0 |
+| [Whole core, all 13 incident types — `--auto`](outputs/y3172/examples/core_security_full/report.md) | blocking | 13/13 | 4/4 | 1.0 | 0 | 0 | 0 | 16 | 2 |
+
+What the runs show: benign look-alikes (flash crowd, authorised billing batch, maintenance window) are not reported; every injected attack is detected in the tick it starts; a ×5 growth in legitimate load first causes false alarms, which monitoring catches — the MLFO re-calibrates the sandbox to the live load, retrains and re-selects, and the false alarms stop; a low-confidence detection is escalated, not acted on. With `--auto` the false alarms' playbooks are applied (the report flags them); with an operator reviewing the blocking-mode holds, none is. These runs used stub knowledge bases for the specialist agents (vector stores are not committed); with `python -m src.rag.build` done first, the agents quote the ingested passages.
 
 **Limits, stated plainly.** The "live" network is a second instance of the
 contained simulator, not an operator network. Reference points and node levels
