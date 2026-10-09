@@ -386,7 +386,9 @@ def test_declined_hold_changes_nothing_and_escalates(catalog, tmp_path):
     assert sinks["remediation"]["status"] == "held" and not sinks["remediation"]["approved"]
     assert {k: v for k, v in sim.state.items() if k != "logs"} == {k: v for k, v in before.items() if k != "logs"}
     assert sinks["escalation"]["status"] == "escalated"
-    assert sinks["regulatory_notices"]["notices"]
+    assert sinks["escalation"]["detail"].startswith("Remediation status: held")
+    drafts = [n for n in sinks["regulatory_notices"]["notices"] if "recipient" in n]
+    assert drafts and all(n["status"].startswith("ON HOLD") for n in drafts)
     manifest = json.loads((tmp_path / "evidence" / "INC1" / "MANIFEST.json").read_text())
     assert "logs/amf.log" in manifest["sha256"]
 
@@ -399,6 +401,8 @@ def test_approved_remediation_runs_through_the_ir_engine(catalog, tmp_path):
     assert any("disconnect_gnb" in c for c in sinks["remediation"]["changes"])
     assert "escalation" not in sinks
     assert Path(sinks["remediation"]["paths"][0]).parent == tmp_path / "live" / "reports"
+    drafts = [n for n in sinks["regulatory_notices"]["notices"] if "recipient" in n]
+    assert drafts and not any(n["status"].startswith("ON HOLD") for n in drafts)
 
 
 def test_max_tier_stops_gates(catalog, tmp_path):

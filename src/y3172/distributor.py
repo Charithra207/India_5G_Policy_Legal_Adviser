@@ -187,7 +187,8 @@ class Distributor:
             "remedial_measures": (remediation or {}).get("changes", []),
         }
         out = self.run_dir / "notices" / decision.incident_id
-        drafts = draft_notices(decision, detected_at, facts, out)
+        confirmed = remediation is None or remediation.get("approved", True)
+        drafts = draft_notices(decision, detected_at, facts, out, confirmed=confirmed)
         return {"sink": "regulatory_notices", "status": "drafted",
                 "detail": f"{sum('recipient' in d for d in drafts)} draft notices, "
                           f"{sum('action' in d for d in drafts)} preservation actions",
@@ -203,7 +204,7 @@ class Distributor:
         path = out / f"{decision.incident_id}.md"
         why = list(decision.reasons)
         if remediation is not None and remediation["status"] != "resolved":
-            why.append(f"Remediation status: {remediation['status']} — {remediation['detail']}")
+            why.insert(0, f"Remediation status: {remediation['status']} — {remediation['detail']}")
         lines = [f"# Escalation — {decision.incident_id}", "",
                  f"- Prediction: **{prediction.label}** by {prediction.model_id} "
                  f"(confidence {prediction.confidence:.2f}, anomaly score {prediction.anomaly_score:.2f})",

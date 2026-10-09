@@ -97,12 +97,14 @@ def _verify(doc: str, phrase: str) -> str:
     return f"verified in {cite(hit)}" if hit else f"UNVERIFIED — phrase not found in {doc}"
 
 
-def draft_notices(decision, detected_at: datetime, facts: dict, out_dir: Path | None) -> list[dict]:
+def draft_notices(decision, detected_at: datetime, facts: dict, out_dir: Path | None,
+                  confirmed: bool = True) -> list[dict]:
     """
     Draft notices for the obligations in `decision` (a PolicyDecision).
     `facts`: what the lab knows (affected NFs, users, area, remedial measures,
-    alerts) to pre-fill the drafts.  Writes one markdown file per notice to
-    `out_dir` when given.
+    alerts) to pre-fill the drafts.  `confirmed` is False when the operator
+    declined the policy node's hold: the drafts are then marked ON HOLD.
+    Writes one markdown file per notice to `out_dir` when given.
     """
     ids = {o["id"] for o in decision.obligations}
     dpdp_in_force = detected_at.date() >= DPDP_BREACH_DUTIES_FROM
@@ -123,6 +125,9 @@ def draft_notices(decision, detected_at: datetime, facts: dict, out_dir: Path | 
                              f"incident date {detected_at:%d %b %Y}.")
             if spec.get("condition"):
                 status = "CONDITIONAL DRAFT — " + spec["condition"]
+            if not confirmed:
+                status = ("ON HOLD (the operator did not confirm the incident; complete and send only if it is "
+                          "confirmed) — " + status)
             if spec["from"] == "occurrence":
                 notes.append("This deadline runs from OCCURRENCE, which may be earlier than detection; "
                              "establish the occurrence time from the logs. The deadline shown is the latest "
