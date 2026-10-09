@@ -6,6 +6,8 @@ Demonstration UI — India 5G Policy & Legal Adviser
 Live run: release the staged incident one chunk at a time into the core
 pipeline.  Replay: step through a recorded audit trail, check its hash chain,
 and optionally re-execute it to confirm the record is reproduced.
+Y.3172 pipeline: run an ML Intent (src/y3172/) or open a recorded run.
+Gap register: the domain-specific potential policy gaps with their sources.
 
 Everything displayed comes from a stage entry of the audit trail, which is
 built from the pipeline's own AuditRecord.  The UI computes nothing but
@@ -164,11 +166,28 @@ def render_claim(claim: dict) -> None:
     st.caption("  \n".join(lines))
 
 
+def render_llm_trace(trace: dict) -> None:
+    """The agent's optional LLM step: stated rationale, accepted/rejected claims, prompts."""
+    with st.expander(f"LLM reasoning — {trace.get('provider')}:{trace.get('model')} · {trace.get('status', '')}"):
+        if trace.get("reasoning_summary"):
+            st.markdown(f"**Model's stated rationale:** {trace['reasoning_summary']}")
+        for c in trace.get("accepted_claims", []):
+            st.markdown(f"- accepted → Verifier: {c['claim']}  \n  cites `{', '.join(c['cites'])}`")
+        for c in trace.get("rejected_claims", []):
+            st.markdown(f"- :red[rejected] ({c.get('reason')}): {c.get('claim')}")
+        st.caption("Only claims citing retrieved passages are accepted; the Verifier then checks them "
+                   "against the Canonical KB like any other claim.")
+        st.code(trace.get("user_prompt", ""), language="text")
+
+
 def render_findings(entry: dict) -> None:
     st.header("Agent findings")
     tabs = st.tabs([agent_name(a["agent_id"]) for a in entry["agents"]])
     for tab, agent in zip(tabs, entry["agents"]):
         with tab:
+            view = agent["visible_input"].get("agent_view") or []
+            if view:
+                st.info("**Released to this agent only:**  \n" + "  \n".join(f"• {f}" for f in view))
             st.markdown(f"**Decision summary:** {agent['decision_summary']}")
             for key, value in agent["mandate_output"].items():
                 shown = ", ".join(map(str, value)) if isinstance(value, list) else value
@@ -189,6 +208,8 @@ def render_findings(entry: dict) -> None:
             with st.expander(f"Retrieval queries ({len(agent['queries'])})"):
                 for q in agent["queries"]:
                     st.markdown(f"- {q}")
+            if agent.get("llm_reasoning"):
+                render_llm_trace(agent["llm_reasoning"])
 
 
 def render_passage(p: dict) -> None:
@@ -447,14 +468,24 @@ def live_mode() -> None:
     scenario_id = st.sidebar.selectbox(
         "Scenario", list(SCENARIOS), format_func=lambda s: f"{s} — {SCENARIOS[s].title}")
     use_live = st.sidebar.toggle("Use live knowledge bases", value=True)
+    llm_choice = st.sidebar.selectbox(
+        "Agents' reasoning model", ["offline", "ollama", "anthropic"],
+        help="offline: deterministic agents (default). ollama: a local open-weight model "
+             "(OLLAMA_MODEL). anthropic: Claude (ANTHROPIC_API_KEY). LLM claims must cite "
+             "retrieved passages and are checked by the Verifier.")
 
     engine: ScenarioEngine | None = st.session_state.get("engine")
     if engine is None or engine.spec.scenario_id != scenario_id \
-            or st.session_state.get("engine_live") != use_live:
+            or st.session_state.get("engine_live") != use_live \
+            or st.session_state.get("engine_llm", "offline") != llm_choice:
         if st.sidebar.button("Start run", type="primary"):
+            from src import llm
+            provider = llm.configure(llm_choice)
+            st.session_state.llm_notice = getattr(provider, "notice", "")
             registry = live_registry() if use_live else None
             st.session_state.engine = ScenarioEngine(scenario_id, registry=registry)
             st.session_state.engine_live = use_live
+            st.session_state.engine_llm = llm_choice
             st.rerun()
         spec = get_scenario(scenario_id)
         render_scenario(spec, None)
@@ -465,6 +496,8 @@ def live_mode() -> None:
         return
 
     render_kb_status(engine.kb_status)
+    if st.session_state.get("llm_notice"):
+        st.sidebar.warning(st.session_state.llm_notice)
     st.sidebar.caption(f"Audit trail: `{shown_path(engine.audit_path)}`")
     if engine.has_next():
         nxt = engine.spec.stages[engine.stages_run]
@@ -559,15 +592,101 @@ def replay_mode() -> None:
     render_stage(spec, run.stages, step, run.header, shown_path(path), explain_open=True)
 
 
+# ---------------------------------------------------------------------------
+# ITU-T Y.3172 pipeline (src/y3172/) and the policy-gap register
+# ---------------------------------------------------------------------------
+
+Y3172_OUT = ROOT / "outputs" / "y3172"
+
+
+def y3172_runs() -> list[Path]:
+    """Run folders with a report, examples first, newest first."""
+    runs = [p.parent for p in Y3172_OUT.glob("**/report.json")]
+    return sorted(runs, key=lambda p: ("examples" not in p.parts, -p.stat().st_mtime))
+
+
+def y3172_mode() -> None:
+    st.header("ITU-T Y.3172 ML pipeline — the adviser as the policy (P) node")
+    st.caption("ML Intent → MLFO → ML sandbox (train, evaluate, select, validate playbooks) → "
+               "live simulated network: SRC → C → PP → M → P → D → SINKs. Contained simulation; "
+               "nothing reaches a real network.")
+    intents = sorted((ROOT / "intents").glob("*.yaml"))
+    with st.sidebar.expander("Run an ML Intent", expanded=False):
+        chosen = st.selectbox("Intent", intents, format_func=lambda p: p.name)
+        mode = st.radio("P-node mode", ["blocking", "advisory"], horizontal=True)
+        st.caption("In this page every hold and gate is approved automatically (as `--auto`); "
+                   "use `python run.py --intent …` to review each hold yourself.")
+        if st.button("Run intent", type="primary"):
+            from dataclasses import replace
+
+            from src.y3172.intent import load_intent
+            from src.y3172.mlfo import MLFO, AutoOperator
+            intent = load_intent(chosen)
+            intent = replace(intent, policy=replace(intent.policy, mode=mode))
+            with st.spinner("Training in the sandbox and running the live exercise…"):
+                report = MLFO(intent, human=AutoOperator()).run()
+            st.session_state.y3172_run = report["paths"]["run_dir"]
+    runs = y3172_runs()
+    if not runs:
+        st.info("No recorded run yet: use **Run an ML Intent** in the sidebar.")
+        return
+    default = next((i for i, p in enumerate(runs) if str(p) == st.session_state.get("y3172_run")), 0)
+    run_dir = st.sidebar.selectbox("Recorded pipeline run", runs, index=default,
+                                   format_func=lambda p: shown_path(p))
+    data = json.loads((run_dir / "report.json").read_text(encoding="utf-8"))
+    s = data["summary"]
+    cols = st.columns(5)
+    cols[0].metric("Attacks detected within deadline",
+                   f"{s['attacks_detected_within_deadline']}/{s['attacks_injected']}")
+    cols[1].metric("Live tick accuracy", s["live_accuracy"])
+    cols[2].metric("False-alarm ticks", s["false_alarm_ticks"])
+    cols[3].metric("Remediations on a wrong class", s["remediations_applied_on_wrong_classification"])
+    cols[4].metric("Model re-selections", s["reselections"])
+    st.markdown((run_dir / "report.md").read_text(encoding="utf-8"))
+
+
+def gap_mode() -> None:
+    path = ROOT / "knowledge_base" / "gap_register.json"
+    st.header("Policy-gap register — domain gaps with Indian, global and regional sources")
+    if st.sidebar.button("Regenerate register"):
+        from src.gap.register import main as regenerate
+        regenerate([])
+    if not path.exists():
+        st.info("No register yet: run `python -m src.gap.register`.")
+        return
+    reg = json.loads(path.read_text(encoding="utf-8"))
+    st.caption(reg["disclaimer"])
+    st.markdown("Anchors: " + ", ".join(f"**{v}** {k}" for k, v in reg["anchor_status_counts"].items()))
+    for t in reg["themes"]:
+        with st.expander(f"{t['id']} · {t['domain']} — {t['theme']}  ({t['status']})"):
+            st.markdown(f"**Why it matters.** {t['why_it_matters']}")
+            st.markdown(f"**Coordination problem.** {t['coordination_problem']}")
+            for title, key in (("Indian provisions", "indian_provisions"), ("Global examples", "global_examples"),
+                               ("Neighbouring-region examples", "regional_examples")):
+                if t[key]:
+                    st.markdown(f"**{title}**")
+                    for a in t[key]:
+                        mark = "✔" if a["status"] == "verified" else "…"
+                        st.markdown(f"{mark} {a['cite_as']} ({a['jurisdiction']}) — {a['what']}  \n"
+                                    f":gray[{a['status']}]" + (f"  \n> {a['passage']}" if a.get("passage") else ""))
+            if t.get("questions_for_experts"):
+                st.markdown("**Questions for expert review:** " + " · ".join(t["questions_for_experts"]))
+
+
 def main() -> None:
     st.set_page_config(page_title="India 5G Policy & Legal Adviser", layout="wide")
     st.title("India 5G Policy & Legal Adviser")
     st.warning(f"**Human review required.** {HUMAN_REVIEW}")
-    mode = st.sidebar.radio("Mode", ["Live run", "Replay"], horizontal=True)
+    mode = st.sidebar.radio("Mode", ["Live run", "Replay", "Y.3172 pipeline", "Gap register"],
+                            horizontal=True)
     if mode == "Live run":
         live_mode()
-    else:
+    elif mode == "Replay":
         replay_mode()
+    elif mode == "Y.3172 pipeline":
+        y3172_mode()
+    else:
+        gap_mode()
 
 
 main()

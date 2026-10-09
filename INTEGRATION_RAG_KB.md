@@ -92,8 +92,11 @@ rather than pretending.
 | Distribution | Coordinator assessment | `src/core/coordinator.py` |
 | Sandbox | **Not executed.** The ITU AI for Good Sandbox was not available; everything runs locally. The Y.3172 ML sandbox of the network ML pipeline is local (`sim/datagen.py`, `src/y3172/mlfo.py`) | — |
 
-No generative model is used in the adviser. Agents quote the passages they
+By default no generative model is used in the adviser. Agents quote the passages they
 retrieve; they do not paraphrase, and they do not answer from model knowledge.
+With the optional LLM mode (`--llm ollama|anthropic`, `src/llm/`) a model may add
+claims, but only claims citing a retrieved passage id are kept, they are labelled
+`[LLM-assisted — provider:model]`, and the Verifier checks them like any other claim.
 
 These stage names follow the DOCX. Against ITU-T Y.3172 itself this document
 pipeline maps mostly by analogy (only preprocessing corresponds directly). The

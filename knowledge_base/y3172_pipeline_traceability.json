@@ -101,10 +101,10 @@
         "phrase_quoted": "M (model): This is a machine learning model, in a form which is usable in a machine learning pipeline."
       },
       "project_implementation": {
-        "description": "Sentence-embedding model for retrieval within each agent's own KB. No generative model: agents quote retrieved passages.",
+        "description": "Sentence-embedding model for retrieval within each agent's own KB. By default no generative model: agents quote retrieved passages (an optional LLM step is described under generator_model_scope).",
         "model_id": "BAAI/bge-small-en-v1.5",
         "generator_model": "none — agents quote retrieved passages; no generative model is used",
-        "generator_model_scope": "Applies to the policy adviser (src/). The separate incident-response lab (ir/llm.py) can use a Claude model through the Anthropic API (LLM_PROVIDER=anthropic); without a key or the SDK it falls back to the deterministic offline playbook.",
+        "generator_model_scope": "'none' records the knowledge-base build: no generative model ingests, writes or answers from the knowledge bases. At run time each specialist agent can optionally use an LLM (src/llm: ADVISER_LLM=ollama for a local open-weight model, or anthropic); off by default. Its claims must cite retrieved passages and are checked by the Verifier. The incident-response lab (ir/llm.py) can use Claude or Ollama, falling back to the deterministic offline playbook.",
         "files": [
           "src/rag/embedding.py",
           "src/rag/vector_kb.py"

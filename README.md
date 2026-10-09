@@ -299,6 +299,16 @@ python -m src.scenario.run --conflict-demo       # conflict handling (labelled f
 python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --explain  # decision path per stage
 python -m src.audit.evaluation_report            # evaluation summary from a real test run
 
+# Optional: let each agent reason with a local open model (Ollama) or Claude.
+# Default is offline. Only claims citing a retrieved passage are kept; the
+# Verifier still checks them; prompts and responses go to the audit trail.
+ollama pull qwen2.5:7b-instruct                  # once (https://ollama.com)
+python -m src.scenario.run --stages 4 --llm ollama   # or set ADVISER_LLM=ollama
+python run.py --intent intents/amf_signalling_storm.yaml --auto --llm ollama
+
+# Policy-gap register (Indian provisions vs global / neighbouring-region examples)
+python -m src.gap.register                       # -> knowledge_base/gap_register.md
+
 # Run Scenario 2 (T0-T3) with the live knowledge bases
 python -c "
 import sys; sys.path.insert(0, '.')
@@ -566,7 +576,13 @@ India_5G_Policy_Legal_Adviser/
 │   │   ├── build.py           # python -m src.rag.build
 │   │   ├── registry.py        # build_registry() -> live KBRegistry
 │   │   ├── interface.py       # run_agent(agent_id, chunk) -> AgentFinding
-│   │   └── retrieval_demo.py  # python -m src.rag.retrieval_demo
+│   │   ├── retrieval_demo.py  # python -m src.rag.retrieval_demo
+│   │   └── regions.py         # Region of each source; comparator labels
+│   ├── llm/                   # Optional agent reasoning (offline / Ollama / Claude)
+│   │   ├── provider.py        # Providers with offline fallback
+│   │   └── synthesis.py       # Per-agent prompt, cited-claims-only, reasoning trace
+│   ├── gap/
+│   │   └── register.py        # python -m src.gap.register
 │   ├── scenario/
 │   │   ├── catalog.py         # DOCX stage tables (display/check only)
 │   │   ├── engine.py          # ScenarioEngine: chunk-by-chunk release + state
@@ -600,6 +616,9 @@ India_5G_Policy_Legal_Adviser/
 │   │   └── raw/               # Downloaded source files (git-ignored)
 │   ├── ingestion_manifest.json  # What was actually ingested (generated, in git)
 │   ├── retrieval_tests.md     # One retrieval test per agent (generated, in git)
+│   ├── policy_gap/gap_themes.yaml  # Gap themes and their anchors (in git)
+│   ├── gap_register.md/.json  # Policy-gap register (generated, in git)
+│   ├── ADDING_SOURCES.md      # How to add documents and rebuild
 │   ├── canonical/ technical/ policy_legal/ cybersecurity/ privacy/
 │   │   critical_infrastructure/ standards/ policy_gap/   # vector stores (git-ignored)
 ├── outputs/                   # Assessment text/JSON; audit/ holds recorded runs;
@@ -633,13 +652,15 @@ India_5G_Policy_Legal_Adviser/
 | Not ingested | IT (NCIIPC) Rules 2013 (source unreachable); international policy examples (not specified in DOCX) |
 | In-force / amendment checks | Not done for any source — quoted claims are INCOMPLETE, not VERIFIED |
 | Scenario engine, audit trail, replay | Complete — stage tables checked against the DOCX; hash-chained JSONL; re-execution compare |
-| Demonstration UI | Day-1 functional UI (Streamlit): live run and replay |
+| Demonstration UI | Streamlit: live run (with optional agent reasoning model), replay, Y.3172 pipeline, gap register |
 | Cross-domain verification | Complete — evidence-based (shared provision, instrument basis, parallel reporting), across chunks |
 | Conflict handling | Complete — structured Finding A / Finding B with evidence; demonstrated with labelled fixtures (the live corpus has no conflicting provisions) |
 | Progressive reassessment | Complete — cumulative facts, carried-forward conclusions, computed changes |
 | Full 4-stage run | Recorded: `outputs/audit/day2_scenario2_full_T0_T3.jsonl` (replays and re-executes exactly) |
 | ITU-T Y.3172 ML pipeline | Implemented over the simulated 5G core (`src/y3172/`): ML Intent, SRC/C/PP/M/P/D/SINK nodes, MLFO, ML sandbox, monitoring and re-selection, with the adviser as the P node. Not a live network; reference points and levels are logical (one process). The adviser's own document pipeline maps to Y.3172 mostly by analogy. See `knowledge_base/y3172_pipeline_traceability.json` |
-| Generative model | None in the adviser (`src/`); the incident-response lab (`ir/`) can optionally use a Claude model, with an offline fallback |
+| Generative model | Off by default (`offline`). Optional per-agent reasoning with Ollama (local, open) or Claude (`--llm`, `ADVISER_LLM`): a model may only add claims that cite a retrieved passage; every claim is still checked by the Verifier and the prompt, response and accepted/rejected claims are written to the audit trail. The incident-response lab (`ir/`) can use Claude or Ollama, with an offline fallback |
+| Agent views | Each scenario stage releases some facts to one agent only (`agent_views`); recorded in the audit trail as `visible_input.agent_view` |
+| Policy-gap register | `knowledge_base/gap_register.md` — five domain-framed themes; Indian provisions checked word for word against the index; global (EU) and neighbouring-region (South Asia) examples labelled and marked *pending* until their documents are added (`knowledge_base/ADDING_SOURCES.md`) |
 | ITU AI for Good Sandbox | Not used — access was not available; everything runs locally |
 | Tests | All passing — see `knowledge_base/evaluation_report.md` for per-area counts and status (Working / Partially working / Not yet implemented) |
 

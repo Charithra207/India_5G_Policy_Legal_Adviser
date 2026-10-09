@@ -145,8 +145,9 @@ for example "in force from 26 June 2024 (S.O. 2408(E))".
 5. **Other limits:**
    - support is judged by a deterministic term-coverage check, not a
      language model;
-   - the adviser uses no generative model (only the separate incident-response
-     lab can optionally use one);
+   - by default the adviser uses no generative model; the optional Ollama /
+     Claude mode (`--llm`) may only add claims that cite retrieved passages,
+     which the Verifier still checks, and every prompt and response is audited;
    - agents run sequentially;
    - the ITU AI for Good Sandbox was not available, so everything runs locally;
    - Y.3172: the document pipeline maps mostly by analogy; the network ML
@@ -173,7 +174,7 @@ for example "in force from 26 June 2024 (S.O. 2408(E))".
 | "The quoted Rule 5 / Rule 8 text is current" | Amended by G.S.R. 771(E); we quote the original | "As originally published; amended in 2025" |
 | "Patient data was exposed" | The scenario says it *may* carry identifiable data | "Possible personal-data involvement (suspected, not confirmed)" |
 | "The system detected a conflict between Indian laws" | The conflict demo uses synthetic fixtures | "With labelled test passages, the system shows how a conflict is kept unresolved for human review" |
-| "Uses generative AI / an LLM to analyse" | The adviser uses no generative model; only the separate incident-response lab can optionally use one | "Adviser agents quote retrieved passages; the Coordinator organises verified claims" |
+| "Uses generative AI / an LLM to analyse" | Off by default; when switched on, the model only adds claims citing retrieved passages, and the Verifier still decides | "Adviser agents quote retrieved passages; an optional local LLM (Ollama) can add cited reasoning, which is verified and fully audited" |
 | "Validated in the ITU AI for Good Sandbox" / "Y.3172 compliant" / "deployed on a live network" | Sandbox access was not available; compliance not assessed; the network ML pipeline runs on the contained simulator; reference points are not SBA | "We implement the Y.3172 pipeline — intent, SRC/C/PP/M/P/D/SINK, MLFO, ML sandbox — over a simulated 5G core, with our policy & legal adviser as the P node; the traceability file lists what is simulated" |
 | "Accuracy of X %" / readiness score | No such measurement exists | Quote the labelled retrieval results: right section first in 8/12 queries, in the top 5 in 12/12 |
 | "Legal advice" | Decision support only | "Decision support; legal interpretation requires qualified human judgment" |

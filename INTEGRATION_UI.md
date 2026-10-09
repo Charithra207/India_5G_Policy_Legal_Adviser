@@ -203,7 +203,7 @@ Status: Day 1 delivered. All of it calls `Pipeline.run_chunk`; nothing here
 selects agents, retrieves, verifies or assesses.
 
 ```powershell
-streamlit run src/ui/app.py                     # Live run + Replay
+streamlit run src/ui/app.py                     # Live run, Replay, Y.3172 pipeline, Gap register
 python -m src.scenario.run --stages 2           # Day-1 test: T0 then T1
 python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --reexecute
 ```
@@ -250,6 +250,22 @@ the "no conclusion is evidence-backed" notice. A run on fixture KBs records
 Recorded runs: `day2_scenario2_full_T0_T3.jsonl` (live KBs, all four
 stages) and `day2_conflict_demo_FIXTURE.jsonl` (labelled synthetic passages).
 
+**Agent views and optional reasoning model.** Each scenario chunk can release
+facts to one agent only (`ScenarioChunk.agent_views`); the agent's
+`visible_input.agent_view` records them and the UI shows them as "Released to
+this agent only". In live mode the sidebar selects the agents' reasoning model
+(offline by default, Ollama or Claude); with a model, each finding shows its
+reasoning trace (prompt hash, response, accepted and rejected claims), stored in
+the audit entry as `llm_reasoning`. The run header records `llm` (provider,
+model); replay re-executes offline runs exactly and notes that LLM runs may
+differ.
+
+**Other pages.** *Y.3172 pipeline* runs an ML Intent through the MLFO
+(SRC → C → PP → M → P → D → SINK) and shows recorded runs and their reports.
+*Gap register* shows `knowledge_base/gap_register.json` — five domain-framed
+themes with Indian provisions and global / neighbouring-region examples — and
+can regenerate it.
+
 ### Remaining Member 3 work
 
 - Visual polish: cross-domain links drawn between agent panels; a
@@ -257,10 +273,9 @@ stages) and `day2_conflict_demo_FIXTURE.jsonl` (labelled synthetic passages).
 - Collapse repetitive evidence: the same passage retrieved by several agents
   is currently shown once per agent.
 - Export a replay as a single HTML/PDF evidence report for judges.
-- Y.3172 pipeline trace view (source → collection → preprocessing → model →
-  policy → distribution; Sandbox marked "not executed"; correspondence per
-  stage and the components not implemented, from
-  `knowledge_base/y3172_pipeline_traceability.json`).
+- Y.3172 traceability view of the adviser's own document pipeline (from
+  `knowledge_base/y3172_pipeline_traceability.json`); the network ML pipeline
+  page is done.
 - Store audit runs with the ITU AI for Good Sandbox artefacts (§7.6), if
   Sandbox access becomes available (it was not available to the team).
 - Show the DOCX wording beside the scenario file's wording where they differ
