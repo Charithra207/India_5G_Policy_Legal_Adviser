@@ -1,0 +1,239 @@
+# =============================================================================
+# Domain-specific potential policy gaps for 5G incidents (build-a-thon brief §3:
+# "focus on domain specific policy gaps and finding relevant global policy
+# examples"; search space includes the neighbouring region).
+# =============================================================================
+# Generator: python -m src.gap.register  ->  knowledge_base/gap_register.json/.md
+#
+# Every anchor's `phrase` is looked up WORD FOR WORD in the cited document:
+#   1. in the adviser's knowledge bases (knowledge_base/<kb>/chunks.jsonl,
+#      built by python -m src.rag.build) — by `source` (manifest id) or by
+#      `title_contains`;
+#   2. otherwise in the committed incident-response index (kb/index) — by
+#      `index_doc` (file name).
+# Found -> "verified" with file/section/page and the passage. Not found ->
+# "phrase not found". Document absent -> "pending: document not in corpus"
+# (add it as described in knowledge_base/ADDING_SOURCES.md, rebuild, rerun).
+# `phrase: null` lists an example for comparison without quoting it.
+#
+# Language rule (DOCX §5.1): "potential gap", "regulatory ambiguity", "for
+# expert review" — never a conclusion that a policy is inadequate.
+# =============================================================================
+
+themes:
+
+  - id: G1
+    domain: Incident reporting and escalation
+    theme: Parallel incident-reporting clocks with no single reporting channel
+    category: overlapping_requirements
+    why_it_matters: >-
+      One 5G security incident that touches personal data and a critical
+      service can start several reporting clocks at once, to different
+      recipients, counted from different moments (becoming aware, noticing,
+      occurrence).
+    coordination_problem: >-
+      The passages below set reporting duties to the Central Government (DoT),
+      CERT-In, the CTI portal and the Data Protection Board. None of the quoted
+      passages provides a single submission that satisfies all of them, or
+      says which report takes precedence when their contents differ.
+    conflicting_objectives: Speed of reporting vs. accuracy and consistency of what is reported.
+    indian_anchors:
+      - {source: telecom_cyber_security_rules_2024, index_doc: cybersecurity-rules-2024.pdf,
+         cite_as: "Telecom Cyber Security Rules, 2024, rule 7(1)(a)",
+         phrase: "within six hours of becoming aware of a security incident",
+         what: "Report to the Central Government within 6 hours of becoming aware"}
+      - {source: certin_directions_2022, index_doc: CERT-In_Directions_70B_28.04.2022.pdf,
+         cite_as: "CERT-In Directions (28.04.2022), direction (ii)",
+         phrase: "within 6 hours of noticing such incidents",
+         what: "Report to CERT-In within 6 hours of noticing"}
+      - {source: cti_rules_2024, index_doc: "Critical Telecommunication Infrastructure Rules, 2024_0.pdf",
+         cite_as: "CTI Rules, 2024, rule 7(1)(j)",
+         phrase: "no later than six hours of occurrence of such incident",
+         what: "Intimation for CTI within 6 hours of occurrence"}
+      - {source: dpdp_rules_2025, index_doc: 53450e6e5dc0bfa85ebd78686cadad39.pdf,
+         cite_as: "DPDP Rules, 2025, rule 7(2)(b)",
+         phrase: "within seventy-two hours of becoming aware of the breach",
+         what: "Detailed intimation to the Data Protection Board within 72 hours"}
+    global_examples:
+      - {source: eu_nis2_directive_2022_2555, title_contains: [NIS2, "2022/2555"],
+         cite_as: "EU NIS2 Directive (EU) 2022/2555, Art. 23(4)(a)", jurisdiction: European Union,
+         url: "https://eur-lex.europa.eu/eli/dir/2022/2555/oj",
+         phrase: "within 24 hours of becoming aware of the significant incident",
+         what: "Staged reporting (early warning, notification, final report) to one CSIRT or competent authority"}
+      - {source: eu_gdpr_2016_679, title_contains: [GDPR, "2016/679", General Data Protection Regulation],
+         cite_as: "EU GDPR (EU) 2016/679, Art. 33(1)", jurisdiction: European Union,
+         url: "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+         phrase: "not later than 72 hours after having become aware of it",
+         what: "Personal-data breach notification to the supervisory authority within 72 hours"}
+    regional_examples:
+      - {cite_as: "Sri Lanka Personal Data Protection Act, No. 9 of 2022", jurisdiction: Sri Lanka,
+         title_contains: [Sri Lanka], phrase: null,
+         what: "Personal-data breach duties in a neighbouring jurisdiction — add the Act and a phrase to compare"}
+    y3172_link: >-
+      The regulatory-notice SINK of the Y.3172 pipeline (src/y3172/notices.py) drafts each of these
+      notices with its own deadline, which makes the parallel clocks visible on every incident.
+    questions_for_experts:
+      - Can one incident report be filed once and shared between DoT, CERT-In and (where applicable) the Board?
+      - When "becoming aware", "noticing" and "occurrence" differ, which time should operators record?
+
+  - id: G2
+    domain: Logging, retention and data minimisation
+    theme: Different log-retention periods for the same incident logs
+    category: overlapping_requirements
+    why_it_matters: >-
+      Incident logs from a 5G core contain traffic data and personal data; the
+      quoted passages set different minimum retention periods for logs.
+    coordination_problem: >-
+      CERT-In asks for a rolling 180 days within Indian jurisdiction; the DPDP
+      Rules ask a Data Fiduciary to retain logs of processing for at least one
+      year. The quoted passages do not say how the two periods relate for logs
+      that fall under both.
+    conflicting_objectives: Forensic availability of logs vs. data minimisation and storage limitation.
+    indian_anchors:
+      - {source: certin_directions_2022, index_doc: CERT-In_Directions_70B_28.04.2022.pdf,
+         cite_as: "CERT-In Directions (28.04.2022), direction (iv)",
+         phrase: "rolling period of 180 days and the same shall be maintained within the Indian jurisdiction",
+         what: "ICT logs kept for a rolling 180 days, within India"}
+      - {source: dpdp_rules_2025, index_doc: 53450e6e5dc0bfa85ebd78686cadad39.pdf,
+         cite_as: "DPDP Rules, 2025 — retention of personal data, traffic data and logs of processing",
+         phrase: "for a minimum period of one year",
+         what: "Personal data, traffic data and logs of processing retained for at least one year"}
+      - {source: telecom_cyber_security_rules_2024, index_doc: cybersecurity-rules-2024.pdf,
+         cite_as: "Telecom Cyber Security Rules, 2024 — data the Central Government may seek",
+         phrase: "traffic data and any other data, other than content of messages",
+         what: "The Central Government may seek traffic data from a telecommunication entity"}
+    global_examples:
+      - {source: eu_gdpr_2016_679, title_contains: [GDPR, "2016/679", General Data Protection Regulation],
+         cite_as: "EU GDPR (EU) 2016/679, Art. 5(1)(e)", jurisdiction: European Union,
+         url: "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+         phrase: "for no longer than is necessary for the purposes for which the personal data are processed",
+         what: "Storage limitation principle"}
+    regional_examples: []
+    y3172_link: >-
+      The evidence-preservation SINK hashes the live network's logs before any change; how long such
+      evidence may or must be kept is exactly the question above.
+    questions_for_experts:
+      - For logs that are both ICT logs (CERT-In) and logs of personal-data processing (DPDP), which period governs?
+
+  - id: G3
+    domain: Critical infrastructure designation
+    theme: Two routes to "critical" status for telecom networks and services
+    category: missing_institutional_clarity
+    why_it_matters: >-
+      A private 5G slice carrying hospital traffic may be critical in fact but
+      not notified; which designation applies decides which reporting timeline
+      and which institution leads.
+    coordination_problem: >-
+      The Telecommunications Act lets the Central Government notify Critical
+      Telecommunication Infrastructure (DoT/CTI Rules), while NCIIPC designates
+      Critical Information Infrastructure under the IT Act. The quoted passages
+      do not set out how an operator learns which applies to a given slice.
+    conflicting_objectives: Sector-specific control by the telecom department vs. a national CII protection regime.
+    indian_anchors:
+      - {source: telecom_act_2023, index_doc: new-telecom-Act-2023.pdf,
+         cite_as: "Telecommunications Act, 2023, s.22(3)",
+         phrase: "declare any telecommunication network, or part thereof, as Critical Telecommunication Infrastructure",
+         what: "Notification of Critical Telecommunication Infrastructure"}
+      - {source: cti_rules_2024, index_doc: "Critical Telecommunication Infrastructure Rules, 2024_0.pdf",
+         cite_as: "CTI Rules, 2024 — definition of Critical Telecommunication Infrastructure",
+         phrase: "notified under sub-section (3) of section 22 of the Act",
+         what: "CTI means a network notified under s.22(3)"}
+      - {index_doc: "Consultation_Paper _on_Privacy_Security_ownership_of_data_09082017_0.pdf",
+         cite_as: "TRAI consultation paper on privacy, security and ownership of data (2017) — context, not law",
+         phrase: "the agency mandated to facilitate the protection of critical infrastructure",
+         what: "NCIIPC's role as described by TRAI"}
+    global_examples:
+      - {source: eu_nis2_directive_2022_2555, title_contains: [NIS2, "2022/2555"],
+         cite_as: "EU NIS2 Directive (EU) 2022/2555, Art. 3", jurisdiction: European Union,
+         url: "https://eur-lex.europa.eu/eli/dir/2022/2555/oj",
+         phrase: "essential and important entities",
+         what: "Size- and sector-based classification of entities, with one competent authority per sector"}
+      - {source: enisa_5g_cybersecurity_standards_2022, index_doc: "ENISA - 5G Standards.pdf",
+         cite_as: "ENISA, 5G Cybersecurity Standards (2022)", jurisdiction: European Union,
+         phrase: "high-risk suppliers or managed service providers",
+         what: "EU 5G Toolbox risk assessment of suppliers for critical networks"}
+    regional_examples:
+      - {cite_as: "Bangladesh Cyber Security Act, 2023 (critical information infrastructure)",
+         jurisdiction: Bangladesh, title_contains: [Bangladesh], phrase: null,
+         what: "CII designation in a neighbouring jurisdiction — add the Act and a phrase to compare"}
+    y3172_link: >-
+      The CTI notice drafted by the Y.3172 notice SINK is marked CONDITIONAL because the pipeline cannot
+      know whether the affected slice is notified.
+    questions_for_experts:
+      - Is a hospital's private 5G slice within CTI, CII, both or neither until notified?
+
+  - id: G4
+    domain: Network slicing and private 5G
+    theme: Network slicing for critical services is not named in the instruments examined
+    category: emerging_technology_not_explicitly_addressed
+    why_it_matters: >-
+      Slices share physical infrastructure; isolation failures and slice-
+      specific authentication are recognised 5G threats in the reference
+      material, while the Indian passages quoted address networks as a whole.
+    coordination_problem: >-
+      Whether slice isolation, slice-specific authentication or an enterprise
+      slice's security is the operator's or the enterprise's responsibility is
+      not addressed in the passages quoted. (The Policy Gap Agent checks the
+      whole Indian Canonical KB for the word before raising this; see its
+      "Emerging technology" result in a scenario run.)
+    conflicting_objectives: Flexible, sliced service offers vs. clear security accountability per slice.
+    indian_anchors:
+      - {source: telecom_act_2023, index_doc: new-telecom-Act-2023.pdf,
+         cite_as: "Telecommunications Act, 2023, s.22(3)",
+         phrase: "telecommunication network, or part thereof",
+         what: "Instruments refer to networks 'or part thereof', without naming slices"}
+    global_examples:
+      - {index_doc: "ENISA 5G Threat Landscape - Update.pdf", cite_as: "ENISA Threat Landscape for 5G Networks (2020)",
+         jurisdiction: European Union,
+         phrase: "One of key expectations of network slicing is resources isolation",
+         what: "Slice isolation identified as a security expectation and threat area"}
+      - {source: enisa_5g_cybersecurity_standards_2022, index_doc: "ENISA - 5G Standards.pdf",
+         cite_as: "ENISA, 5G Cybersecurity Standards (2022)", jurisdiction: European Union,
+         phrase: "network slice as a service",
+         what: "Slice-as-a-service providers named as a distinct actor"}
+    regional_examples: []
+    y3172_link: >-
+      The hospital-slice intent (intents/hospital_slice_protection.yaml) monitors sessions outside the slice
+      allow-list — a control the quoted Indian passages do not mention.
+    questions_for_experts:
+      - Should slice-level security responsibilities be stated in authorisation conditions or rules?
+
+  - id: G5
+    domain: AI in network operations
+    theme: Human oversight of AI-driven network remediation
+    category: emerging_technology_not_explicitly_addressed
+    why_it_matters: >-
+      ML models increasingly detect incidents and propose (or apply) network
+      changes. ITU-T Y.3172's policy node can be advisory or blocking; the
+      Sandbox India register lists "policy-node enforcement semantics
+      (advisory vs blocking)" as having no India-specific instrument.
+    coordination_problem: >-
+      The Indian passages quoted are principles and recommendations, not binding
+      rules on when an automated network action needs human approval or how
+      such decisions are recorded.
+    conflicting_objectives: Speed of automated response vs. accountability and the risk of acting on a false positive.
+    indian_anchors:
+      - {index_doc: Responsible-AI-22022021.pdf,
+         cite_as: "NITI Aayog, Responsible AI (Part 1, 2021) — principle, not law",
+         phrase: "introduce a human intervention whenever such consequential decisions are made",
+         what: "Human intervention for consequential decisions"}
+      - {source: trai_ai_bigdata_recs_2023, title_contains: [Leveraging Artificial Intelligence and Big Data],
+         cite_as: "TRAI Recommendations on Leveraging AI and Big Data in Telecom (2023) — recommendation, not law",
+         phrase: "Artificial Intelligence and Data Authority of India",
+         what: "Proposed AI regulator for the sector"}
+    global_examples:
+      - {source: eu_ai_act_2024_1689, title_contains: [Artificial Intelligence Act, "2024/1689"],
+         cite_as: "EU AI Act (EU) 2024/1689, Art. 14(1)", jurisdiction: European Union,
+         url: "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+         phrase: "effectively overseen by natural persons",
+         what: "Human oversight of high-risk AI, including safety components of critical digital infrastructure (Annex III)"}
+      - {index_doc: NIST.AI.100-1.pdf, cite_as: "NIST AI Risk Management Framework 1.0, MAP 3.5", jurisdiction: United States,
+         phrase: "Processes for human oversight are defined, assessed, and documented",
+         what: "Documented human-oversight processes"}
+    regional_examples: []
+    y3172_link: >-
+      The project's P node implements both modes; the recorded runs show what auto-approval of false
+      positives does (outputs/y3172/examples/amf_signalling_storm) and what operator review prevents
+      (outputs/y3172/examples/amf_signalling_storm_operator_review).
+    questions_for_experts:
+      - Which automated network actions, if any, should be allowed without prior human approval?
