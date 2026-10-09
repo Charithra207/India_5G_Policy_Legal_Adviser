@@ -50,9 +50,10 @@ Files: `chunks.jsonl`, `vectors.npy`, `index.json`.
   security, SEPP, inter-PLMN security
 - ETSI GR NFV-SEC 003: NFV security threats, trust anchors, virtual
   machine isolation, hypervisor security
-- ITU-T Y.3172: ML pipeline in future networks (Collection, Preprocessing,
-  Model, Policy, Distribution, Sandbox) — the Y.3172-oriented pipeline
-  referenced in the DOCX
+- ITU-T Y.3172: architectural framework for ML in future networks — ML
+  pipeline nodes SRC, C (collector), PP (preprocessor), M (model), P (policy),
+  D (distributor) and SINK, managed by the ML function orchestrator (MLFO)
+  from an ML Intent, with an ML sandbox subsystem; referenced in the DOCX
 - NIST CSF 2.0: Govern-Identify-Protect-Detect-Respond-Recover framework;
   organisational cybersecurity risk management
 - NIST SP 800-61r3: Incident response lifecycle; integration with CSF 2.0

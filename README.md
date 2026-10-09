@@ -3,7 +3,8 @@
 **An Agentic AI System for Evidence-Backed Analysis of Evolving 5G Incidents**
 
 Team: Harshini K (lead), Arshitha S, Charithra H S | Mentor: Rajat Duggal | Org: Nokia  
-Build-a-thon role: Policy and Legal Adviser | Evaluation environment: ITU AI for Good Sandbox
+Build-a-thon role: Policy and Legal Adviser | Target environment: ITU AI for Good Sandbox  
+(access was not available to the team; the knowledge bases are built and every run is executed locally)
 
 ---
 
@@ -413,6 +414,9 @@ advice.
 
 ### Run it in Windows Sandbox
 
+> Windows Sandbox is Microsoft's local isolation feature. It is not the ITU AI
+> for Good Sandbox, and not the ML sandbox of ITU-T Y.3172.
+
 ```powershell
 powershell -ExecutionPolicy Bypass -File sandbox\launch.ps1              # downloads Python + packages inside
 powershell -ExecutionPolicy Bypass -File sandbox\launch.ps1 -HostPython  # reuse the host's Python (read-only)
@@ -553,6 +557,9 @@ India_5G_Policy_Legal_Adviser/
 | Conflict handling | Complete — structured Finding A / Finding B with evidence; demonstrated with labelled fixtures (the live corpus has no conflicting provisions) |
 | Progressive reassessment | Complete — cumulative facts, carried-forward conclusions, computed changes |
 | Full 4-stage run | Recorded: `outputs/audit/day2_scenario2_full_T0_T3.jsonl` (replays and re-executes exactly) |
+| ITU-T Y.3172 alignment | Partial, mostly by analogy — the document pipeline is mapped to the SRC, C, PP, M, P and D nodes (only PP corresponds directly); SINK, MLFO, ML Intent, the ML sandbox and the reference points are not implemented. See `knowledge_base/y3172_pipeline_traceability.json` |
+| Generative model | None in the adviser (`src/`); the incident-response lab (`ir/`) can optionally use a Claude model, with an offline fallback |
+| ITU AI for Good Sandbox | Not used — access was not available; everything runs locally |
 | Tests | All passing — see `knowledge_base/evaluation_report.md` for per-area counts and status (Working / Partially working / Not yet implemented) |
 
 ---

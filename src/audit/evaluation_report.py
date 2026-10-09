@@ -128,10 +128,14 @@ OTHER = [
      ["test_evidence_audit::test_in_force_status_*", "test_evidence_audit::test_amendment_notes_*",
       "test_evidence_audit::test_verifier_reports_*", "test_evidence_audit::test_catches_unbacked_*"]),
     ("Generative synthesis (DOCX §5.2 generative-AI perspective)", N,
-     "No generative model is used: agents quote passages and the Coordinator organises verified claims.", []),
+     "The policy adviser uses no generative model: agents quote passages and the Coordinator "
+     "organises verified claims. Only the separate incident-response lab (ir/llm.py) can use one.", []),
     ("Parallel agent execution", N,
      "Agents run sequentially; the asynchronous runner in the Orchestrator is a stub.", []),
-    ("ITU AI for Good Sandbox stage", N, "Sandbox not available in this environment.", []),
+    ("ITU AI for Good Sandbox stage", N,
+     "Access to the ITU AI for Good Sandbox was not available; builds and runs are local. The "
+     "Y.3172 ML sandbox (simulated underlay networks for training and testing ML models) is not "
+     "implemented either.", []),
 ]
 
 

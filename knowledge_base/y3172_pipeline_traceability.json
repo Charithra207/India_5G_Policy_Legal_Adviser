@@ -2,7 +2,9 @@
   "_about": [
     "ITU-T Y.3172 pipeline traceability (DOCX §4.3 / §7.4). Each stage quotes the",
     "Y.3172 definition from the ingested Recommendation, names the project components",
-    "that perform it, and follows one quoted provision of a recorded run through it."
+    "that perform it, and follows one quoted provision of a recorded run through it.",
+    "Each stage also states how it corresponds to the Y.3172 node (direct or by",
+    "analogy); Y.3172 components with no counterpart are listed separately."
   ],
   "schema_version": "2.0",
   "docx_section": "§4.3",
@@ -10,7 +12,8 @@
   "standard": "ITU-T Recommendation Y.3172 (06/2019) Architectural framework for machine learning in future networks including IMT-2020",
   "standard_authority": "International Telecommunication Union (ITU-T)",
   "standard_url": "https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-Y.3172-201906-I!!PDF-E&type=items",
-  "compliance_disclaimer": "Architectural correspondence only. Formal Y.3172 compliance has not been assessed and is not claimed.",
+  "compliance_disclaimer": "Architectural correspondence only, mostly by analogy (see correspondence per stage). Formal Y.3172 compliance has not been assessed and is not claimed; the clause 7 requirements for ML in networks are not addressed by the current architecture.",
+  "scope_note": "ITU-T Y.3172 specifies an architecture for machine learning in networks: ML pipeline nodes read data from network functions (UE, access and core network) and apply ML output to network targets, managed by an ML function orchestrator (MLFO) from a declarative ML Intent. This project is a policy and legal adviser whose pipeline processes legal and standards documents. The table maps that document pipeline to the Y.3172 node vocabulary; only preprocessing corresponds directly, the other stages correspond by analogy, and the components listed under components_not_implemented do not exist in the project.",
   "pipeline_stages": [
     {
       "stage": "Source",
@@ -33,7 +36,9 @@
         "url": "https://eservices.dot.gov.in/sites/default/files/circular-notifications/cybersecurity-rules-2024.pdf",
         "sha256": "1a0876d2e1fb309679e06afaccc230ae88ea145c8b27f683a3a42126dc047bf6"
       },
-      "status": "IMPLEMENTED"
+      "status": "IMPLEMENTED",
+      "correspondence": "analogy",
+      "difference_from_y3172": "Y.3172 SRC nodes are network data sources such as UE, SMF or AF (clause 8.1, NOTE 2); here the sources are legal and standards documents."
     },
     {
       "stage": "Collection",
@@ -54,7 +59,9 @@
         "extracted_chars": 21311,
         "file": "raw/telecom_cyber_security_rules_2024_dot.pdf"
       },
-      "status": "IMPLEMENTED"
+      "status": "IMPLEMENTED",
+      "correspondence": "analogy",
+      "difference_from_y3172": "A Y.3172 collector may also configure its SRC nodes, e.g. via RRC or OAM (clause 8.1, NOTE 3); document extraction configures nothing."
     },
     {
       "stage": "Preprocessing",
@@ -81,7 +88,9 @@
         "page": "12-13",
         "chunk_id": "telecom_cyber_security_rules_2024:rule-7:1"
       },
-      "status": "IMPLEMENTED"
+      "status": "IMPLEMENTED",
+      "correspondence": "direct",
+      "difference_from_y3172": "Cleans and segments the collected data into the form the model consumes, as clause 8.1 describes for PP."
     },
     {
       "stage": "Model",
@@ -94,6 +103,7 @@
         "description": "Sentence-embedding model for retrieval within each agent's own KB. No generative model: agents quote retrieved passages.",
         "model_id": "BAAI/bge-small-en-v1.5",
         "generator_model": "none — agents quote retrieved passages; no generative model is used",
+        "generator_model_scope": "Applies to the policy adviser (src/). The separate incident-response lab (ir/llm.py) can use a Claude model through the Anthropic API (LLM_PROVIDER=anthropic); without a key or the SDK it falls back to the deterministic offline playbook.",
         "files": [
           "src/rag/embedding.py",
           "src/rag/vector_kb.py"
@@ -111,7 +121,9 @@
         ],
         "relevance_score": 0.8478
       },
-      "status": "IMPLEMENTED"
+      "status": "IMPLEMENTED",
+      "correspondence": "analogy",
+      "difference_from_y3172": "The embedding model only ranks passages for retrieval; it is not trained here and makes no prediction about a network. Agent selection (src/core/orchestrator.py) uses keyword rules and claim support (src/core/verifier.py) is a lexical term-coverage check, so neither decision is made by the model."
     },
     {
       "stage": "Policy",
@@ -132,7 +144,9 @@
         "verifier_outcome": "INCOMPLETE",
         "verifier_rationale": "Supported by the authoritative text (Telecommunications (Telecom Cyber Security) Rules, 2024, Rule 7), but amendments not checked for this source. Recorded status: in force from 21 November 2024 (rule 1(2): on publication in the Official Gazette)."
       },
-      "status": "IMPLEMENTED"
+      "status": "IMPLEMENTED",
+      "correspondence": "analogy",
+      "difference_from_y3172": "The Y.3172 P node applies operator policies to model output to limit its impact before it is applied to a live network (clause 8.1, NOTE 5); here the Verifier applies evidence rules to the agents' claims, and nothing is applied to a network."
     },
     {
       "stage": "Distribution",
@@ -156,7 +170,9 @@
         "audit_entry_seq": 3,
         "audit_entry_hash": "e2f6e29937e0b808a9d86c14cc2780aadd776db85496fcc356f865d42a5675b5"
       },
-      "status": "IMPLEMENTED"
+      "status": "IMPLEMENTED",
+      "correspondence": "analogy",
+      "difference_from_y3172": "The Y.3172 D node identifies SINK nodes and distributes the model output to them (clause 8.1, NOTE 6); here the output goes to a human reader through the Coordinator, the audit trail and the UI. No SINK node exists."
     },
     {
       "stage": "Sandbox",
@@ -166,7 +182,7 @@
         "phrase_quoted": "machine learning sandbox: An environment in which machine learning models can be trained, tested and their effects on the network evaluated."
       },
       "project_implementation": {
-        "description": "NOT EXECUTED — not executed — the ITU AI for Good Sandbox is not available in this environment. Replay of recorded runs (src/audit/replay.py) is the local substitute for re-testing.",
+        "description": "NOT EXECUTED — not executed — the ITU AI for Good Sandbox is not available in this environment. The Y.3172 ML sandbox (clauses 3.2.6, 8.2) is a different thing from the ITU AI for Good Sandbox platform: a subsystem of ML pipelines and simulated ML underlay networks, managed by the MLFO, in which ML models are trained and tested before deployment. Neither is part of this project. Replay of recorded runs (src/audit/replay.py) re-tests recorded runs but is not an ML sandbox.",
         "files": [
           "knowledge_base/ingestion_manifest.json",
           "src/audit/replay.py"
@@ -174,7 +190,53 @@
         "evidence_preserved": "'sandbox' entry in the ingestion manifest"
       },
       "worked_trace": null,
-      "status": "NOT EXECUTED"
+      "status": "NOT EXECUTED",
+      "correspondence": "not implemented",
+      "difference_from_y3172": "No ML sandbox subsystem (clause 8.2) exists: no simulated ML underlay network is used to train or test an ML model."
+    }
+  ],
+  "components_not_implemented": [
+    {
+      "component": "SINK",
+      "y3172_reference": "Clause 8.1",
+      "y3172_role": "Target of the ML output, which takes action on it (e.g. a UE adjusting its measurement periodicity).",
+      "project_status": "Not implemented. The adviser's output is read by a human; nothing acts on a network."
+    },
+    {
+      "component": "Machine learning function orchestrator (MLFO)",
+      "y3172_reference": "Clauses 3.2.2, 8.1, 8.2",
+      "y3172_role": "Manages and orchestrates the ML pipeline nodes: selects and reselects ML models on performance, places and chains the nodes, based on the ML Intent.",
+      "project_status": "Not implemented. The Swarm Orchestrator selects specialist agents with keyword rules on the released scenario text; it does not select models, place or chain pipeline nodes, or react to model performance.",
+      "files": [
+        "src/core/orchestrator.py"
+      ]
+    },
+    {
+      "component": "ML Intent",
+      "y3172_reference": "Clauses 7.4, 8.1 (NOTE 12)",
+      "y3172_role": "Declarative, technology-agnostic specification of an ML application: data sources, model repositories, output targets, constraints and time constraints.",
+      "project_status": "Not implemented. Scenario chunks are incident descriptions, not ML application specifications."
+    },
+    {
+      "component": "ML underlay networks and simulated ML underlay networks",
+      "y3172_reference": "Clauses 3.2.7, 8.1, 8.2",
+      "y3172_role": "The network whose functions provide data to, and receive output from, the ML pipeline; a simulated one feeds the ML sandbox.",
+      "project_status": "Not connected. The adviser reads no network data. The incident-response lab's simulated 5G core could serve as a simulated underlay but is not connected to an ML pipeline.",
+      "files": [
+        "sim/engine.py"
+      ]
+    },
+    {
+      "component": "Reference points 1-9 and service-based interfaces",
+      "y3172_reference": "Clauses 8.1, 8.2",
+      "y3172_role": "Interfaces between the ML pipeline, sandbox and management subsystems, the underlay networks, and pipeline nodes on different levels.",
+      "project_status": "Not implemented. Components call each other in one Python process."
+    },
+    {
+      "component": "Multilevel distribution of pipeline nodes",
+      "y3172_reference": "Clause 8.2; REQ-ML-COR-003",
+      "y3172_role": "Pipeline nodes instantiated at different levels (e.g. UE, AN, CN).",
+      "project_status": "Not implemented. The pipeline runs in a single process; agents run sequentially."
     }
   ],
   "worked_trace_claim": {
@@ -188,6 +250,7 @@
       {
         "y3172_stage": "Source",
         "status": "IMPLEMENTED",
+        "correspondence": "analogy",
         "components": [
           "knowledge_base/sources/manifest.json",
           "knowledge_base/source_manifest.json"
@@ -196,6 +259,7 @@
       {
         "y3172_stage": "Collection",
         "status": "IMPLEMENTED",
+        "correspondence": "analogy",
         "components": [
           "src/rag/extract.py",
           "src/rag/build.py"
@@ -204,6 +268,7 @@
       {
         "y3172_stage": "Preprocessing",
         "status": "IMPLEMENTED",
+        "correspondence": "direct",
         "components": [
           "src/rag/sections.py"
         ]
@@ -211,6 +276,7 @@
       {
         "y3172_stage": "Model",
         "status": "IMPLEMENTED",
+        "correspondence": "analogy",
         "components": [
           "src/rag/embedding.py",
           "src/rag/vector_kb.py"
@@ -219,6 +285,7 @@
       {
         "y3172_stage": "Policy",
         "status": "IMPLEMENTED",
+        "correspondence": "analogy",
         "components": [
           "src/core/verifier.py",
           "src/core/cross_domain.py"
@@ -227,6 +294,7 @@
       {
         "y3172_stage": "Distribution",
         "status": "IMPLEMENTED",
+        "correspondence": "analogy",
         "components": [
           "src/core/coordinator.py",
           "src/audit/trail.py",
@@ -236,6 +304,7 @@
       {
         "y3172_stage": "Sandbox",
         "status": "NOT EXECUTED",
+        "correspondence": "not implemented",
         "components": [
           "knowledge_base/ingestion_manifest.json",
           "src/audit/replay.py"

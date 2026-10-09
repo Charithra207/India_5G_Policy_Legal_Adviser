@@ -161,8 +161,9 @@ On the full run:
 > and page. What we have not done is equally explicit:
 > - in-force and amendment checks;
 > - the NCIIPC Rules and international comparators;
-> - a generative model;
-> - the ITU Sandbox stage.
+> - a generative model in the adviser;
+> - the ITU AI for Good Sandbox (access was not available; everything runs locally);
+> - the Y.3172 SINK, MLFO, ML Intent and ML sandbox (the pipeline mapping is mostly by analogy).
 
 ## If something fails
 

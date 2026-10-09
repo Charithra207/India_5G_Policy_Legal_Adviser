@@ -249,7 +249,7 @@
     {
       "capability": "Generative synthesis (DOCX §5.2 generative-AI perspective)",
       "status": "Not yet implemented",
-      "reason": "No generative model is used: agents quote passages and the Coordinator organises verified claims.",
+      "reason": "The policy adviser uses no generative model: agents quote passages and the Coordinator organises verified claims. Only the separate incident-response lab (ir/llm.py) can use one.",
       "tests": [],
       "passed": 0,
       "failed": 0,
@@ -267,7 +267,7 @@
     {
       "capability": "ITU AI for Good Sandbox stage",
       "status": "Not yet implemented",
-      "reason": "Sandbox not available in this environment.",
+      "reason": "Access to the ITU AI for Good Sandbox was not available; builds and runs are local. The Y.3172 ML sandbox (simulated underlay networks for training and testing ML models) is not implemented either.",
       "tests": [],
       "passed": 0,
       "failed": 0,
