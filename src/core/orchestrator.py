@@ -70,6 +70,7 @@ current-chunk findings as though they were verified.
 from __future__ import annotations
 
 import logging
+from dataclasses import replace
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -409,11 +410,15 @@ class SwarmOrchestrator:
         for agent_id in agent_ids:
             agent = self._agents[agent_id]
             visible_state = self._visible_state()
+            view = list(chunk.agent_views.get(agent_id.value, []))
+            # The agent sees the shared facts plus the facts released to it alone
+            agent_chunk = replace(chunk, new_facts=list(chunk.new_facts) + view) if view else chunk
             try:
-                finding = agent.analyze(chunk, self._incident_state)
+                finding = agent.analyze(agent_chunk, self._incident_state)
                 self._agent_inputs[agent_id.value] = {
                     "incident_state": visible_state,
                     "queries": list(getattr(agent, "last_queries", [])),
+                    "agent_view": view,
                 }
                 findings.append(finding)
                 logger.debug("Agent %s produced %d claim(s).",

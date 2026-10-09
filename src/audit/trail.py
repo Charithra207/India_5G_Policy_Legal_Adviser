@@ -151,6 +151,7 @@ def _agent_entry(record: AuditRecord, finding: AgentFinding) -> dict:
             "chunk_id": chunk.chunk_id,
             "information_released": chunk.description,
             "new_facts": list(chunk.new_facts),
+            "agent_view": list(inputs.get("agent_view", [])),     # facts released to this agent only
             "prior_chunk_ids": list(chunk.prior_chunks),
             "incident_state": inputs.get("incident_state"),
         },
@@ -161,6 +162,8 @@ def _agent_entry(record: AuditRecord, finding: AgentFinding) -> dict:
         "claims": [_claim_entry(c, finding, verdicts.get(c)) for c in finding.claims],
         "uncertainty_notes": list(finding.uncertainty_notes),
         "missing_facts": list(finding.missing_facts),
+        # LLM prompts, raw response and stated rationale (empty when no model is configured)
+        "llm_reasoning": _plain(finding.reasoning_trace),
     }
 
 
@@ -185,6 +188,7 @@ def stage_entry(record: AuditRecord, scenario_id: str, stage_spec,
             "scenario_time": chunk.timestamp,
             "information_released": chunk.description,
             "new_facts": list(chunk.new_facts),
+            "agent_views": {k: list(v) for k, v in chunk.agent_views.items()},
             "prior_chunks": list(chunk.prior_chunks),
             "docx_information_released": stage_spec.information_released if stage_spec else "",
             "docx_expected_change": stage_spec.expected_change if stage_spec else "",
@@ -235,6 +239,13 @@ def _git_commit() -> dict:
             return ""
     return {"commit": git("rev-parse", "HEAD"),
             "uncommitted_changes": bool(git("status", "--porcelain"))}
+
+
+def _llm() -> dict:
+    """The agents' optional reasoning model for this run (src/llm)."""
+    from src.llm import active
+    llm = active()
+    return {"provider": llm.name, "model": llm.model or None}
 
 
 def _kb_build() -> dict:
@@ -288,6 +299,7 @@ class AuditTrail:
             "knowledge_bases_live": kb_status,
             "knowledge_base_build": _kb_build(),
             "knowledge_base_note": knowledge_base_note,
+            "llm": _llm(),
             "code": _git_commit(),
         })
         return trail

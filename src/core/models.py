@@ -139,6 +139,11 @@ class ScenarioChunk:
     description     : str          # the human-readable incident text released at this stage
     new_facts       : list[str]    = field(default_factory=list)
     prior_chunks    : list[str]    = field(default_factory=list)  # IDs of earlier chunks
+    # Information released to one agent only (build-a-thon brief: agents
+    # "each receiving different information"): AgentID value → facts.
+    # Agents not listed see only the shared description and new_facts.
+    # Never used for agent selection or incident flags.
+    agent_views     : dict[str, list[str]] = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -182,6 +187,11 @@ class AgentFinding:
     # Uncertainty
     uncertainty_notes   : list[str]             = field(default_factory=list)
     missing_facts       : list[str]             = field(default_factory=list)
+
+    # Optional LLM reasoning (src/llm/synthesis.py): provider, prompts, raw
+    # response, the model's stated rationale, accepted and rejected claims.
+    # Empty when no model is configured.
+    reasoning_trace     : dict                  = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------

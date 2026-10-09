@@ -160,11 +160,13 @@ def main(argv: list[str] | None = None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
     ap.add_argument("--attack", help="attack id from catalog/attacks.yaml")
     ap.add_argument("--list", action="store_true", help="list attack ids")
-    ap.add_argument("--provider", choices=["anthropic", "offline"], help="overrides LLM_PROVIDER")
+    ap.add_argument("--provider", choices=["anthropic", "ollama", "offline"], help="overrides LLM_PROVIDER")
     ap.add_argument("--auto", action="store_true", help="non-interactive: agent at every gate, approve all")
     ap.add_argument("--intent", help="ML Intent (YAML) for the Y.3172 pipeline, e.g. intents/amf_signalling_storm.yaml")
     ap.add_argument("--mode", choices=["advisory", "blocking"], help="with --intent: override the P-node mode")
     ap.add_argument("--out", help="with --intent: run folder (default outputs/y3172/<run id>)")
+    ap.add_argument("--llm", choices=["offline", "ollama", "anthropic"],
+                    help="with --intent: reasoning model of the P node's specialist agents (default ADVISER_LLM)")
     args = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
@@ -274,10 +276,15 @@ def run_intent(args) -> int:
     if args.provider:
         intent = replace(intent, remediation_agent=args.provider)
         os.environ["LLM_PROVIDER"] = args.provider
+    from src import llm
+    adviser_llm = llm.configure(args.llm) if args.llm else llm.active()
+    if getattr(adviser_llm, "notice", ""):
+        print("NOTE:", adviser_llm.notice)
     mlfo = MLFO(intent, run_dir=Path(args.out) if args.out else None, human=CliHuman(args.auto),
                 on_event=print_pipeline_event, incident_event=print_event)
     os.environ["LAB_WORK_DIR"] = str(mlfo.run_dir / "live")      # operator commands (manual tiers)
     print(_rule(f"Y.3172 PIPELINE — {intent.title} — P node: {intent.policy.mode}"))
+    print(f"Agents' reasoning model (P node): {adviser_llm.describe()}")
     report = mlfo.run()
     print("\n" + _rule("RUN SUMMARY"))
     for k, v in report["data"]["summary"].items():

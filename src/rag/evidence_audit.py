@@ -128,6 +128,9 @@ class Audit:
             self.flag(where, "authority/jurisdiction differ from the manifest")
         if chunk["url"] != doc["source_url"]:
             self.flag(where, "URL differs from the manifest")
+        # LLM-assisted claims (src/llm/synthesis.py) carry a leading label; the checks
+        # below apply to the claim behind it, quotations included
+        claim = re.sub(r"^\[LLM-assisted — [^\]]*\]\s*", "", claim)
         quote = _quote_in(claim)
         if quote is not None and quote not in _flat(chunk["excerpt"]):
             self.flag(where, "quoted words are not in the stored passage")

@@ -38,12 +38,19 @@ def print_stage(entry: dict) -> None:
     for agent in entry["agents"]:
         real = [p for p in agent["retrieved_passages"] if not p["is_stub"]]
         print(f"\n  [{agent['agent_id']}] {agent['decision_summary']}")
+        for fact in agent["visible_input"].get("agent_view", []):
+            print(f"    only this agent was told: {fact}")
         print(f"    passages retrieved: {len(real)}")
         for p in real[:3]:
             print(f"      - {p['source_title']}, {p['section']}"
                   + (f" (p. {p['page']})" if p["page"] else ""))
         for c in agent["claims"]:
             print(f"    {c['verifier_outcome'] or 'NOT VERIFIED':<11} {c['claim'][:WIDTH + 20]}")
+        trace = agent.get("llm_reasoning") or {}
+        if trace:
+            print(f"    LLM ({trace.get('provider')}:{trace.get('model')}): {trace.get('status', '')}")
+            if trace.get("reasoning_summary"):
+                print(f"      rationale: {trace['reasoning_summary'][:WIDTH * 2]}")
     counts = entry["verifier"]["outcome_counts"]
     print("\nVerifier        :", ", ".join(f"{k} {v}" for k, v in sorted(counts.items())))
     print("Coordinator     :", "; ".join(
@@ -101,8 +108,14 @@ def main(argv: list[str] | None = None) -> int:
                          "evidence, the conclusion, the verification and the Coordinator's path")
     ap.add_argument("--reexecute", action="store_true",
                     help="with --replay: re-run the recorded chunks and compare")
+    ap.add_argument("--llm", choices=["offline", "ollama", "anthropic"],
+                    help="agents' optional reasoning model (default: ADVISER_LLM, else offline)")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.ERROR)
+    from src import llm
+    provider = llm.configure(args.llm) if args.llm else llm.active()
+    if getattr(provider, "notice", ""):
+        print("NOTE:", provider.notice)
 
     if args.replay:
         run = load_run(args.replay)
@@ -141,6 +154,7 @@ def main(argv: list[str] | None = None) -> int:
     live = [k for k, v in engine.kb_status.items() if v]
     print(f"{engine.spec.title} (DOCX {engine.spec.docx_section})")
     print(f"Live KBs: {', '.join(live) or 'none — stub run'}")
+    print(f"Agents' reasoning model: {provider.describe()}")
     for _ in range(min(args.stages, engine.stage_count)):
         print_stage(engine.next_stage())
     print("=" * WIDTH)

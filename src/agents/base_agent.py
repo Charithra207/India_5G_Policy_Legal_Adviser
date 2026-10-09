@@ -74,6 +74,11 @@ class BaseAgent(ABC):
         finding  = self._produce_finding(chunk, incident_state, evidence)
         finding.agent_id = self.agent_id
         finding.chunk_id = chunk.chunk_id
+        # Optional LLM reasoning over the same retrieved passages; a no-op
+        # unless a model is configured (src/llm).  Its claims cite passages
+        # and are verified like any other claim.
+        from src.llm.synthesis import enrich
+        enrich(self, chunk, incident_state, evidence, finding)
         # Citations may only point at claims the finding actually makes
         finding.claim_citations = {
             c: items for c, items in finding.claim_citations.items()
