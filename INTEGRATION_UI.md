@@ -258,9 +258,11 @@ stages) and `day2_conflict_demo_FIXTURE.jsonl` (labelled synthetic passages).
   is currently shown once per agent.
 - Export a replay as a single HTML/PDF evidence report for judges.
 - Y.3172 pipeline trace view (source → collection → preprocessing → model →
-  policy → distribution; Sandbox marked "not executed").
-- Store audit runs with the ITU AI for Good Sandbox artefacts (§7.6), once
-  the Sandbox is available.
+  policy → distribution; Sandbox marked "not executed"; correspondence per
+  stage and the components not implemented, from
+  `knowledge_base/y3172_pipeline_traceability.json`).
+- Store audit runs with the ITU AI for Good Sandbox artefacts (§7.6), if
+  Sandbox access becomes available (it was not available to the team).
 - Show the DOCX wording beside the scenario file's wording where they differ
   (T1 adds "on the affected private 5G slice").
 

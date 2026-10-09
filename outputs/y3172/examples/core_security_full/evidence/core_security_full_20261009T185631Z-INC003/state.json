@@ -1,0 +1,646 @@
+{
+  "acl_blocks": [],
+  "alerts": [
+    "UE measurement reports show a cell that is not in the cell inventory (TA-4501)",
+    "Bulk subscriber-data reads from consumer-app-x (possible personal-data exfiltration)",
+    "NRF registration from an unexpected host (10.45.9.99)"
+  ],
+  "allowed_neighbors": [
+    "gnb-101",
+    "gnb-102",
+    "gnb-103"
+  ],
+  "attack": "supply_chain_rogue_nf",
+  "auth": {
+    "ciphering": "NEA2",
+    "integrity": "NIA2",
+    "key_version": 1,
+    "method": "5G-AKA",
+    "oam_credentials_version": 1,
+    "subscriber_keys_compromised": false
+  },
+  "backups": {
+    "amf": "clean-2026-10-06",
+    "ausf": "clean-2026-10-06",
+    "gnb": "clean-2026-10-06",
+    "nef": "clean-2026-10-06",
+    "nrf": "clean-2026-10-06",
+    "oam": "clean-2026-10-06",
+    "smf": "clean-2026-10-06",
+    "udm": "clean-2026-10-06",
+    "upf": "clean-2026-10-06"
+  },
+  "blocked_destinations": [],
+  "c2_contacts": [],
+  "device_policy": {
+    "ignore_cells": [
+      "gnb-666"
+    ]
+  },
+  "devices": {
+    "meter-0001": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0002": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0003": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0004": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0005": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0006": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0007": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0008": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0009": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0010": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0011": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0012": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0013": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0014": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0015": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0016": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0017": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0018": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0019": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0020": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0021": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0022": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0023": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0024": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0025": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0026": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0027": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0028": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0029": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0030": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0031": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0032": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0033": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0034": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0035": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0036": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0037": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0038": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0039": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    },
+    "meter-0040": {
+      "dst": "meter-head-end",
+      "rate": 1,
+      "slice": "mmtc"
+    }
+  },
+  "egress_flows": [
+    {
+      "active": true,
+      "dst": "203.0.113.200:443",
+      "kbps": 96,
+      "src": "nf-x9"
+    }
+  ],
+  "evidence": [],
+  "exfiltration": [
+    "consumer-app-x",
+    "nf-x9"
+  ],
+  "fake_cells": [
+    "gnb-666"
+  ],
+  "field_tickets": [
+    {
+      "area": "TA-4501",
+      "cell": "gnb-666",
+      "status": "handed off to the field team (real-world action, recorded only)"
+    }
+  ],
+  "gnbs": [
+    {
+      "connected": true,
+      "id": "gnb-101",
+      "in_inventory": true
+    },
+    {
+      "connected": true,
+      "id": "gnb-102",
+      "in_inventory": true
+    },
+    {
+      "connected": true,
+      "id": "gnb-103",
+      "in_inventory": true
+    }
+  ],
+  "hostile_cells": [
+    "gnb-666"
+  ],
+  "infected_devices": [],
+  "interfaces": {
+    "N2": {
+      "ipsec": true
+    },
+    "N3": {
+      "ipsec": true
+    }
+  },
+  "isolated_instances": [],
+  "metrics": {
+    "active_pdu_sessions": 1200,
+    "amf": {
+      "accepted_rate": 189,
+      "cpu": 28,
+      "offered_rate": 189,
+      "rate_limit": null,
+      "registration_failure_pct": 0.0,
+      "registration_rate": 189,
+      "replicas": 1
+    },
+    "ausf": {
+      "accepted_rate": 10,
+      "cpu": 16,
+      "offered_rate": 10,
+      "rate_limit": null,
+      "replicas": 1
+    },
+    "gnb": {
+      "accepted_rate": 10,
+      "cpu": 16,
+      "fallback_to_lte_ues": 0,
+      "offered_rate": 10,
+      "radio_link_failures": 0,
+      "rate_limit": null,
+      "replicas": 1
+    },
+    "nef": {
+      "accepted_rate": 31,
+      "api_calls_per_min": 31,
+      "cpu": 17,
+      "offered_rate": 31,
+      "rate_limit": null,
+      "replicas": 1
+    },
+    "nrf": {
+      "accepted_rate": 10,
+      "cpu": 16,
+      "offered_rate": 10,
+      "rate_limit": null,
+      "replicas": 1
+    },
+    "oam": {
+      "accepted_rate": 10,
+      "cpu": 16,
+      "offered_rate": 10,
+      "rate_limit": null,
+      "replicas": 1
+    },
+    "registered_ues": 5000,
+    "smf": {
+      "accepted_rate": 39,
+      "cpu": 18,
+      "offered_rate": 39,
+      "rate_limit": null,
+      "replicas": 1
+    },
+    "udm": {
+      "accepted_rate": 85,
+      "bulk_reads_active": 1,
+      "cpu": 21,
+      "offered_rate": 85,
+      "rate_limit": null,
+      "replicas": 1
+    },
+    "upf": {
+      "accepted_rate": 490,
+      "cpu": 36,
+      "offered_rate": 490,
+      "packet_drop_pct": 0.0,
+      "rate_limit": null,
+      "replicas": 1
+    }
+  },
+  "nef_tokens": {
+    "abusive_tokens": [],
+    "valid_tokens": [
+      "af-partner-1"
+    ]
+  },
+  "neighbors": [
+    "gnb-101",
+    "gnb-102",
+    "gnb-103"
+  ],
+  "nfs": {
+    "amf": {
+      "blocked_sources": [],
+      "config": {
+        "max_registration_rate": 1500,
+        "overload_control": "enabled"
+      },
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "ausf": {
+      "blocked_sources": [],
+      "config": {},
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "gnb": {
+      "blocked_sources": [],
+      "config": {
+        "neighbor_whitelist": "enforced",
+        "up_integrity": "required"
+      },
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "nef": {
+      "blocked_sources": [],
+      "config": {
+        "oauth2": "required"
+      },
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "nrf": {
+      "blocked_sources": [],
+      "config": {
+        "registration_auth": "disabled",
+        "require_signed_nf_profiles": false
+      },
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "oam": {
+      "blocked_sources": [],
+      "config": {
+        "admin_access": "jump-host-only",
+        "default_credentials": false,
+        "exposed_to_internet": false
+      },
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "smf": {
+      "blocked_sources": [],
+      "config": {},
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "udm": {
+      "blocked_sources": [
+        "consumer-app-x"
+      ],
+      "config": {
+        "bulk_export": "disabled",
+        "suci_protection": "profile_A"
+      },
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    },
+    "upf": {
+      "blocked_sources": [],
+      "config": {
+        "source_address_validation": "enabled"
+      },
+      "files_encrypted": false,
+      "isolated": false,
+      "rate_limit": null,
+      "replicas": 1,
+      "status": "running"
+    }
+  },
+  "quarantined_devices": [],
+  "registered_nfs": [
+    {
+      "host": "10.45.8.11",
+      "id": "smf-01",
+      "signed": true,
+      "type": "SMF"
+    },
+    {
+      "host": "10.45.8.12",
+      "id": "upf-01",
+      "signed": true,
+      "type": "UPF"
+    },
+    {
+      "host": "10.45.8.13",
+      "id": "udm-01",
+      "signed": true,
+      "type": "UDM"
+    },
+    {
+      "host": "10.45.9.99",
+      "id": "nf-x9",
+      "signed": false,
+      "type": "SMF"
+    }
+  ],
+  "rogue_instances": [
+    "nf-x9"
+  ],
+  "services": {
+    "hospital-portal": {
+      "capacity": 800,
+      "filter": false,
+      "slice": "urllc-hospital"
+    }
+  },
+  "sessions": [
+    {
+      "id": "pdu-1001",
+      "slice": "urllc-hospital",
+      "supi": "imsi-404450000000101",
+      "ue_ip": "10.46.0.101"
+    },
+    {
+      "id": "pdu-5001",
+      "slice": "embb",
+      "supi": "imsi-404450000000555",
+      "ue_ip": "10.45.0.55"
+    }
+  ],
+  "slices": {
+    "embb": {
+      "allow_list": null
+    },
+    "mmtc": {
+      "allow_list": null,
+      "per_device_limit": null
+    },
+    "urllc-hospital": {
+      "allow_list": [
+        "imsi-404450000000101",
+        "imsi-404450000000102"
+      ]
+    }
+  },
+  "subscriber_changes": [],
+  "subscriber_snapshot": {
+    "imsi-404450000000101": {
+      "slices": [
+        "embb",
+        "urllc-hospital"
+      ]
+    },
+    "imsi-404450000000102": {
+      "slices": [
+        "embb",
+        "urllc-hospital"
+      ]
+    },
+    "imsi-404450000000555": {
+      "slices": [
+        "embb"
+      ]
+    },
+    "imsi-404450000000777": {
+      "slices": [
+        "embb"
+      ]
+    }
+  },
+  "subscribers": {
+    "imsi-404450000000101": {
+      "slices": [
+        "embb",
+        "urllc-hospital"
+      ]
+    },
+    "imsi-404450000000102": {
+      "slices": [
+        "embb",
+        "urllc-hospital"
+      ]
+    },
+    "imsi-404450000000555": {
+      "slices": [
+        "embb"
+      ]
+    },
+    "imsi-404450000000777": {
+      "slices": [
+        "embb"
+      ]
+    }
+  },
+  "tick": 27,
+  "traffic": {
+    "amf": [
+      {
+        "rate": 139,
+        "source": "bg-amf"
+      }
+    ],
+    "ausf": [],
+    "gnb": [],
+    "nef": [
+      {
+        "rate": 11,
+        "source": "bg-nef"
+      }
+    ],
+    "nrf": [],
+    "oam": [],
+    "smf": [
+      {
+        "rate": 29,
+        "source": "bg-smf"
+      }
+    ],
+    "udm": [
+      {
+        "rate": 1500,
+        "source": "consumer-app-x"
+      },
+      {
+        "rate": 40,
+        "source": "nf-x9"
+      },
+      {
+        "rate": 15,
+        "source": "bg-udm"
+      }
+    ],
+    "upf": [
+      {
+        "rate": 90,
+        "source": "bg-upf"
+      }
+    ]
+  },
+  "upf_flows": []
+}

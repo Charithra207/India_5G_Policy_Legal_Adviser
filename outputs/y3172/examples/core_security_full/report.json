@@ -1,0 +1,2536 @@
+{
+  "summary": {
+    "intent_id": "core_security_full",
+    "policy_mode": "blocking",
+    "ticks": 34,
+    "initial_model": "iforest_rf",
+    "final_model": "iforest_rf",
+    "live_accuracy": 1.0,
+    "live_macro_f1": 1.0,
+    "live_detection_f1": 1.0,
+    "false_alarm_ticks": 0,
+    "missed_ticks": 0,
+    "incidents_dispatched": 5,
+    "incidents_correctly_classified": 5,
+    "remediations_applied_on_wrong_classification": 0,
+    "attacks_injected": 4,
+    "attacks_detected_within_deadline": 4,
+    "mean_detection_delay_ticks": 0.0,
+    "deadline_ticks": 1,
+    "reselections": 0,
+    "notices_drafted": 16,
+    "escalations": 2,
+    "sandbox_validation_passed": 13,
+    "sandbox_validation_total": 13,
+    "mean_inference_ms": 20.642,
+    "adviser_knowledge_bases": "stubs \u2014 vector stores not built here (python -m src.rag.build); agents report no passages"
+  },
+  "intent": {
+    "intent_id": "core_security_full",
+    "title": "Security monitoring of the whole 5G core (all catalog incidents)",
+    "description": "Detect and classify all thirteen incident types in the attack catalog across RAN, transport, control plane, user plane, service-based APIs and management, using telemetry from every network function, and hold every remediation for the operator together with its Indian reporting duties.",
+    "ml_application": {
+      "task": "incident detection and classification",
+      "target_classes": "all"
+    },
+    "sources": [
+      {
+        "nf": "gnb",
+        "level": "AN",
+        "telemetry": [
+          "metrics",
+          "logs",
+          "ran",
+          "transport"
+        ]
+      },
+      {
+        "nf": "amf",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "health",
+          "logs",
+          "devices"
+        ]
+      },
+      {
+        "nf": "smf",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "health",
+          "logs",
+          "integrity",
+          "slices",
+          "services"
+        ]
+      },
+      {
+        "nf": "upf",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "health",
+          "logs",
+          "user_plane",
+          "egress"
+        ]
+      },
+      {
+        "nf": "ausf",
+        "level": "CN",
+        "telemetry": [
+          "logs",
+          "auth"
+        ]
+      },
+      {
+        "nf": "udm",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "logs",
+          "sba",
+          "subscribers"
+        ]
+      },
+      {
+        "nf": "nef",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "logs",
+          "sba"
+        ]
+      },
+      {
+        "nf": "nrf",
+        "level": "CN",
+        "telemetry": [
+          "logs",
+          "registry"
+        ]
+      },
+      {
+        "nf": "oam",
+        "level": "management",
+        "telemetry": [
+          "logs",
+          "alerts",
+          "oam"
+        ]
+      }
+    ],
+    "model": {
+      "level": "CN",
+      "candidates": [
+        "threshold_centroid",
+        "iforest_rf"
+      ],
+      "selection": {
+        "metric": "macro_f1",
+        "min_score": 0.85,
+        "max_inference_ms": 80
+      }
+    },
+    "training": {
+      "samples_per_class": 40,
+      "holdout_fraction": 0.3,
+      "seed": 13,
+      "background_load": [
+        0.8,
+        1.2
+      ]
+    },
+    "policy": {
+      "level": "management",
+      "mode": "blocking",
+      "jurisdiction": "IN",
+      "min_confidence": 0.6,
+      "legal_adviser": true
+    },
+    "distributor": {
+      "level": "management"
+    },
+    "sinks": [
+      "evidence_preservation",
+      "remediation",
+      "regulatory_notices",
+      "escalation"
+    ],
+    "remediation": {
+      "agent": "offline",
+      "max_tier": "advanced"
+    },
+    "constraints": {
+      "decision_deadline_ticks": 1
+    },
+    "monitoring": {
+      "metric": "accuracy",
+      "window": 10,
+      "min_samples": 5,
+      "min_score": 0.75,
+      "cooldown_ticks": 5
+    },
+    "exercise": {
+      "ticks": 34,
+      "seed": 3,
+      "events": [
+        {
+          "at": 3,
+          "benign": "maintenance_window"
+        },
+        {
+          "at": 6,
+          "inject": "rogue_base_station"
+        },
+        {
+          "at": 12,
+          "inject": "subscriber_data_exfiltration"
+        },
+        {
+          "at": 18,
+          "benign": "flash_crowd"
+        },
+        {
+          "at": 22,
+          "inject": "supply_chain_rogue_nf"
+        },
+        {
+          "at": 28,
+          "inject": "nf_host_ransomware"
+        }
+      ]
+    }
+  },
+  "instantiation": {
+    "nodes": [
+      {
+        "node": "SRC",
+        "id": "src:gnb",
+        "level": "AN",
+        "telemetry": [
+          "metrics",
+          "logs",
+          "ran",
+          "transport"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:amf",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "health",
+          "logs",
+          "devices"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:smf",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "health",
+          "logs",
+          "integrity",
+          "slices",
+          "services"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:upf",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "health",
+          "logs",
+          "user_plane",
+          "egress"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:ausf",
+        "level": "CN",
+        "telemetry": [
+          "logs",
+          "auth"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:udm",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "logs",
+          "sba",
+          "subscribers"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:nef",
+        "level": "CN",
+        "telemetry": [
+          "metrics",
+          "logs",
+          "sba"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:nrf",
+        "level": "CN",
+        "telemetry": [
+          "logs",
+          "registry"
+        ]
+      },
+      {
+        "node": "SRC",
+        "id": "src:oam",
+        "level": "management",
+        "telemetry": [
+          "logs",
+          "alerts",
+          "oam"
+        ]
+      },
+      {
+        "node": "C",
+        "id": "collector",
+        "level": "CN",
+        "polls": [
+          "gnb.metrics",
+          "gnb.logs",
+          "gnb.ran",
+          "gnb.transport",
+          "amf.metrics",
+          "amf.health",
+          "amf.logs",
+          "amf.devices",
+          "smf.metrics",
+          "smf.health",
+          "smf.logs",
+          "smf.integrity",
+          "smf.slices",
+          "smf.services",
+          "upf.metrics",
+          "upf.health",
+          "upf.logs",
+          "upf.user_plane",
+          "upf.egress",
+          "ausf.logs",
+          "ausf.auth",
+          "udm.metrics",
+          "udm.logs",
+          "udm.sba",
+          "udm.subscribers",
+          "nef.metrics",
+          "nef.logs",
+          "nef.sba",
+          "nrf.logs",
+          "nrf.registry",
+          "oam.logs",
+          "oam.alerts",
+          "oam.oam"
+        ]
+      },
+      {
+        "node": "PP",
+        "id": "preprocessor",
+        "level": "CN"
+      },
+      {
+        "node": "M",
+        "id": "model",
+        "level": "CN",
+        "candidates": [
+          "threshold_centroid",
+          "iforest_rf"
+        ]
+      },
+      {
+        "node": "P",
+        "id": "policy_node",
+        "level": "management",
+        "mode": "blocking"
+      },
+      {
+        "node": "D",
+        "id": "distributor",
+        "level": "management"
+      },
+      {
+        "node": "SINK",
+        "id": "sink:evidence_preservation",
+        "level": "management"
+      },
+      {
+        "node": "SINK",
+        "id": "sink:remediation",
+        "level": "CN"
+      },
+      {
+        "node": "SINK",
+        "id": "sink:regulatory_notices",
+        "level": "management"
+      },
+      {
+        "node": "SINK",
+        "id": "sink:escalation",
+        "level": "management"
+      }
+    ],
+    "levels": [
+      "AN",
+      "CN",
+      "management"
+    ],
+    "reference_points": {
+      "4": "ML underlay network (live simulation) \u2194 ML pipeline: collector reads diagnostics; SINKs act",
+      "1,2": "simulated ML underlay networks \u2194 ML pipeline in the sandbox subsystem",
+      "3": "ML sandbox subsystem \u2194 ML pipeline subsystem: trained model handed over at deployment",
+      "5": "management subsystem (MLFO) \u2194 ML pipeline subsystem: instantiation, model updates",
+      "6": "management subsystem (MLFO) \u2194 ML sandbox subsystem: training, evaluation, selection",
+      "7": "MLFO \u2194 other management functions: the incident-response engine (ir/engine.py) and its human gates"
+    },
+    "chain": "SRC \u2192 C \u2192 PP \u2192 M \u2192 P \u2192 D \u2192 SINK",
+    "feature_count": 152
+  },
+  "selections": [
+    {
+      "reason": "initial",
+      "selected": "iforest_rf",
+      "meets_intent": true,
+      "rule": "highest macro_f1 among candidates with macro_f1 \u2265 0.85 and p95 inference \u2264 80.0 ms",
+      "training_load": [
+        0.8,
+        1.2
+      ],
+      "samples": 900,
+      "train_samples": 630,
+      "test_samples": 270,
+      "features": 152,
+      "data_seconds": 1.03,
+      "candidates": [
+        {
+          "model_id": "threshold_centroid",
+          "train_seconds": 0.014,
+          "eligible": true,
+          "metrics": {
+            "macro_f1": 0.8685,
+            "detection_f1": 0.8607,
+            "detection_precision": 0.7588,
+            "detection_recall": 0.9943,
+            "false_alarm_rate": 0.5729,
+            "unknown_anomaly_predictions": 0,
+            "per_class_f1": {
+              "core_ddos_upf": 0.9412,
+              "exposed_mgmt_interface": 0.9091,
+              "gtpu_spoofing_upf": 0.9565,
+              "iot_botnet_mmtc": 1.0,
+              "n2_n3_mitm": 1.0,
+              "nf_host_ransomware": 0.9565,
+              "normal": 0.5942,
+              "rogue_base_station": 1.0,
+              "sba_api_abuse_nef": 1.0,
+              "signalling_storm_amf": 0.7143,
+              "subscriber_cred_compromise": 0.2526,
+              "subscriber_data_exfiltration": 1.0,
+              "subscriber_profile_tampering": 0.96,
+              "supply_chain_rogue_nf": 0.875
+            },
+            "inference_ms_mean": 0.042,
+            "inference_ms_p95": 0.058,
+            "test_samples": 270
+          },
+          "card": {
+            "model_id": "threshold_centroid",
+            "description": "Baseline: max per-feature z-score against normal operation with a trained threshold; nearest class centroid names the incident",
+            "threshold_max_abs_z": 3.935,
+            "classes": [
+              "core_ddos_upf",
+              "exposed_mgmt_interface",
+              "gtpu_spoofing_upf",
+              "iot_botnet_mmtc",
+              "n2_n3_mitm",
+              "nf_host_ransomware",
+              "rogue_base_station",
+              "sba_api_abuse_nef",
+              "signalling_storm_amf",
+              "subscriber_cred_compromise",
+              "subscriber_data_exfiltration",
+              "subscriber_profile_tampering",
+              "supply_chain_rogue_nf"
+            ]
+          }
+        },
+        {
+          "model_id": "iforest_rf",
+          "train_seconds": 0.775,
+          "eligible": true,
+          "metrics": {
+            "macro_f1": 0.9855,
+            "detection_f1": 0.9855,
+            "detection_precision": 0.9942,
+            "detection_recall": 0.977,
+            "false_alarm_rate": 0.0104,
+            "unknown_anomaly_predictions": 1,
+            "per_class_f1": {
+              "core_ddos_upf": 1.0,
+              "exposed_mgmt_interface": 0.9091,
+              "gtpu_spoofing_upf": 0.9565,
+              "iot_botnet_mmtc": 1.0,
+              "n2_n3_mitm": 1.0,
+              "nf_host_ransomware": 1.0,
+              "normal": 0.9744,
+              "rogue_base_station": 1.0,
+              "sba_api_abuse_nef": 1.0,
+              "signalling_storm_amf": 1.0,
+              "subscriber_cred_compromise": 0.9565,
+              "subscriber_data_exfiltration": 1.0,
+              "subscriber_profile_tampering": 1.0,
+              "supply_chain_rogue_nf": 1.0
+            },
+            "inference_ms_mean": 23.623,
+            "inference_ms_p95": 42.407,
+            "test_samples": 270
+          },
+          "card": {
+            "model_id": "iforest_rf",
+            "description": "IsolationForest on normal operation (unknown anomalies) + RandomForest classifier (known incident classes)",
+            "iforest_threshold": -0.4874,
+            "classes": [
+              "core_ddos_upf",
+              "exposed_mgmt_interface",
+              "gtpu_spoofing_upf",
+              "iot_botnet_mmtc",
+              "n2_n3_mitm",
+              "nf_host_ransomware",
+              "normal",
+              "rogue_base_station",
+              "sba_api_abuse_nef",
+              "signalling_storm_amf",
+              "subscriber_cred_compromise",
+              "subscriber_data_exfiltration",
+              "subscriber_profile_tampering",
+              "supply_chain_rogue_nf"
+            ],
+            "top_features": [
+              {
+                "feature": "ausf.auth.subscriber_keys_compromised",
+                "importance": 0.0521
+              },
+              {
+                "feature": "oam.oam.exposed_to_internet",
+                "importance": 0.041
+              },
+              {
+                "feature": "nrf.registry.signed_profiles_not_required",
+                "importance": 0.0328
+              },
+              {
+                "feature": "gnb.transport.interfaces_without_ipsec",
+                "importance": 0.0323
+              },
+              {
+                "feature": "gnb.transport.up_integrity_off",
+                "importance": 0.0311
+              },
+              {
+                "feature": "oam.oam.default_credentials",
+                "importance": 0.0283
+              },
+              {
+                "feature": "udm.metrics.accepted_rate",
+                "importance": 0.0264
+              },
+              {
+                "feature": "upf.user_plane.spoofed_flows",
+                "importance": 0.0263
+              },
+              {
+                "feature": "upf.metrics.cpu",
+                "importance": 0.0249
+              },
+              {
+                "feature": "upf.metrics.offered_rate",
+                "importance": 0.0244
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "sandbox_validation": [
+    {
+      "incident": "signalling_storm_amf",
+      "detected_as": "signalling_storm_amf",
+      "detected": true,
+      "confidence": 0.993,
+      "playbook_resolved": true,
+      "resolved_in": "basic",
+      "after_remediation": "signalling_storm_amf"
+    },
+    {
+      "incident": "core_ddos_upf",
+      "detected_as": "core_ddos_upf",
+      "detected": true,
+      "confidence": 0.993,
+      "playbook_resolved": true,
+      "resolved_in": "basic",
+      "after_remediation": "core_ddos_upf"
+    },
+    {
+      "incident": "rogue_base_station",
+      "detected_as": "rogue_base_station",
+      "detected": true,
+      "confidence": 1.0,
+      "playbook_resolved": true,
+      "resolved_in": "intermediate",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "subscriber_cred_compromise",
+      "detected_as": "subscriber_cred_compromise",
+      "detected": true,
+      "confidence": 0.907,
+      "playbook_resolved": true,
+      "resolved_in": "advanced",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "sba_api_abuse_nef",
+      "detected_as": "sba_api_abuse_nef",
+      "detected": true,
+      "confidence": 1.0,
+      "playbook_resolved": true,
+      "resolved_in": "intermediate",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "subscriber_data_exfiltration",
+      "detected_as": "subscriber_data_exfiltration",
+      "detected": true,
+      "confidence": 1.0,
+      "playbook_resolved": true,
+      "resolved_in": "intermediate",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "nf_host_ransomware",
+      "detected_as": "nf_host_ransomware",
+      "detected": true,
+      "confidence": 0.993,
+      "playbook_resolved": true,
+      "resolved_in": "advanced",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "exposed_mgmt_interface",
+      "detected_as": "exposed_mgmt_interface",
+      "detected": true,
+      "confidence": 0.96,
+      "playbook_resolved": true,
+      "resolved_in": "intermediate",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "n2_n3_mitm",
+      "detected_as": "n2_n3_mitm",
+      "detected": true,
+      "confidence": 0.98,
+      "playbook_resolved": true,
+      "resolved_in": "intermediate",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "supply_chain_rogue_nf",
+      "detected_as": "supply_chain_rogue_nf",
+      "detected": true,
+      "confidence": 1.0,
+      "playbook_resolved": true,
+      "resolved_in": "advanced",
+      "after_remediation": "supply_chain_rogue_nf"
+    },
+    {
+      "incident": "subscriber_profile_tampering",
+      "detected_as": "subscriber_profile_tampering",
+      "detected": true,
+      "confidence": 0.967,
+      "playbook_resolved": true,
+      "resolved_in": "advanced",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "gtpu_spoofing_upf",
+      "detected_as": "gtpu_spoofing_upf",
+      "detected": true,
+      "confidence": 1.0,
+      "playbook_resolved": true,
+      "resolved_in": "intermediate",
+      "after_remediation": "normal"
+    },
+    {
+      "incident": "iot_botnet_mmtc",
+      "detected_as": "iot_botnet_mmtc",
+      "detected": true,
+      "confidence": 1.0,
+      "playbook_resolved": true,
+      "resolved_in": "advanced",
+      "after_remediation": "normal"
+    }
+  ],
+  "ticks": [
+    {
+      "tick": 0,
+      "clock": "09:02",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.847,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 18.913,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 1
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 1,
+      "clock": "09:03",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.88,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 18.497,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 2
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 2,
+      "clock": "09:04",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.84,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 18.731,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 3
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 3,
+      "clock": "09:05",
+      "events": [
+        "benign event: maintenance_window"
+      ],
+      "prediction": "normal",
+      "confidence": 0.753,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 18.548,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 4
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 4,
+      "clock": "09:06",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.753,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 18.603,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 5
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 5,
+      "clock": "09:07",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.7,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 19.016,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 6
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 6,
+      "clock": "09:09",
+      "events": [
+        "attack injected: rogue_base_station",
+        "benign event ended: maintenance_window"
+      ],
+      "prediction": "rogue_base_station",
+      "confidence": 0.893,
+      "truth": "rogue_base_station",
+      "scored_truth": "rogue_base_station",
+      "inference_ms": 30.88,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 7
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "core_security_full_20261009T185631Z-INC001: P=hold_for_approval; remediation=resolved"
+    },
+    {
+      "tick": 7,
+      "clock": "09:10",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.713,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 19.747,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 8
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 8,
+      "clock": "09:11",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.753,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 18.667,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 9
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 9,
+      "clock": "09:12",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.733,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 19.178,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 10,
+      "clock": "09:13",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.76,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 20.396,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 11,
+      "clock": "09:14",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.767,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 19.207,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 12,
+      "clock": "09:16",
+      "events": [
+        "attack injected: subscriber_data_exfiltration"
+      ],
+      "prediction": "subscriber_data_exfiltration",
+      "confidence": 0.907,
+      "truth": "subscriber_data_exfiltration",
+      "scored_truth": "subscriber_data_exfiltration",
+      "inference_ms": 19.356,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "core_security_full_20261009T185631Z-INC002: P=hold_for_approval; remediation=resolved"
+    },
+    {
+      "tick": 13,
+      "clock": "09:17",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.72,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 22.832,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 14,
+      "clock": "09:18",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.773,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 20.446,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 15,
+      "clock": "09:19",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.673,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 19.839,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 16,
+      "clock": "09:20",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.753,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 19.423,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 17,
+      "clock": "09:21",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.727,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 21.323,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 18,
+      "clock": "09:22",
+      "events": [
+        "benign event: flash_crowd"
+      ],
+      "prediction": "normal",
+      "confidence": 0.74,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 21.541,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 19,
+      "clock": "09:23",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.747,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 21.853,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 20,
+      "clock": "09:24",
+      "events": [],
+      "prediction": "normal",
+      "confidence": 0.76,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 23.485,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 21,
+      "clock": "09:25",
+      "events": [
+        "benign event ended: flash_crowd"
+      ],
+      "prediction": "normal",
+      "confidence": 0.72,
+      "truth": "normal",
+      "scored_truth": "normal",
+      "inference_ms": 18.798,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": null
+    },
+    {
+      "tick": 22,
+      "clock": "09:27",
+      "events": [
+        "attack injected: supply_chain_rogue_nf"
+      ],
+      "prediction": "supply_chain_rogue_nf",
+      "confidence": 0.887,
+      "truth": "supply_chain_rogue_nf",
+      "scored_truth": "supply_chain_rogue_nf",
+      "inference_ms": 19.274,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "core_security_full_20261009T185631Z-INC003: P=hold_for_approval; remediation=resolved"
+    },
+    {
+      "tick": 23,
+      "clock": "09:28",
+      "events": [],
+      "prediction": "supply_chain_rogue_nf",
+      "confidence": 0.84,
+      "truth": "contained:supply_chain_rogue_nf",
+      "scored_truth": "supply_chain_rogue_nf",
+      "inference_ms": 20.086,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "resolved incident still observed (contained) \u2014 not re-dispatched"
+    },
+    {
+      "tick": 24,
+      "clock": "09:29",
+      "events": [],
+      "prediction": "supply_chain_rogue_nf",
+      "confidence": 0.8,
+      "truth": "contained:supply_chain_rogue_nf",
+      "scored_truth": "supply_chain_rogue_nf",
+      "inference_ms": 20.243,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "resolved incident still observed (contained) \u2014 not re-dispatched"
+    },
+    {
+      "tick": 25,
+      "clock": "09:30",
+      "events": [],
+      "prediction": "supply_chain_rogue_nf",
+      "confidence": 0.827,
+      "truth": "contained:supply_chain_rogue_nf",
+      "scored_truth": "supply_chain_rogue_nf",
+      "inference_ms": 20.329,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "resolved incident still observed (contained) \u2014 not re-dispatched"
+    },
+    {
+      "tick": 26,
+      "clock": "09:31",
+      "events": [],
+      "prediction": "supply_chain_rogue_nf",
+      "confidence": 0.813,
+      "truth": "contained:supply_chain_rogue_nf",
+      "scored_truth": "supply_chain_rogue_nf",
+      "inference_ms": 20.98,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "resolved incident still observed (contained) \u2014 not re-dispatched"
+    },
+    {
+      "tick": 27,
+      "clock": "09:32",
+      "events": [],
+      "prediction": "supply_chain_rogue_nf",
+      "confidence": 0.767,
+      "truth": "contained:supply_chain_rogue_nf",
+      "scored_truth": "supply_chain_rogue_nf",
+      "inference_ms": 20.424,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "resolved incident still observed (contained) \u2014 not re-dispatched"
+    },
+    {
+      "tick": 28,
+      "clock": "09:34",
+      "events": [
+        "attack injected: nf_host_ransomware"
+      ],
+      "prediction": "nf_host_ransomware",
+      "confidence": 0.573,
+      "truth": "nf_host_ransomware",
+      "scored_truth": "nf_host_ransomware",
+      "inference_ms": 19.131,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "core_security_full_20261009T185631Z-INC004: P=escalate; remediation=escalate"
+    },
+    {
+      "tick": 29,
+      "clock": "09:35",
+      "events": [],
+      "prediction": "nf_host_ransomware",
+      "confidence": 0.547,
+      "truth": "nf_host_ransomware",
+      "scored_truth": "nf_host_ransomware",
+      "inference_ms": 19.019,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "duplicate of an incident handled in the last ticks \u2014 not re-dispatched"
+    },
+    {
+      "tick": 30,
+      "clock": "09:36",
+      "events": [],
+      "prediction": "nf_host_ransomware",
+      "confidence": 0.553,
+      "truth": "nf_host_ransomware",
+      "scored_truth": "nf_host_ransomware",
+      "inference_ms": 19.965,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "duplicate of an incident handled in the last ticks \u2014 not re-dispatched"
+    },
+    {
+      "tick": 31,
+      "clock": "09:37",
+      "events": [],
+      "prediction": "nf_host_ransomware",
+      "confidence": 0.553,
+      "truth": "nf_host_ransomware",
+      "scored_truth": "nf_host_ransomware",
+      "inference_ms": 29.835,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "duplicate of an incident handled in the last ticks \u2014 not re-dispatched"
+    },
+    {
+      "tick": 32,
+      "clock": "09:38",
+      "events": [],
+      "prediction": "nf_host_ransomware",
+      "confidence": 0.54,
+      "truth": "nf_host_ransomware",
+      "scored_truth": "nf_host_ransomware",
+      "inference_ms": 22.972,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "duplicate of an incident handled in the last ticks \u2014 not re-dispatched"
+    },
+    {
+      "tick": 33,
+      "clock": "09:39",
+      "events": [],
+      "prediction": "nf_host_ransomware",
+      "confidence": 0.547,
+      "truth": "nf_host_ransomware",
+      "scored_truth": "nf_host_ransomware",
+      "inference_ms": 20.285,
+      "rolling": {
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "detection_f1": 1.0,
+        "false_alarms": 0,
+        "missed": 0,
+        "n": 10
+      },
+      "model": "iforest_rf",
+      "load": 1.0,
+      "action": "core_security_full_20261009T185631Z-INC005: P=escalate; remediation=escalate"
+    }
+  ],
+  "incidents": [
+    {
+      "incident_id": "core_security_full_20261009T185631Z-INC001",
+      "tick": 6,
+      "detected_at": "2026-10-07T09:09:00",
+      "prediction": {
+        "label": "rogue_base_station",
+        "confidence": 0.8933,
+        "anomaly_score": -0.1177,
+        "model_id": "iforest_rf",
+        "evidence": [
+          {
+            "feature": "gnb.metrics.fallback_to_lte_ues",
+            "value": 38.0,
+            "normal_mean": 0.0,
+            "z": 152.0
+          },
+          {
+            "feature": "gnb.metrics.radio_link_failures",
+            "value": 12.0,
+            "normal_mean": 0.0,
+            "z": 48.0
+          },
+          {
+            "feature": "\u0394gnb.ran.unknown_neighbours",
+            "value": 1.0,
+            "normal_mean": -0.022,
+            "z": 4.1
+          },
+          {
+            "feature": "oam.alerts.new_alerts",
+            "value": 1.0,
+            "normal_mean": 0.0,
+            "z": 4.0
+          },
+          {
+            "feature": "\u0394gnb.ran.unknown_cells_reported",
+            "value": 1.0,
+            "normal_mean": 0.0,
+            "z": 4.0
+          }
+        ],
+        "proposal": {
+          "attack_id": "rogue_base_station",
+          "name": "Fake base station (rogue cell)",
+          "affected_nf": [
+            "gnb"
+          ],
+          "basic_auto_safe_steps": [
+            "patch_config"
+          ],
+          "steps_needing_approval": {
+            "intermediate": [
+              "flag_cell_hostile",
+              "push_device_policy",
+              "dispatch_field_team"
+            ],
+            "advanced": [
+              "patch_config"
+            ]
+          },
+          "references": {
+            "enisa": "ENISA 5G Threat Landscape (Update), \"Man in the middle / Session hijacking \u2014 Session hijacking via rogue base station \u2014 Downgrade attacks via rogue base station\" (ENISA 5G Threat Landscape - Update.pdf, p. 108)",
+            "3gpp": "3GPP TS 33.501 Annex E \"UE-assisted network-based detection of false base station\" (ts_133501v181200p.pdf, pp. 250-251) and clause 6.12.2 SUCI (p. 114). (3GPP TR 33.809, the false-base-station study, is not in the knowledge base.)"
+          }
+        }
+      },
+      "lab_truth": "rogue_base_station",
+      "correct": true,
+      "detection_delay_ticks": 0,
+      "decision": {
+        "incident_id": "core_security_full_20261009T185631Z-INC001",
+        "label": "rogue_base_station",
+        "mode": "blocking",
+        "decision": "hold_for_approval",
+        "reasons": [
+          "Blocking mode: remediation is held until a human approves it, having seen the obligations below.",
+          "Logs are preserved before any state-changing step (CERT-In Directions: 180-day log retention)."
+        ],
+        "obligations": [
+          {
+            "id": "certin_6h",
+            "summary": "Report the cyber incident to CERT-In within 6 hours of noticing it",
+            "applies_when": "the incident is of a type listed in Annexure I of the CERT-In Directions (e.g. targeted scanning, compromise of critical systems, attacks on servers, DoS/DDoS, data breach, unauthorised access)",
+            "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+            "phrase": "within 6 hours of noticing such incidents",
+            "verified": true,
+            "citation": "CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+            "passage": "\u2026viate from NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details"
+          },
+          {
+            "id": "tcs_rules_rule7_6h",
+            "summary": "Telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require",
+            "applies_when": "the incident affects the telecommunication network or service",
+            "doc": "cybersecurity-rules-2024.pdf",
+            "phrase": "within six hours of becoming aware of a security incident",
+            "verified": true,
+            "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+            "passage": "\u2026of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident\u2026"
+          },
+          {
+            "id": "certin_logs_180d",
+            "summary": "Keep ICT system logs for a rolling 180 days and provide them to CERT-In on request",
+            "applies_when": "always (preserve the incident's logs; do not let them roll over)",
+            "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+            "phrase": "rolling period of 180 days",
+            "verified": true,
+            "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+            "passage": "\u2026 Contact. (iv) All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily enable logs of all their ICT systems and maintain them securely for a rolling period of 180 days and the same shall be maintained within the Indian jurisdiction. These should be provided to CERT-In along with reporting of any incident or when ordered / directed by CERT-In. (v) Data Centres, Virt\u2026"
+          },
+          {
+            "id": "telecom_act_s22",
+            "summary": "Telecommunications Act, 2023 s.22 \u2014 measures to protect and ensure the cyber security of telecommunication networks and services",
+            "applies_when": "always (statutory basis of the Telecom Cyber Security Rules)",
+            "doc": "new-telecom-Act-2023.pdf",
+            "phrase": "protect and ensure cyber security of telecommunication networks",
+            "verified": true,
+            "citation": "new-telecom-Act-2023.pdf, p. 10",
+            "passage": "\u2026y telecommunication services, or any telecommunication network or part thereof, connected with such telecommunication services. 22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. E\u2026"
+          }
+        ],
+        "adviser": {
+          "active_agents": [
+            "cybersecurity",
+            "policy_legal",
+            "standards",
+            "technical"
+          ],
+          "claims": 7,
+          "verifier_outcomes": {
+            "UNSUPPORTED": 7
+          },
+          "evidence_backed_conclusions": [],
+          "uncertain_conclusions": [
+            "[CYBERSECURITY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] The security indicators released in this chunk (\"Machine-learning detection on the live 5G core: suspected Fake base station (rogue cell) (model iforest_rf, confidence 0.89). Affected network functions: GNB. Security indicator: unusual activity consistent with a cyber attack on the network. Question: which reporting and escalation obligations apply to the operator?\") are consistent with a possible cybersecurity incident affecting the 5G network, such as an unauthorised access attempt, a signalling attack, or an exploited misconfiguration. The cause is not established. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[CYBERSECURITY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] No passage was retrieved from the Cybersecurity KB. Instruments in this agent's mandate (DOCX \u00a74): Telecommunications (Telecom Cyber Security) Rules, 2024; CERT-In Directions, 2022 (under Section 70B IT Act 2000); National Cyber Security Policy-2013; NIST CSF 2.0 (reference only \u2014 not Indian law); NIST SP 800-61 Rev. 3 (reference only \u2014 not Indian law). Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[POLICY_LEGAL | UNSUPPORTED \u2014 insufficient evidence; preliminary only] No passage was retrieved from the Indian Legal/Regulatory KB. Instruments in this agent's mandate (DOCX \u00a74): Telecommunications Act, 2023; TRAI Act, 1997; National Digital Communications Policy-2018; Government directions and notifications under DoT/TRAI. Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[STANDARDS | UNSUPPORTED \u2014 insufficient evidence; preliminary only] [REFERENCE ONLY \u2014 not Indian law or formal certification] No passage was retrieved from the International Standards KB. Instruments in this agent's mandate (DOCX \u00a74): 3GPP TS 23.501 (System architecture for the 5G System (5GS)); 3GPP TS 33.501 (Security architecture and procedures for 5G System); NIST SP 800-61 Rev. 3 (Incident Response Recommendations (reference)). Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[TECHNICAL | UNSUPPORTED \u2014 insufficient evidence; preliminary only] The incident involves Unknown \u2014 insufficient telemetry in current chunk. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)"
+          ],
+          "conflicting_findings": [],
+          "potential_policy_gaps": [],
+          "relevant_institutions": [
+            "CERT-In",
+            "Department of Telecommunications (DoT)",
+            "Telecom Regulatory Authority of India (TRAI)"
+          ],
+          "open_questions": [
+            "No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.",
+            "[VERIFIER] Canonical KB not yet populated. All claims are UNSUPPORTED or INCOMPLETE pending KB integration. Populate CanonicalKnowledgeBase to enable real verification.",
+            "[cybersecurity] Whether the telecommunication entity has reported the anomaly to CERT-In or DoT is unknown.",
+            "[cybersecurity] Exact nature of the security indicators (protocol, volume, source) has not been released.",
+            "[policy_legal] Applicable sections, thresholds and timelines under the Indian telecom instruments require retrieval from the Indian Legal/Regulatory KB."
+          ],
+          "counts": {
+            "evidence_backed_conclusions": 0,
+            "uncertain_conclusions": 7,
+            "conflicting_findings": 0,
+            "potential_policy_gaps": 0
+          },
+          "human_review_required": "Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers."
+        },
+        "rules_applied": [
+          "blocking_mode_human_approval",
+          "preserve_logs_before_changes"
+        ],
+        "detected_at": "2026-10-07T09:09:00"
+      },
+      "sinks": [
+        {
+          "sink": "evidence_preservation",
+          "status": "preserved",
+          "detail": "10 files hashed before any change",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/evidence/core_security_full_20261009T185631Z-INC001/MANIFEST.json"
+          ],
+          "sha256_of_manifest": "0550e1422df547a43609bca6c430623d31bcec6458bf1d0cdc633f00f72220be"
+        },
+        {
+          "sink": "remediation",
+          "status": "resolved",
+          "detail": "resolved after tiers ['basic', 'intermediate']; gates: [('intermediate', 'agent')]",
+          "resolved_in": "intermediate",
+          "changes": [
+            "patch_config {\"nf\": \"gnb\", \"key\": \"neighbor_whitelist\", \"value\": \"enforced\"}",
+            "flag_cell_hostile {\"cell_id\": \"gnb-666\"}",
+            "push_device_policy {\"cell_id\": \"gnb-666\"}",
+            "dispatch_field_team {\"cell_id\": \"gnb-666\"}"
+          ],
+          "provider": "offline",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/live/reports/rogue_base_station_20261009T185638Z.md",
+            "outputs/y3172/examples/core_security_full/live/reports/rogue_base_station_20261009T185638Z.json"
+          ],
+          "approved": true
+        },
+        {
+          "sink": "regulatory_notices",
+          "status": "drafted",
+          "detail": "3 draft notices, 1 preservation actions",
+          "notices": [
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC001",
+              "key": "dot_initial",
+              "recipient": "Central Government (Department of Telecommunications)",
+              "what": "Report of the security incident with relevant details of the affected system and a description of the incident",
+              "instrument": "Telecom Cyber Security Rules, 2024, rule 7(1)(a)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-07T15:09:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:09 simulated clock)",
+              "source_check": "verified in cybersecurity-rules-2024.pdf, pp. 12\u201313",
+              "phrase": "within six hours of becoming aware of a security incident",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC001",
+              "key": "dot_details",
+              "recipient": "Central Government (Department of Telecommunications)",
+              "what": "Details: (i) users affected, (ii) duration, (iii) geographical area, (iv) extent to which the network or service is affected, (v) remedial measures, (vi) other relevant information",
+              "instrument": "Telecom Cyber Security Rules, 2024, rule 7(1)(b)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-08T09:09:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:09 simulated clock)",
+              "source_check": "verified in cybersecurity-rules-2024.pdf, pp. 12\u201313",
+              "phrase": "within twenty-four hours of becoming aware",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC001",
+              "key": "certin",
+              "recipient": "CERT-In (incident@cert-in.org.in)",
+              "what": "Report of the cyber incident (if it is of a type listed in Annexure I of the Directions)",
+              "instrument": "CERT-In Directions under s.70B(6) IT Act, direction (ii)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-07T15:09:00",
+              "counted_from": "noticing (07 Oct 2026 09:09 simulated clock)",
+              "source_check": "verified in CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+              "phrase": "within 6 hours of noticing such incidents",
+              "notes": []
+            },
+            {
+              "key": "action_certin_logs_180d",
+              "incident_id": "core_security_full_20261009T185631Z-INC001",
+              "obligation": "certin_logs_180d",
+              "action": "Preserve the ICT system logs of the incident (CERT-In direction (iv): rolling 180 days, within Indian jurisdiction); provide them to CERT-In with the incident report or on request",
+              "source_check": "verified in CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133"
+            }
+          ],
+          "paths": [
+            "outputs/y3172/examples/core_security_full/notices/core_security_full_20261009T185631Z-INC001"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "core_security_full_20261009T185631Z-INC002",
+      "tick": 12,
+      "detected_at": "2026-10-07T09:16:00",
+      "prediction": {
+        "label": "subscriber_data_exfiltration",
+        "confidence": 0.9067,
+        "anomaly_score": -0.1182,
+        "model_id": "iforest_rf",
+        "evidence": [
+          {
+            "feature": "udm.metrics.offered_rate",
+            "value": 1537.0,
+            "normal_mean": 44.433,
+            "z": 148.0
+          },
+          {
+            "feature": "udm.metrics.accepted_rate",
+            "value": 1537.0,
+            "normal_mean": 44.433,
+            "z": 148.0
+          },
+          {
+            "feature": "udm.metrics.cpu",
+            "value": 100.0,
+            "normal_mean": 17.71,
+            "z": 25.6
+          },
+          {
+            "feature": "\u0394udm.metrics.bulk_reads_active",
+            "value": 1.0,
+            "normal_mean": -0.036,
+            "z": 4.1
+          },
+          {
+            "feature": "\u0394udm.sba.bulk_export_enabled",
+            "value": 1.0,
+            "normal_mean": -0.036,
+            "z": 4.1
+          }
+        ],
+        "proposal": {
+          "attack_id": "subscriber_data_exfiltration",
+          "name": "Subscriber data exfiltration from the UDM",
+          "affected_nf": [
+            "udm"
+          ],
+          "basic_auto_safe_steps": [
+            "patch_config"
+          ],
+          "steps_needing_approval": {
+            "intermediate": [
+              "revoke_tokens",
+              "block_source"
+            ],
+            "advanced": [
+              "rotate_keys",
+              "isolate_nf",
+              "restore_nf"
+            ]
+          },
+          "references": {
+            "enisa": "ENISA 5G Threat Landscape (Update), \"Data breach, leak, theft and manipulation of information\" (ENISA 5G Threat Landscape - Update.pdf, p. 106)",
+            "3gpp": "3GPP TS 33.501 clause 5.9.2.1 requirements for service registration, discovery and authorization (ts_133501v181200p.pdf, p. 39) and 13.4.1 OAuth 2.0 authorization (p. 194)"
+          }
+        }
+      },
+      "lab_truth": "subscriber_data_exfiltration",
+      "correct": true,
+      "detection_delay_ticks": 0,
+      "decision": {
+        "incident_id": "core_security_full_20261009T185631Z-INC002",
+        "label": "subscriber_data_exfiltration",
+        "mode": "blocking",
+        "decision": "hold_for_approval",
+        "reasons": [
+          "Blocking mode: remediation is held until a human approves it, having seen the obligations below.",
+          "Logs are preserved before any state-changing step (CERT-In Directions: 180-day log retention)."
+        ],
+        "obligations": [
+          {
+            "id": "certin_6h",
+            "summary": "Report the cyber incident to CERT-In within 6 hours of noticing it",
+            "applies_when": "the incident is of a type listed in Annexure I of the CERT-In Directions (e.g. targeted scanning, compromise of critical systems, attacks on servers, DoS/DDoS, data breach, unauthorised access)",
+            "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+            "phrase": "within 6 hours of noticing such incidents",
+            "verified": true,
+            "citation": "CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+            "passage": "\u2026viate from NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details"
+          },
+          {
+            "id": "tcs_rules_rule7_6h",
+            "summary": "Telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require",
+            "applies_when": "the incident affects the telecommunication network or service",
+            "doc": "cybersecurity-rules-2024.pdf",
+            "phrase": "within six hours of becoming aware of a security incident",
+            "verified": true,
+            "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+            "passage": "\u2026of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident\u2026"
+          },
+          {
+            "id": "dpdp_act_s8_6",
+            "summary": "DPDP Act, 2023 s.8(6) \u2014 on a personal data breach, intimate the Data Protection Board and each affected Data Principal",
+            "applies_when": "subscribers' personal data was (or may have been) accessed or disclosed; NOTE s.8 commences 18 months after 13 Nov 2025 (G.S.R. 843(E)) \u2014 plan for it now, verify the commencement date before relying on it",
+            "doc": "2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+            "phrase": "In the event of a personal data breach",
+            "verified": true,
+            "citation": "2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf, p. 7",
+            "passage": "\u2026ssion or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach. (6) In the event of a personal data breach,"
+          },
+          {
+            "id": "dpdp_rules_rule7_72h",
+            "summary": "DPDP Rules, 2025 rule 7 \u2014 detailed intimation to the Board within seventy-two hours of becoming aware of the breach",
+            "applies_when": "personal data breach; NOTE rule 7 commences eighteen months after publication of the Rules (Nov 2025) \u2014 verify before relying on it",
+            "doc": "53450e6e5dc0bfa85ebd78686cadad39.pdf",
+            "phrase": "within seventy-two hours of becoming aware of the breach",
+            "verified": true,
+            "citation": "53450e6e5dc0bfa85ebd78686cadad39.pdf, pp. 26\u201327",
+            "passage": "\u2026ta breach, the Data Fiduciary shall intimate to the Board, \u2014 (a) without delay, a description of the breach, including its nature, extent, timing and location of occurrence and the likely impact; (b) within seventy-two hours of becoming aware of the breach, or within such longer period as the Board may allow on a request made in writing in this behalf, \u2014 (i) updated and detailed information in respect of such description; (ii) the broad facts related t\u2026"
+          },
+          {
+            "id": "dpdp_commencement",
+            "summary": "Commencement notification G.S.R. 843(E), 13 Nov 2025 \u2014 the breach-intimation provisions (ss. 3-17 incl. s.8) come into force eighteen months after publication",
+            "applies_when": "deciding whether the DPDP breach duties already apply on the incident date",
+            "doc": "c56ceae6c383460ca69577428d36828b.pdf",
+            "phrase": "eighteen months from the date of publication",
+            "verified": true,
+            "citation": "c56ceae6c383460ca69577428d36828b.pdf, pp. 1\u20132",
+            "passage": "\u2026ne year from the date of publication of this gazette on which the provisions of sub-section (9) of section 6 and clause (d) of sub-section (1) of section 27 of the said Act shall come into force. (c) eighteen months from the date of publication of this gazette, on which the provision of sections 3 to 5, sub-sections (1) to (8) and (10) of section 6,sections 7 to 10, sections 11 to 17, section 27 except clause (d) of sub-section (1) of the s\u2026"
+          },
+          {
+            "id": "certin_logs_180d",
+            "summary": "Keep ICT system logs for a rolling 180 days and provide them to CERT-In on request",
+            "applies_when": "always (preserve the incident's logs; do not let them roll over)",
+            "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+            "phrase": "rolling period of 180 days",
+            "verified": true,
+            "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+            "passage": "\u2026 Contact. (iv) All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily enable logs of all their ICT systems and maintain them securely for a rolling period of 180 days and the same shall be maintained within the Indian jurisdiction. These should be provided to CERT-In along with reporting of any incident or when ordered / directed by CERT-In. (v) Data Centres, Virt\u2026"
+          }
+        ],
+        "adviser": {
+          "active_agents": [
+            "cybersecurity",
+            "policy_legal",
+            "privacy",
+            "standards",
+            "technical"
+          ],
+          "claims": 10,
+          "verifier_outcomes": {
+            "UNSUPPORTED": 10
+          },
+          "evidence_backed_conclusions": [],
+          "uncertain_conclusions": [
+            "[CYBERSECURITY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] The security indicators released in this chunk (\"Machine-learning detection on the live 5G core: suspected Subscriber data exfiltration from the UDM (model iforest_rf, confidence 0.91). Affected network functions: UDM. Security indicator: unusual activity consistent with a cyber attack on the network. Subscriber personal data may be involved. Question: which reporting and escalation obligations apply to the operator?\") are consistent with a possible cybersecurity incident affecting the 5G network, such as an unauthorised access attempt, a signalling attack, or an exploited misconfiguration. The cause is not established. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[CYBERSECURITY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] The possible data exposure released in this chunk is a potential security breach. Whether it resulted from unauthorised access is not established. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[CYBERSECURITY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] No passage was retrieved from the Cybersecurity KB. Instruments in this agent's mandate (DOCX \u00a74): Telecommunications (Telecom Cyber Security) Rules, 2024; CERT-In Directions, 2022 (under Section 70B IT Act 2000); National Cyber Security Policy-2013; NIST CSF 2.0 (reference only \u2014 not Indian law); NIST SP 800-61 Rev. 3 (reference only \u2014 not Indian law). Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[POLICY_LEGAL | UNSUPPORTED \u2014 insufficient evidence; preliminary only] No passage was retrieved from the Indian Legal/Regulatory KB. Instruments in this agent's mandate (DOCX \u00a74): Telecommunications Act, 2023; TRAI Act, 1997; National Digital Communications Policy-2018; Government directions and notifications under DoT/TRAI. Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[PRIVACY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] Personal data exposure is SUSPECTED: the affected slice may carry identifiable patient or subscriber information. Confirmed exposure cannot be established from current facts \u2014 further investigation required. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)"
+          ],
+          "conflicting_findings": [],
+          "potential_policy_gaps": [],
+          "relevant_institutions": [
+            "CERT-In",
+            "Department of Telecommunications (DoT)",
+            "Telecom Regulatory Authority of India (TRAI)",
+            "Data Protection Board of India (once operational)"
+          ],
+          "open_questions": [
+            "No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.",
+            "[VERIFIER] Canonical KB not yet populated. All claims are UNSUPPORTED or INCOMPLETE pending KB integration. Populate CanonicalKnowledgeBase to enable real verification.",
+            "[cybersecurity] Whether the telecommunication entity has reported the anomaly to CERT-In or DoT is unknown.",
+            "[cybersecurity] Exact nature of the security indicators (protocol, volume, source) has not been released.",
+            "[policy_legal] Applicable sections, thresholds and timelines under the Indian telecom instruments require retrieval from the Indian Legal/Regulatory KB."
+          ],
+          "counts": {
+            "evidence_backed_conclusions": 0,
+            "uncertain_conclusions": 10,
+            "conflicting_findings": 0,
+            "potential_policy_gaps": 0
+          },
+          "human_review_required": "Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers."
+        },
+        "rules_applied": [
+          "blocking_mode_human_approval",
+          "preserve_logs_before_changes"
+        ],
+        "detected_at": "2026-10-07T09:16:00"
+      },
+      "sinks": [
+        {
+          "sink": "evidence_preservation",
+          "status": "preserved",
+          "detail": "10 files hashed before any change",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/evidence/core_security_full_20261009T185631Z-INC002/MANIFEST.json"
+          ],
+          "sha256_of_manifest": "083bd28b64db11e672833019e3fb4d5d079d75fe66b8332e0b16fc321ad02c96"
+        },
+        {
+          "sink": "remediation",
+          "status": "resolved",
+          "detail": "resolved after tiers ['basic', 'intermediate']; gates: [('intermediate', 'agent')]",
+          "resolved_in": "intermediate",
+          "changes": [
+            "patch_config {\"nf\": \"udm\", \"key\": \"bulk_export\", \"value\": \"disabled\"}",
+            "revoke_tokens {\"nf\": \"udm\"}"
+          ],
+          "provider": "offline",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/live/reports/subscriber_data_exfiltration_20261009T185638Z.md",
+            "outputs/y3172/examples/core_security_full/live/reports/subscriber_data_exfiltration_20261009T185638Z.json"
+          ],
+          "approved": true
+        },
+        {
+          "sink": "regulatory_notices",
+          "status": "drafted",
+          "detail": "6 draft notices, 1 preservation actions",
+          "notices": [
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC002",
+              "key": "dot_initial",
+              "recipient": "Central Government (Department of Telecommunications)",
+              "what": "Report of the security incident with relevant details of the affected system and a description of the incident",
+              "instrument": "Telecom Cyber Security Rules, 2024, rule 7(1)(a)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-07T15:16:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:16 simulated clock)",
+              "source_check": "verified in cybersecurity-rules-2024.pdf, pp. 12\u201313",
+              "phrase": "within six hours of becoming aware of a security incident",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC002",
+              "key": "dot_details",
+              "recipient": "Central Government (Department of Telecommunications)",
+              "what": "Details: (i) users affected, (ii) duration, (iii) geographical area, (iv) extent to which the network or service is affected, (v) remedial measures, (vi) other relevant information",
+              "instrument": "Telecom Cyber Security Rules, 2024, rule 7(1)(b)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-08T09:16:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:16 simulated clock)",
+              "source_check": "verified in cybersecurity-rules-2024.pdf, pp. 12\u201313",
+              "phrase": "within twenty-four hours of becoming aware",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC002",
+              "key": "certin",
+              "recipient": "CERT-In (incident@cert-in.org.in)",
+              "what": "Report of the cyber incident (if it is of a type listed in Annexure I of the Directions)",
+              "instrument": "CERT-In Directions under s.70B(6) IT Act, direction (ii)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-07T15:16:00",
+              "counted_from": "noticing (07 Oct 2026 09:16 simulated clock)",
+              "source_check": "verified in CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+              "phrase": "within 6 hours of noticing such incidents",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC002",
+              "key": "dpdp_principals",
+              "recipient": "Each affected Data Principal",
+              "what": "Description of the breach, likely consequences, mitigation, safety measures and a contact",
+              "instrument": "DPDP Act, 2023 s.8(6); DPDP Rules, 2025, rule 7(1)",
+              "status": "PREPAREDNESS DRAFT \u2014 duty not yet in force on the incident date",
+              "deadline": "without delay",
+              "counted_from": "becoming aware (07 Oct 2026 09:16 simulated clock)",
+              "source_check": "verified in 53450e6e5dc0bfa85ebd78686cadad39.pdf, p. 26",
+              "phrase": "intimate to each affected Data Principal",
+              "notes": [
+                "DPDP breach duties come into force on 13 May 2027 (eighteen months after G.S.R. 843(E), 13 Nov 2025); incident date 07 Oct 2026."
+              ]
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC002",
+              "key": "dpdp_board_initial",
+              "recipient": "Data Protection Board of India",
+              "what": "Without delay: description of the breach \u2014 nature, extent, timing, location, likely impact",
+              "instrument": "DPDP Rules, 2025, rule 7(2)(a)",
+              "status": "PREPAREDNESS DRAFT \u2014 duty not yet in force on the incident date",
+              "deadline": "without delay",
+              "counted_from": "becoming aware (07 Oct 2026 09:16 simulated clock)",
+              "source_check": "verified in 53450e6e5dc0bfa85ebd78686cadad39.pdf, pp. 26\u201327",
+              "phrase": "shall intimate to the Board",
+              "notes": [
+                "DPDP breach duties come into force on 13 May 2027 (eighteen months after G.S.R. 843(E), 13 Nov 2025); incident date 07 Oct 2026."
+              ]
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC002",
+              "key": "dpdp_board_details",
+              "recipient": "Data Protection Board of India",
+              "what": "Updated and detailed information, facts and reasons, mitigation, findings about the person responsible, remedial measures, report of intimations to Data Principals",
+              "instrument": "DPDP Rules, 2025, rule 7(2)(b)",
+              "status": "PREPAREDNESS DRAFT \u2014 duty not yet in force on the incident date",
+              "deadline": "2026-10-10T09:16:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:16 simulated clock)",
+              "source_check": "verified in 53450e6e5dc0bfa85ebd78686cadad39.pdf, pp. 26\u201327",
+              "phrase": "within seventy-two hours of becoming aware of the breach",
+              "notes": [
+                "DPDP breach duties come into force on 13 May 2027 (eighteen months after G.S.R. 843(E), 13 Nov 2025); incident date 07 Oct 2026."
+              ]
+            },
+            {
+              "key": "action_certin_logs_180d",
+              "incident_id": "core_security_full_20261009T185631Z-INC002",
+              "obligation": "certin_logs_180d",
+              "action": "Preserve the ICT system logs of the incident (CERT-In direction (iv): rolling 180 days, within Indian jurisdiction); provide them to CERT-In with the incident report or on request",
+              "source_check": "verified in CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133"
+            }
+          ],
+          "paths": [
+            "outputs/y3172/examples/core_security_full/notices/core_security_full_20261009T185631Z-INC002"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "core_security_full_20261009T185631Z-INC003",
+      "tick": 22,
+      "detected_at": "2026-10-07T09:27:00",
+      "prediction": {
+        "label": "supply_chain_rogue_nf",
+        "confidence": 0.8867,
+        "anomaly_score": -0.1295,
+        "model_id": "iforest_rf",
+        "evidence": [
+          {
+            "feature": "\u0394udm.metrics.bulk_reads_active",
+            "value": 1.0,
+            "normal_mean": -0.036,
+            "z": 4.1
+          },
+          {
+            "feature": "\u0394udm.sba.bulk_readers",
+            "value": 1.0,
+            "normal_mean": -0.036,
+            "z": 4.1
+          },
+          {
+            "feature": "udm.metrics.accepted_rate",
+            "value": 85.0,
+            "normal_mean": 44.433,
+            "z": 4.0
+          },
+          {
+            "feature": "udm.metrics.offered_rate",
+            "value": 85.0,
+            "normal_mean": 44.433,
+            "z": 4.0
+          },
+          {
+            "feature": "nrf.registry.signed_profiles_not_required",
+            "value": 1.0,
+            "normal_mean": 0.0,
+            "z": 4.0
+          }
+        ],
+        "proposal": {
+          "attack_id": "supply_chain_rogue_nf",
+          "name": "Rogue network function and subscriber data theft",
+          "affected_nf": [
+            "nrf",
+            "udm",
+            "upf"
+          ],
+          "basic_auto_safe_steps": [],
+          "steps_needing_approval": {
+            "intermediate": [
+              "capture_evidence",
+              "deregister_nf"
+            ],
+            "advanced": [
+              "isolate_instance",
+              "cut_flow",
+              "patch_config",
+              "patch_config"
+            ]
+          },
+          "references": {
+            "enisa": "ENISA 5G Threat Landscape (Update), \"Malicious network functions\" (p. 105), \"Data breach, leak, theft and manipulation of information\" (p. 106) and NRF vulnerabilities (pp. 72-73) (ENISA 5G Threat Landscape - Update.pdf)",
+            "3gpp": "3GPP TS 33.501 clause 5.9.2.1 requirements for service registration, discovery and authorization - \"The NRF shall act as authorization server\" (ts_133501v181200p.pdf, pp. 39-40) and 13.4.1 OAuth 2.0 (p. 194)"
+          }
+        }
+      },
+      "lab_truth": "supply_chain_rogue_nf",
+      "correct": true,
+      "detection_delay_ticks": 0,
+      "decision": {
+        "incident_id": "core_security_full_20261009T185631Z-INC003",
+        "label": "supply_chain_rogue_nf",
+        "mode": "blocking",
+        "decision": "hold_for_approval",
+        "reasons": [
+          "Blocking mode: remediation is held until a human approves it, having seen the obligations below.",
+          "Logs are preserved before any state-changing step (CERT-In Directions: 180-day log retention)."
+        ],
+        "obligations": [
+          {
+            "id": "certin_6h",
+            "summary": "Report the cyber incident to CERT-In within 6 hours of noticing it",
+            "applies_when": "the incident is of a type listed in Annexure I of the CERT-In Directions (e.g. targeted scanning, compromise of critical systems, attacks on servers, DoS/DDoS, data breach, unauthorised access)",
+            "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+            "phrase": "within 6 hours of noticing such incidents",
+            "verified": true,
+            "citation": "CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+            "passage": "\u2026viate from NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details"
+          },
+          {
+            "id": "tcs_rules_rule7_6h",
+            "summary": "Telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require",
+            "applies_when": "the incident affects the telecommunication network or service",
+            "doc": "cybersecurity-rules-2024.pdf",
+            "phrase": "within six hours of becoming aware of a security incident",
+            "verified": true,
+            "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+            "passage": "\u2026of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident\u2026"
+          },
+          {
+            "id": "cti_rules_reporting",
+            "summary": "If the affected network is notified as Critical Telecommunication Infrastructure, follow the CTI Rules, 2024 incident-reporting timelines",
+            "applies_when": "the affected network or element is notified as Critical Telecommunication Infrastructure",
+            "doc": "Critical Telecommunication Infrastructure Rules, 2024_0.pdf",
+            "phrase": "reporting of security incidents",
+            "verified": true,
+            "citation": "Critical Telecommunication Infrastructure Rules, 2024_0.pdf, pp. 7\u20138",
+            "passage": "\u2026tructure; (h) all logs relating to Critical Telecommunication Infrastructure to assist in detection of anomalies and enable the Central Government to generate intelligence on real time basis; and (i) reporting of security incidents within the timelines specified for Critical Telecommunication Infrastructure under rule 7. 7. Obligations related to Critical Telecommunication Infrastructure. \u2013 (1) Every telecommunication entity sh\u2026"
+          },
+          {
+            "id": "certin_logs_180d",
+            "summary": "Keep ICT system logs for a rolling 180 days and provide them to CERT-In on request",
+            "applies_when": "always (preserve the incident's logs; do not let them roll over)",
+            "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+            "phrase": "rolling period of 180 days",
+            "verified": true,
+            "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+            "passage": "\u2026 Contact. (iv) All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily enable logs of all their ICT systems and maintain them securely for a rolling period of 180 days and the same shall be maintained within the Indian jurisdiction. These should be provided to CERT-In along with reporting of any incident or when ordered / directed by CERT-In. (v) Data Centres, Virt\u2026"
+          },
+          {
+            "id": "dpdp_act_s8_6",
+            "summary": "DPDP Act, 2023 s.8(6) \u2014 on a personal data breach, intimate the Data Protection Board and each affected Data Principal",
+            "applies_when": "subscribers' personal data was (or may have been) accessed or disclosed; NOTE s.8 commences 18 months after 13 Nov 2025 (G.S.R. 843(E)) \u2014 plan for it now, verify the commencement date before relying on it",
+            "doc": "2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf",
+            "phrase": "In the event of a personal data breach",
+            "verified": true,
+            "citation": "2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf, p. 7",
+            "passage": "\u2026ssion or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach. (6) In the event of a personal data breach,"
+          },
+          {
+            "id": "dpdp_rules_rule7_72h",
+            "summary": "DPDP Rules, 2025 rule 7 \u2014 detailed intimation to the Board within seventy-two hours of becoming aware of the breach",
+            "applies_when": "personal data breach; NOTE rule 7 commences eighteen months after publication of the Rules (Nov 2025) \u2014 verify before relying on it",
+            "doc": "53450e6e5dc0bfa85ebd78686cadad39.pdf",
+            "phrase": "within seventy-two hours of becoming aware of the breach",
+            "verified": true,
+            "citation": "53450e6e5dc0bfa85ebd78686cadad39.pdf, pp. 26\u201327",
+            "passage": "\u2026ta breach, the Data Fiduciary shall intimate to the Board, \u2014 (a) without delay, a description of the breach, including its nature, extent, timing and location of occurrence and the likely impact; (b) within seventy-two hours of becoming aware of the breach, or within such longer period as the Board may allow on a request made in writing in this behalf, \u2014 (i) updated and detailed information in respect of such description; (ii) the broad facts related t\u2026"
+          },
+          {
+            "id": "dpdp_commencement",
+            "summary": "Commencement notification G.S.R. 843(E), 13 Nov 2025 \u2014 the breach-intimation provisions (ss. 3-17 incl. s.8) come into force eighteen months after publication",
+            "applies_when": "deciding whether the DPDP breach duties already apply on the incident date",
+            "doc": "c56ceae6c383460ca69577428d36828b.pdf",
+            "phrase": "eighteen months from the date of publication",
+            "verified": true,
+            "citation": "c56ceae6c383460ca69577428d36828b.pdf, pp. 1\u20132",
+            "passage": "\u2026ne year from the date of publication of this gazette on which the provisions of sub-section (9) of section 6 and clause (d) of sub-section (1) of section 27 of the said Act shall come into force. (c) eighteen months from the date of publication of this gazette, on which the provision of sections 3 to 5, sub-sections (1) to (8) and (10) of section 6,sections 7 to 10, sections 11 to 17, section 27 except clause (d) of sub-section (1) of the s\u2026"
+          }
+        ],
+        "adviser": {
+          "active_agents": [
+            "cybersecurity",
+            "policy_legal",
+            "privacy",
+            "standards",
+            "technical"
+          ],
+          "claims": 9,
+          "verifier_outcomes": {
+            "UNSUPPORTED": 9
+          },
+          "evidence_backed_conclusions": [],
+          "uncertain_conclusions": [
+            "[CYBERSECURITY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] The security indicators released in this chunk (\"Machine-learning detection on the live 5G core: suspected Rogue network function and subscriber data theft (model iforest_rf, confidence 0.89). Affected network functions: NRF, UDM, UPF. Security indicator: unusual activity consistent with a cyber attack on the network. Subscriber personal data may be involved. Question: which reporting and escalation obligations apply to the operator?\") are consistent with a possible cybersecurity incident affecting the 5G network, such as an unauthorised access attempt, a signalling attack, or an exploited misconfiguration. The cause is not established. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[CYBERSECURITY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] No passage was retrieved from the Cybersecurity KB. Instruments in this agent's mandate (DOCX \u00a74): Telecommunications (Telecom Cyber Security) Rules, 2024; CERT-In Directions, 2022 (under Section 70B IT Act 2000); National Cyber Security Policy-2013; NIST CSF 2.0 (reference only \u2014 not Indian law); NIST SP 800-61 Rev. 3 (reference only \u2014 not Indian law). Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[POLICY_LEGAL | UNSUPPORTED \u2014 insufficient evidence; preliminary only] No passage was retrieved from the Indian Legal/Regulatory KB. Instruments in this agent's mandate (DOCX \u00a74): Telecommunications Act, 2023; TRAI Act, 1997; National Digital Communications Policy-2018; Government directions and notifications under DoT/TRAI. Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[PRIVACY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] Personal data exposure is SUSPECTED: the affected slice may carry identifiable patient or subscriber information. Confirmed exposure cannot be established from current facts \u2014 further investigation required. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)",
+            "[PRIVACY | UNSUPPORTED \u2014 insufficient evidence; preliminary only] No passage was retrieved from the Privacy KB \u2014 DPDP Act & Rules. Instruments in this agent's mandate (DOCX \u00a74): Digital Personal Data Protection Act, 2023; Digital Personal Data Protection Rules, 2025. Their applicability to this incident is not assessed. (Verification note: Canonical KB not yet available and the claim is not backed by a retrieved passage it cites. Claim cannot be verified. Status: UNSUPPORTED pending RAG and Canoni\u2026)"
+          ],
+          "conflicting_findings": [],
+          "potential_policy_gaps": [],
+          "relevant_institutions": [
+            "CERT-In",
+            "Department of Telecommunications (DoT)",
+            "Telecom Regulatory Authority of India (TRAI)",
+            "Data Protection Board of India (once operational)"
+          ],
+          "open_questions": [
+            "No conclusion is evidence-backed at this stage: no claim was found supported by an authoritative source whose in-force status and amendments have been checked. Every conclusion below is uncertain or preliminary.",
+            "[VERIFIER] Canonical KB not yet populated. All claims are UNSUPPORTED or INCOMPLETE pending KB integration. Populate CanonicalKnowledgeBase to enable real verification.",
+            "[cybersecurity] Whether the telecommunication entity has reported the anomaly to CERT-In or DoT is unknown.",
+            "[cybersecurity] Exact nature of the security indicators (protocol, volume, source) has not been released.",
+            "[policy_legal] Applicable sections, thresholds and timelines under the Indian telecom instruments require retrieval from the Indian Legal/Regulatory KB."
+          ],
+          "counts": {
+            "evidence_backed_conclusions": 0,
+            "uncertain_conclusions": 9,
+            "conflicting_findings": 0,
+            "potential_policy_gaps": 0
+          },
+          "human_review_required": "Legal interpretation, regulatory decisions, and institutional action require qualified human judgment. This assessment is decision support only and does not replace legal counsel, regulators, or government decision-makers."
+        },
+        "rules_applied": [
+          "blocking_mode_human_approval",
+          "preserve_logs_before_changes"
+        ],
+        "detected_at": "2026-10-07T09:27:00"
+      },
+      "sinks": [
+        {
+          "sink": "evidence_preservation",
+          "status": "preserved",
+          "detail": "10 files hashed before any change",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/evidence/core_security_full_20261009T185631Z-INC003/MANIFEST.json"
+          ],
+          "sha256_of_manifest": "63a7f00909b6475e8f8faf32205c1e750eb040be0c28fa43aaa33b30ed8d6fd7"
+        },
+        {
+          "sink": "remediation",
+          "status": "resolved",
+          "detail": "resolved after tiers ['basic', 'intermediate', 'advanced']; gates: [('intermediate', 'agent'), ('advanced', 'agent')]",
+          "resolved_in": "advanced",
+          "changes": [
+            "capture_evidence {\"target\": \"nf-x9\"}",
+            "deregister_nf {\"instance_id\": \"nf-x9\"}",
+            "isolate_instance {\"instance_id\": \"nf-x9\"}",
+            "cut_flow {\"src\": \"nf-x9\"}",
+            "patch_config {\"nf\": \"nrf\", \"key\": \"registration_auth\", \"value\": \"required\"}"
+          ],
+          "provider": "offline",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/live/reports/supply_chain_rogue_nf_20261009T185638Z.md",
+            "outputs/y3172/examples/core_security_full/live/reports/supply_chain_rogue_nf_20261009T185638Z.json"
+          ],
+          "approved": true
+        },
+        {
+          "sink": "regulatory_notices",
+          "status": "drafted",
+          "detail": "7 draft notices, 1 preservation actions",
+          "notices": [
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "key": "dot_initial",
+              "recipient": "Central Government (Department of Telecommunications)",
+              "what": "Report of the security incident with relevant details of the affected system and a description of the incident",
+              "instrument": "Telecom Cyber Security Rules, 2024, rule 7(1)(a)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-07T15:27:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:27 simulated clock)",
+              "source_check": "verified in cybersecurity-rules-2024.pdf, pp. 12\u201313",
+              "phrase": "within six hours of becoming aware of a security incident",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "key": "dot_details",
+              "recipient": "Central Government (Department of Telecommunications)",
+              "what": "Details: (i) users affected, (ii) duration, (iii) geographical area, (iv) extent to which the network or service is affected, (v) remedial measures, (vi) other relevant information",
+              "instrument": "Telecom Cyber Security Rules, 2024, rule 7(1)(b)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-08T09:27:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:27 simulated clock)",
+              "source_check": "verified in cybersecurity-rules-2024.pdf, pp. 12\u201313",
+              "phrase": "within twenty-four hours of becoming aware",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "key": "certin",
+              "recipient": "CERT-In (incident@cert-in.org.in)",
+              "what": "Report of the cyber incident (if it is of a type listed in Annexure I of the Directions)",
+              "instrument": "CERT-In Directions under s.70B(6) IT Act, direction (ii)",
+              "status": "DRAFT \u2014 requires human review and sign-off; not sent",
+              "deadline": "2026-10-07T15:27:00",
+              "counted_from": "noticing (07 Oct 2026 09:27 simulated clock)",
+              "source_check": "verified in CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+              "phrase": "within 6 hours of noticing such incidents",
+              "notes": []
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "key": "cti",
+              "recipient": "Central Government (Critical Telecommunication Infrastructure)",
+              "what": "Intimation of the security incident in the form and manner specified on the portal",
+              "instrument": "Telecommunications (Critical Telecommunication Infrastructure) Rules, 2024, rule 7(1)(j)",
+              "status": "CONDITIONAL DRAFT \u2014 only if the affected element is notified as Critical Telecommunication Infrastructure",
+              "deadline": "2026-10-07T15:27:00",
+              "counted_from": "occurrence (07 Oct 2026 09:27 simulated clock)",
+              "source_check": "verified in Critical Telecommunication Infrastructure Rules, 2024_0.pdf, p. 8",
+              "phrase": "no later than six hours of occurrence of such incident",
+              "notes": [
+                "This deadline runs from OCCURRENCE, which may be earlier than detection; establish the occurrence time from the logs. The deadline shown is the latest possible."
+              ]
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "key": "dpdp_principals",
+              "recipient": "Each affected Data Principal",
+              "what": "Description of the breach, likely consequences, mitigation, safety measures and a contact",
+              "instrument": "DPDP Act, 2023 s.8(6); DPDP Rules, 2025, rule 7(1)",
+              "status": "PREPAREDNESS DRAFT \u2014 duty not yet in force on the incident date",
+              "deadline": "without delay",
+              "counted_from": "becoming aware (07 Oct 2026 09:27 simulated clock)",
+              "source_check": "verified in 53450e6e5dc0bfa85ebd78686cadad39.pdf, p. 26",
+              "phrase": "intimate to each affected Data Principal",
+              "notes": [
+                "DPDP breach duties come into force on 13 May 2027 (eighteen months after G.S.R. 843(E), 13 Nov 2025); incident date 07 Oct 2026."
+              ]
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "key": "dpdp_board_initial",
+              "recipient": "Data Protection Board of India",
+              "what": "Without delay: description of the breach \u2014 nature, extent, timing, location, likely impact",
+              "instrument": "DPDP Rules, 2025, rule 7(2)(a)",
+              "status": "PREPAREDNESS DRAFT \u2014 duty not yet in force on the incident date",
+              "deadline": "without delay",
+              "counted_from": "becoming aware (07 Oct 2026 09:27 simulated clock)",
+              "source_check": "verified in 53450e6e5dc0bfa85ebd78686cadad39.pdf, pp. 26\u201327",
+              "phrase": "shall intimate to the Board",
+              "notes": [
+                "DPDP breach duties come into force on 13 May 2027 (eighteen months after G.S.R. 843(E), 13 Nov 2025); incident date 07 Oct 2026."
+              ]
+            },
+            {
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "key": "dpdp_board_details",
+              "recipient": "Data Protection Board of India",
+              "what": "Updated and detailed information, facts and reasons, mitigation, findings about the person responsible, remedial measures, report of intimations to Data Principals",
+              "instrument": "DPDP Rules, 2025, rule 7(2)(b)",
+              "status": "PREPAREDNESS DRAFT \u2014 duty not yet in force on the incident date",
+              "deadline": "2026-10-10T09:27:00",
+              "counted_from": "becoming aware (07 Oct 2026 09:27 simulated clock)",
+              "source_check": "verified in 53450e6e5dc0bfa85ebd78686cadad39.pdf, pp. 26\u201327",
+              "phrase": "within seventy-two hours of becoming aware of the breach",
+              "notes": [
+                "DPDP breach duties come into force on 13 May 2027 (eighteen months after G.S.R. 843(E), 13 Nov 2025); incident date 07 Oct 2026."
+              ]
+            },
+            {
+              "key": "action_certin_logs_180d",
+              "incident_id": "core_security_full_20261009T185631Z-INC003",
+              "obligation": "certin_logs_180d",
+              "action": "Preserve the ICT system logs of the incident (CERT-In direction (iv): rolling 180 days, within Indian jurisdiction); provide them to CERT-In with the incident report or on request",
+              "source_check": "verified in CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133"
+            }
+          ],
+          "paths": [
+            "outputs/y3172/examples/core_security_full/notices/core_security_full_20261009T185631Z-INC003"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "core_security_full_20261009T185631Z-INC004",
+      "tick": 28,
+      "detected_at": "2026-10-07T09:34:00",
+      "prediction": {
+        "label": "nf_host_ransomware",
+        "confidence": 0.5733,
+        "anomaly_score": -0.0748,
+        "model_id": "iforest_rf",
+        "evidence": [
+          {
+            "feature": "smf.health.state",
+            "value": 3.0,
+            "normal_mean": 0.0,
+            "z": 12.0
+          },
+          {
+            "feature": "\u0394smf.metrics.active_pdu_sessions",
+            "value": -1200.0,
+            "normal_mean": 32.143,
+            "z": -6.4
+          },
+          {
+            "feature": "\u0394smf.metrics.cpu",
+            "value": -17.0,
+            "normal_mean": 0.473,
+            "z": -5.9
+          },
+          {
+            "feature": "\u0394smf.integrity.files_encrypted",
+            "value": 1.0,
+            "normal_mean": -0.027,
+            "z": 4.1
+          },
+          {
+            "feature": "oam.alerts.new_alerts",
+            "value": 1.0,
+            "normal_mean": 0.0,
+            "z": 4.0
+          }
+        ],
+        "proposal": {
+          "attack_id": "nf_host_ransomware",
+          "name": "Ransomware on an NF host (SMF)",
+          "affected_nf": [
+            "smf"
+          ],
+          "basic_auto_safe_steps": [
+            "isolate_nf"
+          ],
+          "steps_needing_approval": {
+            "intermediate": [
+              "rotate_keys",
+              "rotate_keys"
+            ],
+            "advanced": [
+              "restore_from_backup",
+              "restore_nf"
+            ]
+          },
+          "references": {
+            "enisa": "ENISA 5G Threat Landscape (Update), \"Ransomware\" and \"Abuse of remote access to the network\" (ENISA 5G Threat Landscape - Update.pdf, p. 105)",
+            "3gpp": "3GPP TS 33.501 clause 5.9.2.1 NF service registration, discovery and authorization (ts_133501v181200p.pdf, p. 39) \u2014 the restored SMF must re-register with valid credentials"
+          }
+        }
+      },
+      "lab_truth": "nf_host_ransomware",
+      "correct": true,
+      "detection_delay_ticks": 0,
+      "decision": {
+        "incident_id": "core_security_full_20261009T185631Z-INC004",
+        "label": "nf_host_ransomware",
+        "mode": "blocking",
+        "decision": "escalate",
+        "reasons": [
+          "Confidence 0.57 is below the intent's minimum 0.60; no automated action is taken."
+        ],
+        "obligations": [],
+        "adviser": null,
+        "rules_applied": [
+          "low_confidence_to_human"
+        ],
+        "detected_at": "2026-10-07T09:34:00"
+      },
+      "sinks": [
+        {
+          "sink": "escalation",
+          "status": "escalated",
+          "detail": "Confidence 0.57 is below the intent's minimum 0.60; no automated action is taken.",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/escalations/core_security_full_20261009T185631Z-INC004.md"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "core_security_full_20261009T185631Z-INC005",
+      "tick": 33,
+      "detected_at": "2026-10-07T09:39:00",
+      "prediction": {
+        "label": "nf_host_ransomware",
+        "confidence": 0.5467,
+        "anomaly_score": -0.0805,
+        "model_id": "iforest_rf",
+        "evidence": [
+          {
+            "feature": "smf.health.state",
+            "value": 3.0,
+            "normal_mean": 0.0,
+            "z": 12.0
+          },
+          {
+            "feature": "smf.metrics.active_pdu_sessions",
+            "value": 0.0,
+            "normal_mean": 1157.143,
+            "z": -5.2
+          },
+          {
+            "feature": "smf.metrics.cpu",
+            "value": 0.0,
+            "normal_mean": 16.723,
+            "z": -5.1
+          },
+          {
+            "feature": "udm.metrics.accepted_rate",
+            "value": 91.0,
+            "normal_mean": 44.433,
+            "z": 4.6
+          },
+          {
+            "feature": "udm.metrics.offered_rate",
+            "value": 91.0,
+            "normal_mean": 44.433,
+            "z": 4.6
+          }
+        ],
+        "proposal": {
+          "attack_id": "nf_host_ransomware",
+          "name": "Ransomware on an NF host (SMF)",
+          "affected_nf": [
+            "smf"
+          ],
+          "basic_auto_safe_steps": [
+            "isolate_nf"
+          ],
+          "steps_needing_approval": {
+            "intermediate": [
+              "rotate_keys",
+              "rotate_keys"
+            ],
+            "advanced": [
+              "restore_from_backup",
+              "restore_nf"
+            ]
+          },
+          "references": {
+            "enisa": "ENISA 5G Threat Landscape (Update), \"Ransomware\" and \"Abuse of remote access to the network\" (ENISA 5G Threat Landscape - Update.pdf, p. 105)",
+            "3gpp": "3GPP TS 33.501 clause 5.9.2.1 NF service registration, discovery and authorization (ts_133501v181200p.pdf, p. 39) \u2014 the restored SMF must re-register with valid credentials"
+          }
+        }
+      },
+      "lab_truth": "nf_host_ransomware",
+      "correct": true,
+      "detection_delay_ticks": null,
+      "decision": {
+        "incident_id": "core_security_full_20261009T185631Z-INC005",
+        "label": "nf_host_ransomware",
+        "mode": "blocking",
+        "decision": "escalate",
+        "reasons": [
+          "Confidence 0.55 is below the intent's minimum 0.60; no automated action is taken."
+        ],
+        "obligations": [],
+        "adviser": null,
+        "rules_applied": [
+          "low_confidence_to_human"
+        ],
+        "detected_at": "2026-10-07T09:39:00"
+      },
+      "sinks": [
+        {
+          "sink": "escalation",
+          "status": "escalated",
+          "detail": "Confidence 0.55 is below the intent's minimum 0.60; no automated action is taken.",
+          "paths": [
+            "outputs/y3172/examples/core_security_full/escalations/core_security_full_20261009T185631Z-INC005.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "reselections": []
+}

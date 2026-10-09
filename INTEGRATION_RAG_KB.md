@@ -90,10 +90,16 @@ rather than pretending.
 | Retrieval | Cosine top-k within the agent's own KB; exact source/section lookups for the Verifier | `src/rag/vector_kb.py` |
 | Policy | Canonical KB, used by the Verifier and (read-only) the Policy Gap Agent | `src/core/verifier.py` |
 | Distribution | Coordinator assessment | `src/core/coordinator.py` |
-| Sandbox | **Not executed.** The ITU AI for Good Sandbox is not available in this environment | — |
+| Sandbox | **Not executed.** The ITU AI for Good Sandbox was not available; everything runs locally. The Y.3172 ML sandbox of the network ML pipeline is local (`sim/datagen.py`, `src/y3172/mlfo.py`) | — |
 
-No generative model is used. Agents quote the passages they retrieve; they
-do not paraphrase, and they do not answer from model knowledge.
+No generative model is used in the adviser. Agents quote the passages they
+retrieve; they do not paraphrase, and they do not answer from model knowledge.
+
+These stage names follow the DOCX. Against ITU-T Y.3172 itself this document
+pipeline maps mostly by analogy (only preprocessing corresponds directly). The
+Y.3172 ML pipeline proper — ML Intent, SRC/C/PP/M/P/D/SINK nodes, MLFO and ML
+sandbox — is `src/y3172/`, over the simulated 5G core, with this adviser as its
+policy node; see `knowledge_base/y3172_pipeline_traceability.json`.
 
 ---
 

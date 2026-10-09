@@ -145,9 +145,14 @@ for example "in force from 26 June 2024 (S.O. 2408(E))".
 5. **Other limits:**
    - support is judged by a deterministic term-coverage check, not a
      language model;
-   - there is no generative model;
+   - the adviser uses no generative model (only the separate incident-response
+     lab can optionally use one);
    - agents run sequentially;
-   - the ITU Sandbox step was not executed.
+   - the ITU AI for Good Sandbox was not available, so everything runs locally;
+   - Y.3172: the document pipeline maps mostly by analogy; the network ML
+     pipeline (`src/y3172/`) implements intent, nodes, MLFO and ML sandbox over
+     the simulated core only — not a live network; reference points and levels
+     are logical (one process).
 6. **The TRAI Act text is from TDSAT's compilation**, whose consolidation
    date is not stated. NDCP-2018 and the Telecom Cyber Security Rules are
    from government mirror sites; each is noted in the manifest.
@@ -168,8 +173,8 @@ for example "in force from 26 June 2024 (S.O. 2408(E))".
 | "The quoted Rule 5 / Rule 8 text is current" | Amended by G.S.R. 771(E); we quote the original | "As originally published; amended in 2025" |
 | "Patient data was exposed" | The scenario says it *may* carry identifiable data | "Possible personal-data involvement (suspected, not confirmed)" |
 | "The system detected a conflict between Indian laws" | The conflict demo uses synthetic fixtures | "With labelled test passages, the system shows how a conflict is kept unresolved for human review" |
-| "Uses generative AI / an LLM to analyse" | No generative model is used | "Agents quote retrieved passages; the Coordinator organises verified claims" |
-| "Validated in the ITU AI for Good Sandbox" / "Y.3172 compliant" | Not executed; compliance not assessed | "Mapped to the Y.3172 pipeline stages; Sandbox stage not executed" |
+| "Uses generative AI / an LLM to analyse" | The adviser uses no generative model; only the separate incident-response lab can optionally use one | "Adviser agents quote retrieved passages; the Coordinator organises verified claims" |
+| "Validated in the ITU AI for Good Sandbox" / "Y.3172 compliant" / "deployed on a live network" | Sandbox access was not available; compliance not assessed; the network ML pipeline runs on the contained simulator; reference points are not SBA | "We implement the Y.3172 pipeline — intent, SRC/C/PP/M/P/D/SINK, MLFO, ML sandbox — over a simulated 5G core, with our policy & legal adviser as the P node; the traceability file lists what is simulated" |
 | "Accuracy of X %" / readiness score | No such measurement exists | Quote the labelled retrieval results: right section first in 8/12 queries, in the top 5 in 12/12 |
 | "Legal advice" | Decision support only | "Decision support; legal interpretation requires qualified human judgment" |
 

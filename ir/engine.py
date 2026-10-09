@@ -217,7 +217,7 @@ class Incident:
     def final_report(self) -> dict:
         from ir.report import build_report
         report = build_report(self)
-        out = work_dir() / "reports"
+        out = self.sim.root / "reports"
         out.mkdir(parents=True, exist_ok=True)
         stem = f"{self.attack['id']}_{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
         (out / f"{stem}.md").write_text(report["markdown"], encoding="utf-8")

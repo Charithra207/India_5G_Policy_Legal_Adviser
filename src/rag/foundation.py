@@ -578,6 +578,139 @@ def policy_gap_categories(c: Corpus, run: dict) -> dict:
 
 _Y3172 = "itu_t_y3172"
 
+# Y.3172 is an architecture for ML inside networks: its nodes read network
+# data (UE, AN, CN functions) and push configuration back to the network.
+# The project has two pipelines.  The adviser's document pipeline (the seven
+# stages below, DOCX §4.3) corresponds to the Y.3172 nodes mostly by
+# analogy; each stage states how it corresponds and how it differs.  The
+# network ML pipeline (src/y3172/) implements the Y.3172 components over the
+# contained simulated 5G core, with the adviser as its policy (P) node; it is
+# listed under network_ml_pipeline.  What neither provides is listed under
+# components_not_implemented.  Clause and NOTE numbers refer to Y.3172.
+_Y3172_SCOPE_NOTE = (
+    "ITU-T Y.3172 specifies an architecture for machine learning in networks: ML pipeline nodes "
+    "read data from network functions (UE, access and core network) and apply ML output to "
+    "network targets, managed by an ML function orchestrator (MLFO) from a declarative ML "
+    "Intent. The project has two pipelines. (1) The policy and legal adviser's document pipeline, "
+    "mapped stage by stage below: only preprocessing corresponds directly, the other stages by "
+    "analogy. (2) The network ML pipeline in src/y3172/ (network_ml_pipeline below): an ML Intent, "
+    "SRC/C/PP/M/P/D/SINK nodes, an MLFO and an ML sandbox, run over the contained simulated 5G core "
+    "in sim/, with the adviser as its P node. The network is a simulation; what is simulated or only "
+    "logical is listed under components_not_implemented."
+)
+_Y3172_DISCLAIMER = (
+    "Architectural correspondence only. The document pipeline corresponds mostly by analogy (see "
+    "correspondence per stage); the network ML pipeline implements the Y.3172 components over a "
+    "simulated network, not a live one. Formal Y.3172 compliance has not been assessed and is not "
+    "claimed."
+)
+_Y3172_CORRESPONDENCE = {
+    "Source": ("analogy",
+               "Y.3172 SRC nodes are network data sources such as UE, SMF or AF (clause 8.1, NOTE 2); "
+               "here the sources are legal and standards documents. Network SRC nodes: see "
+               "network_ml_pipeline."),
+    "Collection": ("analogy",
+                   "A Y.3172 collector may also configure its SRC nodes, e.g. via RRC or OAM "
+                   "(clause 8.1, NOTE 3); document extraction configures nothing."),
+    "Preprocessing": ("direct",
+                      "Cleans and segments the collected data into the form the model consumes, as "
+                      "clause 8.1 describes for PP."),
+    "Model": ("analogy",
+              "The embedding model only ranks passages for retrieval; it is not trained here and "
+              "makes no prediction about a network. Agent selection (src/core/orchestrator.py) uses "
+              "keyword rules and claim support (src/core/verifier.py) is a lexical term-coverage "
+              "check, so neither decision is made by the model. The trained network models are in "
+              "network_ml_pipeline."),
+    "Policy": ("analogy",
+               "The Y.3172 P node applies operator policies to model output to limit its impact "
+               "before it is applied to a live network (clause 8.1, NOTE 5); in this pipeline the "
+               "Verifier applies evidence rules to the agents' claims. In the network ML pipeline the "
+               "whole adviser is the P node and does gate model output (network_ml_pipeline)."),
+    "Distribution": ("analogy",
+                     "The Y.3172 D node identifies SINK nodes and distributes the model output to "
+                     "them (clause 8.1, NOTE 6); in this pipeline the output goes to a human reader "
+                     "through the Coordinator, the audit trail and the UI. The network ML pipeline has "
+                     "a D node and SINKs (network_ml_pipeline)."),
+    "Sandbox": ("not implemented",
+                "This document pipeline has no ML sandbox. The network ML pipeline has one: simulated "
+                "underlay networks in which candidate models are trained, tested and their remediation "
+                "effects evaluated (network_ml_pipeline)."),
+}
+_Y3172_NETWORK_PIPELINE = [
+    {"component": "ML Intent", "y3172_reference": "Clauses 7.4, 8.1 (NOTE 12)",
+     "implementation": "Declarative YAML: target incident classes, SRC nodes and their levels, candidate "
+                       "models and selection rule, policy-node mode, SINKs, time constraints, "
+                       "monitoring; validated on load.",
+     "files": ["src/y3172/intent.py", "intents/amf_signalling_storm.yaml"]},
+    {"component": "SRC, C, PP", "y3172_reference": "Clause 8.1",
+     "implementation": "Simulated network functions as sources; the collector reads them only through "
+                       "read-only diagnostics; the preprocessor builds a fixed-length feature vector "
+                       "and its change since the previous poll.",
+     "files": ["src/y3172/nodes.py", "sim/engine.py"]},
+    {"component": "M (model)", "y3172_reference": "Clause 8.1",
+     "implementation": "Two candidates trained in the sandbox: a z-score threshold / nearest-centroid "
+                       "baseline and an IsolationForest + RandomForest model; each returns a class, "
+                       "confidence, the deviating signals and the catalog remediation proposal.",
+     "files": ["src/y3172/models.py"]},
+    {"component": "P (policy)", "y3172_reference": "Clause 8.1 (NOTE 5)",
+     "implementation": "Operator rules (unknown, low-confidence or out-of-intent detections go to a "
+                       "human), the attack's Indian obligations checked word for word in their "
+                       "sources, the specialist-agent swarm, and an advisory or blocking mode.",
+     "files": ["src/y3172/policy_node.py"]},
+    {"component": "D (distributor) and SINKs", "y3172_reference": "Clause 8.1",
+     "implementation": "Evidence preservation (hashed) before any change, remediation through the "
+                       "incident-response engine and its human gates, draft regulatory notices with "
+                       "verified deadlines, escalation to a human.",
+     "files": ["src/y3172/distributor.py", "src/y3172/notices.py", "ir/engine.py"]},
+    {"component": "MLFO", "y3172_reference": "Clauses 3.2.2, 8.1, 8.2",
+     "implementation": "Instantiates and places the nodes from the intent, trains and selects a model "
+                       "in the sandbox, deploys it, monitors live performance and re-selects after "
+                       "re-calibrating the sandbox; every decision in a hash-chained audit trail.",
+     "files": ["src/y3172/mlfo.py", "src/audit/trail.py"]},
+    {"component": "ML sandbox and simulated ML underlay networks", "y3172_reference": "Clauses 3.2.6, 8.2",
+     "implementation": "Seeded simulations with background load, benign look-alikes, attack intensity "
+                       "and post-remediation states generate labelled data; each playbook's effect is "
+                       "evaluated in a sandbox simulation before live use.",
+     "files": ["sim/datagen.py", "src/y3172/mlfo.py"]},
+]
+_Y3172_NOT_IMPLEMENTED = [
+    {"component": "ML underlay network (live)", "y3172_reference": "Clauses 3.2.7, 8.1",
+     "y3172_role": "The operator network whose functions provide data to, and receive output from, "
+                   "the ML pipeline.",
+     "project_status": "Simulated. The 'live' network of the network ML pipeline is a separate "
+                       "instance of the contained simulator; no real network is read or changed.",
+     "files": ["sim/engine.py"]},
+    {"component": "Reference points 1-9 and service-based interfaces", "y3172_reference": "Clauses 8.1, 8.2",
+     "y3172_role": "Interfaces between the ML pipeline, sandbox and management subsystems, the "
+                   "underlay networks, and pipeline nodes on different levels.",
+     "project_status": "Logical only. The network ML pipeline names the reference points it uses, but "
+                       "its components call each other in one Python process, not over SBA."},
+    {"component": "Multilevel distribution of pipeline nodes", "y3172_reference": "Clause 8.2; REQ-ML-COR-003",
+     "y3172_role": "Pipeline nodes instantiated at different levels (e.g. UE, AN, CN).",
+     "project_status": "Logical only. The intent places each node on a level and the MLFO records the "
+                       "placement, but every node runs in a single process."},
+    {"component": "Standardised intent metalanguage", "y3172_reference": "Clause 7.4 (REQ-ML-SPEC-001), 8.1 (NOTE 12)",
+     "y3172_role": "A standard way to represent ML applications that third parties can also use.",
+     "project_status": "Project-specific. The ML Intent is a validated YAML schema of this project, "
+                       "not a standardised metalanguage."},
+]
+_GENERATOR_SCOPE = (
+    "Applies to the policy adviser (src/). The separate incident-response lab (ir/llm.py) can "
+    "use a Claude model through the Anthropic API (LLM_PROVIDER=anthropic); without a key or the "
+    "SDK it falls back to the deterministic offline playbook."
+)
+
+
+def _y3172_sandbox_description(ing: dict) -> str:
+    return (
+        "NOT EXECUTED — " + ing["sandbox"] + ". The Y.3172 ML sandbox (clauses 3.2.6, 8.2) is a "
+        "different thing from the ITU AI for Good Sandbox platform: a subsystem of ML pipelines and "
+        "simulated ML underlay networks, managed by the MLFO, in which ML models are trained and "
+        "tested before deployment. This document pipeline has none; the network ML pipeline has one "
+        "(sim/datagen.py, src/y3172/mlfo.py). Replay of recorded runs (src/audit/replay.py) re-tests "
+        "recorded document-pipeline runs but is not an ML sandbox."
+    )
+
 
 def y3172_traceability(c: Corpus, run: dict) -> dict:
     ing = c.ingestion
@@ -635,6 +768,7 @@ def y3172_traceability(c: Corpus, run: dict) -> dict:
                          "model: agents quote retrieved passages.",
           "model_id": ing["embedding_model"],
           "generator_model": ing["generator_model"],
+          "generator_model_scope": _GENERATOR_SCOPE,
           "files": [_file("src/rag/embedding.py"), _file("src/rag/vector_kb.py")],
           "evidence_preserved": "query, cosine similarity, knowledge base searched"},
          {"agent": trace_agent["agent_id"], "queries": trace_agent["queries"],
@@ -656,8 +790,7 @@ def y3172_traceability(c: Corpus, run: dict) -> dict:
          {"coordinator_category": coordinator_category, "audit_file": run["path"],
           "audit_entry_seq": trace_stage["seq"], "audit_entry_hash": trace_stage["hash"]}, "IMPLEMENTED"),
         ("Sandbox", node("Clause 3.2", "machine learning sandbox: An environment in which machine learning models can be trained, tested and their effects on the network evaluated."),
-         {"description": "NOT EXECUTED — " + ing["sandbox"] + ". Replay of recorded runs "
-                         "(src/audit/replay.py) is the local substitute for re-testing.",
+         {"description": _y3172_sandbox_description(ing),
           "files": [_file("knowledge_base/ingestion_manifest.json"), _file("src/audit/replay.py")],
           "evidence_preserved": "'sandbox' entry in the ingestion manifest"},
          None, "NOT EXECUTED"),
@@ -667,20 +800,37 @@ def y3172_traceability(c: Corpus, run: dict) -> dict:
             "ITU-T Y.3172 pipeline traceability (DOCX §4.3 / §7.4). Each stage quotes the",
             "Y.3172 definition from the ingested Recommendation, names the project components",
             "that perform it, and follows one quoted provision of a recorded run through it.",
+            "Each stage also states how it corresponds to the Y.3172 node (direct or by",
+            "analogy). network_ml_pipeline lists the Y.3172 components implemented over the",
+            "simulated network (src/y3172/); what is simulated or logical only is listed separately.",
         ], "§4.3"),
         "standard": c.docs[_Y3172]["title"],
         "standard_authority": c.docs[_Y3172]["authority"],
         "standard_url": c.docs[_Y3172]["source_url"],
-        "compliance_disclaimer": "Architectural correspondence only. Formal Y.3172 compliance has "
-                                 "not been assessed and is not claimed.",
+        "compliance_disclaimer": _Y3172_DISCLAIMER,
+        "scope_note": _Y3172_SCOPE_NOTE,
         "pipeline_stages": [{
             "stage": name, "y3172_definition": defn, "project_implementation": impl,
             "worked_trace": trace, "status": status,
+            "correspondence": _Y3172_CORRESPONDENCE[name][0],
+            "difference_from_y3172": _Y3172_CORRESPONDENCE[name][1],
         } for name, defn, impl, trace, status in stages],
+        "network_ml_pipeline": {
+            "description": "ITU-T Y.3172 components implemented in src/y3172/ over the contained "
+                           "simulated 5G core, with the policy and legal adviser as the P node. Run: "
+                           "python run.py --intent intents/amf_signalling_storm.yaml",
+            "components": [{**item, "files": [_file(f) for f in item["files"]]}
+                           for item in _Y3172_NETWORK_PIPELINE],
+        },
+        "components_not_implemented": [
+            {**item, "files": [_file(f) for f in item["files"]]} if "files" in item else dict(item)
+            for item in _Y3172_NOT_IMPLEMENTED
+        ],
         "worked_trace_claim": {"run": run["path"], "stage": trace_stage["stage"]["label"],
                                "agent": trace_agent["agent_id"], "claim": trace_claim["claim"]},
         "pipeline_traceability_matrix": {
             "rows": [{"y3172_stage": name, "status": status,
+                      "correspondence": _Y3172_CORRESPONDENCE[name][0],
                       "components": impl["files"]} for name, _, impl, _, status in stages],
         },
     }
@@ -723,10 +873,16 @@ def itu_readiness(c: Corpus, manifest: dict, run: dict) -> dict:
         ("Generative AI content ecosystem",
          "Generative AI synthesizes verified multi-domain findings while preserving citations and uncertainty.",
          "Addressed architecturally; exact generator model name must be added.",
-         [artefact("No generative model is used: agents quote retrieved passages and the Coordinator "
-                   "organises verified claims; generator_model is recorded as 'none'.",
-                   "knowledge_base/ingestion_manifest.json", "src/agents/base_agent.py")],
-         ["No generator model name exists to record, because none is used."]),
+         [artefact("The policy adviser (src/) uses no generative model: its agents quote retrieved "
+                   "passages and the Coordinator organises verified claims; generator_model is "
+                   "recorded as 'none'.",
+                   "knowledge_base/ingestion_manifest.json", "src/agents/base_agent.py"),
+          artefact("The separate incident-response lab (ir/) can use a Claude model through the "
+                   "Anthropic API for tool use (LLM_PROVIDER=anthropic, model set by "
+                   "ANTHROPIC_MODEL); without a key or the SDK it falls back to the deterministic "
+                   "offline playbook.", "ir/llm.py")],
+         ["The policy adviser uses no generator model, so none is recorded for it.",
+          "No evaluation of the lab's generative agent is recorded."]),
         ("Contextualization of AI solutions and regional development",
          "India-specific legal, regulatory and institutional context with a regional comparison layer.",
          "Addressed in scope; neighbouring-country corpus should be included in the final Policy Gap KB.",

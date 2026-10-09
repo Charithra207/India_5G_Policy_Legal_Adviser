@@ -1,0 +1,70 @@
+# =============================================================================
+# ML Intent (ITU-T Y.3172 clause 7.4) — validated by src/y3172/intent.py
+# =============================================================================
+# What the operator wants from ML, without naming how it is built: detect
+# control-plane overload on the AMF, tell an attack (signalling storm through
+# a base station that is not ours) from a legitimate surge (flash crowd), and
+# act only within Indian law and the operator's approval.
+#
+#   python run.py --intent intents/amf_signalling_storm.yaml          # interactive
+#   python run.py --intent intents/amf_signalling_storm.yaml --auto   # approve everything
+# =============================================================================
+
+intent_id: amf_signalling_storm
+title: Detect and contain signalling storms on the AMF
+description: >-
+  Registration floods overwhelm the AMF and lock legitimate users out. The
+  model must separate a storm through an unauthorised base station from a
+  legitimate surge through our own cells, and from related RAN and
+  user-plane attacks, then hand the remediation to the operator together
+  with the reporting duties it triggers.
+
+ml_application:
+  task: incident detection and classification
+  target_classes: [signalling_storm_amf, rogue_base_station, core_ddos_upf]
+
+# SRC nodes: network function, its level, and the telemetry it provides
+sources:
+  - {nf: amf, level: CN, telemetry: [metrics, health, logs]}
+  - {nf: gnb, level: AN, telemetry: [metrics, logs, ran]}
+  - {nf: upf, level: CN, telemetry: [metrics, health, logs]}
+  - {nf: oam, level: management, telemetry: [alerts]}
+
+collector: {level: CN}
+preprocessor: {level: CN}
+
+model:
+  level: CN
+  candidates: [threshold_centroid, iforest_rf]
+  selection: {metric: macro_f1, min_score: 0.85, max_inference_ms: 80}
+
+training:
+  samples_per_class: 60
+  holdout_fraction: 0.3
+  seed: 7
+  background_load: [0.8, 1.2]
+
+policy:
+  level: management
+  mode: blocking            # advisory | blocking — blocking holds remediation for a human
+  jurisdiction: IN
+  min_confidence: 0.6
+  legal_adviser: true       # run the specialist-agent swarm on every detection
+
+distributor: {level: management}
+sinks: [evidence_preservation, remediation, regulatory_notices, escalation]
+remediation: {agent: offline, max_tier: advanced}
+
+constraints:
+  decision_deadline_ticks: 1   # detect within one minute (one tick) of the attack starting
+
+monitoring: {metric: accuracy, window: 8, min_samples: 4, min_score: 0.75, cooldown_ticks: 4}
+
+# Lab schedule for the live run (not part of the Y.3172 intent)
+exercise:
+  ticks: 26
+  seed: 11
+  events:
+    - {at: 3, benign: flash_crowd}          # legitimate surge: must NOT be reported as an attack
+    - {at: 7, drift: 5.0}                   # network growth: background load x5 (concept drift)
+    - {at: 18, inject: signalling_storm_amf}   # the attack hits the grown network

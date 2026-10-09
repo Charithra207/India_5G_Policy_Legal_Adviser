@@ -52,15 +52,23 @@
       "evidence_items": [
         {
           "evidence_type": "project artefact",
-          "claim": "No generative model is used: agents quote retrieved passages and the Coordinator organises verified claims; generator_model is recorded as 'none'.",
+          "claim": "The policy adviser (src/) uses no generative model: its agents quote retrieved passages and the Coordinator organises verified claims; generator_model is recorded as 'none'.",
           "files": [
             "knowledge_base/ingestion_manifest.json",
             "src/agents/base_agent.py"
           ]
+        },
+        {
+          "evidence_type": "project artefact",
+          "claim": "The separate incident-response lab (ir/) can use a Claude model through the Anthropic API for tool use (LLM_PROVIDER=anthropic, model set by ANTHROPIC_MODEL); without a key or the SDK it falls back to the deterministic offline playbook.",
+          "files": [
+            "ir/llm.py"
+          ]
         }
       ],
       "evidence_unavailable": [
-        "No generator model name exists to record, because none is used."
+        "The policy adviser uses no generator model, so none is recorded for it.",
+        "No evaluation of the lab's generative agent is recorded."
       ]
     },
     {

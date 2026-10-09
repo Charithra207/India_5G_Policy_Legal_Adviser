@@ -161,8 +161,9 @@ On the full run:
 > and page. What we have not done is equally explicit:
 > - in-force and amendment checks;
 > - the NCIIPC Rules and international comparators;
-> - a generative model;
-> - the ITU Sandbox stage.
+> - a generative model in the adviser;
+> - the ITU AI for Good Sandbox (access was not available; everything runs locally);
+> - a live network: the Y.3172 ML pipeline (`python run.py --intent …`) runs on the contained simulator.
 
 ## If something fails
 

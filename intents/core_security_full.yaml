@@ -1,0 +1,69 @@
+# =============================================================================
+# ML Intent (ITU-T Y.3172 clause 7.4) — validated by src/y3172/intent.py
+# =============================================================================
+# Every attack in the catalog, every telemetry source: the widest pipeline.
+# Policy node in BLOCKING mode.
+#
+#   python run.py --intent intents/core_security_full.yaml --auto
+# =============================================================================
+
+intent_id: core_security_full
+title: Security monitoring of the whole 5G core (all catalog incidents)
+description: >-
+  Detect and classify all thirteen incident types in the attack catalog
+  across RAN, transport, control plane, user plane, service-based APIs and
+  management, using telemetry from every network function, and hold every
+  remediation for the operator together with its Indian reporting duties.
+
+ml_application:
+  task: incident detection and classification
+  target_classes: all
+
+sources:
+  - {nf: gnb, level: AN, telemetry: [metrics, logs, ran, transport]}
+  - {nf: amf, level: CN, telemetry: [metrics, health, logs, devices]}
+  - {nf: smf, level: CN, telemetry: [metrics, health, logs, integrity, slices, services]}
+  - {nf: upf, level: CN, telemetry: [metrics, health, logs, user_plane, egress]}
+  - {nf: ausf, level: CN, telemetry: [logs, auth]}
+  - {nf: udm, level: CN, telemetry: [metrics, logs, sba, subscribers]}
+  - {nf: nef, level: CN, telemetry: [metrics, logs, sba]}
+  - {nf: nrf, level: CN, telemetry: [logs, registry]}
+  - {nf: oam, level: management, telemetry: [logs, alerts, oam]}
+
+model:
+  level: CN
+  candidates: [threshold_centroid, iforest_rf]
+  selection: {metric: macro_f1, min_score: 0.85, max_inference_ms: 80}
+
+training:
+  samples_per_class: 40
+  holdout_fraction: 0.3
+  seed: 13
+  background_load: [0.8, 1.2]
+
+policy:
+  level: management
+  mode: blocking
+  jurisdiction: IN
+  min_confidence: 0.6
+  legal_adviser: true
+
+distributor: {level: management}
+sinks: [evidence_preservation, remediation, regulatory_notices, escalation]
+remediation: {agent: offline, max_tier: advanced}
+
+constraints:
+  decision_deadline_ticks: 1
+
+monitoring: {metric: accuracy, window: 10, min_samples: 5, min_score: 0.75, cooldown_ticks: 5}
+
+exercise:
+  ticks: 34
+  seed: 3
+  events:
+    - {at: 3, benign: maintenance_window}
+    - {at: 6, inject: rogue_base_station}
+    - {at: 12, inject: subscriber_data_exfiltration}
+    - {at: 18, benign: flash_crowd}
+    - {at: 22, inject: supply_chain_rogue_nf}
+    - {at: 28, inject: nf_host_ransomware}

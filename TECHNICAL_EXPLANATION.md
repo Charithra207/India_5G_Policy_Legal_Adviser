@@ -24,9 +24,10 @@ separate Canonical KB and links findings across domains → Coordinator →
 assessment → append-only audit trail → replay.
 
 - **Language and models:** Python. Retrieval uses the BAAI/bge-small-en-v1.5
-  embedding model on CPU. **No generative model is used:** agents quote the
-  passages they retrieve, and the Coordinator organises claims the Verifier
-  has checked.
+  embedding model on CPU. **The adviser uses no generative model:** agents
+  quote the passages they retrieve, and the Coordinator organises claims the
+  Verifier has checked. Only the separate incident-response lab (`ir/`) can
+  optionally use a Claude model, with a deterministic offline fallback.
 - **Execution:** sequential.
 - **UI:** Streamlit.
 
@@ -219,9 +220,16 @@ Replay, in the UI or on the command line, does four things:
 - No IndiaAI Mission documents or neighbouring-country instruments. The
   economic and multilateral categories have no source; labour, IP,
   infrastructure and comparators are partial.
-- No generative synthesis.
+- No generative synthesis in the adviser.
 - Agents run sequentially, not in parallel.
-- The ITU AI for Good Sandbox stage was not executed.
+- The ITU AI for Good Sandbox was not available; everything runs locally.
+- ITU-T Y.3172: the adviser's document pipeline maps to the SRC, C, PP, M, P
+  and D nodes mostly by analogy (only PP directly). The network ML pipeline
+  (`src/y3172/`, `python run.py --intent intents/amf_signalling_storm.yaml`)
+  implements the ML Intent, SRC/C/PP/M/P/D/SINK nodes, MLFO and ML sandbox, with
+  the adviser as its P node — over the contained simulator, not a live
+  network; reference points and levels are logical, in one process
+  (`knowledge_base/y3172_pipeline_traceability.json`).
 - No human-evaluation study or energy measurement.
 
 ## Core status

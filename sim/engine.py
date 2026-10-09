@@ -107,12 +107,25 @@ def _baseline() -> dict:
 
 
 class Sim:
-    """One simulated core.  All functions return plain dicts (JSON-serialisable)."""
+    """
+    One simulated core.  All functions return plain dicts (JSON-serialisable).
 
-    def __init__(self, persist: bool = True) -> None:
+    `root` is the folder for state.json and logs/.  By default it follows
+    work_dir() ($LAB_WORK_DIR or sim/) at each save; give an explicit folder
+    to run several simulations side by side (e.g. the Y.3172 ML sandbox and
+    the live network in src/y3172/mlfo.py).
+    """
+
+    def __init__(self, persist: bool = True, root: Path | str | None = None) -> None:
         self.persist = persist
+        self._root = Path(root) if root is not None else None
         self.state: dict = {}
         self.reset()
+
+    @property
+    def root(self) -> Path:
+        """Where this simulation saves its state, logs and reports."""
+        return self._root if self._root is not None else work_dir()
 
     # ------------------------------------------------------------------
     # Lifecycle
@@ -126,16 +139,16 @@ class Sim:
         return {"ok": True, "tick": 0}
 
     @classmethod
-    def resume(cls) -> "Sim":
+    def resume(cls, root: Path | str | None = None) -> "Sim":
         """A Sim continuing from <work>/state.json (without first saving a fresh baseline)."""
-        sim = cls(persist=False)
+        sim = cls(persist=False, root=root)
         sim.load()
         sim.persist = True
         return sim
 
     def load(self) -> dict:
         """Continue from <work>/state.json and logs (e.g. after an operator ran sim.cli)."""
-        root = work_dir()
+        root = self.root
         state = json.loads((root / "state.json").read_text(encoding="utf-8"))
         state["logs"] = {nf: ((root / "logs" / f"{nf}.log").read_text(encoding="utf-8").splitlines()
                               if (root / "logs" / f"{nf}.log").exists() else []) for nf in NFS}
@@ -167,7 +180,7 @@ class Sim:
     def _save(self) -> None:
         if not self.persist:
             return
-        root = work_dir()
+        root = self.root
         (root / "logs").mkdir(parents=True, exist_ok=True)
         public = {k: v for k, v in self.state.items() if k != "logs"}
         (root / "state.json").write_text(json.dumps(public, indent=2), encoding="utf-8")
