@@ -23,6 +23,18 @@ def _f(v, nd=3):
     return "—" if v is None else (f"{v:.{nd}f}" if isinstance(v, float) else str(v))
 
 
+def _kb_status(mlfo) -> str:
+    status = getattr(mlfo.policy, "kb_status", {}) or {}
+    if not mlfo.intent.policy.legal_adviser:
+        return "not used (intent)"
+    if not status:
+        return "not loaded (no detection reached the specialist agents, or a custom pipeline)"
+    live = sorted(k for k, v in status.items() if v)
+    if not live:
+        return "stubs — vector stores not built here (python -m src.rag.build); agents report no passages"
+    return f"live: {', '.join(live)}"
+
+
 def build_report(mlfo) -> dict:
     i, sel = mlfo.intent, mlfo.history[0] if mlfo.history else {}
     pairs = [(t["prediction"], t["scored_truth"]) for t in mlfo.ticks]
@@ -52,6 +64,7 @@ def build_report(mlfo) -> dict:
         "sandbox_validation_passed": sum(r["detected"] and r["playbook_resolved"] for r in mlfo.sandbox_validation),
         "sandbox_validation_total": len(mlfo.sandbox_validation),
         "mean_inference_ms": round(sum(t["inference_ms"] for t in mlfo.ticks) / max(1, len(mlfo.ticks)), 3),
+        "adviser_knowledge_bases": _kb_status(mlfo),
     }
     L = [f"# Y.3172 ML pipeline run — {i.title}", "",
          f"Run `{mlfo.run_id}` · intent `{i.intent_id}` ({i.path}) · policy node in **{i.policy.mode}** mode", "",
