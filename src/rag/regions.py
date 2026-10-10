@@ -55,10 +55,16 @@ def region_of(jurisdiction: str, region: str = "") -> str:
     return "global"
 
 
-def comparator_tag(jurisdiction: str, region: str = "") -> str:
-    """'[Global example — European Union]' / '[Neighbouring-region example — Sri Lanka]' ('' for India)."""
+def comparator_tag(jurisdiction: str, region: str = "", authority: str = "") -> str:
+    """
+    '[Global example — European Union]' / '[Neighbouring-region example — Sri Lanka]' ('' for India).
+    A source whose jurisdiction is only "International" is named by its authority instead
+    ('[International reference — European Union Agency for Cybersecurity (ENISA)]').
+    """
     reg = region_of(jurisdiction, region)
     if reg == "india":
         return ""
-    where = (jurisdiction or "").strip() or "international"
-    return f"[{_LABEL[reg]} — {where}]"
+    where = (jurisdiction or "").strip()
+    if where.lower() in ("", "international") and authority.strip():
+        where = authority.strip()
+    return f"[{_LABEL[reg]} — {where or 'international'}]"

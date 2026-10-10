@@ -76,9 +76,9 @@ def _item(title, jurisdiction, excerpt, chunk_id):
 
 def test_comparators_are_region_labelled_with_a_neighbour_first():
     eu = _item("EU incident policy", "European Union",
-               "coordination between agencies for cyber security incident response policy 5G", "eu:1")
+               "Coordination between agencies for cyber security incident response policy 5G.", "eu:1")
     lk = _item("Sri Lanka incident policy", "Sri Lanka",
-               "coordination between agencies for cyber security incident response policy", "lk:1")
+               "Coordination between agencies for cyber security incident response policy.", "lk:1")
     india = _item("Indian Rules", "India", "telecommunication network security incident reporting", "in:1")
     agent = PolicyGapAgent(InMemoryKnowledgeBase("Policy Gap KB", "policy_gap", [eu, lk]),
                            canonical_kb=InMemoryCanonicalKB([india]))
@@ -95,7 +95,7 @@ def test_comparators_are_region_labelled_with_a_neighbour_first():
 
 def test_missing_neighbour_is_stated():
     eu = _item("EU incident policy", "European Union",
-               "coordination between agencies for cyber security incident response", "eu:1")
+               "Coordination between agencies for cyber security incident response.", "eu:1")
     agent = PolicyGapAgent(InMemoryKnowledgeBase("Policy Gap KB", "policy_gap", [eu]),
                            canonical_kb=InMemoryCanonicalKB([_item("Indian Rules", "India", "network", "in:1")]))
     finding = agent.analyze(get_chunks()[3], {"verified_findings": [], "chunks_processed": ["T0"]})

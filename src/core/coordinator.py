@@ -48,6 +48,8 @@ provisions, re-rated claims, cross-domain links, conflicts and gaps.
 
 from __future__ import annotations
 
+import re
+
 import logging
 from typing import Optional
 
@@ -67,6 +69,16 @@ _FLAG_CHANGES = (
     ("data_exposure_suspected",
      "Possible personal-data involvement appears for the first time in this chunk."),
 )
+
+
+
+_ACRONYM = re.compile(r"\(([A-Z][A-Za-z\-]{1,11})\)")
+
+
+def _institution_key(name: str) -> str:
+    """'National … Centre (NCIIPC)', 'NCIIPC' and 'NCIIPC (if …)' share the key 'nciipc'."""
+    m = _ACRONYM.search(name)
+    return (m.group(1) if m else name.split(" (", 1)[0]).strip().lower()
 
 
 class Coordinator:
@@ -286,7 +298,15 @@ class Coordinator:
         names = list(prior.relevant_institutions) if prior else []
         for finding in findings:
             names += finding.responsible_institutions
-        return list(dict.fromkeys(names))
+        # One entry per institution: "NCIIPC", "National Critical Information
+        # Infrastructure Protection Centre (NCIIPC)" and "NCIIPC (if critical
+        # infrastructure is confirmed)" are the same body; the full name wins.
+        chosen: dict[str, str] = {}
+        for name in dict.fromkeys(names):
+            key = _institution_key(name)
+            if key not in chosen or (_ACRONYM.search(name) and not _ACRONYM.search(chosen[key])):
+                chosen[key] = name
+        return list(chosen.values())
 
     def _open_questions(self, result: VerifierResult, evidence_backed: list[str]) -> list[str]:
         questions = []

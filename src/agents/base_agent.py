@@ -21,11 +21,13 @@ so that the RAG/KB layer can integrate real retrieval by overriding
 from __future__ import annotations
 
 import logging
+import re
 from abc import ABC, abstractmethod
 from typing import Optional
 
 from src.core.models import AgentFinding, AgentID, EvidenceItem, ScenarioChunk
 from src.knowledge_base.base_kb import KnowledgeBase, StubKnowledgeBase
+from src.knowledge_base.text_match import content_terms
 
 logger = logging.getLogger(__name__)
 
@@ -68,12 +70,17 @@ class BaseAgent(ABC):
         """
         logger.info("Agent %s -> analyzing chunk %s", self.agent_id.value, chunk.chunk_id)
 
-        queries  = self._build_queries(chunk, incident_state)
+        view     = list(getattr(chunk, "agent_views", {}).get(self.agent_id.value, []))
+        queries  = self._focus_queries(chunk, self._build_queries(chunk, incident_state), view)
         self.last_queries = list(queries)      # recorded in the audit trail (DOCX §7.6)
+        # Words of this incident (released facts, and what only this agent
+        # was told) decide which retrieved passages are quoted first.
+        self._focus_terms = content_terms(" ".join([*view, *chunk.new_facts])) if view else set()
         evidence = self._retrieve_evidence(queries)
         finding  = self._produce_finding(chunk, incident_state, evidence)
         finding.agent_id = self.agent_id
         finding.chunk_id = chunk.chunk_id
+        finding.missing_facts = self._reconcile_missing(finding.missing_facts, view)
         # Optional LLM reasoning over the same retrieved passages; a no-op
         # unless a model is configured (src/llm).  Its claims cite passages
         # and are verified like any other claim.
@@ -173,6 +180,102 @@ class BaseAgent(ABC):
         return [e for e in evidence if cls._is_real(e)]
 
     # ------------------------------------------------------------------
+    # Focus: the facts of this incident, including what only this agent saw
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _focus_queries(chunk: ScenarioChunk, queries: list[str], view: list[str]) -> list[str]:
+        """
+        The facts released to this agent alone are searched first.  A chunk
+        description that is a question (e.g. "The question asks: what should
+        be reported…?") states no fact, so it is not searched as one.
+        """
+        description = chunk.description.strip()
+        kept = [q for q in queries if not (q.strip() == description and "?" in description)]
+        return list(dict.fromkeys([*view, *kept]))
+
+    # A short passage with no sentence in it is a title page or a heading,
+    # not a provision (e.g. a report's cover: "5G CYBERSECURITY STANDARDS …").
+    MIN_QUOTABLE_CHARS = 150
+
+    @classmethod
+    def _is_heading(cls, item: EvidenceItem) -> bool:
+        text = " ".join(item.excerpt.split())
+        return len(text) < cls.MIN_QUOTABLE_CHARS and not re.search(r"[.;:]", text)
+
+    # Time limits mark the duties an incident responder needs first.
+    _DEADLINE = re.compile(r"\b(?:hours?|days?|without (?:undue )?delay|forthwith|immediately)\b", re.I)
+
+    def _quotable(self, evidence: list[EvidenceItem]) -> list[EvidenceItem]:
+        """
+        Real passages long enough to state something, in the order they are
+        quoted.  Without facts released to this agent the retrieval order is
+        kept.  With them, the selection stays the retrieval's top passages,
+        except that a passage sharing (almost) no words with the incident's
+        facts gives way to a later one that does — a duty with a time limit
+        first — and time-limited duties are quoted first.  So "logs are kept
+        30 days" brings the log-retention direction in, and a passage on an
+        unrelated topic that a generic query happened to return drops out.
+        """
+        items = [e for e in self._real_evidence(evidence) if not self._is_heading(e)]
+        focus = getattr(self, "_focus_terms", set())
+        if not focus:
+            return items
+
+        def text(item: EvidenceItem) -> str:
+            return f"{item.section_title} {item.excerpt}".lower()
+
+        def overlap(item: EvidenceItem) -> int:
+            return len(focus & content_terms(text(item)))
+
+        def timed_duty(item: EvidenceItem) -> bool:
+            return any(w in text(item) for w in self._DUTY_WORDS) and bool(self._DEADLINE.search(text(item)))
+
+        n = self.MAX_CITED_PASSAGES
+        top, rest = items[:n], items[n:]
+        spare = sorted((r for r in rest if overlap(r) >= self.MIN_SHARED_TERMS),
+                       key=lambda r: (not timed_duty(r), -overlap(r), rest.index(r)))
+        for weak in sorted((i for i in top if overlap(i) < self.MIN_SHARED_TERMS and not timed_duty(i)),
+                           key=overlap):
+            if not spare:
+                break
+            top[top.index(weak)] = spare.pop(0)
+        top = sorted(top, key=lambda i: not timed_duty(i))           # stable: otherwise retrieval order
+        return top + [r for r in rest if r not in top]
+
+    # A quoted passage should share at least this many words with the facts.
+    MIN_SHARED_TERMS = 2
+
+    # Missing-information notes answered by what this agent was told: (words
+    # in the note, words in the agent's own facts, replacement or None to drop).
+    _ANSWERED_BY_VIEW = (
+        (("amf/smf logs",), ("amf", "smf"),
+         "SMF and UPF telemetry has not been released; AMF logs were released to this agent."),
+        (("radio access network",), ("gnb", "ran ", "radio"), None),
+        (("protocol, volume, source",), ("baseline", "times", "failures", "burst"),
+         "Protocol and source of the security indicators have not been released; their volume "
+         "was released to this agent."),
+        (("whether patient/subscriber data is processed",), ("patient names",), None),
+    )
+
+    def _reconcile_missing(self, missing: list[str], view: list[str]) -> list[str]:
+        """Drop or narrow a 'missing' note that this agent's own facts already answer."""
+        if not view:
+            return missing
+        seen = " ".join(view).lower()
+        out: list[str] = []
+        for note in missing:
+            low = note.lower()
+            for note_words, view_words, replacement in self._ANSWERED_BY_VIEW:
+                if any(w in low for w in note_words) and any(w in seen for w in view_words):
+                    if replacement:
+                        out.append(replacement)
+                    break
+            else:
+                out.append(note)
+        return list(dict.fromkeys(out))
+
+    # ------------------------------------------------------------------
     # Evidence-grounded claims
     # ------------------------------------------------------------------
     #
@@ -212,7 +315,7 @@ class BaseAgent(ABC):
         """One quoted claim per top retrieved passage, each with its citation."""
         claims: list[str] = []
         citations: dict[str, list[EvidenceItem]] = {}
-        for item in self._real_evidence(evidence)[: self.MAX_CITED_PASSAGES]:
+        for item in self._quotable(evidence)[: self.MAX_CITED_PASSAGES]:
             claim = self._quote_claim(item)
             if claim not in citations:
                 claims.append(claim)
@@ -223,7 +326,7 @@ class BaseAgent(ABC):
         """Retrieved passages whose text imposes a duty, quoted with their source."""
         return [
             self._quote_claim(e)
-            for e in self._real_evidence(evidence)[: self.MAX_CITED_PASSAGES]
+            for e in self._quotable(evidence)[: self.MAX_CITED_PASSAGES]
             if any(w in e.excerpt.lower() for w in self._DUTY_WORDS)
         ]
 

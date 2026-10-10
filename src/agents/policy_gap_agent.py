@@ -343,7 +343,8 @@ class PolicyGapAgent(BaseAgent):
             international = neighbours[:1] + [e for e in international if e not in neighbours[:1]]
             comparator_claims, comparator_cites = self._cited_claims(international)
             for claim in comparator_claims[:2]:
-                tag = comparator_tag(comparator_cites[claim][0].jurisdiction)
+                tag = comparator_tag(comparator_cites[claim][0].jurisdiction,
+                                     authority=comparator_cites[claim][0].authority)
                 body = claim.replace(_REFERENCE, f"{_REFERENCE} {tag}", 1) if tag else claim
                 text = f"Comparator — {body}"
                 claims.append(text)

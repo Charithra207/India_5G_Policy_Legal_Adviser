@@ -61,6 +61,10 @@ class PolicyLegalAgent(BaseAgent):
             queries.append(
                 "notification of critical telecommunication infrastructure and rules for it"
             )
+        if any(w in base.lower() for w in ("report", "notif", "escalat", "intimat")):
+            queries.append(
+                "intimation of a security incident to the Central Government within hours"
+            )
         return queries
 
     def _produce_finding(
