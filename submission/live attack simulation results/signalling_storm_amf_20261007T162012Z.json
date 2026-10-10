@@ -1,0 +1,469 @@
+{
+  "attack": "signalling_storm_amf",
+  "outcome": "resolved",
+  "resolved_in": "intermediate",
+  "checks": [
+    {
+      "fn": "get_metrics",
+      "args": {
+        "nf": "amf"
+      },
+      "path": "cpu",
+      "op": "<",
+      "value": 70,
+      "actual": 49,
+      "ok": true
+    },
+    {
+      "fn": "get_nf_health",
+      "args": {
+        "nf": "amf"
+      },
+      "path": "amf",
+      "op": "==",
+      "value": "ok",
+      "actual": "ok",
+      "ok": true
+    },
+    {
+      "fn": "get_top_talkers",
+      "args": {
+        "nf": "amf"
+      },
+      "path": "top.0.blocked",
+      "op": "==",
+      "value": true,
+      "actual": true,
+      "ok": true
+    }
+  ],
+  "tier_outcomes": {
+    "basic": {
+      "mode": "agent",
+      "provider": "offline",
+      "summary": "ran the basic playbook steps in order",
+      "resolved": false,
+      "checks": [
+        {
+          "fn": "get_metrics",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "cpu",
+          "op": "<",
+          "value": 70,
+          "actual": 50,
+          "ok": true
+        },
+        {
+          "fn": "get_nf_health",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "amf",
+          "op": "==",
+          "value": "ok",
+          "actual": "ok",
+          "ok": true
+        },
+        {
+          "fn": "get_top_talkers",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "top.0.blocked",
+          "op": "==",
+          "value": true,
+          "actual": false,
+          "ok": false
+        }
+      ]
+    },
+    "intermediate": {
+      "mode": "agent",
+      "provider": "offline",
+      "summary": "resolved; remaining steps not needed",
+      "resolved": true,
+      "checks": [
+        {
+          "fn": "get_metrics",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "cpu",
+          "op": "<",
+          "value": 70,
+          "actual": 49,
+          "ok": true
+        },
+        {
+          "fn": "get_nf_health",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "amf",
+          "op": "==",
+          "value": "ok",
+          "actual": "ok",
+          "ok": true
+        },
+        {
+          "fn": "get_top_talkers",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "top.0.blocked",
+          "op": "==",
+          "value": true,
+          "actual": true,
+          "ok": true
+        }
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "at": "16:20:12",
+      "tier": "start",
+      "actor": "system",
+      "action": "inject",
+      "args": {
+        "attack": "signalling_storm_amf"
+      },
+      "state_changing": true,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "AMF CPU above 90% for 3 consecutive ticks (registration storm suspected)"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_alerts",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "AMF CPU above 90% for 3 consecutive ticks (registration storm suspected)"
+        ]
+      },
+      "note": "b1_alerts: Read the active alerts to confirm what the monitoring saw"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_nf_health",
+      "args": {
+        "nf": "amf"
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "amf": "degraded"
+      },
+      "note": "b2_health: Check AMF health (ok / degraded / down)"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_metrics",
+      "args": {
+        "nf": "amf"
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "cpu": 100,
+        "offered_rate": 8750,
+        "accepted_rate": 8750,
+        "rate_limit": null,
+        "replicas": 1,
+        "registration_rate": 8750
+      },
+      "note": "b3_metrics: Read AMF CPU, offered and accepted registration rate"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_logs",
+      "args": {
+        "nf": "amf",
+        "last": 10
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "amf",
+        "lines": [
+          "t=0000 WARN  AMF  registration request burst: 7800/min from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "t=0000 WARN  AMF  registration request burst: 7800/min from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "t=0000 WARN  AMF  registration request burst: 7800/min from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "t=0000 WARN  AMF  registration request burst: 7800/min from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "t=0000 WARN  AMF  registration request burst: 7800/min from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "t=0000 WARN  AMF  registration request burst: 7800/min from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "t=0000 ERROR AMF  N1/N2 message queue above 95%; registration latency 4.8 s"
+        ]
+      },
+      "note": "b4_logs: Read recent AMF logs for the registration pattern (repeated SUCI, no service request)"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_top_talkers",
+      "args": {
+        "nf": "amf"
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "amf",
+        "top": [
+          {
+            "source": "ue-range-404-45-77xx",
+            "rate": 7800,
+            "blocked": false
+          },
+          {
+            "source": "ue-range-404-45-12xx",
+            "rate": 900,
+            "blocked": false
+          }
+        ]
+      },
+      "note": "b5_top_talkers: Identify which UE ranges generate the registrations"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "check_auth_config",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "method": "5G-AKA",
+        "ciphering": "NEA2",
+        "integrity": "NIA2",
+        "suci_protection": "profile_A",
+        "up_integrity": "required",
+        "subscriber_keys_compromised": false,
+        "key_version": 1
+      },
+      "note": "b6_auth_config: Rule out an authentication misconfiguration causing re-registration loops"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "rate_limit_nf",
+      "args": {
+        "nf": "amf",
+        "limit": 1000
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "rate limit set to 1000/min"
+      },
+      "note": "b7_rate_limit: Cap accepted registrations at 1000/min (AMF overload control; safe, idempotent, reversible)"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": 1000
+      },
+      "note": "b7_rate_limit: get_metrics.accepted_rate <= 1000 \u2192 passed"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "scale_out",
+      "args": {
+        "nf": "amf",
+        "replicas": 2
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "scaled to 2 replicas"
+      },
+      "note": "b8_scale_out: Add a second AMF instance for headroom (safe, idempotent)"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": 50
+      },
+      "note": "b8_scale_out: get_metrics.cpu < 70 \u2192 passed"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "basic",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": false,
+        "checks": [
+          {
+            "fn": "get_metrics",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "cpu",
+            "op": "<",
+            "value": 70,
+            "actual": 50,
+            "ok": true
+          },
+          {
+            "fn": "get_nf_health",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "amf",
+            "op": "==",
+            "value": "ok",
+            "actual": "ok",
+            "ok": true
+          },
+          {
+            "fn": "get_top_talkers",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "top.0.blocked",
+            "op": "==",
+            "value": true,
+            "actual": false,
+            "ok": false
+          }
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "16:20:12",
+      "tier": "intermediate",
+      "actor": "operator",
+      "action": "gate",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": "agent",
+      "note": ""
+    },
+    {
+      "at": "16:20:12",
+      "tier": "intermediate",
+      "actor": "agent",
+      "action": "block_source",
+      "args": {
+        "nf": "amf",
+        "source": "ue-range-404-45-77xx"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "blocked source ue-range-404-45-77xx"
+      },
+      "note": "i1_block_top_source: Block the top registration source found by get_top_talkers (needs approval \u2014 legitimate UEs in the range are cut off)"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "intermediate",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": true
+      },
+      "note": "i1_block_top_source: get_top_talkers.top.0.blocked == True \u2192 passed"
+    },
+    {
+      "at": "16:20:12",
+      "tier": "intermediate",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": true,
+        "checks": [
+          {
+            "fn": "get_metrics",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "cpu",
+            "op": "<",
+            "value": 70,
+            "actual": 49,
+            "ok": true
+          },
+          {
+            "fn": "get_nf_health",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "amf",
+            "op": "==",
+            "value": "ok",
+            "actual": "ok",
+            "ok": true
+          },
+          {
+            "fn": "get_top_talkers",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "top.0.blocked",
+            "op": "==",
+            "value": true,
+            "actual": true,
+            "ok": true
+          }
+        ]
+      },
+      "note": ""
+    }
+  ],
+  "policy": {
+    "error": "[Errno 2] No such file or directory: 'C:\\\\Users\\\\HP\\\\Desktop\\\\rag\\\\India_5G_Policy_Legal_Adviser\\\\kb\\\\index\\\\chunks.jsonl.gz'",
+    "obligations": [],
+    "related": []
+  }
+}

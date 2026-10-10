@@ -1,0 +1,766 @@
+{
+  "attack": "subscriber_profile_tampering",
+  "outcome": "resolved",
+  "summary": "The simulated attack \"Subscriber profile tampering (slice breach)\" was injected into the contained 5G core, affecting OAM, UDM and SMF. It was first visible as: session on urllc-hospital from a subscriber that is not on the slice allow-list. The response agent (offline) worked through the basic, intermediate and advanced tiers, running 7 diagnostic steps and 1 approved fix (end_session). The Policy panel listed 5 Indian obligations for this kind of incident, 5 confirmed word for word in the cited documents.",
+  "conclusion": "The incident was resolved in the advanced tier: every resolution check passes against the simulator (not on the agent's own say-so). Whatever the technical outcome, the Indian obligations listed still apply, among them: report the cyber incident to CERT-In within 6 hours of noticing it; telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require; if the affected network is notified as Critical Telecommunication Infrastructure, follow the CTI Rules, 2024 incident-reporting timelines. Every action, approval and refusal is in the timeline and the saved report. This is a training simulation and decision support, not legal advice.",
+  "resolved_in": "advanced",
+  "checks": [
+    {
+      "fn": "check_slice_sessions",
+      "args": {
+        "slice": "urllc-hospital"
+      },
+      "path": "not_on_allow_list",
+      "op": "empty",
+      "actual": [],
+      "ok": true
+    },
+    {
+      "fn": "get_subscriber_changes",
+      "path": "unreverted",
+      "op": "empty",
+      "actual": [],
+      "ok": true
+    },
+    {
+      "fn": "check_mgmt_exposure",
+      "path": "default_credentials",
+      "op": "==",
+      "value": false,
+      "actual": false,
+      "ok": true
+    },
+    {
+      "fn": "check_mgmt_exposure",
+      "path": "admin_access",
+      "op": "==",
+      "value": "jump-host-only",
+      "actual": "jump-host-only",
+      "ok": true
+    }
+  ],
+  "tier_outcomes": {
+    "basic": {
+      "mode": "agent",
+      "provider": "offline",
+      "summary": "ran the basic playbook steps in order",
+      "resolved": false,
+      "checks": [
+        {
+          "fn": "check_slice_sessions",
+          "args": {
+            "slice": "urllc-hospital"
+          },
+          "path": "not_on_allow_list",
+          "op": "empty",
+          "actual": [
+            {
+              "id": "pdu-9001",
+              "supi": "imsi-404450000000777",
+              "slice": "urllc-hospital",
+              "ue_ip": "10.46.0.177"
+            }
+          ],
+          "ok": false
+        },
+        {
+          "fn": "get_subscriber_changes",
+          "path": "unreverted",
+          "op": "empty",
+          "actual": [
+            {
+              "supi": "imsi-404450000000777",
+              "field": "allowed_slices",
+              "old": [
+                "embb"
+              ],
+              "new": [
+                "embb",
+                "urllc-hospital"
+              ],
+              "by": "admin",
+              "from": "10.20.30.77",
+              "reverted": false
+            }
+          ],
+          "ok": false
+        },
+        {
+          "fn": "check_mgmt_exposure",
+          "path": "default_credentials",
+          "op": "==",
+          "value": false,
+          "actual": true,
+          "ok": false
+        },
+        {
+          "fn": "check_mgmt_exposure",
+          "path": "admin_access",
+          "op": "==",
+          "value": "jump-host-only",
+          "actual": "any-internal",
+          "ok": false
+        }
+      ]
+    },
+    "intermediate": {
+      "mode": "agent",
+      "provider": "offline",
+      "summary": "ran the intermediate playbook steps in order",
+      "resolved": false,
+      "checks": [
+        {
+          "fn": "check_slice_sessions",
+          "args": {
+            "slice": "urllc-hospital"
+          },
+          "path": "not_on_allow_list",
+          "op": "empty",
+          "actual": [],
+          "ok": true
+        },
+        {
+          "fn": "get_subscriber_changes",
+          "path": "unreverted",
+          "op": "empty",
+          "actual": [
+            {
+              "supi": "imsi-404450000000777",
+              "field": "allowed_slices",
+              "old": [
+                "embb"
+              ],
+              "new": [
+                "embb",
+                "urllc-hospital"
+              ],
+              "by": "admin",
+              "from": "10.20.30.77",
+              "reverted": false
+            }
+          ],
+          "ok": false
+        },
+        {
+          "fn": "check_mgmt_exposure",
+          "path": "default_credentials",
+          "op": "==",
+          "value": false,
+          "actual": true,
+          "ok": false
+        },
+        {
+          "fn": "check_mgmt_exposure",
+          "path": "admin_access",
+          "op": "==",
+          "value": "jump-host-only",
+          "actual": "any-internal",
+          "ok": false
+        }
+      ]
+    },
+    "advanced": {
+      "mode": "manual",
+      "summary": "Operator results received; resolution checks now pass.",
+      "resolved": true,
+      "checks": [
+        {
+          "fn": "check_slice_sessions",
+          "args": {
+            "slice": "urllc-hospital"
+          },
+          "path": "not_on_allow_list",
+          "op": "empty",
+          "actual": [],
+          "ok": true
+        },
+        {
+          "fn": "get_subscriber_changes",
+          "path": "unreverted",
+          "op": "empty",
+          "actual": [],
+          "ok": true
+        },
+        {
+          "fn": "check_mgmt_exposure",
+          "path": "default_credentials",
+          "op": "==",
+          "value": false,
+          "actual": false,
+          "ok": true
+        },
+        {
+          "fn": "check_mgmt_exposure",
+          "path": "admin_access",
+          "op": "==",
+          "value": "jump-host-only",
+          "actual": "jump-host-only",
+          "ok": true
+        }
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "at": "03:55:05",
+      "tier": "start",
+      "actor": "system",
+      "action": "inject",
+      "args": {
+        "attack": "subscriber_profile_tampering"
+      },
+      "state_changing": true,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "Session on urllc-hospital from a subscriber that is not on the slice allow-list"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "03:55:17",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_alerts",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "Session on urllc-hospital from a subscriber that is not on the slice allow-list"
+        ]
+      },
+      "note": "b1_alerts: Read the active alerts"
+    },
+    {
+      "at": "03:55:18",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "check_slice_sessions",
+      "args": {
+        "slice": "urllc-hospital"
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "slice": "urllc-hospital",
+        "allow_list": [
+          "imsi-404450000000101",
+          "imsi-404450000000102"
+        ],
+        "sessions": [
+          {
+            "id": "pdu-1001",
+            "supi": "imsi-404450000000101",
+            "slice": "urllc-hospital",
+            "ue_ip": "10.46.0.101"
+          },
+          {
+            "id": "pdu-9001",
+            "supi": "imsi-404450000000777",
+            "slice": "urllc-hospital",
+            "ue_ip": "10.46.0.177"
+          }
+        ],
+        "session_ids": [
+          "pdu-1001",
+          "pdu-9001"
+        ],
+        "not_on_allow_list": [
+          {
+            "id": "pdu-9001",
+            "supi": "imsi-404450000000777",
+            "slice": "urllc-hospital",
+            "ue_ip": "10.46.0.177"
+          }
+        ]
+      },
+      "note": "b2_slice_sessions: Sessions on the hospital slice that are not on its allow-list"
+    },
+    {
+      "at": "03:55:18",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_subscriber_changes",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "changes": [
+          {
+            "supi": "imsi-404450000000777",
+            "field": "allowed_slices",
+            "old": [
+              "embb"
+            ],
+            "new": [
+              "embb",
+              "urllc-hospital"
+            ],
+            "by": "admin",
+            "from": "10.20.30.77",
+            "reverted": false
+          }
+        ],
+        "unreverted": [
+          {
+            "supi": "imsi-404450000000777",
+            "field": "allowed_slices",
+            "old": [
+              "embb"
+            ],
+            "new": [
+              "embb",
+              "urllc-hospital"
+            ],
+            "by": "admin",
+            "from": "10.20.30.77",
+            "reverted": false
+          }
+        ]
+      },
+      "note": "b3_db_changes: Subscriber-database change records (who changed what"
+    },
+    {
+      "at": "03:55:19",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_logs",
+      "args": {
+        "nf": "oam",
+        "last": 10
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "oam",
+        "lines": [
+          "10/07 09:00:00.000: [oam] INFO: simulation reset to baseline",
+          "10/07 09:00:00.007: [oam] INFO: admin login (default account 'admin') from 10.20.30.77; usual source is the jump host"
+        ]
+      },
+      "note": "b4_admin_logins: Admin login log - was the change made from an unusual source"
+    },
+    {
+      "at": "03:55:20",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "check_mgmt_exposure",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "exposed_to_internet": false,
+        "default_credentials": true,
+        "admin_access": "any-internal",
+        "credentials_version": 1
+      },
+      "note": "b5_mgmt: Are default admin credentials still in use"
+    },
+    {
+      "at": "03:55:20",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_logs",
+      "args": {
+        "nf": "smf",
+        "last": 10
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "smf",
+        "lines": [
+          "10/07 09:00:00.000: [smf] INFO: PDU session pdu-9001 established for imsi-404450000000777 on S-NSSAI urllc-hospital"
+        ]
+      },
+      "note": "b6_smf_logs: When was the session established"
+    },
+    {
+      "at": "03:55:21",
+      "tier": "basic",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": false,
+        "checks": [
+          {
+            "fn": "check_slice_sessions",
+            "args": {
+              "slice": "urllc-hospital"
+            },
+            "path": "not_on_allow_list",
+            "op": "empty",
+            "actual": [
+              {
+                "id": "pdu-9001",
+                "supi": "imsi-404450000000777",
+                "slice": "urllc-hospital",
+                "ue_ip": "10.46.0.177"
+              }
+            ],
+            "ok": false
+          },
+          {
+            "fn": "get_subscriber_changes",
+            "path": "unreverted",
+            "op": "empty",
+            "actual": [
+              {
+                "supi": "imsi-404450000000777",
+                "field": "allowed_slices",
+                "old": [
+                  "embb"
+                ],
+                "new": [
+                  "embb",
+                  "urllc-hospital"
+                ],
+                "by": "admin",
+                "from": "10.20.30.77",
+                "reverted": false
+              }
+            ],
+            "ok": false
+          },
+          {
+            "fn": "check_mgmt_exposure",
+            "path": "default_credentials",
+            "op": "==",
+            "value": false,
+            "actual": true,
+            "ok": false
+          },
+          {
+            "fn": "check_mgmt_exposure",
+            "path": "admin_access",
+            "op": "==",
+            "value": "jump-host-only",
+            "actual": "any-internal",
+            "ok": false
+          }
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "03:55:26",
+      "tier": "intermediate",
+      "actor": "operator",
+      "action": "gate",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": "agent",
+      "note": ""
+    },
+    {
+      "at": "03:55:28",
+      "tier": "intermediate",
+      "actor": "agent",
+      "action": "end_session",
+      "args": {
+        "session_id": "pdu-9001"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "PDU session pdu-9001 (imsi-404450000000777, urllc-hospital) released"
+      },
+      "note": "i1_end_session: End the session that is not on the slice allow-list"
+    },
+    {
+      "at": "03:55:29",
+      "tier": "intermediate",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": []
+      },
+      "note": "i1_end_session: check_slice_sessions.not_on_allow_list empty  \u2192 passed"
+    },
+    {
+      "at": "03:55:30",
+      "tier": "intermediate",
+      "actor": "agent",
+      "action": "get_subscriber_changes",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "changes": [
+          {
+            "supi": "imsi-404450000000777",
+            "field": "allowed_slices",
+            "old": [
+              "embb"
+            ],
+            "new": [
+              "embb",
+              "urllc-hospital"
+            ],
+            "by": "admin",
+            "from": "10.20.30.77",
+            "reverted": false
+          }
+        ],
+        "unreverted": [
+          {
+            "supi": "imsi-404450000000777",
+            "field": "allowed_slices",
+            "old": [
+              "embb"
+            ],
+            "new": [
+              "embb",
+              "urllc-hospital"
+            ],
+            "by": "admin",
+            "from": "10.20.30.77",
+            "reverted": false
+          }
+        ]
+      },
+      "note": "i2_verify: Re-check the change records (the profile still allows the slice)"
+    },
+    {
+      "at": "03:55:30",
+      "tier": "intermediate",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": false,
+        "checks": [
+          {
+            "fn": "check_slice_sessions",
+            "args": {
+              "slice": "urllc-hospital"
+            },
+            "path": "not_on_allow_list",
+            "op": "empty",
+            "actual": [],
+            "ok": true
+          },
+          {
+            "fn": "get_subscriber_changes",
+            "path": "unreverted",
+            "op": "empty",
+            "actual": [
+              {
+                "supi": "imsi-404450000000777",
+                "field": "allowed_slices",
+                "old": [
+                  "embb"
+                ],
+                "new": [
+                  "embb",
+                  "urllc-hospital"
+                ],
+                "by": "admin",
+                "from": "10.20.30.77",
+                "reverted": false
+              }
+            ],
+            "ok": false
+          },
+          {
+            "fn": "check_mgmt_exposure",
+            "path": "default_credentials",
+            "op": "==",
+            "value": false,
+            "actual": true,
+            "ok": false
+          },
+          {
+            "fn": "check_mgmt_exposure",
+            "path": "admin_access",
+            "op": "==",
+            "value": "jump-host-only",
+            "actual": "any-internal",
+            "ok": false
+          }
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "03:55:35",
+      "tier": "advanced",
+      "actor": "operator",
+      "action": "gate",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": "manual",
+      "note": ""
+    },
+    {
+      "at": "03:55:35",
+      "tier": "advanced",
+      "actor": "system",
+      "action": "handed to operator",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": null,
+      "note": "4 steps printed"
+    },
+    {
+      "at": "03:56:41",
+      "tier": "advanced",
+      "actor": "operator",
+      "action": "pasted results",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": "{\n  \"ok\": true,\n  \"action\": \"subscription profile of imsi-404450000000777 restored from the known-good snapshot\"\n}\n{\n  \"ok\": true,\n  \"action\": \"rotated keys: oam_credentials\"\n}\n{\n  \"ok\": true,\n  \"action\": \"admin access restricted to the jump host\"\n}\n{\n  \"slice\": \"urllc-hospital\",\n  \"allow_list\": [\n    \"imsi-404450000000101\",\n    \"imsi-404450000000102\"\n  ],\n  \"sessions\": [\n    {\n      \"id\": \"pdu-1001\",\n      \"supi\": \"imsi-404450000000101\",\n      \"slice\": \"urllc-hospital\",\n      \"ue_ip\": \"10.46.0.101\"\n    }\n  ],\n  \"session_ids\": [\n    \"pdu-1001\"\n  ],\n  \"not_on_allow_list\": []\n}",
+      "note": "Operator results received; resolution checks now pass."
+    },
+    {
+      "at": "03:56:42",
+      "tier": "advanced",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": true,
+        "checks": [
+          {
+            "fn": "check_slice_sessions",
+            "args": {
+              "slice": "urllc-hospital"
+            },
+            "path": "not_on_allow_list",
+            "op": "empty",
+            "actual": [],
+            "ok": true
+          },
+          {
+            "fn": "get_subscriber_changes",
+            "path": "unreverted",
+            "op": "empty",
+            "actual": [],
+            "ok": true
+          },
+          {
+            "fn": "check_mgmt_exposure",
+            "path": "default_credentials",
+            "op": "==",
+            "value": false,
+            "actual": false,
+            "ok": true
+          },
+          {
+            "fn": "check_mgmt_exposure",
+            "path": "admin_access",
+            "op": "==",
+            "value": "jump-host-only",
+            "actual": "jump-host-only",
+            "ok": true
+          }
+        ]
+      },
+      "note": ""
+    }
+  ],
+  "policy": {
+    "categories": [
+      "cyber_incident_rules",
+      "law_and_acts"
+    ],
+    "obligations": [
+      {
+        "id": "certin_6h",
+        "summary": "Report the cyber incident to CERT-In within 6 hours of noticing it",
+        "applies_when": "the incident is of a type listed in Annexure I of the CERT-In Directions (e.g. targeted scanning, compromise of critical systems, attacks on servers, DoS/DDoS, data breach, unauthorised access)",
+        "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+        "found": true,
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+        "passage": "\u2026 source shall not deviate from NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details"
+      },
+      {
+        "id": "tcs_rules_rule7_6h",
+        "summary": "Telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require",
+        "applies_when": "the incident affects the telecommunication network or service",
+        "doc": "cybersecurity-rules-2024.pdf",
+        "found": true,
+        "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+        "passage": "\u2026 the implementation of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident; and (b) within twe\u2026"
+      },
+      {
+        "id": "cti_rules_reporting",
+        "summary": "If the affected network is notified as Critical Telecommunication Infrastructure, follow the CTI Rules, 2024 incident-reporting timelines",
+        "applies_when": "the affected network or element is notified as Critical Telecommunication Infrastructure",
+        "doc": "Critical Telecommunication Infrastructure Rules, 2024_0.pdf",
+        "found": true,
+        "citation": "Critical Telecommunication Infrastructure Rules, 2024_0.pdf, pp. 7\u20138",
+        "passage": "\u2026communication Infrastructure; (h) all logs relating to Critical Telecommunication Infrastructure to assist in detection of anomalies and enable the Central Government to generate intelligence on real time basis; and (i) reporting of security incidents within the timelines specified for Critical Telecommunication Infrastructure under rule 7. 7. Obligations related to Critical Telecommunication Infrastructure. \u2013 (1) Every telecommunication entity shall comply with the \u2026"
+      },
+      {
+        "id": "certin_logs_180d",
+        "summary": "Keep ICT system logs for a rolling 180 days and provide them to CERT-In on request",
+        "applies_when": "always (preserve the incident's logs; do not let them roll over)",
+        "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+        "found": true,
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+        "passage": "\u2026to the said Point of Contact. (iv) All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily enable logs of all their ICT systems and maintain them securely for a rolling period of 180 days and the same shall be maintained within the Indian jurisdiction. These should be provided to CERT-In along with reporting of any incident or when ordered / directed by CERT-In. (v) Data Centres, Virtual Private Server (\u2026"
+      },
+      {
+        "id": "telecom_act_s22",
+        "summary": "Telecommunications Act, 2023 s.22 \u2014 measures to protect and ensure the cyber security of telecommunication networks and services",
+        "applies_when": "always (statutory basis of the Telecom Cyber Security Rules)",
+        "doc": "new-telecom-Act-2023.pdf",
+        "found": true,
+        "citation": "new-telecom-Act-2023.pdf, p. 10",
+        "passage": "\u2026age any or all of any telecommunication services, or any telecommunication network or part thereof, connected with such telecommunication services. 22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.\u2014For the \u2026"
+      }
+    ],
+    "related": [
+      {
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 5\u20138",
+        "category": "cyber_incident_rules",
+        "score": 0.7534,
+        "text": "systems/information iii. Unauthorised access of IT systems/data iv. Defacement of website or intrusion into a website and unauthorised changes such as inserting malicious code, links to external websites etc. v. Malicious code attacks such as spreading of virus/worm/Trojan/Bots/ Spyware/Ransomware/Cryptominers vi. Attack on servers such as Database, Mail and DNS and network devices such as Routers vii. Identity Theft, spoofing and phishing attacks viii. Denial of Service (DoS) and Distributed De"
+      },
+      {
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+        "category": "cyber_incident_rules",
+        "score": 0.739,
+        "text": "NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details regarding methods and formats of reporting cyber security incidents is also publishe"
+      },
+      {
+        "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+        "category": "cyber_incident_rules",
+        "score": 0.7385,
+        "text": "of Directors or similar governing body of the telecommunication entity. (3) The Chief Telecommunication Security Officer shall be responsible for coordinating with the Central Government on behalf of the telecommunication entity for the implementation of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security"
+      },
+      {
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 4\u20135",
+        "category": "cyber_incident_rules",
+        "score": 0.7333,
+        "text": "Telecom (DoT) notice September 21, 2021 mandated procedures as amended from time to time may be referred to as per Annexure III. With respect to transaction records, accurate information shall be maintained in such a way that individual transaction can be reconstructed along with the relevant elements comprising of, but not limited to, information relating to the identification of the relevant parties including IP addresses along with timestamps and time zones, transaction ID, the public keys (o"
+      },
+      {
+        "citation": "cybersecurity-rules-2024.pdf, pp. 10\u201311",
+        "category": "cyber_incident_rules",
+        "score": 0.7331,
+        "text": "telecommunication services or telecommunication network, as well as, attempts to cause such incidents, intrusions or breaches; 11 (ii) maintain details of threat actors impacting its telecommunication services, or telecommunication network; (iii) maintain command logs of operation and maintenance; (iv) maintain logs of Security Operations Centre (SOC) (firewall, Intrusion Detection System (IDS) or Intrusion Prevention System (IPS), or Security Information and Event Management (SIEM) or other suc"
+      }
+    ],
+    "note": "Citations come from the prebuilt index. Decision support only \u2014 not legal advice."
+  }
+}
