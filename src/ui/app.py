@@ -680,7 +680,12 @@ def y3172_mode() -> None:
         st.header("Conclusion")
         st.write(story["conclusion"])
     with st.expander("Full run report"):
-        st.markdown((run_dir / "report.md").read_text(encoding="utf-8"))
+        report_md = run_dir / "report.md"
+        if report_md.exists():
+            st.markdown(report_md.read_text(encoding="utf-8"))
+        else:
+            st.info(f"`{shown_path(report_md)}` is missing; restore it with "
+                    "`git checkout -- outputs/y3172/examples` or run the intent again.")
 
 
 # ---------------------------------------------------------------------------
