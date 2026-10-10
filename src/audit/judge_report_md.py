@@ -1,16 +1,19 @@
 """
 Judge report — Markdown, complete
 =================================
-Renders one audit-trail JSON Lines file (see trail.py) as a Markdown document
-that keeps EVERY recorded field: the readable summary and timeline come
-first, then every entry in full — stage inputs, orchestrator choice, each
-agent's visible input, queries, retrieved passages with all metadata, claims
-with every citation and verifier outcome, the LLM prompts and raw response,
-the Verifier and Coordinator output, and the hash chain.
+Renders one audit-trail JSON Lines file (see trail.py) as a report in plain
+Markdown (no HTML), laid out for judges:
 
-Known fields get a readable layout; any field this module does not know is
-still printed under "Other fields", so nothing in the trail is dropped.
-`check_complete` confirms that every recorded value appears in the output.
+    Executive summary and observations  →  run status and configuration
+    →  timeline  →  stage-by-stage analysis  →  notifications
+    →  appendices holding every recorded value verbatim
+       (passages, claims and citations, LLM prompts and responses,
+        agent inputs, entry records and the hash chain)
+
+Known fields get a readable layout; a field this module does not know is
+still printed under "Other recorded fields", so nothing in the trail is
+dropped.  `check_complete` confirms that every recorded value appears in the
+report.
 
     python -m src.audit.judge_report_md outputs/audit/<run>.jsonl [-o report.md]
 """
@@ -19,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -39,10 +43,12 @@ OUTCOME_HELP = {
     "UNSUPPORTED": "The Canonical KB passages checked do not support the claim; preliminary only.",
     "CONFLICT": "Authoritative sources disagree; the Coordinator records both sides.",
 }
+FLAG_NAMES = {"cyber_event_suspected": "Cyber event suspected", "cii_flagged": "Critical infrastructure flagged",
+              "data_exposure_suspected": "Personal-data exposure suspected"}
 
 
 # ---------------------------------------------------------------------------
-# Markdown helpers
+# Markdown helpers (plain Markdown only)
 # ---------------------------------------------------------------------------
 
 def label(key: str) -> str:
@@ -58,51 +64,69 @@ def scalar(v) -> str:
 
 
 def cell(v) -> str:
-    return scalar(v).replace("|", "\\|").replace("\n", "<br>")
+    if isinstance(v, (dict, list)):
+        v = json.dumps(v, ensure_ascii=False)
+    s = scalar(v)
+    return (s.replace("|", "\\|").replace("\n", " ") if s != "" else "_(empty)_")
+
+
+def anchor(text: str) -> str:
+    """GitHub-style heading anchor."""
+    text = re.sub(r"[^\w\- ]", "", text.lower(), flags=re.UNICODE)
+    return text.strip().replace(" ", "-")
 
 
 def outcome(o: str) -> str:
     return f"{OUTCOME_ICON.get(o, '')} **{o}**"
 
 
-def agent(a: str) -> str:
-    return f"**{AGENT_NAMES.get(a, a)}** (`{a}`)"
+def name(a: str) -> str:
+    return AGENT_NAMES.get(a, a)
+
+
+def agents(ids) -> str:
+    return ", ".join(f"{name(a)} (`{a}`)" for a in ids) or "_none_"
 
 
 def counts(c: dict) -> str:
-    return ", ".join(f"{outcome(o)} {c[o]}" for o in OUTCOMES if o in c) + \
-        "".join(f", {k} {v}" for k, v in c.items() if k not in OUTCOMES) or "none"
+    parts = [f"{outcome(o)} {c[o]}" for o in OUTCOMES if o in c]
+    parts += [f"{k} {v}" for k, v in c.items() if k not in OUTCOMES]
+    return ", ".join(parts) or "none"
+
+
+def inline(v) -> str:
+    if isinstance(v, (dict, list)):
+        return "`" + json.dumps(v, ensure_ascii=False) + "`"
+    return scalar(v) if scalar(v) != "" else "_(empty)_"
 
 
 def bullets(items, empty: str = "_None recorded._") -> str:
-    if not items:
-        return empty + "\n"
-    return "".join(f"- {generic_inline(i)}\n" for i in items)
+    return "".join(f"- {inline(i)}\n" for i in items) if items else empty + "\n"
 
 
-def generic_inline(v) -> str:
-    if isinstance(v, (dict, list)):
-        return "`" + json.dumps(v, ensure_ascii=False) + "`"
-    return scalar(v)
+def quote(text: str) -> str:
+    return "".join(f"> {line}\n" if line else ">\n" for line in scalar(text).split("\n"))
 
 
-def fence(text: str, lang: str = "") -> str:
+def fence(text: str, lang: str = "text") -> str:
     return f"~~~~{lang}\n{text}\n~~~~\n"
 
 
-def details(summary: str, body: str) -> str:
-    return f"<details>\n<summary>{summary}</summary>\n\n{body}\n</details>\n\n"
+def table(headers: list[str], rows: list[list]) -> str:
+    out = "| " + " | ".join(headers) + " |\n|" + "---|" * len(headers) + "\n"
+    return out + "".join("| " + " | ".join(cell(c) if not isinstance(c, Raw) else c for c in r) + " |\n" for r in rows)
 
 
-def kv_table(d: dict, keys=None) -> str:
-    keys = keys if keys is not None else list(d)
-    rows = [f"| {label(k)} | {cell(d[k]) if not isinstance(d[k], (dict, list)) else cell(json.dumps(d[k], ensure_ascii=False))} |"
-            for k in keys if k in d]
-    return "| Field | Value |\n|---|---|\n" + "\n".join(rows) + "\n" if rows else ""
+class Raw(str):
+    """A table cell that is already Markdown."""
+
+
+def kv(d: dict, keys=None) -> str:
+    keys = [k for k in (keys if keys is not None else d) if k in d]
+    return table(["Field", "Value"], [[label(k), d[k]] for k in keys]) if keys else ""
 
 
 def generic(v, depth: int = 0) -> str:
-    """Any value, fully, as nested bullets."""
     pad = "  " * depth
     if isinstance(v, dict):
         if not v:
@@ -110,346 +134,452 @@ def generic(v, depth: int = 0) -> str:
         out = ""
         for k, x in v.items():
             if isinstance(x, (dict, list)) and x:
-                out += f"{pad}- **{label(k)}**:\n" + generic(x, depth + 1)
+                out += f"{pad}- **{label(k)}:**\n" + generic(x, depth + 1)
             else:
-                out += f"{pad}- **{label(k)}**: {generic_inline(x) if x not in ([], {}) else '_(empty)_'}\n"
+                out += f"{pad}- **{label(k)}:** {inline(x) if x not in ([], {}) else '_(empty)_'}\n"
         return out
     if isinstance(v, list):
         if not v:
             return f"{pad}- _(empty)_\n"
-        out = ""
-        for i, x in enumerate(v, 1):
-            if isinstance(x, (dict, list)):
-                out += f"{pad}- #{i}\n" + generic(x, depth + 1)
-            else:
-                out += f"{pad}- {scalar(x)}\n"
-        return out
-    return f"{pad}- {scalar(v)}\n"
+        return "".join(f"{pad}- Item {i}:\n" + generic(x, depth + 1) if isinstance(x, (dict, list))
+                       else f"{pad}- {inline(x)}\n" for i, x in enumerate(v, 1))
+    return f"{pad}- {inline(v)}\n"
 
 
-def rest(d: dict, known: set, title: str = "Other fields") -> str:
+def rest(d: dict, known: set) -> str:
     left = {k: v for k, v in d.items() if k not in known}
-    return f"**{title}:**\n\n" + generic(left) + "\n" if left else ""
+    return "**Other recorded fields:**\n\n" + generic(left) + "\n" if left else ""
 
 
 def ref(c: dict) -> str:
     return f"{c.get('source_title', '')}, {c.get('section', '')}" + (f" (p. {c['page']})" if c.get("page") else "")
 
 
-def citation_lines(cits: list[dict]) -> str:
+def cite_rows(cits: list) -> str:
     if not cits:
-        return "_none_\n"
-    out = ""
+        return "_None._\n"
+    rows = []
     for c in cits:
         if isinstance(c, dict):
-            extra = {k: v for k, v in c.items() if k not in ("source_title", "section", "page", "chunk_id")}
-            out += (f"- {ref(c)} — page `{scalar(c.get('page', ''))}` — chunk `{scalar(c.get('chunk_id', ''))}`"
-                    + (f" — {generic_inline(extra)}" if extra else "") + "\n")
+            rows.append([c.get("source_title", ""), c.get("section", ""), c.get("page", ""), Raw(f"`{c.get('chunk_id', '')}`"),
+                         Raw(inline({k: v for k, v in c.items() if k not in ("source_title", "section", "page", "chunk_id")}))
+                         if set(c) - {"source_title", "section", "page", "chunk_id"} else ""])
         else:
-            out += f"- {scalar(c)}\n"
-    return out
+            rows.append([c, "", "", "", ""])
+    return table(["Source", "Section", "Page", "Chunk ID", "Other"], rows)
+
+
+def strip_brackets(x: str) -> str:
+    return str(x).strip().strip("[]")
 
 
 # ---------------------------------------------------------------------------
-# Sections
+# Report sections
 # ---------------------------------------------------------------------------
 
-def run_header(start: dict, stages: list, end: dict | None, problems: list) -> str:
+def observations(start: dict, stages: list, end: dict | None, problems: list) -> list[str]:
+    """Factual points a reader should notice, each read from the trail."""
+    obs = []
+    n_stages, planned = len(stages), start.get("stage_count")
+    if not end:
+        obs.append(f"**The run is incomplete.** Only {n_stages} of {planned} planned stages {'was' if n_stages == 1 else 'were'} recorded and there "
+                   "is no `run_completed` entry, so the run stopped before the remaining stages were processed. "
+                   "Everything below describes the stage(s) that were recorded.")
+    obs.append("**The audit trail is intact.** Every entry's SHA-256 hash and its link to the previous entry check out."
+               if not problems else "**The audit trail is broken:** " + "; ".join(problems))
+    matched = sum(1 for s in stages if s.get("orchestrator", {}).get("matches_docx_table"))
+    obs.append(f"**Agent selection matched the official DOCX stage table at {matched} of {n_stages} stage(s).**")
     totals: Counter = Counter()
     for s in stages:
         totals.update(s.get("verifier", {}).get("outcome_counts", {}))
-    passages = sum(len(a.get("retrieved_passages", [])) for s in stages for a in s.get("agents", []))
-    used = sorted({a for s in stages for a in s.get("orchestrator", {}).get("active_agents", [])})
-    stage_count = start.get("stage_count")
-    status = (f"✅ Completed — {end['stages_recorded']} of {stage_count} stage(s) recorded"
-              if end else f"⚠️ **Incomplete run** — {len(stages)} of {stage_count} stage(s) recorded; "
-                          "no `run_completed` entry (the run stopped before finishing)")
-    integrity = ("✅ **Intact** — every entry's SHA-256 hash and its link to the previous entry check out, "
-                 "so no entry was edited, removed or reordered." if not problems
-                 else "❌ **Broken** — " + "; ".join(problems))
-    md = f"""# {start.get('scenario_title', start.get('scenario_id', 'Run'))}
+    if not totals.get("VERIFIED"):
+        obs.append(f"**No claim reached VERIFIED** ({counts(dict(totals))}). The quoted passages match the authoritative "
+                   "text, but the in-force and amendment status of the sources was not confirmed, so the system "
+                   "reports them as INCOMPLETE rather than overstating them; claims without a supporting passage are "
+                   "UNSUPPORTED and treated as preliminary.")
+    accepted = rejected = bracketed = 0
+    for s in stages:
+        for a in s.get("agents", []):
+            llm = a.get("llm_reasoning") or {}
+            offered = set(llm.get("passages_offered", []))
+            accepted += len(llm.get("accepted_claims", []))
+            for r in llm.get("rejected_claims", []):
+                rejected += 1
+                cites = r.get("cites", []) if isinstance(r, dict) else []
+                if cites and all(strip_brackets(c) in offered for c in cites) and any(c != strip_brackets(c) for c in cites):
+                    bracketed += 1
+    if rejected or accepted:
+        text = (f"**LLM claims: {accepted} accepted, {rejected} rejected** by the citation check before reaching the "
+                "Verifier; only passages quoted from the knowledge base were verified.")
+        if bracketed:
+            text += (f" In {bracketed} of the rejected claims the LLM did cite passages it had been offered, but wrote "
+                     "the IDs inside square brackets (e.g. `[3gpp_ts_23501:clause-5-45-2:1]`), so they did not match "
+                     "the offered IDs exactly and were rejected as \"cites no retrieved passage id\".")
+        obs.append(text)
+    kb, llm = start.get("knowledge_base_build", {}), start.get("llm", {})
+    if "none" in str(kb.get("generator_model", "")).lower() and llm.get("model"):
+        obs.append(f"**The run header records two different statements about generation:** "
+                   f"`generator_model` is \"{kb['generator_model']}\", while `llm` records "
+                   f"{llm.get('provider')} · {llm.get('model')}, which the agents used for reasoning. Both are "
+                   "reproduced as recorded.")
+    if kb.get("not_ingested"):
+        obs.append("**Sources not ingested into the knowledge base:** " + ", ".join(f"`{x}`" for x in kb["not_ingested"]) + ".")
+    if start.get("code", {}).get("uncommitted_changes"):
+        obs.append(f"**The run was made from commit `{start['code'].get('commit')}` with uncommitted changes.**")
+    return obs
 
-**Audit-trail report** — run `{start.get('run_id')}` · scenario `{start.get('scenario_id')}` (DOCX {start.get('docx_section', '')})
 
-> **Run status:** {status}
->
-> **Hash-chain integrity:** {integrity}
-
-| Stages recorded | Specialist agents used | Passages retrieved | Claims verified | Selections matching DOCX table |
-|---|---|---|---|---|
-| {len(stages)} / {stage_count} | {len(used)} | {passages} | {sum(totals.values())} | {sum(1 for s in stages if s.get('orchestrator', {}).get('matches_docx_table'))} / {len(stages)} |
-
-**Verifier outcomes (all stages):** {counts(dict(totals))}
-
-**Contents:** [1. Summary](#1-summary-and-conclusion) · [2. Timeline](#2-timeline) · [3. Run header](#3-run-header-entry-1) · """
-    md += " · ".join(f"[Stage {s['stage']['label']}](#stage-{s['stage']['label'].lower()})" for s in stages)
-    md += " · [Run completion](#run-completion) · [Hash chain](#hash-chain)\n\n"
-    md += "**Verifier outcome key:**\n\n| Outcome | Meaning |\n|---|---|\n" + "".join(
-        f"| {outcome(o)} | {OUTCOME_HELP[o]} |\n" for o in OUTCOMES) + "\n"
+def front(path: Path, start: dict, stages: list, end: dict | None, problems: list) -> str:
+    title = start.get("scenario_title", start.get("scenario_id", "Run"))
+    last = (end or (stages[-1] if stages else start)).get("recorded_at", "")
+    status = (f"✅ Complete — {end.get('stages_recorded')} of {start.get('stage_count')} stages" if end else
+              f"⚠️ Incomplete — {len(stages)} of {start.get('stage_count')} stages recorded, run did not finish")
+    md = f"# Audit Report: {title}\n\n"
+    md += table(["Item", "Detail"], [
+        ["Run ID", Raw(f"`{start.get('run_id')}`")], ["Scenario", f"{start.get('scenario_id')} (DOCX {start.get('docx_section', '')})"],
+        ["Run started", start.get("recorded_at")], ["Last entry recorded", last], ["Run status", status],
+        ["Audit-trail integrity", "✅ Intact" if not problems else "❌ Broken"],
+        ["Source file", Raw(f"`{path.name}`")]]) + "\n"
+    sections = ["1. Executive summary", "2. Run status and integrity", "3. Run configuration", "4. Incident timeline",
+                "5. Stage-by-stage analysis", "6. Notifications that may be due", "7. Glossary",
+                "Appendix A. Retrieved passages in full", "Appendix B. Claims and citations in full",
+                "Appendix C. LLM prompts and responses", "Appendix D. Inputs visible to each agent",
+                "Appendix E. Entry records and hash chain"]
+    md += "## Contents\n\n" + "".join(f"- [{s}](#{anchor(s)})\n" for s in sections) + "\n---\n\n"
     return md
 
 
-def summary(stages: list) -> str:
+def executive(start: dict, stages: list, end: dict | None, problems: list) -> str:
     n = adviser_narrative(stages)
-    md = "## 1. Summary and conclusion\n\n" \
-         "_Condensed by the project's `src/audit/narrative.py` from the recorded entries; every sentence " \
-         "restates a recorded fact, quoted provision or Verifier outcome._\n\n"
-    md += f"### What happened\n\n{n['summary']}\n\n### What follows\n\n{n['conclusion']}\n\n"
-    md += "### Notifications that may be due\n\n_Read from the quoted Indian provisions; each must be confirmed by a qualified person._\n\n"
-    if n["notifications"]:
-        md += "| To | Time limit | Provision | Page | Applies if | Raised by | First raised |\n|---|---|---|---|---|---|---|\n"
-        for r in n["notifications"]:
-            md += (f"| {cell(r['recipient'])} | {cell(', then '.join(r['limits']))} | {cell(r['source'])}, "
-                   f"{cell(r['section'])} | {cell(r.get('page', ''))} | {cell(r['condition'])} | "
-                   f"{cell(', '.join(r.get('agents', [])))} | {cell(r['stage'])} |\n")
-    else:
-        md += "_No reporting duty was found in the provisions quoted so far._\n"
-    return md + "\n"
-
-
-def timeline(stages: list) -> str:
-    md = "## 2. Timeline\n\n| Stage | Scenario time | Information released | Agents active | Newly activated | Verifier outcomes | Flags raised |\n|---|---|---|---|---|---|---|\n"
+    totals: Counter = Counter()
     for s in stages:
-        st, o = s["stage"], s["orchestrator"]
-        flags = s.get("coordinator", {}).get("incident_flags", {})
-        raised = [k.replace("_", " ") for k, v in flags.items() if v] or ["—"]
-        md += (f"| [{st['label']}](#stage-{st['label'].lower()}) | {cell(st['scenario_time'])} | "
-               f"{cell(st['information_released'])} | {cell(', '.join(AGENT_NAMES.get(a, a) for a in o['active_agents']))} | "
-               f"{cell(', '.join(AGENT_NAMES.get(a, a) for a in o['newly_activated']) or '—')} | "
-               f"{cell(counts(s['verifier']['outcome_counts']))} | {cell(', '.join(raised))} |\n")
-    return md + "\n"
+        totals.update(s.get("verifier", {}).get("outcome_counts", {}))
+    used = sorted({a for s in stages for a in s.get("orchestrator", {}).get("active_agents", [])})
+    md = "## 1. Executive summary\n\n### Key figures\n\n"
+    md += table(["Measure", "Value"], [
+        ["Stages recorded", f"{len(stages)} of {start.get('stage_count')}"],
+        ["Specialist agents used", f"{len(used)} ({', '.join(name(a) for a in used)})"],
+        ["Passages retrieved", sum(len(a.get('retrieved_passages', [])) for s in stages for a in s.get('agents', []))],
+        ["Claims checked by the Verifier", sum(totals.values())],
+        ["Verifier outcomes", Raw(counts(dict(totals)))],
+        ["Evidence-backed conclusions (final stage)", len(stages[-1].get("coordinator", {}).get("evidence_backed_conclusions", [])) if stages else 0],
+        ["Agent selection matching DOCX table", f"{sum(1 for s in stages if s.get('orchestrator', {}).get('matches_docx_table'))} of {len(stages)}"]])
+    md += f"\n### What happened\n\n{n['summary']}\n\n### What follows\n\n{n['conclusion']}\n\n"
+    md += "_The two paragraphs above are produced by the project's `src/audit/narrative.py` from the recorded entries; " \
+          "each sentence restates a recorded fact, quoted provision or Verifier outcome._\n\n"
+    md += "### Observations for judges\n\n" + "".join(f"{i}. {o}\n" for i, o in enumerate(observations(start, stages, end, problems), 1))
+    return md + "\n---\n\n"
 
 
-def start_entry(start: dict) -> str:
-    md = "## 3. Run header (entry 1)\n\n"
-    top = ["seq", "run_id", "type", "schema_version", "recorded_at", "scenario_id", "scenario_title",
-           "docx_section", "stage_count", "knowledge_base_note", "prev_hash", "hash"]
-    md += kv_table(start, top) + "\n"
+def status_section(start: dict, stages: list, end: dict | None, problems: list, entries: list) -> str:
+    md = "## 2. Run status and integrity\n\n"
+    rows = [[e.get("seq"), e.get("type") + (f" {e['stage']['label']}" if e.get("type") == "stage" else ""), e.get("recorded_at")]
+            for e in entries]
+    md += "### Entries in the audit trail\n\n" + table(["Seq", "Entry", "Recorded at"], rows) + "\n"
+    if end:
+        md += "### Run completion entry\n\n" + kv(end) + "\n"
+    else:
+        md += (f"### Run completion\n\n⚠️ No `run_completed` entry was recorded. The header planned "
+               f"{start.get('stage_count')} stages; {len(stages)} {'was' if len(stages) == 1 else 'were'} recorded. The remaining stages were not run "
+               "or not recorded, so this report covers only the recorded stage(s).\n\n")
+    md += "### Integrity check\n\n"
+    md += ("✅ **Intact.** Each entry stores the SHA-256 of its own content (`hash`) and the hash of the entry before it "
+           "(`prev_hash`). All hashes were recomputed with `src.audit.trail.verify_chain` and match, so no entry was "
+           "edited, removed or reordered. The full chain is in [Appendix E](#appendix-e-entry-records-and-hash-chain).\n\n"
+           if not problems else "❌ **Broken:**\n\n" + bullets(problems) + "\n")
+    return md + "---\n\n"
+
+
+def config_section(start: dict) -> str:
+    md = "## 3. Run configuration\n\n### Run header\n\n"
+    top = ["seq", "run_id", "type", "schema_version", "recorded_at", "scenario_id", "scenario_title", "docx_section",
+           "stage_count", "knowledge_base_note", "prev_hash", "hash"]
+    md += kv(start, top) + "\n"
     if "knowledge_bases_live" in start:
-        md += "### Knowledge bases live\n\n| Knowledge base | Live |\n|---|---|\n" + "".join(
-            f"| {k} | {'✅ true' if v else '❌ false'} |\n" for k, v in start["knowledge_bases_live"].items()) + "\n"
+        md += "### Knowledge bases\n\n" + table(["Knowledge base", "Live"], [
+            [k, "✅ true" if v else "❌ false"] for k, v in start["knowledge_bases_live"].items()]) + "\n"
     kb = start.get("knowledge_base_build")
     if kb is not None:
-        md += "### Knowledge-base build\n\n" + kv_table({k: v for k, v in kb.items() if k != "not_ingested"})
-        md += f"\n**Not ingested:**\n\n{bullets(kb.get('not_ingested', []))}\n"
+        md += "### Knowledge-base build\n\n" + kv({k: v for k, v in kb.items() if k != "not_ingested"}) + "\n"
+        md += "**Not ingested:**\n\n" + bullets(kb.get("not_ingested", [])) + "\n"
     if "llm" in start:
-        md += "### Language model\n\n" + kv_table(start["llm"]) + "\n"
+        md += "### Language model\n\n" + kv(start["llm"]) + "\n"
     if "code" in start:
-        md += "### Code\n\n" + kv_table(start["code"]) + "\n"
-    if kb and "none" in str(kb.get("generator_model", "")).lower() and start.get("llm", {}).get("model"):
-        md += ("> ℹ️ **Note for readers:** the header records both `generator_model: "
-               f"\"{kb['generator_model']}\"` and an LLM (`{start['llm'].get('provider')}` · "
-               f"`{start['llm'].get('model')}`). Both values are reproduced exactly as recorded.\n\n")
-    return md + rest(start, set(top) | {"knowledge_bases_live", "knowledge_base_build", "llm", "code"})
+        md += "### Code version\n\n" + kv(start["code"]) + "\n"
+    return md + rest(start, set(top) | {"knowledge_bases_live", "knowledge_base_build", "llm", "code"}) + "---\n\n"
 
 
-def passage_md(i: int, p: dict) -> str:
-    known = ["source_title", "authority", "jurisdiction", "document_type", "section", "section_title", "page",
-             "date_issued", "effective", "effective_status", "amendment_checked", "amendment_note", "url",
-             "provenance_note", "chunk_id", "relevance_score", "is_stub"]
-    md = f"**{i}. {ref(p)}** — relevance {scalar(p.get('relevance_score'))}\n\n" + kv_table(p, known)
-    md += "\n**Excerpt:**\n\n" + "".join(f"> {line}\n" for line in scalar(p.get("excerpt", "")).split("\n")) + "\n"
-    return md + rest(p, set(known) | {"excerpt"})
+def timeline_section(stages: list) -> str:
+    md = "## 4. Incident timeline\n\n"
+    rows = []
+    for s in stages:
+        st, o = s["stage"], s["orchestrator"]
+        flags = [FLAG_NAMES.get(k, k) for k, v in s.get("coordinator", {}).get("incident_flags", {}).items() if v]
+        rows.append([Raw(f"[{st['label']}](#{anchor(stage_heading(s))})"), st.get("scenario_time"), st.get("information_released"),
+                     ", ".join(name(a) for a in o.get("active_agents", [])),
+                     ", ".join(name(a) for a in o.get("newly_activated", [])) or "—",
+                     Raw(counts(s.get("verifier", {}).get("outcome_counts", {}))), ", ".join(flags) or "none"])
+    md += table(["Stage", "Scenario time", "Information released", "Agents active", "Newly activated",
+                 "Verifier outcomes", "Flags raised"], rows) if rows else "_No stages recorded._\n"
+    return md + "\n---\n\n"
 
 
-def claim_md(i: int, c: dict) -> str:
-    md = f"**Claim {i}** — {outcome(c.get('verifier_outcome', ''))}\n\n"
-    md += "".join(f"> {line}\n" for line in scalar(c.get("claim", "")).split("\n")) + "\n"
-    md += f"- **Verifier rationale:** {scalar(c.get('verifier_rationale', ''))}\n"
-    md += f"- **Cross-domain flag:** {scalar(c.get('cross_domain_flag'))}"
-    md += f" — note: {scalar(c.get('cross_domain_note'))}\n" if c.get("cross_domain_note") else " — note: _(none)_\n"
-    md += "\n**Citations (cited by the agent):**\n\n" + citation_lines(c.get("citations", []))
-    md += "\n**Verifier — supporting passages:**\n\n" + citation_lines(c.get("verifier_supporting", []))
-    md += "\n**Verifier — conflicting / non-supporting passages checked:**\n\n" + citation_lines(c.get("verifier_conflicting", []))
-    return md + "\n" + rest(c, {"claim", "citations", "verifier_outcome", "verifier_rationale", "verifier_supporting",
-                                "verifier_conflicting", "cross_domain_flag", "cross_domain_note"})
+def stage_heading(s: dict) -> str:
+    return f"5.{s['stage'].get('index', 0) + 1} Stage {s['stage']['label']}"
 
 
-def llm_md(llm: dict) -> str:
-    md = kv_table(llm, ["provider", "model", "status", "latency_ms", "prompt_sha256"])
-    if "usage" in llm:
-        md += "\n**Token usage:** " + ", ".join(f"{k} {v}" for k, v in (llm["usage"] or {}).items()) + "\n"
-    md += f"\n**Reasoning summary:** {scalar(llm.get('reasoning_summary', ''))}\n\n"
-    md += "**Passages offered to the LLM:**\n\n" + "".join(f"- `{p}`\n" for p in llm.get("passages_offered", [])) + "\n"
-    md += "**Accepted claims (passed to the Verifier):**\n\n"
-    acc = llm.get("accepted_claims", [])
-    md += generic(acc) if acc else "_None._\n"
-    md += "\n**Rejected claims (not passed on):**\n\n"
-    rej = llm.get("rejected_claims", [])
-    if rej:
-        for j, r in enumerate(rej, 1):
-            if isinstance(r, dict):
-                md += (f"{j}. {scalar(r.get('claim', ''))}\n   - cites: "
-                       f"{', '.join('`' + str(x) + '`' for x in r.get('cites', [])) or '_none_'}\n"
-                       f"   - reason rejected: {scalar(r.get('reason', ''))}\n")
-                extra = {k: v for k, v in r.items() if k not in ("claim", "cites", "reason")}
-                if extra:
-                    md += generic(extra, 1)
-            else:
-                md += f"{j}. {scalar(r)}\n"
-    else:
-        md += "_None._\n"
-    md += "\n"
-    for key, title in (("system_prompt", "System prompt"), ("user_prompt", "User prompt"),
-                       ("raw_response", "Raw LLM response")):
-        if key in llm:
-            md += details(title, fence(scalar(llm[key]), "json" if key == "raw_response" else "text"))
-    return md + rest(llm, {"provider", "model", "status", "latency_ms", "prompt_sha256", "usage", "reasoning_summary",
-                           "passages_offered", "accepted_claims", "rejected_claims", "system_prompt", "user_prompt",
-                           "raw_response"})
-
-
-def agent_md(label_: str, a: dict) -> str:
-    aid = a.get("agent_id", "")
-    md = f"#### {label_} · Agent: {AGENT_NAMES.get(aid, aid)} (`{aid}`)\n\n"
-    md += f"**Decision summary:** {scalar(a.get('decision_summary', ''))}\n\n"
+def agent_section(s: dict, a: dict, num: str) -> str:
+    aid, lab = a.get("agent_id", ""), s["stage"]["label"]
+    md = f"#### {num} {name(aid)} agent\n\n"
+    md += f"**Decision summary:** {a.get('decision_summary', '')}\n\n"
     m = a.get("mandate_output", {})
     md += "**Mandate output:**\n\n" + (generic(m) if m else "_(empty)_\n") + "\n"
-    claims = a.get("claims", [])
-    c_counts = Counter(c.get("verifier_outcome") for c in claims)
-    md += f"**Claims and verification** ({len(claims)}: {counts(dict(c_counts))}):\n\n"
-    md += "".join(claim_md(i, c) for i, c in enumerate(claims, 1)) or "_No claims._\n\n"
-    md += "**Uncertainty notes:**\n\n" + bullets(a.get("uncertainty_notes", [])) + "\n"
-    md += "**Missing facts:**\n\n" + bullets(a.get("missing_facts", [])) + "\n"
-    vi = a.get("visible_input", {})
-    vi_md = kv_table(vi, ["chunk_id", "information_released"])
-    vi_md += "\n**New facts:**\n\n" + bullets(vi.get("new_facts", []))
-    vi_md += "\n**Agent-only view:**\n\n" + bullets(vi.get("agent_view", []))
-    vi_md += "\n**Prior chunk IDs:**\n\n" + bullets(vi.get("prior_chunk_ids", []))
-    vi_md += "\n**Incident state given to the agent:**\n\n" + generic(vi.get("incident_state", {}))
-    vi_md += "\n" + rest(vi, {"chunk_id", "information_released", "new_facts", "agent_view", "prior_chunk_ids", "incident_state"})
-    md += details(f"Input visible to {AGENT_NAMES.get(aid, aid)}", vi_md)
-    md += "**Retrieval queries:**\n\n" + bullets(a.get("queries", [])) + "\n"
+    md += "**Search queries used:**\n\n" + "".join(f"{i}. {q}\n" for i, q in enumerate(a.get("queries", []), 1)) + "\n"
     ps = a.get("retrieved_passages", [])
-    md += details(f"Retrieved passages ({len(ps)}) — full metadata and excerpts",
-                  "".join(passage_md(i, p) for i, p in enumerate(ps, 1)) or "_None._")
-    if "llm_reasoning" in a:
-        llm = a["llm_reasoning"] or {}
-        md += f"**LLM reasoning** — {scalar(llm.get('status', ''))}\n\n" + (llm_md(llm) if llm else "_(none recorded)_\n\n")
-    return md + rest(a, {"agent_id", "decision_summary", "mandate_output", "claims", "uncertainty_notes", "missing_facts",
-                         "visible_input", "queries", "retrieved_passages", "llm_reasoning"})
+    md += f"**Evidence retrieved ({len(ps)} passages; full text in [Appendix A](#appendix-a-retrieved-passages-in-full)):**\n\n"
+    md += table(["#", "Source", "Section", "Section title", "Page", "Relevance", "Chunk ID"],
+                [[i, p.get("source_title"), p.get("section"), p.get("section_title"), p.get("page"), p.get("relevance_score"),
+                  Raw(f"`{p.get('chunk_id')}`")] for i, p in enumerate(ps, 1)]) + "\n" if ps else "_None._\n\n"
+    claims = a.get("claims", [])
+    md += (f"**Claims and verification ({len(claims)}: {counts(dict(Counter(c.get('verifier_outcome') for c in claims)))}; "
+           "citations in full in [Appendix B](#appendix-b-claims-and-citations-in-full)):**\n\n")
+    md += table(["#", "Claim", "Verifier outcome", "Verifier rationale"],
+                [[i, c.get("claim"), Raw(outcome(c.get("verifier_outcome", ""))), c.get("verifier_rationale")]
+                 for i, c in enumerate(claims, 1)]) + "\n" if claims else "_No claims._\n\n"
+    md += "**Uncertainty noted by the agent:**\n\n" + bullets(a.get("uncertainty_notes", [])) + "\n"
+    md += "**Missing facts noted by the agent:**\n\n" + bullets(a.get("missing_facts", [])) + "\n"
+    llm = a.get("llm_reasoning")
+    if llm:
+        md += "**LLM-assisted reasoning** (prompts and raw output in [Appendix C](#appendix-c-llm-prompts-and-responses)):\n\n"
+        md += table(["Field", "Value"], [["Provider / model", f"{llm.get('provider')} · {llm.get('model')}"],
+                                         ["Outcome", llm.get("status")], ["Latency (ms)", llm.get("latency_ms")],
+                                         ["Tokens", ", ".join(f"{k} {v}" for k, v in (llm.get("usage") or {}).items())]]) + "\n"
+        md += f"Reasoning summary:\n\n{quote(llm.get('reasoning_summary', ''))}\n"
+        acc, rej = llm.get("accepted_claims", []), llm.get("rejected_claims", [])
+        md += "Accepted claims:\n\n" + (generic(acc) if acc else "_None._\n") + "\n"
+        md += "Rejected claims:\n\n"
+        md += table(["#", "Claim proposed by the LLM", "Passages it cited", "Reason rejected"],
+                    [[i, r.get("claim"), Raw(", ".join(f"`{c}`" for c in r.get("cites", [])) or "_none_"), r.get("reason")]
+                     if isinstance(r, dict) else [i, r, "", ""] for i, r in enumerate(rej, 1)]) + "\n" if rej else "_None._\n\n"
+    elif "llm_reasoning" in a:
+        md += "**LLM-assisted reasoning:** _none recorded._\n\n"
+    return md + rest(a, {"agent_id", "decision_summary", "mandate_output", "queries", "retrieved_passages", "claims",
+                         "uncertainty_notes", "missing_facts", "llm_reasoning", "visible_input"})
 
 
-def link_md(links: list) -> str:
+def link_list(links: list) -> str:
     if not links:
         return "_None._\n"
     md = ""
     for i, l in enumerate(links, 1):
         if not isinstance(l, dict):
-            md += f"{i}. {scalar(l)}\n"
+            md += f"{i}. {inline(l)}\n"
             continue
-        md += f"{i}. **{' ↔ '.join(l.get('agents', []))}**" + (f" — kind: `{l['kind']}`" if "kind" in l else "") + \
-              (f" — chunk `{l['chunk_id']}`" if "chunk_id" in l else "") + f"\n   - {scalar(l.get('note', ''))}\n"
+        md += (f"{i}. **{' ↔ '.join(name(x) for x in l.get('agents', []))}**"
+               + (f", kind `{l['kind']}`" if "kind" in l else "") + (f", chunk `{l['chunk_id']}`" if "chunk_id" in l else "")
+               + f": {l.get('note', '')}\n")
         for mbr in l.get("members", []):
-            md += (f"   - member: {agent(mbr.get('agent_id', ''))} at `{mbr.get('chunk_id', '')}` — "
-                   f"{scalar(mbr.get('claim', ''))}\n")
+            md += f"    - Member: {name(mbr.get('agent_id', ''))} at `{mbr.get('chunk_id', '')}`: {mbr.get('claim', '')}\n"
             extra = {k: v for k, v in mbr.items() if k not in ("agent_id", "chunk_id", "claim")}
-            if extra:
-                md += generic(extra, 2)
+            md += generic(extra, 3) if extra else ""
         extra = {k: v for k, v in l.items() if k not in ("agents", "kind", "chunk_id", "note", "members")}
-        if extra:
-            md += generic(extra, 1)
+        md += generic(extra, 2) if extra else ""
     return md
 
 
-def stage_md(s: dict) -> str:
-    st, o = s["stage"], s["orchestrator"]
-    lab = st["label"]
-    md = f"## Stage {lab}\n\n**{scalar(st.get('information_released'))}**\n\n"
-    md += "### Entry record\n\n" + kv_table(s, ["seq", "run_id", "type", "scenario_id", "recorded_at",
-                                               "pipeline_timestamp", "prev_hash", "hash"]) + "\n"
-    md += "### What was released\n\n" + kv_table(st, ["index", "label", "chunk_id", "scenario_time",
-                                                      "information_released", "docx_information_released",
-                                                      "docx_expected_change"])
-    md += "\n**New facts:**\n\n" + bullets(st.get("new_facts", []))
-    md += "\n**Information released only to specific agents:**\n\n"
+def stage_section(s: dict) -> str:
+    st, o, v, c = s["stage"], s["orchestrator"], s.get("verifier", {}), s.get("coordinator", {})
+    h = stage_heading(s)
+    md = f"### {h}\n\n**Scenario time:** {st.get('scenario_time')}  \n**Chunk:** `{st.get('chunk_id')}`\n\n"
+    md += f"#### What was released\n\n{quote(st.get('information_released', ''))}\n"
+    md += "**New facts:**\n\n" + bullets(st.get("new_facts", [])) + "\n"
     av = st.get("agent_views", {})
-    md += "".join(f"- {agent(k)}:\n" + "".join(f"  - {scalar(x)}\n" for x in v) for k, v in av.items()) or "_None._\n"
-    md += "\n**Prior chunks:**\n\n" + bullets(st.get("prior_chunks", []))
-    md += "\n" + rest(st, {"index", "label", "chunk_id", "scenario_time", "information_released", "new_facts",
-                           "agent_views", "prior_chunks", "docx_information_released", "docx_expected_change"})
-    md += "### Orchestrator — which agents acted\n\n"
-    md += f"- **Active:** {', '.join(agent(a) for a in o.get('active_agents', [])) or '_none_'}\n"
-    md += f"- **Newly activated:** {', '.join(agent(a) for a in o.get('newly_activated', [])) or '_none_'}\n"
-    md += f"- **No longer active (carried forward, not re-examined):** {', '.join(agent(a) for a in o.get('no_longer_active', [])) or '_none_'}\n"
-    md += f"- **DOCX primary agents:** {', '.join(agent(a) for a in o.get('docx_primary_agents', [])) or '_none_'}\n"
-    md += f"- **Matches DOCX table:** {'✅ true' if o.get('matches_docx_table') else '❌ ' + scalar(o.get('matches_docx_table'))}\n\n"
+    md += "**Information released only to specific agents:**\n\n"
+    md += ("".join(f"- {name(k)} (`{k}`) only:\n" + "".join(f"    - {x}\n" for x in vals) for k, vals in av.items()) or "_None._\n") + "\n"
+    md += "**Prior chunks considered:** " + (", ".join(f"`{x}`" for x in st.get("prior_chunks", [])) or "_none (first stage)_") + "\n\n"
+    md += table(["Official DOCX stage table", "Text"], [["Information released", st.get("docx_information_released")],
+                                                         ["Expected change", st.get("docx_expected_change")]]) + "\n"
+    md += rest(st, {"index", "label", "chunk_id", "scenario_time", "information_released", "new_facts", "agent_views",
+                    "prior_chunks", "docx_information_released", "docx_expected_change"})
+    md += "#### Agents selected by the Orchestrator\n\n"
+    md += table(["Item", "Agents"], [["Active", agents(o.get("active_agents", []))],
+                                     ["Newly activated", agents(o.get("newly_activated", []))],
+                                     ["No longer active (conclusions carried forward)", agents(o.get("no_longer_active", []))],
+                                     ["Primary agents in the DOCX table", agents(o.get("docx_primary_agents", []))],
+                                     ["Matches the DOCX table", "✅ Yes" if o.get("matches_docx_table") else f"❌ {scalar(o.get('matches_docx_table'))}"]]) + "\n"
     md += rest(o, {"active_agents", "newly_activated", "no_longer_active", "docx_primary_agents", "matches_docx_table"})
-    md += "### Specialist agents\n\n" + "".join(agent_md(lab, a) for a in s.get("agents", []))
-    v = s.get("verifier", {})
-    md += f"### Verifier\n\n**Outcome counts:** {counts(v.get('outcome_counts', {}))}\n\n"
-    md += "**Cross-domain links:**\n\n" + bullets(v.get("cross_domain_links", []))
-    md += "\n**Cross-domain link details:**\n\n" + link_md(v.get("cross_domain_details", []))
-    md += "\n**Conflicts:**\n\n" + bullets(v.get("conflicts", []))
-    md += "\n**Conflict details:**\n\n" + (generic(v["conflict_details"]) if v.get("conflict_details") else "_None._\n")
-    md += "\n**Missing evidence:**\n\n" + bullets(v.get("missing_evidence", [])) + "\n"
-    md += rest(v, {"outcome_counts", "cross_domain_links", "conflicts", "missing_evidence", "cross_domain_details",
-                   "conflict_details"})
-    c = s.get("coordinator", {})
-    md += f"### Coordinator assessment\n\n- **Chunk:** `{scalar(c.get('chunk_id'))}`\n"
-    md += f"- **Active agents:** {', '.join(agent(a) for a in c.get('active_agents', []))}\n"
-    md += "- **Incident flags:** " + ", ".join(f"{k} = {'✅ true' if x else 'false'}"
-                                               for k, x in c.get("incident_flags", {}).items()) + "\n\n"
-    for key, title in (("changes_from_prior", "What changed from the previous stage"),
-                       ("confirmed_facts", "Confirmed facts"),
+    md += "#### Findings of the specialist agents\n\n"
+    base = h.split(" ")[0]
+    md += "".join(agent_section(s, a, f"{base}.{i}") for i, a in enumerate(s.get("agents", []), 1))
+    md += f"#### Verification\n\n**Outcome counts:** {counts(v.get('outcome_counts', {}))}\n\n"
+    md += "**Cross-domain links:**\n\n" + bullets(v.get("cross_domain_links", []), "_None._") + "\n"
+    md += "**Cross-domain link details:**\n\n" + link_list(v.get("cross_domain_details", [])) + "\n"
+    md += "**Conflicts:**\n\n" + bullets(v.get("conflicts", []), "_None._") + "\n"
+    md += "**Conflict details:**\n\n" + (generic(v["conflict_details"]) if v.get("conflict_details") else "_None._\n") + "\n"
+    md += "**Missing evidence:**\n\n" + bullets(v.get("missing_evidence", [])) + "\n"
+    md += rest(v, {"outcome_counts", "cross_domain_links", "conflicts", "missing_evidence", "cross_domain_details", "conflict_details"})
+    md += f"#### Coordinator assessment\n\n**Chunk:** `{c.get('chunk_id')}` · **Active agents:** {agents(c.get('active_agents', []))}\n\n"
+    md += "**Incident flags:**\n\n" + table(["Flag", "Raised"], [[FLAG_NAMES.get(k, k) + f" (`{k}`)", "✅ true" if x else "false"]
+                                                                 for k, x in c.get("incident_flags", {}).items()]) + "\n"
+    for key, title in (("changes_from_prior", "What changed from the previous stage"), ("confirmed_facts", "Confirmed facts"),
                        ("evidence_backed_conclusions", "Evidence-backed conclusions"),
-                       ("uncertain_conclusions", "Uncertain / preliminary conclusions"),
+                       ("uncertain_conclusions", "Uncertain or preliminary conclusions"),
                        ("conflicting_findings", "Conflicting findings"),
                        ("potential_policy_gaps", "Potential policy gaps (for expert review)"),
                        ("cross_domain_relationships", "Cross-domain relationships"),
-                       ("relevant_institutions", "Relevant institutions"),
-                       ("open_questions", "Open questions")):
-        md += f"**{title}** ({len(c.get(key, []))}):\n\n" + bullets(c.get(key, [])) + "\n"
+                       ("relevant_institutions", "Relevant institutions"), ("open_questions", "Open questions")):
+        items = c.get(key, [])
+        md += f"**{title} ({len(items)}):**\n\n" + ("".join(f"{i}. {inline(x)}\n" for i, x in enumerate(items, 1)) if items else "_None._\n") + "\n"
     reg = c.get("claim_register", [])
-    md += f"**Claim register** ({len(reg)}):\n\n"
-    if reg:
-        md += "| # | Agent | Outcome | Claim | Rationale | Citations | Chunk | Carried forward | In conflict |\n|---|---|---|---|---|---|---|---|---|\n"
-        for i, r in enumerate(reg, 1):
-            md += (f"| {i} | {cell(r.get('agent_id'))} | {cell(r.get('outcome'))} | {cell(r.get('claim'))} | "
-                   f"{cell(r.get('rationale'))} | {cell('; '.join(map(str, r.get('citations', []))) or '—')} | "
-                   f"{cell(r.get('chunk_id'))} | {cell(r.get('carried_forward'))} | {cell(r.get('in_conflict'))} |\n")
-        extras = [{k: x for k, x in r.items() if k not in ("agent_id", "outcome", "claim", "rationale", "citations",
-                                                           "chunk_id", "carried_forward", "in_conflict")} for r in reg]
-        if any(extras):
-            md += "\n**Claim register — other fields:**\n\n" + generic(extras)
-    else:
-        md += "_Empty._\n"
-    md += "\n**Link register:**\n\n" + link_md(c.get("link_register", []))
-    md += f"\n> ⚖️ **Human review required:** {scalar(c.get('human_review_required', ''))}\n\n"
+    md += f"**Claim register ({len(reg)}):**\n\n"
+    known_r = ("agent_id", "outcome", "claim", "rationale", "citations", "chunk_id", "carried_forward", "in_conflict")
+    md += table(["#", "Agent", "Outcome", "Claim", "Rationale", "Citations", "Chunk", "Carried forward", "In conflict"],
+                [[i, name(r.get("agent_id", "")), Raw(outcome(r.get("outcome", ""))), r.get("claim"), r.get("rationale"),
+                  "; ".join(map(str, r.get("citations", []))) or "—", r.get("chunk_id"), r.get("carried_forward"), r.get("in_conflict")]
+                 for i, r in enumerate(reg, 1)]) + "\n" if reg else "_Empty._\n\n"
+    extras = [{k: x for k, x in r.items() if k not in known_r} for r in reg]
+    md += ("**Claim register, other recorded fields:**\n\n" + generic(extras) + "\n") if any(extras) else ""
+    md += "**Link register:**\n\n" + link_list(c.get("link_register", [])) + "\n"
+    md += f"**Human review required:** {c.get('human_review_required', '')}\n\n"
     md += rest(c, {"chunk_id", "active_agents", "confirmed_facts", "evidence_backed_conclusions", "uncertain_conclusions",
                    "conflicting_findings", "potential_policy_gaps", "cross_domain_relationships", "relevant_institutions",
                    "changes_from_prior", "open_questions", "claim_register", "incident_flags", "link_register",
                    "human_review_required"})
     return md + rest(s, {"seq", "run_id", "type", "scenario_id", "recorded_at", "pipeline_timestamp", "prev_hash", "hash",
-                         "stage", "orchestrator", "agents", "verifier", "coordinator"}) + "\n---\n\n"
+                         "stage", "orchestrator", "agents", "verifier", "coordinator"})
+
+
+def notifications_section(stages: list) -> str:
+    rows = adviser_narrative(stages)["notifications"]
+    md = "## 6. Notifications that may be due\n\n_Read from the quoted Indian provisions; each must be confirmed by a qualified person before it is sent._\n\n"
+    md += table(["To", "Time limit", "Provision", "Page", "Applies if", "Raised by", "First raised"],
+                [[r["recipient"], ", then ".join(r["limits"]), f"{r['source']}, {r['section']}", r.get("page", ""), r["condition"],
+                  ", ".join(name(a) for a in r.get("agents", [])), r["stage"]] for r in rows]) if rows else \
+        "No reporting duty with a recipient or time limit appears in the provisions quoted in the recorded stage(s).\n"
+    return md + "\n---\n\n"
+
+
+def glossary() -> str:
+    md = "## 7. Glossary\n\n**Verifier outcomes**\n\n" + table(["Outcome", "Meaning"], [[Raw(outcome(o)), OUTCOME_HELP[o]] for o in OUTCOMES])
+    md += "\n**Terms**\n\n" + table(["Term", "Meaning"], [
+        ["Stage (T0, T1, …)", "One release of incident information; the scenario is revealed stage by stage."],
+        ["Orchestrator", "Chooses which specialist agents act at each stage from what that stage reveals."],
+        ["Specialist agent", "Retrieves passages from its own knowledge base and makes claims quoting them."],
+        ["Verifier", "Checks every claim against the separate Canonical knowledge base."],
+        ["Coordinator", "Combines verified findings into facts, conclusions, conflicts, gaps and open questions."],
+        ["Chunk ID", "Identifier of the stage, or of a passage in a knowledge base (document:section:part)."],
+        ["REFERENCE ONLY — not Indian law", "International standard used as a reference point, never as an Indian obligation."],
+        ["Hash chain", "Each entry carries a SHA-256 of its content and of the previous entry, so edits are detectable."]])
+    return md + "\n---\n\n"
+
+
+def appendix_passages(stages: list) -> str:
+    md = "## Appendix A. Retrieved passages in full\n\n"
+    known = ["source_title", "authority", "jurisdiction", "document_type", "section", "section_title", "page", "date_issued",
+             "effective", "effective_status", "amendment_checked", "amendment_note", "url", "provenance_note", "chunk_id",
+             "relevance_score", "is_stub"]
+    for s in stages:
+        for a in s.get("agents", []):
+            ps = a.get("retrieved_passages", [])
+            md += f"### Stage {s['stage']['label']}: {name(a.get('agent_id', ''))} agent ({len(ps)} passages)\n\n"
+            for i, p in enumerate(ps, 1):
+                md += f"#### A.{s['stage']['label']}.{a.get('agent_id')}.{i} {ref(p)}\n\n" + kv(p, known)
+                md += "\n**Excerpt:**\n\n" + quote(p.get("excerpt", "")) + "\n" + rest(p, set(known) | {"excerpt"})
+    return md + "---\n\n"
+
+
+def appendix_claims(stages: list) -> str:
+    md = "## Appendix B. Claims and citations in full\n\n"
+    for s in stages:
+        for a in s.get("agents", []):
+            md += f"### Stage {s['stage']['label']}: {name(a.get('agent_id', ''))} agent\n\n"
+            for i, c in enumerate(a.get("claims", []), 1):
+                md += f"#### Claim {s['stage']['label']}.{a.get('agent_id')}.{i}: {outcome(c.get('verifier_outcome', ''))}\n\n"
+                md += quote(c.get("claim", "")) + "\n"
+                md += f"- **Verifier rationale:** {c.get('verifier_rationale', '')}\n"
+                md += f"- **Cross-domain flag:** {scalar(c.get('cross_domain_flag'))}\n"
+                md += f"- **Cross-domain note:** {inline(c.get('cross_domain_note', ''))}\n\n"
+                md += "**Citations given by the agent:**\n\n" + cite_rows(c.get("citations", [])) + "\n"
+                md += "**Passages the Verifier found supporting:**\n\n" + cite_rows(c.get("verifier_supporting", [])) + "\n"
+                md += "**Passages the Verifier checked that do not support the claim:**\n\n" + cite_rows(c.get("verifier_conflicting", [])) + "\n"
+                md += rest(c, {"claim", "citations", "verifier_outcome", "verifier_rationale", "verifier_supporting",
+                               "verifier_conflicting", "cross_domain_flag", "cross_domain_note"})
+    return md + "---\n\n"
+
+
+def appendix_llm(stages: list) -> str:
+    md = "## Appendix C. LLM prompts and responses\n\n"
+    known = {"provider", "model", "status", "latency_ms", "prompt_sha256", "usage", "reasoning_summary", "passages_offered",
+             "accepted_claims", "rejected_claims", "system_prompt", "user_prompt", "raw_response"}
+    for s in stages:
+        for a in s.get("agents", []):
+            llm = a.get("llm_reasoning")
+            if not llm:
+                continue
+            md += f"### Stage {s['stage']['label']}: {name(a.get('agent_id', ''))} agent\n\n"
+            md += kv(llm, ["provider", "model", "status", "latency_ms", "prompt_sha256"])
+            md += "\n**Token usage:** " + (", ".join(f"{k} {v}" for k, v in (llm.get("usage") or {}).items()) or "_none_") + "\n\n"
+            md += "**Passages offered to the LLM:**\n\n" + "".join(f"- `{p}`\n" for p in llm.get("passages_offered", [])) + "\n"
+            for r_i, r in enumerate(llm.get("rejected_claims", []), 1):
+                if isinstance(r, dict) and set(r) - {"claim", "cites", "reason"}:
+                    md += f"**Rejected claim {r_i}, other recorded fields:**\n\n" + generic({k: v for k, v in r.items() if k not in ("claim", "cites", "reason")}) + "\n"
+            for key, title, lang in (("system_prompt", "System prompt", "text"), ("user_prompt", "User prompt", "text"),
+                                     ("raw_response", "Raw LLM response", "json")):
+                if key in llm:
+                    md += f"**{title}:**\n\n" + fence(scalar(llm[key]), lang) + "\n"
+            md += rest(llm, known)
+    return md + "---\n\n"
+
+
+def appendix_inputs(stages: list) -> str:
+    md = "## Appendix D. Inputs visible to each agent\n\n"
+    known = {"chunk_id", "information_released", "new_facts", "agent_view", "prior_chunk_ids", "incident_state"}
+    for s in stages:
+        for a in s.get("agents", []):
+            vi = a.get("visible_input", {})
+            md += f"### Stage {s['stage']['label']}: {name(a.get('agent_id', ''))} agent\n\n"
+            md += kv(vi, ["chunk_id", "information_released"])
+            md += "\n**New facts:**\n\n" + bullets(vi.get("new_facts", []))
+            md += "\n**Information only this agent received:**\n\n" + bullets(vi.get("agent_view", []), "_None._")
+            md += "\n**Prior chunk IDs:**\n\n" + bullets(vi.get("prior_chunk_ids", []), "_None._")
+            md += "\n**Incident state passed to the agent:**\n\n" + generic(vi.get("incident_state", {})) + "\n"
+            md += rest(vi, known)
+    return md + "---\n\n"
+
+
+def appendix_chain(path: Path, entries: list) -> str:
+    md = ("## Appendix E. Entry records and hash chain\n\n"
+          f"Source file `{path.name}`. Each `hash` is the SHA-256 of the entry without its `hash` field; each `prev_hash` "
+          "is the previous entry's `hash`.\n\n")
+    rows = []
+    for e in entries:
+        rows.append([e.get("seq"), e.get("type") + (f" {e['stage']['label']}" if e.get("type") == "stage" else ""),
+                     e.get("run_id"), e.get("scenario_id", "—"), e.get("recorded_at"), e.get("pipeline_timestamp", "—"),
+                     Raw(f"`{e.get('prev_hash')}`"), Raw(f"`{e.get('hash')}`")])
+    md += table(["Seq", "Entry", "Run ID", "Scenario", "Recorded at", "Pipeline timestamp", "prev_hash", "hash"], rows)
+    others = [e for e in entries if e.get("type") not in ("run_started", "stage", "run_completed")]
+    if others:
+        md += "\n**Other entries:**\n\n" + generic(others)
+    return md + ("\n---\n\n**Decision support only.** Legal interpretation, regulatory decisions and institutional action "
+                 "remain with qualified people.\n")
 
 
 def build(path: Path) -> str:
     entries = read_entries(path)
     problems = verify_chain(entries)
-    start = next((x for x in entries if x.get("type") == "run_started"), {})
-    stages = [x for x in entries if x.get("type") == "stage"]
-    end = next((x for x in entries if x.get("type") == "run_completed"), None)
-    md = run_header(start, stages, end, problems) + summary(stages) + timeline(stages) + start_entry(start)
-    md += "\n---\n\n" + "".join(stage_md(s) for s in stages)
-    md += "## Run completion\n\n" + (kv_table(end) if end else
-                                     "⚠️ _No `run_completed` entry: the run stopped before all stages were recorded._\n")
-    others = [x for x in entries if x.get("type") not in ("run_started", "stage", "run_completed")]
-    if others:
-        md += "\n### Other entries\n\n" + generic(others)
-    md += ("\n## Hash chain\n\nEach entry stores the SHA-256 of its own content (`hash`) and the hash of the entry "
-           f"before it (`prev_hash`). Source file: `{path.name}`. Re-check with `src.audit.trail.verify_chain`.\n\n"
-           "| Seq | Entry | Recorded at | prev_hash | hash |\n|---|---|---|---|---|\n")
-    for x in entries:
-        name = x.get("type", "") + (f" {x['stage']['label']}" if x.get("type") == "stage" else "")
-        md += f"| {x.get('seq')} | {name} | {x.get('recorded_at')} | `{x.get('prev_hash')}` | `{x.get('hash')}` |\n"
-    md += ("\n> **Decision support only:** legal interpretation, regulatory decisions and institutional action "
-           "remain with qualified people.\n")
-    return md
+    start = next((e for e in entries if e.get("type") == "run_started"), {})
+    stages = [e for e in entries if e.get("type") == "stage"]
+    end = next((e for e in entries if e.get("type") == "run_completed"), None)
+    md = front(path, start, stages, end, problems) + executive(start, stages, end, problems)
+    md += status_section(start, stages, end, problems, entries) + config_section(start) + timeline_section(stages)
+    md += "## 5. Stage-by-stage analysis\n\n" + "".join(stage_section(s) + "\n" for s in stages) + "---\n\n"
+    md += notifications_section(stages) + glossary()
+    md += appendix_passages(stages) + appendix_claims(stages) + appendix_llm(stages) + appendix_inputs(stages)
+    return md + appendix_chain(path, entries)
 
 
 def check_complete(path: Path, md: str) -> list[str]:
-    """Every recorded scalar value must appear in the Markdown; returns the ones that do not."""
+    """Every recorded scalar value must appear in the report; returns the ones that do not."""
     missing = []
 
     def walk(v, where):
@@ -473,9 +603,9 @@ def check_complete(path: Path, md: str) -> list[str]:
 def main() -> int:
     ap = argparse.ArgumentParser(description="Render an audit-trail JSONL as a complete Markdown report.")
     ap.add_argument("trail", type=Path)
-    ap.add_argument("-o", "--output", type=Path, help="default: <trail>.md next to the trail")
+    ap.add_argument("-o", "--output", type=Path, help="default: <trail>_report.md next to the trail")
     args = ap.parse_args()
-    out = args.output or args.trail.with_suffix(".md")
+    out = args.output or args.trail.with_name(args.trail.stem + "_report.md")
     md = build(args.trail)
     out.write_text(md, encoding="utf-8")
     missing = check_complete(args.trail, md)
