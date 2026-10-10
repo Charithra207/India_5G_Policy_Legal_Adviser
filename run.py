@@ -176,10 +176,18 @@ def main(argv: list[str] | None = None) -> int:
         return run_intent(args)
     from catalog.loader import load_catalog
     catalog = load_catalog()
+    ids = [a["id"] for a in catalog["attacks"]]
     if args.list or not args.attack:
-        for a in catalog["attacks"]:
-            print(f"{a['id']:<30} {a['name']}")
+        for n, a in enumerate(catalog["attacks"], 1):
+            print(f"{n:>3}  {a['id']:<30} {a['name']}")
         return 0
+    if args.attack.strip().isdigit() and 1 <= int(args.attack) <= len(ids):   # menu number
+        args.attack = ids[int(args.attack) - 1]
+    if args.attack not in ids:
+        print(f"Unknown attack {args.attack!r}. Type a number 1-{len(ids)} or one of these ids:")
+        for n, aid in enumerate(ids, 1):
+            print(f"{n:>3}  {aid}")
+        return 1
     if args.provider:
         os.environ["LLM_PROVIDER"] = args.provider
 

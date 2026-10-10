@@ -86,7 +86,7 @@ while ($true) {
     Write-Host ""
     & $Python run.py --list
     Write-Host ""
-    $attack = Read-Host "Attack id to run (or 'ui' for the web UI, 'q' to quit)"
+    $attack = Read-Host "Attack number (1-13) or id to run ('ui' = web UI, 'q' = quit)"
     if ($attack -eq 'q') { break }
     if ($attack -eq 'ui') {
         Write-Host "Starting the web UI on http://localhost:8501 (Ctrl+C to stop)"
