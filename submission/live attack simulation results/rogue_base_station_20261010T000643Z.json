@@ -1,0 +1,536 @@
+{
+  "attack": "rogue_base_station",
+  "outcome": "resolved",
+  "resolved_in": "intermediate",
+  "checks": [
+    {
+      "fn": "get_ran_kpis",
+      "path": "fallback_to_lte_ues",
+      "op": "==",
+      "value": 0,
+      "actual": 0,
+      "ok": true
+    },
+    {
+      "fn": "get_ran_kpis",
+      "path": "hostile_cells",
+      "op": "contains",
+      "value": "gnb-666",
+      "actual": [
+        "gnb-666"
+      ],
+      "ok": true
+    },
+    {
+      "fn": "get_ran_kpis",
+      "path": "field_ticket_cells",
+      "op": "contains",
+      "value": "gnb-666",
+      "actual": [
+        "gnb-666"
+      ],
+      "ok": true
+    },
+    {
+      "fn": "list_neighbors",
+      "path": "whitelist",
+      "op": "==",
+      "value": "enforced",
+      "actual": "enforced",
+      "ok": true
+    }
+  ],
+  "tier_outcomes": {
+    "basic": {
+      "mode": "agent",
+      "provider": "offline",
+      "summary": "ran the basic playbook steps in order",
+      "resolved": false,
+      "checks": [
+        {
+          "fn": "get_ran_kpis",
+          "path": "fallback_to_lte_ues",
+          "op": "==",
+          "value": 0,
+          "actual": 38,
+          "ok": false
+        },
+        {
+          "fn": "get_ran_kpis",
+          "path": "hostile_cells",
+          "op": "contains",
+          "value": "gnb-666",
+          "actual": [],
+          "ok": false
+        },
+        {
+          "fn": "get_ran_kpis",
+          "path": "field_ticket_cells",
+          "op": "contains",
+          "value": "gnb-666",
+          "actual": [],
+          "ok": false
+        },
+        {
+          "fn": "list_neighbors",
+          "path": "whitelist",
+          "op": "==",
+          "value": "enforced",
+          "actual": "enforced",
+          "ok": true
+        }
+      ]
+    },
+    "intermediate": {
+      "mode": "agent",
+      "provider": "offline",
+      "summary": "resolved; remaining steps not needed",
+      "resolved": true,
+      "checks": [
+        {
+          "fn": "get_ran_kpis",
+          "path": "fallback_to_lte_ues",
+          "op": "==",
+          "value": 0,
+          "actual": 0,
+          "ok": true
+        },
+        {
+          "fn": "get_ran_kpis",
+          "path": "hostile_cells",
+          "op": "contains",
+          "value": "gnb-666",
+          "actual": [
+            "gnb-666"
+          ],
+          "ok": true
+        },
+        {
+          "fn": "get_ran_kpis",
+          "path": "field_ticket_cells",
+          "op": "contains",
+          "value": "gnb-666",
+          "actual": [
+            "gnb-666"
+          ],
+          "ok": true
+        },
+        {
+          "fn": "list_neighbors",
+          "path": "whitelist",
+          "op": "==",
+          "value": "enforced",
+          "actual": "enforced",
+          "ok": true
+        }
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "at": "23:57:42",
+      "tier": "start",
+      "actor": "system",
+      "action": "inject",
+      "args": {
+        "attack": "rogue_base_station"
+      },
+      "state_changing": true,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "UE measurement reports show a cell that is not in the cell inventory (TA-4501)"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_alerts",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "UE measurement reports show a cell that is not in the cell inventory (TA-4501)"
+        ]
+      },
+      "note": "b1_alerts: Read the active alerts"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_ran_kpis",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "area": "TA-4501",
+        "fallback_to_lte_ues": 38,
+        "radio_link_failures": 12,
+        "unknown_cells_reported": [
+          {
+            "cell": "gnb-666",
+            "pci": 999,
+            "rsrp_dbm": -61,
+            "area": "TA-4501",
+            "reports_last_hour": 214,
+            "in_cell_inventory": false
+          }
+        ],
+        "hostile_cells": [],
+        "ignored_by_device_policy": [],
+        "field_ticket_cells": []
+      },
+      "note": "b2_ran_kpis: Read RAN KPIs - unknown cells in measurement reports"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "list_neighbors",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "neighbors": [
+          "gnb-101",
+          "gnb-102",
+          "gnb-103",
+          "gnb-666"
+        ],
+        "unknown": [
+          "gnb-666"
+        ],
+        "whitelist": "disabled"
+      },
+      "note": "b3_neighbors: Compare reported cells with the planned neighbour list"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_logs",
+      "args": {
+        "nf": "gnb",
+        "last": 10
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "gnb",
+        "lines": [
+          "10/07 09:00:00.000: [gnb] WARNING: measurement reports from 214 UEs in TA-4501 list cell gnb-666 (PCI 999, RSRP -61 dBm); no such cell in the cell inventory",
+          "10/07 09:00:00.007: [gnb] WARNING: 38 UEs in TA-4501 fell back to LTE and 12 radio link failures in 10 min"
+        ]
+      },
+      "note": "b4_gnb_logs: Read gNB logs (measurement reports)"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_logs",
+      "args": {
+        "nf": "amf",
+        "last": 10
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "amf",
+        "lines": [
+          "10/07 09:00:00.000: [amf] WARNING: registration attempts with downgraded security capabilities from UEs in TA-4501"
+        ]
+      },
+      "note": "b5_amf_logs: Read AMF logs (downgraded registrations)"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "check_auth_config",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "method": "5G-AKA",
+        "ciphering": "NEA2",
+        "integrity": "NIA2",
+        "suci_protection": "profile_A",
+        "up_integrity": "required",
+        "subscriber_keys_compromised": false,
+        "key_version": 1
+      },
+      "note": "b6_auth: Confirm SUCI protection is still on (identity not exposed)"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "patch_config",
+      "args": {
+        "nf": "gnb",
+        "key": "neighbor_whitelist",
+        "value": "enforced"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "config neighbor_whitelist = 'enforced'"
+      },
+      "note": "b7_whitelist: Re-enable the planned-neighbour whitelist (restores the baseline control; safe, idempotent)"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": "enforced"
+      },
+      "note": "b7_whitelist: list_neighbors.whitelist == enforced \u2192 passed"
+    },
+    {
+      "at": "23:57:43",
+      "tier": "basic",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": false,
+        "checks": [
+          {
+            "fn": "get_ran_kpis",
+            "path": "fallback_to_lte_ues",
+            "op": "==",
+            "value": 0,
+            "actual": 38,
+            "ok": false
+          },
+          {
+            "fn": "get_ran_kpis",
+            "path": "hostile_cells",
+            "op": "contains",
+            "value": "gnb-666",
+            "actual": [],
+            "ok": false
+          },
+          {
+            "fn": "get_ran_kpis",
+            "path": "field_ticket_cells",
+            "op": "contains",
+            "value": "gnb-666",
+            "actual": [],
+            "ok": false
+          },
+          {
+            "fn": "list_neighbors",
+            "path": "whitelist",
+            "op": "==",
+            "value": "enforced",
+            "actual": "enforced",
+            "ok": true
+          }
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "00:06:36",
+      "tier": "intermediate",
+      "actor": "operator",
+      "action": "gate",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": "agent",
+      "note": ""
+    },
+    {
+      "at": "00:06:39",
+      "tier": "intermediate",
+      "actor": "agent",
+      "action": "flag_cell_hostile",
+      "args": {
+        "cell_id": "gnb-666"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "cell gnb-666 flagged hostile and removed from neighbour lists"
+      },
+      "note": "i1_flag_hostile: Flag the cell that is not in the inventory as hostile"
+    },
+    {
+      "at": "00:06:39",
+      "tier": "intermediate",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": [
+          "gnb-666"
+        ]
+      },
+      "note": "i1_flag_hostile: get_ran_kpis.hostile_cells contains gnb-666 \u2192 passed"
+    },
+    {
+      "at": "00:06:41",
+      "tier": "intermediate",
+      "actor": "agent",
+      "action": "push_device_policy",
+      "args": {
+        "cell_id": "gnb-666"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "policy pushed to UEs in TA-4501: do not camp on or hand over to gnb-666"
+      },
+      "note": "i2_device_policy: Push a policy telling devices in TA-4501 to ignore that cell"
+    },
+    {
+      "at": "00:06:41",
+      "tier": "intermediate",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": 0
+      },
+      "note": "i2_device_policy: get_ran_kpis.fallback_to_lte_ues == 0 \u2192 passed"
+    },
+    {
+      "at": "00:06:43",
+      "tier": "intermediate",
+      "actor": "agent",
+      "action": "dispatch_field_team",
+      "args": {
+        "cell_id": "gnb-666"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "field-team ticket opened to locate the transmitter of gnb-666"
+      },
+      "note": "i3_field_team: Hand off to a field team to locate the transmitter (physical removal is a real-world action; recorded here)"
+    },
+    {
+      "at": "00:06:43",
+      "tier": "intermediate",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": true,
+        "checks": [
+          {
+            "fn": "get_ran_kpis",
+            "path": "fallback_to_lte_ues",
+            "op": "==",
+            "value": 0,
+            "actual": 0,
+            "ok": true
+          },
+          {
+            "fn": "get_ran_kpis",
+            "path": "hostile_cells",
+            "op": "contains",
+            "value": "gnb-666",
+            "actual": [
+              "gnb-666"
+            ],
+            "ok": true
+          },
+          {
+            "fn": "get_ran_kpis",
+            "path": "field_ticket_cells",
+            "op": "contains",
+            "value": "gnb-666",
+            "actual": [
+              "gnb-666"
+            ],
+            "ok": true
+          },
+          {
+            "fn": "list_neighbors",
+            "path": "whitelist",
+            "op": "==",
+            "value": "enforced",
+            "actual": "enforced",
+            "ok": true
+          }
+        ]
+      },
+      "note": ""
+    }
+  ],
+  "policy": {
+    "error": "similarity search unavailable (ImportError: DLL load failed while importing mmh3: An Application Control policy has blocked this file.); the obligations above were still checked word for word",
+    "categories": [
+      "cyber_incident_rules",
+      "law_and_acts"
+    ],
+    "obligations": [
+      {
+        "id": "certin_6h",
+        "summary": "Report the cyber incident to CERT-In within 6 hours of noticing it",
+        "applies_when": "the incident is of a type listed in Annexure I of the CERT-In Directions (e.g. targeted scanning, compromise of critical systems, attacks on servers, DoS/DDoS, data breach, unauthorised access)",
+        "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+        "found": true,
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+        "passage": "\u2026 source shall not deviate from NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details"
+      },
+      {
+        "id": "tcs_rules_rule7_6h",
+        "summary": "Telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require",
+        "applies_when": "the incident affects the telecommunication network or service",
+        "doc": "cybersecurity-rules-2024.pdf",
+        "found": true,
+        "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+        "passage": "\u2026 the implementation of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident; and (b) within twe\u2026"
+      },
+      {
+        "id": "certin_logs_180d",
+        "summary": "Keep ICT system logs for a rolling 180 days and provide them to CERT-In on request",
+        "applies_when": "always (preserve the incident's logs; do not let them roll over)",
+        "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+        "found": true,
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+        "passage": "\u2026to the said Point of Contact. (iv) All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily enable logs of all their ICT systems and maintain them securely for a rolling period of 180 days and the same shall be maintained within the Indian jurisdiction. These should be provided to CERT-In along with reporting of any incident or when ordered / directed by CERT-In. (v) Data Centres, Virtual Private Server (\u2026"
+      },
+      {
+        "id": "telecom_act_s22",
+        "summary": "Telecommunications Act, 2023 s.22 \u2014 measures to protect and ensure the cyber security of telecommunication networks and services",
+        "applies_when": "always (statutory basis of the Telecom Cyber Security Rules)",
+        "doc": "new-telecom-Act-2023.pdf",
+        "found": true,
+        "citation": "new-telecom-Act-2023.pdf, p. 10",
+        "passage": "\u2026age any or all of any telecommunication services, or any telecommunication network or part thereof, connected with such telecommunication services. 22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.\u2014For the \u2026"
+      }
+    ],
+    "related": []
+  }
+}

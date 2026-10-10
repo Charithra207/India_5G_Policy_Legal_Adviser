@@ -1,0 +1,467 @@
+{
+  "attack": "signalling_storm_amf",
+  "outcome": "resolved",
+  "resolved_in": "basic",
+  "checks": [
+    {
+      "fn": "list_gnbs",
+      "path": "unauthorised_connected",
+      "op": "empty",
+      "actual": [],
+      "ok": true
+    },
+    {
+      "fn": "get_top_talkers",
+      "args": {
+        "nf": "amf"
+      },
+      "path": "top.0.blocked",
+      "op": "==",
+      "value": true,
+      "actual": true,
+      "ok": true
+    },
+    {
+      "fn": "get_metrics",
+      "args": {
+        "nf": "amf"
+      },
+      "path": "registration_failure_pct",
+      "op": "<",
+      "value": 2,
+      "actual": 0.0,
+      "ok": true
+    },
+    {
+      "fn": "get_nf_health",
+      "args": {
+        "nf": "amf"
+      },
+      "path": "amf",
+      "op": "==",
+      "value": "ok",
+      "actual": "ok",
+      "ok": true
+    }
+  ],
+  "tier_outcomes": {
+    "basic": {
+      "mode": "agent",
+      "provider": "offline",
+      "summary": "resolved; remaining steps not needed",
+      "resolved": true,
+      "checks": [
+        {
+          "fn": "list_gnbs",
+          "path": "unauthorised_connected",
+          "op": "empty",
+          "actual": [],
+          "ok": true
+        },
+        {
+          "fn": "get_top_talkers",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "top.0.blocked",
+          "op": "==",
+          "value": true,
+          "actual": true,
+          "ok": true
+        },
+        {
+          "fn": "get_metrics",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "registration_failure_pct",
+          "op": "<",
+          "value": 2,
+          "actual": 0.0,
+          "ok": true
+        },
+        {
+          "fn": "get_nf_health",
+          "args": {
+            "nf": "amf"
+          },
+          "path": "amf",
+          "op": "==",
+          "value": "ok",
+          "actual": "ok",
+          "ok": true
+        }
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "at": "01:56:35",
+      "tier": "start",
+      "actor": "system",
+      "action": "inject",
+      "args": {
+        "attack": "signalling_storm_amf"
+      },
+      "state_changing": true,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "AMF CPU above 90% for 3 consecutive ticks; legitimate registrations failing"
+        ]
+      },
+      "note": ""
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_alerts",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "alerts": [
+          "AMF CPU above 90% for 3 consecutive ticks; legitimate registrations failing"
+        ]
+      },
+      "note": "b1_alerts: Read the active alerts to confirm what the monitoring saw"
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_nf_health",
+      "args": {
+        "nf": "amf"
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "amf": "degraded"
+      },
+      "note": "b2_health: Check AMF health (ok / degraded / down)"
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_metrics",
+      "args": {
+        "nf": "amf"
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "cpu": 100,
+        "offered_rate": 8750,
+        "accepted_rate": 8750,
+        "rate_limit": null,
+        "replicas": 1,
+        "registration_rate": 8750,
+        "registration_failure_pct": 86.3
+      },
+      "note": "b3_metrics: Read AMF CPU, registration rate and registration failure rate"
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_logs",
+      "args": {
+        "nf": "amf",
+        "last": 10
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "amf",
+        "lines": [
+          "10/07 09:00:00.000: [amf] INFO: NG setup request from gnb-207 (not in the cell inventory) accepted",
+          "10/07 09:00:00.007: [amf] WARNING: registration request burst: 7800/min via gnb-207 from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "10/07 09:00:00.014: [amf] WARNING: registration request burst: 7800/min via gnb-207 from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "10/07 09:00:00.021: [amf] WARNING: registration request burst: 7800/min via gnb-207 from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "10/07 09:00:00.028: [amf] WARNING: registration request burst: 7800/min via gnb-207 from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "10/07 09:00:00.035: [amf] WARNING: registration request burst: 7800/min via gnb-207 from ue-range-404-45-77xx (initial registrations, repeated SUCI, no service request)",
+          "10/07 09:00:00.042: [amf] ERROR: N1/N2 message queue above 95%; registration latency 4.8 s",
+          "10/07 09:00:00.049: [amf] WARNING: registration reject (cause #22 congestion) for UEs on gnb-101/102/103"
+        ]
+      },
+      "note": "b4_logs: Read recent AMF logs for the registration pattern (repeated SUCI, no service request)"
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "list_gnbs",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "gnbs": [
+          {
+            "id": "gnb-101",
+            "in_inventory": true,
+            "connected": true,
+            "registration_rate": 0
+          },
+          {
+            "id": "gnb-102",
+            "in_inventory": true,
+            "connected": true,
+            "registration_rate": 900
+          },
+          {
+            "id": "gnb-103",
+            "in_inventory": true,
+            "connected": true,
+            "registration_rate": 0
+          },
+          {
+            "id": "gnb-207",
+            "in_inventory": false,
+            "connected": true,
+            "registration_rate": 7800
+          }
+        ],
+        "unauthorised_connected": [
+          "gnb-207"
+        ]
+      },
+      "note": "b5_gnbs: List base stations on the AMF; find any not in the cell inventory"
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "get_top_talkers",
+      "args": {
+        "nf": "amf"
+      },
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "nf": "amf",
+        "top": [
+          {
+            "source": "ue-range-404-45-77xx",
+            "rate": 7800,
+            "via": "gnb-207",
+            "blocked": false,
+            "path_connected": true
+          },
+          {
+            "source": "ue-range-404-45-12xx",
+            "rate": 900,
+            "via": "gnb-102",
+            "blocked": false,
+            "path_connected": true
+          }
+        ]
+      },
+      "note": "b6_top_talkers: Identify the subscriber range and the base station it comes through"
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "disconnect_gnb",
+      "args": {
+        "gnb_id": "gnb-207"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "NG setup of gnb-207 released; base station disconnected and barred"
+      },
+      "note": "b7_disconnect_gnb: Disconnect the base station that is not in the cell inventory (safe - it is not ours; idempotent)"
+    },
+    {
+      "at": "01:56:37",
+      "tier": "basic",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": []
+      },
+      "note": "b7_disconnect_gnb: list_gnbs.unauthorised_connected empty  \u2192 passed"
+    },
+    {
+      "at": "01:56:38",
+      "tier": "basic",
+      "actor": "agent",
+      "action": "block_source",
+      "args": {
+        "nf": "amf",
+        "source": "ue-range-404-45-77xx"
+      },
+      "state_changing": true,
+      "approved": true,
+      "result": {
+        "ok": true,
+        "action": "blocked source ue-range-404-45-77xx"
+      },
+      "note": "b8_block_range: Block the subscriber range that generated the storm (safe - every request from it was storm traffic; idempotent)"
+    },
+    {
+      "at": "01:56:38",
+      "tier": "basic",
+      "actor": "system",
+      "action": "success_check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "ok": true,
+        "actual": true
+      },
+      "note": "b8_block_range: get_top_talkers.top.0.blocked == True \u2192 passed"
+    },
+    {
+      "at": "01:56:38",
+      "tier": "basic",
+      "actor": "system",
+      "action": "resolution check",
+      "args": {},
+      "state_changing": false,
+      "approved": null,
+      "result": {
+        "resolved": true,
+        "checks": [
+          {
+            "fn": "list_gnbs",
+            "path": "unauthorised_connected",
+            "op": "empty",
+            "actual": [],
+            "ok": true
+          },
+          {
+            "fn": "get_top_talkers",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "top.0.blocked",
+            "op": "==",
+            "value": true,
+            "actual": true,
+            "ok": true
+          },
+          {
+            "fn": "get_metrics",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "registration_failure_pct",
+            "op": "<",
+            "value": 2,
+            "actual": 0.0,
+            "ok": true
+          },
+          {
+            "fn": "get_nf_health",
+            "args": {
+              "nf": "amf"
+            },
+            "path": "amf",
+            "op": "==",
+            "value": "ok",
+            "actual": "ok",
+            "ok": true
+          }
+        ]
+      },
+      "note": ""
+    }
+  ],
+  "policy": {
+    "categories": [
+      "cyber_incident_rules",
+      "law_and_acts"
+    ],
+    "obligations": [
+      {
+        "id": "certin_6h",
+        "summary": "Report the cyber incident to CERT-In within 6 hours of noticing it",
+        "applies_when": "the incident is of a type listed in Annexure I of the CERT-In Directions (e.g. targeted scanning, compromise of critical systems, attacks on servers, DoS/DDoS, data breach, unauthorised access)",
+        "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+        "found": true,
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, p. 2",
+        "passage": "\u2026 source shall not deviate from NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details"
+      },
+      {
+        "id": "tcs_rules_rule7_6h",
+        "summary": "Telecommunication entity reports the security incident to the Central Government within six hours of becoming aware (Telecom Cyber Security Rules, 2024, rule 7), followed by the details the rules require",
+        "applies_when": "the incident affects the telecommunication network or service",
+        "doc": "cybersecurity-rules-2024.pdf",
+        "found": true,
+        "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+        "passage": "\u2026 the implementation of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security incident affecting its telecommunication network or telecommunication service, report the same to the Central Government with relevant details of the affected system including the description of such incident; and (b) within twe\u2026"
+      },
+      {
+        "id": "cti_rules_reporting",
+        "summary": "If the affected network is notified as Critical Telecommunication Infrastructure, follow the CTI Rules, 2024 incident-reporting timelines",
+        "applies_when": "the affected network or element is notified as Critical Telecommunication Infrastructure",
+        "doc": "Critical Telecommunication Infrastructure Rules, 2024_0.pdf",
+        "found": true,
+        "citation": "Critical Telecommunication Infrastructure Rules, 2024_0.pdf, pp. 7\u20138",
+        "passage": "\u2026communication Infrastructure; (h) all logs relating to Critical Telecommunication Infrastructure to assist in detection of anomalies and enable the Central Government to generate intelligence on real time basis; and (i) reporting of security incidents within the timelines specified for Critical Telecommunication Infrastructure under rule 7. 7. Obligations related to Critical Telecommunication Infrastructure. \u2013 (1) Every telecommunication entity shall comply with the \u2026"
+      },
+      {
+        "id": "certin_logs_180d",
+        "summary": "Keep ICT system logs for a rolling 180 days and provide them to CERT-In on request",
+        "applies_when": "always (preserve the incident's logs; do not let them roll over)",
+        "doc": "CERT-In_Directions_70B_28.04.2022.pdf",
+        "found": true,
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+        "passage": "\u2026to the said Point of Contact. (iv) All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily enable logs of all their ICT systems and maintain them securely for a rolling period of 180 days and the same shall be maintained within the Indian jurisdiction. These should be provided to CERT-In along with reporting of any incident or when ordered / directed by CERT-In. (v) Data Centres, Virtual Private Server (\u2026"
+      },
+      {
+        "id": "telecom_act_s22",
+        "summary": "Telecommunications Act, 2023 s.22 \u2014 measures to protect and ensure the cyber security of telecommunication networks and services",
+        "applies_when": "always (statutory basis of the Telecom Cyber Security Rules)",
+        "doc": "new-telecom-Act-2023.pdf",
+        "found": true,
+        "citation": "new-telecom-Act-2023.pdf, p. 10",
+        "passage": "\u2026age any or all of any telecommunication services, or any telecommunication network or part thereof, connected with such telecommunication services. 22. (1) The Central Government may by rules provide for the measures to protect and ensure cyber security of telecommunication networks and telecommunication services. (2) The measures may include collection, analysis and dissemination of traffic data that is generated, transmitted, received or stored in telecommunication networks. Explanation.\u2014For the \u2026"
+      }
+    ],
+    "related": [
+      {
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 2\u20133",
+        "category": "cyber_incident_rules",
+        "score": 0.7432,
+        "text": "NPL and NIC. (ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. The incidents can be reported to CERT-In via email (incident@cert-in.org.in), Phone (1800- 11-4949) and Fax (1800-11-6969). The details regarding methods and formats of reporting cyber security incidents is also publishe"
+      },
+      {
+        "citation": "cybersecurity-rules-2024.pdf, pp. 12\u201313",
+        "category": "cyber_incident_rules",
+        "score": 0.7333,
+        "text": "of Directors or similar governing body of the telecommunication entity. (3) The Chief Telecommunication Security Officer shall be responsible for coordinating with the Central Government on behalf of the telecommunication entity for the implementation of these rules, including compliance with any reporting requirements or reporting of security incidents under rule 7. 7. Reporting of security incidents. \u2014 (1) The telecommunication entity shall\u2013 (a) within six hours of becoming aware of a security"
+      },
+      {
+        "citation": "cybersecurity-rules-2024.pdf, pp. 10\u201311",
+        "category": "cyber_incident_rules",
+        "score": 0.7231,
+        "text": "telecommunication services or telecommunication network, as well as, attempts to cause such incidents, intrusions or breaches; 11 (ii) maintain details of threat actors impacting its telecommunication services, or telecommunication network; (iii) maintain command logs of operation and maintenance; (iv) maintain logs of Security Operations Centre (SOC) (firewall, Intrusion Detection System (IDS) or Intrusion Prevention System (IPS), or Security Information and Event Management (SIEM) or other suc"
+      },
+      {
+        "citation": "G.S.R_20(E).pdf, p. 4",
+        "category": "cyber_incident_rules",
+        "score": 0.7206,
+        "text": "cyber security incidents as appropriate and the ultimate responsibility of the security of the computer resource shall rest with owner of the computer resource. (2) Cooperation and collaboration.\u2014 CERT-In shall collaborate with:\u2014 (1) organisations within and outside the country engaged in the specialised areas in protecting and responding to cyber security incidents; (II) organisations engaged in collection of intelligence in general, law enforcement, investigation and forensics; (1D) academia, "
+      },
+      {
+        "citation": "CERT-In_Directions_70B_28.04.2022.pdf, pp. 5\u20138",
+        "category": "cyber_incident_rules",
+        "score": 0.7175,
+        "text": "systems/information iii. Unauthorised access of IT systems/data iv. Defacement of website or intrusion into a website and unauthorised changes such as inserting malicious code, links to external websites etc. v. Malicious code attacks such as spreading of virus/worm/Trojan/Bots/ Spyware/Ransomware/Cryptominers vi. Attack on servers such as Database, Mail and DNS and network devices such as Routers vii. Identity Theft, spoofing and phishing attacks viii. Denial of Service (DoS) and Distributed De"
+      }
+    ],
+    "note": "Citations come from the prebuilt index. Decision support only \u2014 not legal advice."
+  }
+}
