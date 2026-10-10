@@ -116,6 +116,10 @@ def main(argv: list[str] | None = None) -> int:
     provider = llm.configure(args.llm) if args.llm else llm.active()
     if getattr(provider, "notice", ""):
         print("NOTE:", provider.notice)
+    elif not args.replay:
+        ready, problem = provider.check()
+        if not ready:
+            print("WARNING:", problem)
 
     if args.replay:
         run = load_run(args.replay)
@@ -134,6 +138,7 @@ def main(argv: list[str] | None = None) -> int:
                     print(f"\n  {question}")
                     for line in lines:
                         print(f"    {line}")
+        print_narrative(run.stages)
         if args.reexecute:
             diffs = reexecute(run, registry)
             print("=" * WIDTH)
@@ -157,9 +162,32 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Agents' reasoning model: {provider.describe()}")
     for _ in range(min(args.stages, engine.stage_count)):
         print_stage(engine.next_stage())
+    print_narrative(engine.stages)
     print("=" * WIDTH)
     print("Audit trail:", engine.audit_path)
     return 0
+
+
+def print_narrative(stages: list[dict]) -> None:
+    """Summary, notifications that may be due, and conclusion of the stages run."""
+    import textwrap
+
+    from src.audit.narrative import adviser_narrative
+    story = adviser_narrative(stages)
+    if not story["summary"]:
+        return
+    wrap = lambda text: textwrap.fill(text, WIDTH, initial_indent="  ", subsequent_indent="  ")  # noqa: E731
+    print("=" * WIDTH)
+    print("SUMMARY")
+    print(wrap(story["summary"]))
+    if story["notifications"]:
+        print("\nNOTIFICATIONS THE RETRIEVED INDIAN PROVISIONS MAY REQUIRE (each subject to its condition "
+              "and to confirmation)")
+        for r in story["notifications"]:
+            print(f"  - {'; '.join(r['limits'])} to {r['recipient']} — {r['source']}, {r['section']}")
+            print(f"      applies: {r['condition']}")
+    print("\nCONCLUSION")
+    print(wrap(story["conclusion"]))
 
 
 if __name__ == "__main__":

@@ -47,6 +47,10 @@ class LLMProvider:
     def describe(self) -> str:
         return f"{self.name}:{self.model}" if self.model else self.name
 
+    def check(self) -> tuple[bool, str]:
+        """(ready, problem) — whether the model can be reached before a run starts."""
+        return True, ""
+
 
 class OfflineLLM(LLMProvider):
     """No generative model: the agents stay fully deterministic and replayable."""
@@ -78,8 +82,14 @@ class OllamaLLM(LLMProvider):
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as resp:
                 data = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            self.last_error = (self._missing_model() if exc.code == 404 else f"HTTP {exc.code} from Ollama: "
+                               f"{exc.read().decode('utf-8', 'replace')[:200]}")
+            return None
         except (urllib.error.URLError, OSError, ValueError) as exc:
             self.last_error = f"{type(exc).__name__}: {exc}"
+            if isinstance(exc, urllib.error.URLError) and "refused" in str(exc).lower():
+                self.last_error = f"Ollama is not running at {self.host} (start the Ollama app)"
             return None
         text = (data.get("message") or {}).get("content", "")
         if not text:
@@ -87,6 +97,29 @@ class OllamaLLM(LLMProvider):
             return None
         usage = {"input_tokens": data.get("prompt_eval_count"), "output_tokens": data.get("eval_count")}
         return LLMResponse(text, self.name, self.model, round((time.perf_counter() - t0) * 1000, 1), usage)
+
+
+    def _missing_model(self) -> str:
+        return (f"model {self.model!r} is not installed in Ollama — run: ollama pull {self.model} "
+                "(or set OLLAMA_MODEL to a name from `ollama list`)")
+
+    def installed_models(self) -> list[str]:
+        """Names Ollama reports in /api/tags (raises if Ollama cannot be reached)."""
+        with urllib.request.urlopen(f"{self.host}/api/tags", timeout=5) as resp:
+            return [m.get("name", "") for m in json.loads(resp.read().decode("utf-8")).get("models", [])]
+
+    def check(self) -> tuple[bool, str]:
+        """(ready, problem): is Ollama running, and is this model pulled?"""
+        try:
+            names = self.installed_models()
+        except (urllib.error.URLError, OSError, ValueError):
+            return False, (f"Ollama is not reachable at {self.host}: start the Ollama app. Until then the "
+                           "agents run without a model (deterministic findings only).")
+        wanted = {self.model, f"{self.model}:latest"} if ":" not in self.model else {self.model}
+        if wanted & set(names):
+            return True, ""
+        return False, (self._missing_model() + ". Installed: " + (", ".join(names) or "none")
+                       + ". Until then the agents run without a model (deterministic findings only).")
 
 
 class AnthropicLLM(LLMProvider):
