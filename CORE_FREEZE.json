@@ -69,22 +69,32 @@
         "scenarios/scenario1_slicing_incident.py",
         "scenarios/scenario2_healthcare_5g.py"
       ]
+    },
+    {
+      "at": "2026-10-10T01:10:23.062446+00:00",
+      "reason": "Agent focus from the run review: each agent searches first for the facts released to it alone (agent_views) and no longer searches a question as if it were a fact; quoting keeps the retrieval's top passages but replaces one sharing fewer than two words with the incident's facts by a later relevant passage (time-limited duties first); title pages are never quoted; 'missing information' already answered by the agent's own facts is dropped or narrowed; Policy & Legal also searches for incident-reporting duties when a stage asks about reporting; the Coordinator lists each institution once; international comparators are named by their authority. Deterministic and offline-replayable; recorded runs made before this change re-execute with differences in quoted passages (re-record the reference run).",
+      "files": [
+        "src/agents/base_agent.py",
+        "src/agents/policy_legal_agent.py",
+        "src/agents/policy_gap_agent.py",
+        "src/core/coordinator.py"
+      ]
     }
   ],
   "files": {
     "src/core/orchestrator.py": "df9b73f8852137605d31e4446f9ffcc682bc2f385dc8cffb6856b3f6bff581b9",
     "src/pipeline.py": "b4be369060bf21f4ddf303a5a2099d3fcb9261c777f4891f7ad5ea736401a888",
-    "src/agents/base_agent.py": "a408160662667b87b2f7cf93a55ee9c69bcba3c9a310492d8fdb3c3cb4ac26db",
+    "src/agents/base_agent.py": "233b7ffa43929106274496b02bc14c8e86226c5a7ab27293780da23e70d0950c",
     "src/agents/technical_agent.py": "8d7a9bbe4b49ee2ecabb4eec1fe5e69bbdab8867dd1b248e4497a6c5cd972d39",
-    "src/agents/policy_legal_agent.py": "3325bc4693f833df185f937b2d62b01b844c399aafe2586856c9b5fa91a086e2",
+    "src/agents/policy_legal_agent.py": "bc73aad8272a793f0889b18393ac85dea0cfbbca8792fd9b614e35be5521c23d",
     "src/agents/cybersecurity_agent.py": "4ce3b1351a4d26662e218878d34fa06705be10e0a279b0d4dc1ada0634aed6e5",
     "src/agents/privacy_agent.py": "cf53d2eab78df354e1a1a9e7ea7d4690715166fbfcd689fb42085855815ae5c4",
     "src/agents/critical_infra_agent.py": "789bfca226a00f2b2173c4645b06dd8f9a54488828cdfa68340a1508fe3df4a6",
     "src/agents/standards_agent.py": "1f79c93d0ed8c358f4e83d35db0e60db85bed11a0e969c4bae584f988adadac0",
-    "src/agents/policy_gap_agent.py": "6a1579db6acd108732421bdd5842ad60ea53fc2f80b29e70c2fbd4393e00e4d8",
+    "src/agents/policy_gap_agent.py": "c383c4312fdcf31a3178581a8388b7f87d20c06fa8411d94993a6ab9bff07f02",
     "src/core/verifier.py": "14e076fe48b98156cb7606037cf3d8011d15c96941af6950c17d6af70f3e2a15",
     "src/core/cross_domain.py": "0a9dda4e1bc7ed3fd44d8c2fe059cc83f776acfc273c46d9c613691edaa8747b",
-    "src/core/coordinator.py": "3648dadc29f353da796b3ac8dfcf4928f6783e90d1756f22966ab5794fd11b74",
+    "src/core/coordinator.py": "b8df10ec1ab182758aabed686a2f48d0591b65f4e359dd23203862a00b9c3b2b",
     "src/core/models.py": "280d67d44488b7612ca5a084daef88864252887525708daf9c86a6e98da26299",
     "scenarios/scenario1_slicing_incident.py": "97312cf05b50f9e4215d4cfb67d900257e8f9fa9b706472918d531f9ddf1f481",
     "scenarios/scenario2_healthcare_5g.py": "2baf4852b9f1a276f5afbc97ae73da8a07ef786ef50046c7fa0ca89451a88777",

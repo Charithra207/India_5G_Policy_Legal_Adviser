@@ -297,6 +297,7 @@ python -m src.scenario.run --stages 2
 python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --reexecute
 python -m src.scenario.run --conflict-demo       # conflict handling (labelled fixtures)
 python -m src.scenario.run --replay outputs/audit/<run_id>.jsonl --explain  # decision path per stage
+# every run and replay ends with a Summary, the notifications that may be due, and a Conclusion
 python -m src.audit.evaluation_report            # evaluation summary from a real test run
 
 # Optional: let each agent reason with a local open model (Ollama) or Claude.
@@ -362,7 +363,10 @@ python run.py --list
 python run.py --attack signalling_storm_amf                 # interactive gates and y/n
 python run.py --attack nf_host_ransomware --provider offline
 python run.py --attack core_ddos_upf --auto                 # non-interactive demo
-streamlit run ir/ui.py                                      # web UI
+python run.py --attack 1 --step                             # presenting: Enter moves to each next phase
+python run.py --attack 1 --auto --pace 2                    # unfolds by itself, 2 s per step (--fast: none)
+python run.py --attack 1 --auto --full-report               # also print the full report at the end
+streamlit run ir/ui.py                                      # web UI: Next step / Auto-play
 
 python -m kb.retriever "report a security incident within six hours" --categories cyber_incident_rules
 python -m sim.inject --attack rogue_base_station            # just inject; then:
@@ -372,7 +376,13 @@ python -m pytest tests/test_ir_lab.py -q
 
 How a run goes:
 
-1. The simulation is reset and the attack injected; both panels are printed.
+1. The simulation is reset and the attack injected. The attack is shown as it
+   unfolds, one step at a time: the network before it (all NFs green), each
+   log line and alert it causes in the order they were written, then the NF
+   health once it is detected. Then the Policy panel (the Indian obligations
+   that now apply) and the Technical panel. In a terminal there is a pause
+   between steps (`--pace`, default 1 s; `--step` waits for Enter at each
+   phase); the web page has **Next step**, **Show all** and **Auto-play**.
 2. **Basic**: the agent runs the diagnostics and applies only the fixes
    marked `auto_safe` (safe and idempotent), checking each one afterwards.
 3. If the incident is not resolved, a gate appears:
@@ -382,8 +392,12 @@ How a run goes:
    - In manual mode, the commands (`python -m sim.cli …`) are printed; you
      run them, paste the output, and the agent interprets it.
 4. The same gate appears before **Advanced**.
-5. A final report (timeline, what fixed it or the escalation, and a policy
-   recap) is written to `<work>/reports/`.
+5. The run ends with two paragraphs: a **Summary** (what was attacked, how it
+   showed, what the agent ran and fixed, what was refused at a gate, which
+   obligations apply) and a **Conclusion** (resolved or not, and the reporting
+   duties that apply either way). The full report (summary, conclusion,
+   timeline, what fixed it or the escalation, policy recap) is written to
+   `<work>/reports/`.
 
 "Resolved" is decided by the catalog's `resolved_when` checks against the
 simulator, never by the agent's own claim.
@@ -652,11 +666,11 @@ India_5G_Policy_Legal_Adviser/
 | Not ingested | IT (NCIIPC) Rules 2013 (source unreachable); international policy examples (not specified in DOCX) |
 | In-force / amendment checks | Not done for any source — quoted claims are INCOMPLETE, not VERIFIED |
 | Scenario engine, audit trail, replay | Complete — stage tables checked against the DOCX; hash-chained JSONL; re-execution compare |
-| Demonstration UI | Streamlit: live run (with optional agent reasoning model), replay, Y.3172 pipeline, gap register |
+| Demonstration UI | Streamlit: live run (with optional agent reasoning model), replay, Y.3172 pipeline (played step by step), gap register; every adviser stage ends with a Summary, the notifications the retrieved provisions may require, and a Conclusion (`src/audit/narrative.py`). Attack lab (`ir/ui.py`): the attack plays step by step and ends with a Summary and Conclusion |
 | Cross-domain verification | Complete — evidence-based (shared provision, instrument basis, parallel reporting), across chunks |
 | Conflict handling | Complete — structured Finding A / Finding B with evidence; demonstrated with labelled fixtures (the live corpus has no conflicting provisions) |
 | Progressive reassessment | Complete — cumulative facts, carried-forward conclusions, computed changes |
-| Full 4-stage run | Recorded: `outputs/audit/day2_scenario2_full_T0_T3.jsonl` (replays and re-executes exactly) |
+| Full 4-stage run | Recorded: `outputs/audit/day2_scenario2_full_T0_T3.jsonl` (replays with its hash chain intact; recorded before the agent-focus change, so re-execution now shows differences in quoted passages — record a fresh run with `python -m src.scenario.run --stages 4` and use that for **Re-execute and compare**) |
 | ITU-T Y.3172 ML pipeline | Implemented over the simulated 5G core (`src/y3172/`): ML Intent, SRC/C/PP/M/P/D/SINK nodes, MLFO, ML sandbox, monitoring and re-selection, with the adviser as the P node. Not a live network; reference points and levels are logical (one process). The adviser's own document pipeline maps to Y.3172 mostly by analogy. See `knowledge_base/y3172_pipeline_traceability.json` |
 | Generative model | Off by default (`offline`). Optional per-agent reasoning with Ollama (local, open) or Claude (`--llm`, `ADVISER_LLM`): a model may only add claims that cite a retrieved passage; every claim is still checked by the Verifier and the prompt, response and accepted/rejected claims are written to the audit trail. The incident-response lab (`ir/`) can use Claude or Ollama, with an offline fallback |
 | Agent views | Each scenario stage releases some facts to one agent only (`agent_views`); recorded in the audit trail as `visible_input.agent_view` |

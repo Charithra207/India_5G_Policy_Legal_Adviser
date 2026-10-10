@@ -5,6 +5,8 @@ Contained 5G incident-response lab — command line (the source of truth).
     python run.py --attack signalling_storm_amf
     python run.py --attack nf_host_ransomware --provider offline
     python run.py --attack core_ddos_upf --auto        # approve everything, agent at every gate
+    python run.py --attack 1 --step                    # presenting: Enter to move to each next phase
+    python run.py --attack 1 --pace 2 --auto           # unfold with 2 s between steps; --fast: no pauses
 
 ITU-T Y.3172 ML pipeline (src/y3172/) driven by an ML Intent:
     python run.py --intent intents/amf_signalling_storm.yaml
@@ -37,8 +39,27 @@ import json
 import os
 import sys
 import textwrap
+import time
 
 W = 100
+
+# Pacing: an attack is shown as it unfolds, one step at a time, rather than
+# all at once.  PACE seconds between steps (0 = no pause); STEP = wait for
+# Enter at each phase.  Set from --pace / --step / --fast in main().
+PACE = 0.0
+STEP = False
+
+
+def _pause(weight: float = 1.0, phase: str = "") -> None:
+    """Pause between steps; with --step, wait for Enter at the start of each phase."""
+    sys.stdout.flush()
+    if STEP and phase:
+        try:
+            input(f"\n  ⏎  Enter to continue: {phase} ")
+        except EOFError:
+            pass
+    elif PACE > 0:
+        time.sleep(PACE * weight)
 
 
 def _rule(title: str = "", ch: str = "=") -> str:
@@ -135,6 +156,7 @@ def print_technical(panel: dict) -> None:
 def print_event(e) -> None:
     if e.action in ("inject",):
         return
+    _pause(0.6)
     if e.action == "resolution check":
         ok = e.result["resolved"]
         print(f"  [{e.tier}] RESOLUTION CHECK: {'RESOLVED' if ok else 'not resolved'}")
@@ -165,12 +187,21 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--intent", help="ML Intent (YAML) for the Y.3172 pipeline, e.g. intents/amf_signalling_storm.yaml")
     ap.add_argument("--mode", choices=["advisory", "blocking"], help="with --intent: override the P-node mode")
     ap.add_argument("--out", help="with --intent: run folder (default outputs/y3172/<run id>)")
+    ap.add_argument("--pace", type=float, default=None,
+                    help="seconds between steps as the attack unfolds (default 1.0 in a terminal, 0 otherwise)")
+    ap.add_argument("--step", action="store_true", help="wait for Enter at each phase (presenting live)")
+    ap.add_argument("--fast", action="store_true", help="no pauses")
+    ap.add_argument("--full-report", action="store_true", help="also print the full report at the end")
     ap.add_argument("--llm", choices=["offline", "ollama", "anthropic"],
                     help="with --intent: reasoning model of the P node's specialist agents (default ADVISER_LLM)")
     args = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
+    global PACE, STEP
+    PACE = 0.0 if args.fast else (args.pace if args.pace is not None else
+                                  (1.0 if sys.stdout.isatty() else 0.0))
+    STEP = args.step and not args.fast
     _load_dotenv()
     if args.intent:
         return run_intent(args)
@@ -195,19 +226,50 @@ def main(argv: list[str] | None = None) -> int:
     incident = Incident(args.attack, human=CliHuman(args.auto), catalog=catalog, on_event=print_event)
     print(_rule(f"CONTAINED LAB — {incident.attack['name']} — provider: {incident.provider.name}"))
     panels = incident.start()
+    print_attack_story(incident)
+    _pause(1.5, "the Indian obligations that now apply")
     print_policy(panels["policy"])
+    _pause(1.5, "the technical picture")
     print_technical(panels["technical"])
+    _pause(1.5, "the response")
     print("\n" + _rule("BASIC tier — agent runs diagnostics and auto-safe fixes"))
     report = incident.run()
-    print("\n" + _rule("FINAL REPORT"))
-    print(report["markdown"])
-    print("Saved:", *report["paths"], sep="\n  ")
+    _pause(1.5, "the summary")
+    print("\n" + _rule("SUMMARY"))
+    print(_wrap(report["data"]["summary"], "  "))
+    print("\n" + _rule("CONCLUSION"))
+    print(_wrap(report["data"]["conclusion"], "  "))
+    if args.full_report:
+        print("\n" + _rule("FULL REPORT"))
+        print(report["markdown"])
+    print("\nFull report (timeline, what fixed it, policy recap) saved:", *report["paths"], sep="\n  ")
     return 0 if report["resolved"] else 2
+
+
+def print_attack_story(incident) -> None:
+    """The network before the attack, then the attack as it unfolds, line by line."""
+    icon = {"ok": "🟢", "degraded": "🟠", "down": "🔴", "isolated": "⚪"}
+    health = lambda h: "  ".join(f"{icon.get(v, '?')} {k.upper()}" for k, v in h.items())   # noqa: E731
+    print("\n" + _rule("1. THE NETWORK BEFORE THE ATTACK"))
+    print("  " + health(incident.baseline_health))
+    _pause(1.5, "the attack")
+    print("\n" + _rule(f"2. THE ATTACK UNFOLDS — {incident.attack['name']}"))
+    for s in incident.attack_story:
+        _pause(1.0)
+        if s["kind"] == "alert":
+            print(f"  🚨 ALERT  {s['message']}")
+        else:
+            count = f"  (×{s['count']})" if s["count"] > 1 else ""
+            print(f"  {s['at'][6:]}  [{s['nf'].upper()}] {s['level']:<7} {s['message']}{count}")
+    _pause(1.0)
+    print("\n" + _rule("3. DETECTED — network functions now"))
+    print("  " + health(incident.detected_health))
 
 
 def print_pipeline_event(e: dict) -> None:
     """One line (or a short block) per MLFO event."""
     k = e["kind"]
+    _pause(0.25 if k in ("tick", "candidate_evaluated") else 1.0)
     if k == "instantiated":
         print("\n" + _rule("MLFO — pipeline instantiated from the ML Intent"))
         print(f"  {e['chain']}   ({e['feature_count']} features; levels {', '.join(e['levels'])})")
@@ -297,6 +359,12 @@ def run_intent(args) -> int:
     print("\n" + _rule("RUN SUMMARY"))
     for k, v in report["data"]["summary"].items():
         print(f"  {k.replace('_', ' '):<34} {v}")
+    from src.audit.narrative import pipeline_narrative
+    story = pipeline_narrative(report["data"])
+    print("\n" + _rule("SUMMARY"))
+    print(_wrap(story["summary"], "  "))
+    print("\n" + _rule("CONCLUSION"))
+    print(_wrap(story["conclusion"], "  "))
     print("\nSaved:", *[f"{k}: {v}" for k, v in report["paths"].items()], sep="\n  ")
     return 0
 

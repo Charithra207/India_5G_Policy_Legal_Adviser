@@ -80,6 +80,12 @@ class Incident:
         self.phase = "new"
         self.tier_outcomes: dict[str, dict] = {}
         self.policy_panel: dict = {}
+        # How the attack unfolded, for step-by-step display (CLI and web UI):
+        # the network before it, the log lines and alerts it caused in the
+        # order they were written, and the NF health once it was visible.
+        self.baseline_health: dict = {}
+        self.attack_story: list[dict] = []
+        self.detected_health: dict = {}
 
     # ------------------------------------------------------------------
 
@@ -104,7 +110,11 @@ class Incident:
         """Reset the sim, inject the attack, build both panels."""
         from ir.policy import build_policy_panel
         self.sim.reset()
+        self.baseline_health = self.sim.get_nf_health()
+        before = {nf: len(lines) for nf, lines in self.sim.state["logs"].items()}
         result = inject(self.sim, self.attack["id"])
+        self.detected_health = self.sim.get_nf_health()
+        self.attack_story = attack_story(self.sim.state["logs"], before, result["alerts"])
         self.record("start", "system", "inject", args={"attack": self.attack["id"]},
                     state_changing=True, result={"alerts": result["alerts"]})
         self.policy_panel = build_policy_panel(self.attack, self.search)
@@ -224,6 +234,30 @@ class Incident:
         (out / f"{stem}.json").write_text(json.dumps(report["data"], indent=2, default=str), encoding="utf-8")
         report["paths"] = [str(out / f"{stem}.md"), str(out / f"{stem}.json")]
         return report
+
+
+def attack_story(logs: dict[str, list[str]], before: dict[str, int], alerts: list[str]) -> list[dict]:
+    """
+    The log lines an attack wrote, across NFs, in the order of their simulated
+    timestamps (Open5GS layout "MM/DD HH:MM:SS.mmm: [nf] LEVEL: message"),
+    followed by the alerts it raised.
+    """
+    lines = []
+    for nf, entries in logs.items():
+        for line in entries[before.get(nf, 0):]:
+            stamp, _, rest = line.partition(": ")
+            level, _, message = rest.partition(": ")
+            lines.append({"at": stamp, "nf": nf, "level": level.split("]")[-1].strip() or "INFO",
+                          "message": message or rest, "kind": "log"})
+    lines.sort(key=lambda x: x["at"])
+    story: list[dict] = []
+    for line in lines:                     # a burst of identical lines is one step, with its count
+        if story and (story[-1]["nf"], story[-1]["message"]) == (line["nf"], line["message"]):
+            story[-1]["count"] += 1
+        else:
+            story.append({**line, "count": 1})
+    return story + [{"at": "", "nf": "oam", "level": "ALERT", "message": a, "kind": "alert", "count": 1}
+                    for a in alerts]
 
 
 def report_dir() -> Path:

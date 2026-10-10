@@ -260,8 +260,17 @@ the audit entry as `llm_reasoning`. The run header records `llm` (provider,
 model); replay re-executes offline runs exactly and notes that LLM runs may
 differ.
 
+**Summary and conclusion.** Every stage page (live and replay) ends with a
+*Summary* of the stages up to the one shown, a table of the notifications the
+retrieved Indian provisions may require (recipient, time limit, source,
+condition) and a *Conclusion* — built by `src/audit/narrative.py` from the
+recorded stage entries only, so live and replay read the same.
+
 **Other pages.** *Y.3172 pipeline* runs an ML Intent through the MLFO
-(SRC → C → PP → M → P → D → SINK) and shows recorded runs and their reports.
+(SRC → C → PP → M → P → D → SINK) and plays a recorded run step by step from
+its audit trail (pipeline, sandbox, live ticks, detection, P-node decision,
+SINKs; **Next step**, **Show all**, **Auto-play**), then its Summary and
+Conclusion and the full report.
 *Gap register* shows `knowledge_base/gap_register.json` — five domain-framed
 themes with Indian provisions and global / neighbouring-region examples — and
 can regenerate it.

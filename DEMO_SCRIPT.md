@@ -8,6 +8,12 @@ should NOT be made".
 
 ## Before the audience arrives (5 minutes)
 
+0. Once, after updating the code: record a fresh reference run with
+   `python -m src.scenario.run --stages 4` (live knowledge bases). Use that
+   run, not `day2_scenario2_full_T0_T3.jsonl`, for **Re-execute and
+   compare**: the day-2 run was recorded before the agents' focus changed,
+   so it now re-executes with differences in the quoted passages.
+
 1. Run `streamlit run src/ui/app.py` and open the browser tab.
 2. Choose **Live run**, scenario **scenario2**, with **Use live knowledge
    bases** on. Press **Start run**. This loads the models; do it now, not in
@@ -113,6 +119,11 @@ Talk through it.
 - **Uncertainty:** "No conclusion is evidence-backed at this stage", followed
   by the open questions (for example "Formal CII designation status", "Whether
   NCIIPC has been notified").
+- Scroll to the end of the page: **Summary — up to T3**, the table of
+  **notifications the retrieved Indian provisions may require** (recipient,
+  time limit, source, and the condition under which each applies), and the
+  **Conclusion**. This is the one-minute answer to management's question at
+  T3: what is due, to whom, and by when — each subject to confirmation.
 
 ## 6:45 – 7:30 Verification: valid evidence → VERIFIED
 
@@ -150,8 +161,9 @@ On the full run:
 - Open **Decision path** for a stage. It answers what happened, which agent
   acted, what evidence was retrieved, what was concluded, how it was
   verified, and how the Coordinator reached the assessment.
-- Press **Re-execute and compare** (about 3 seconds). "Re-execution
-  reproduced every stage."
+- Select the fresh reference run you recorded before the demo, and press
+  **Re-execute and compare** (about 3 seconds). "Re-execution reproduced
+  every stage."
 - **Audit record for this stage → Full audit entry (JSON)** holds the
   detailed log.
 
@@ -164,6 +176,16 @@ On the full run:
 > - a generative model by default (the optional Ollama/Claude mode only adds claims that cite retrieved passages, and the Verifier still checks them);
 > - the ITU AI for Good Sandbox (access was not available; everything runs locally);
 > - a live network: the Y.3172 ML pipeline (`python run.py --intent …`) runs on the contained simulator.
+
+## Optional: the attack lab, step by step (2 minutes)
+
+`streamlit run ir/ui.py` → choose an attack (e.g. *Fake base station*) →
+**Reset and inject the attack**. Press **Next step ▶** (or switch on
+**Auto-play**): the network before the attack, each log line and alert as
+the attack unfolds, detection, the Indian obligations that now apply, then
+every response step. At the gate choose **[1] Agent runs it**. The page ends
+with a **Summary** and a **Conclusion**. In a terminal:
+`python run.py --attack 2 --step` (Enter moves to each next phase).
 
 ## If something fails
 

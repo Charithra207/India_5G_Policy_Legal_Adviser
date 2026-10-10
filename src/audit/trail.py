@@ -257,7 +257,10 @@ def _kb_build() -> dict:
         "ingestion_manifest_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
         "built_at": data.get("built_at"),
         "embedding_model": data.get("embedding_model"),
-        "generator_model": data.get("generator_model"),
+        # Recorded when the knowledge bases were built; the reasoning model the
+        # agents used in THIS run (if any) is the header's "llm" field.
+        "generator_model": (f"knowledge-base build: {data['generator_model']} (run-time reasoning model: "
+                            "see 'llm')" if data.get("generator_model") else None),
         "not_ingested": [d["id"] for d in data.get("documents", [])
                          if d.get("status") != "ingested"],
         "sandbox": data.get("sandbox"),
