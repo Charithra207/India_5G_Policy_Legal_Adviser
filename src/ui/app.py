@@ -19,6 +19,7 @@ from __future__ import annotations
 import json
 import logging
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -29,7 +30,7 @@ import streamlit as st  # noqa: E402
 
 from src.audit.explain import explain_stage  # noqa: E402
 from src.audit.replay import list_runs, load_run, reexecute  # noqa: E402
-from src.audit.trail import audit_dir  # noqa: E402
+from src.audit.trail import audit_dir, read_entries  # noqa: E402
 from src.scenario.catalog import SCENARIOS, get_scenario  # noqa: E402
 from src.scenario.engine import ScenarioEngine  # noqa: E402
 
@@ -432,6 +433,28 @@ def render_stage(spec, stages: list[dict], index: int, header: dict | None, path
     render_previous(stages, index)
     if "hash" in entry:
         render_audit_entry(entry, path)
+    render_narrative(stages[: index + 1])
+
+
+def render_narrative(stages: list[dict]) -> None:
+    """Two paragraphs and a table: what happened so far, what follows, which notifications."""
+    from src.audit.narrative import adviser_narrative
+    story = adviser_narrative(stages)
+    if not story["summary"]:
+        return
+    st.divider()
+    st.header(f"Summary — up to {stages[-1]['stage']['label']}")
+    st.write(story["summary"])
+    if story["notifications"]:
+        st.subheader("Notifications the retrieved Indian provisions may require")
+        st.caption("From provisions the agents retrieved, recipient and time limit as printed. Each is "
+                   "subject to its condition and to confirmation by a qualified person.")
+        st.dataframe([{"Recipient": r["recipient"], "Time limit": "; ".join(r["limits"]),
+                       "Source": f"{r['source']}, {r['section']}" + (f" (p. {r['page']})" if r["page"] else ""),
+                       "Applies": r["condition"], "Found by": ", ".join(agent_name(a) for a in r["agents"])}
+                      for r in story["notifications"]], hide_index=True, width="stretch")
+    st.header("Conclusion")
+    st.write(story["conclusion"])
 
 
 def render_kb_status(kb_status: dict[str, bool], header: dict | None = None) -> None:
@@ -481,7 +504,8 @@ def live_mode() -> None:
         if st.sidebar.button("Start run", type="primary"):
             from src import llm
             provider = llm.configure(llm_choice)
-            st.session_state.llm_notice = getattr(provider, "notice", "")
+            ready, problem = provider.check() if hasattr(provider, "check") else (True, "")
+            st.session_state.llm_notice = getattr(provider, "notice", "") or ("" if ready else problem)
             registry = live_registry() if use_live else None
             st.session_state.engine = ScenarioEngine(scenario_id, registry=registry)
             st.session_state.engine_live = use_live
@@ -642,7 +666,146 @@ def y3172_mode() -> None:
     cols[2].metric("False-alarm ticks", s["false_alarm_ticks"])
     cols[3].metric("Remediations on a wrong class", s["remediations_applied_on_wrong_classification"])
     cols[4].metric("Model re-selections", s["reselections"])
-    st.markdown((run_dir / "report.md").read_text(encoding="utf-8"))
+    trails = sorted(run_dir.glob("*.jsonl"))
+    finished = True
+    if trails:
+        st.subheader("The run, step by step")
+        st.caption("Replayed from the run's hash-chained audit trail, in the order it happened.")
+        finished = play_steps(y3172_steps(read_entries(trails[0])), key=f"y3172:{run_dir}")
+    if finished:
+        from src.audit.narrative import pipeline_narrative
+        story = pipeline_narrative(data)
+        st.header("Summary")
+        st.write(story["summary"])
+        st.header("Conclusion")
+        st.write(story["conclusion"])
+    with st.expander("Full run report"):
+        st.markdown((run_dir / "report.md").read_text(encoding="utf-8"))
+
+
+# ---------------------------------------------------------------------------
+# Step-by-step playback (Y.3172 runs)
+# ---------------------------------------------------------------------------
+
+def play_steps(steps: list[dict], key: str) -> bool:
+    """
+    Reveal `steps` one at a time (Next step / Show all / Auto-play in the
+    sidebar).  Returns True once every step is shown.
+    """
+    if not steps:
+        return True
+    state_key = f"shown:{key}"
+    shown = min(st.session_state.get(state_key, 1), len(steps))
+    autoplay = st.sidebar.toggle("Auto-play the run", value=False, key=f"auto:{key}")
+    delay = st.sidebar.slider("Seconds per step", 0.5, 5.0, 1.5, 0.5, key=f"delay:{key}")
+    st.progress(shown / len(steps), text=f"Step {shown} of {len(steps)}")
+    for step in steps[:shown]:
+        box = {"info": st.info, "warning": st.warning, "error": st.error, "success": st.success}[step["kind"]]
+        box(f"**{step['title']}**" + (f"  \n{step['body']}" if step.get("body") else ""))
+    if shown >= len(steps):
+        if st.button("Replay from the start", key=f"restart:{key}"):
+            st.session_state[state_key] = 1
+            st.rerun()
+        return True
+    c1, c2, _ = st.columns([1, 1, 4])
+    if c1.button("Next step ▶", type="primary", key=f"next:{key}"):
+        st.session_state[state_key] = shown + 1
+        st.rerun()
+    if c2.button("Show all", key=f"all:{key}"):
+        st.session_state[state_key] = len(steps)
+        st.rerun()
+    if autoplay:
+        time.sleep(delay)
+        st.session_state[state_key] = shown + 1
+        st.rerun()
+    return False
+
+
+def y3172_steps(entries: list[dict]) -> list[dict]:
+    """A Y.3172 run's audit trail as a story: pipeline, sandbox, live ticks, detections, P node, sinks."""
+    tick_of = {e["incident_id"]: e["tick"] for e in entries if e["type"] == "detection"}
+    rank = {"tick": 0, "detection": 1, "p_node_decision": 2, "dispatch": 3, "model_reselected": 4}
+
+    def when(pair):
+        i, e = pair
+        if e["type"] in ("run_started", "pipeline_instantiated", "model_selected",
+                         "sandbox_effect_evaluation", "model_deployed") and "tick" not in e:
+            return (-1, i, 0)
+        if e["type"] == "run_completed":
+            return (10 ** 9, i, 0)
+        t = e.get("tick", tick_of.get(e.get("incident_id"), 10 ** 8))
+        return (t, rank.get(e["type"], 5), i)
+
+    steps: list[dict] = []
+    quiet: list[dict] = []
+
+    def flush_quiet():
+        if quiet:
+            a, b = quiet[0], quiet[-1]
+            span = f"t{a['tick']}" + (f"–t{b['tick']}" if b is not a else "")
+            steps.append({"kind": "info", "title": f"{span} ({a['clock']}–{b['clock']}): normal traffic",
+                          "body": f"The deployed model predicts **normal** on {len(quiet)} tick(s)."})
+            quiet.clear()
+
+    for _, e in sorted(enumerate(entries), key=when):
+        k = e["type"]
+        if k == "tick" and not e["events"] and e["prediction"] == "normal" and not e.get("action"):
+            quiet.append(e)
+            continue
+        flush_quiet()
+        if k == "run_started":
+            steps.append({"kind": "info", "title": f"ML Intent: {e.get('intent_title', '')}",
+                          "body": (e.get("intent") or {}).get("description", "")})
+        elif k == "pipeline_instantiated":
+            chain = " → ".join(dict.fromkeys(n["node"] for n in e["nodes"]))
+            steps.append({"kind": "info", "title": "MLFO instantiates the pipeline",
+                          "body": f"{chain}  \n" + ", ".join(f"{n['node']} `{n['id']}` ({n['level']})"
+                                                              for n in e["nodes"])})
+        elif k == "model_selected":
+            cands = "; ".join(f"`{c['model_id']}` macro-F1 {c['metrics']['macro_f1']}"
+                              f"{'' if c['eligible'] else ' (does not meet the intent)'}"
+                              for c in e.get("candidates", []))
+            steps.append({"kind": "success" if e.get("meets_intent") else "warning",
+                          "title": f"ML sandbox: model {'selected' if e['reason'] == 'initial' else 're-selected'}"
+                                   f" — `{e['selected']}`",
+                          "body": f"{cands}  \nRule: {e.get('rule', '')}"})
+        elif k == "sandbox_effect_evaluation":
+            rows = "  \n".join(f"{r['incident']}: detected as {r['detected_as']}; playbook "
+                               f"{'resolved it in ' + r['resolved_in'] if r['playbook_resolved'] else 'did not resolve it'}"
+                               for r in e["rows"])
+            steps.append({"kind": "info", "title": "ML sandbox: each playbook tested before live use", "body": rows})
+        elif k == "model_deployed":
+            steps.append({"kind": "success", "title": f"Model `{e['model_id']}` deployed to the live simulated network",
+                          "body": f"Reference points {e.get('reference_point', '')}"})
+        elif k == "tick":
+            wrong = e["prediction"] != e["scored_truth"]
+            events = "; ".join(e["events"])
+            steps.append({"kind": "error" if "attack" in events else ("warning" if wrong else "info"),
+                          "title": f"t{e['tick']} ({e['clock']}): " + (events or "traffic"),
+                          "body": f"Model predicts **{e['prediction']}** (confidence {e['confidence']}); truth "
+                                  f"{e['truth']}" + (" — misclassified" if wrong else "")})
+        elif k == "detection":
+            p = e["prediction"]
+            ev = ", ".join(f"{x['feature']} = {x['value']} (normal ≈ {x['normal_mean']})" for x in p["evidence"][:3])
+            steps.append({"kind": "warning", "title": f"M node detects **{p['label']}** "
+                                                      f"(confidence {p['confidence']})", "body": ev})
+        elif k == "p_node_decision":
+            d = e["decision"]
+            obl = "  \n".join(f"{'✔' if o.get('verified') else '✘'} {o['summary']}" for o in d.get("obligations", []))
+            steps.append({"kind": "warning" if d["decision"].startswith("hold") else "info",
+                          "title": f"P node (policy & legal adviser, {d['mode']} mode): {d['decision'].replace('_', ' ')}",
+                          "body": "  \n".join(d.get("reasons", [])) + ("  \n" + obl if obl else "")})
+        elif k == "dispatch":
+            sinks = "  \n".join(f"SINK `{x['sink']}`: {x['status']} — {x.get('detail', '')[:160]}" for x in e["sinks"])
+            steps.append({"kind": "success", "title": "D node dispatches to the SINKs", "body": sinks})
+        elif k == "model_reselected":
+            steps.append({"kind": "warning", "title": f"Monitoring: score fell, model re-selected at t{e['tick']}",
+                          "body": f"rolling macro-F1 {e['rolling_score'].get('macro_f1')}; estimated live load "
+                                  f"{e.get('estimated_live_load')}; new model `{e['new_model']}`"})
+        elif k == "run_completed":
+            steps.append({"kind": "success", "title": "Run completed", "body": ""})
+    flush_quiet()
+    return steps
 
 
 def gap_mode() -> None:
