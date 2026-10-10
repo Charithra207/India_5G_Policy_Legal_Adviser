@@ -89,6 +89,8 @@ class AnthropicProvider:
 
     def __init__(self) -> None:
         import anthropic
+        if not (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN")):
+            raise RuntimeError("no ANTHROPIC_API_KEY set (add it to .env)")
         self.client = anthropic.Anthropic()
 
     def _system(self, incident, tier: str) -> str:
